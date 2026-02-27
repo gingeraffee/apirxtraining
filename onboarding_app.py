@@ -19,201 +19,255 @@ st.set_page_config(
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
-/* ── Base ── */
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    /* ── Base ── */
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    .stApp { background-color: #EEF2F7; }
 
-.stApp { background-color: #0A1628; color: #E8EDF5; }
+    /* ── Sidebar Container ── */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #0A1628 0%, #12213A 50%, #1B3A5C 100%);
+        border-right: 2px solid #CC2936;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+    }
 
-/* ── Sidebar ── */
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0D1F3C 0%, #091629 100%);
-    border-right: 1px solid #1E3A5F;
-}
-[data-testid="stSidebar"] * { color: #C8D6E8 !important; }
-[data-testid="stSidebar"] .stButton > button {
-    width: 100%;
-    background: transparent;
-    border: 1px solid #1E3A5F;
-    color: #C8D6E8 !important;
-    text-align: left;
-    padding: 10px 16px;
-    border-radius: 8px;
-    margin: 3px 0;
-    font-size: 13px;
-    transition: all 0.2s;
-}
-[data-testid="stSidebar"] .stButton > button:hover {
-    background: rgba(204, 41, 54, 0.15);
-    border-color: #CC2936;
-    color: #fff !important;
-}
+    /* ── Sidebar Header — bright white card so logo stands out ── */
+    .sidebar-header {
+        background: #FFFFFF;
+        border-radius: 12px;
+        padding: 16px 14px 14px 14px;
+        margin-bottom: 18px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    }
+    .sidebar-header * { color: #0A1628 !important; }
+    .sidebar-header .sidebar-username {
+        color: #CC2936 !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.02em !important;
+    }
 
-/* ── Welcome Banner ── */
-.welcome-banner {
-    background: linear-gradient(135deg, #0D1F3C 0%, #1a2f50 50%, #0D1F3C 100%);
-    border: 1px solid #1E3A5F;
-    border-left: 4px solid #CC2936;
-    border-radius: 12px;
-    padding: 32px 40px;
-    margin-bottom: 28px;
-}
-.welcome-banner h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    color: #FFFFFF;
-    margin: 0 0 8px 0;
-}
-.welcome-banner p { color: #8BA3C7; font-size: 1rem; margin: 0; }
+    /* ── Sidebar Navigation — explicit white text so nothing disappears ── */
+    [data-testid="stSidebar"] .stRadio label {
+        color: rgba(255,255,255,0.88) !important;
+        border-radius: 8px !important;
+        padding: 7px 10px !important;
+        transition: all 0.15s ease !important;
+        font-size: 0.9rem !important;
+    }
+    [data-testid="stSidebar"] .stRadio label:hover {
+        background: rgba(204,41,54,0.22) !important;
+        color: #FFFFFF !important;
+    }
+    [data-testid="stSidebar"] .stRadio p,
+    [data-testid="stSidebar"] .stRadio span {
+        color: rgba(255,255,255,0.88) !important;
+    }
 
-/* ── Module Cards ── */
-.module-card {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
-    border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 16px;
-    transition: all 0.2s;
-    cursor: pointer;
-}
-.module-card:hover { border-color: #CC2936; transform: translateY(-2px); }
-.module-card h3 { color: #FFFFFF; margin: 0 0 8px 0; font-size: 1.1rem; }
-.module-card p { color: #8BA3C7; margin: 0; font-size: 0.9rem; }
-.module-card .badge {
-    display: inline-block;
-    background: #CC2936;
-    color: white;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-}
-.module-card .badge.complete {
-    background: #1a6b3c;
-}
+    /* ── Typography ── */
+    h1, h2, h3 { font-family: 'Playfair Display', serif !important; color: #0A1628 !important; }
+    .page-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #0A1628;
+        border-bottom: 3px solid #CC2936;
+        padding-bottom: 12px;
+        margin-bottom: 8px;
+    }
+    .page-subtitle { color: #5A6E8A; font-size: 1.05rem; margin-bottom: 28px; font-weight: 400; }
 
-/* ── Section Content ── */
-.content-section {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
-    border-radius: 12px;
-    padding: 28px 32px;
-    margin-bottom: 20px;
-}
-.content-section h2 {
-    font-family: 'Playfair Display', serif;
-    color: #FFFFFF;
-    font-size: 1.6rem;
-    margin: 0 0 16px 0;
-    border-bottom: 1px solid #1E3A5F;
-    padding-bottom: 12px;
-}
-.content-section h3 { color: #CC2936; font-size: 1.05rem; margin: 20px 0 8px 0; }
-.content-section p, .content-section li { color: #C8D6E8; line-height: 1.7; font-size: 0.95rem; }
-.content-section ul { padding-left: 20px; }
-.content-section strong { color: #FFFFFF; }
+    /* ── Module Cards ── */
+    .module-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        border-left: 5px solid #CC2936;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .module-card:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,0.11); }
+    .module-card.complete { border-left-color: #1A9E5C; background: #F0FFF6; }
 
-/* ── Info Boxes ── */
-.info-box {
-    background: rgba(30, 58, 95, 0.5);
-    border-left: 3px solid #CC2936;
-    border-radius: 6px;
-    padding: 14px 18px;
-    margin: 14px 0;
-    color: #C8D6E8;
-    font-size: 0.9rem;
-}
-.info-box.green { border-left-color: #2ecc71; }
-.info-box.yellow { border-left-color: #f39c12; }
+    /* ── Progress Bars ── */
+    .stProgress > div > div { background-color: #CC2936 !important; }
 
-/* ── Progress Bar ── */
-.progress-container {
-    background: #1E3A5F;
-    border-radius: 8px;
-    height: 10px;
-    margin: 8px 0 4px 0;
-    overflow: hidden;
-}
-.progress-fill {
-    background: linear-gradient(90deg, #CC2936, #e8424f);
-    height: 100%;
-    border-radius: 8px;
-    transition: width 0.5s ease;
-}
+    /* ── Primary Buttons — deep navy, red on hover ── */
+    .stButton > button[kind="primary"],
+    .stButton > button[kind="primary"][data-testid],
+    [data-testid="stBaseButton-primary"] {
+        background-color: #0A1628 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 20px !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.02em !important;
+        transition: background 0.2s ease !important;
+    }
+    .stButton > button[kind="primary"]:hover,
+    [data-testid="stBaseButton-primary"]:hover {
+        background-color: #CC2936 !important;
+    }
 
-/* ── Quiz ── */
-.quiz-question {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
-    border-radius: 10px;
-    padding: 20px 24px;
-    margin-bottom: 16px;
-}
-.quiz-question p { color: #FFFFFF; font-weight: 500; font-size: 1rem; }
+    /* ── Secondary Buttons — red underline link ── */
+    .stButton > button[kind="secondary"],
+    [data-testid="stBaseButton-secondary"] {
+        background: none !important;
+        border: none !important;
+        color: #CC2936 !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        padding: 0 4px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        box-shadow: none !important;
+        text-decoration: underline !important;
+        text-underline-offset: 3px !important;
+    }
+    .stButton > button[kind="secondary"]:hover,
+    [data-testid="stBaseButton-secondary"]:hover {
+        background: none !important;
+        color: #A01E27 !important;
+        box-shadow: none !important;
+    }
 
-/* ── Buttons ── */
-.stButton > button {
-    background: #CC2936;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-weight: 600;
-    transition: all 0.2s;
-}
-.stButton > button:hover { background: #a5212c; color: white; }
+    /* ── Badges ── */
+    .badge {
+        display: inline-block;
+        background: #CC2936;
+        color: white;
+        font-size: 0.74rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-left: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .badge.done { background: #1A9E5C; }
 
-/* ── Table ── */
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.88rem;
-    margin: 14px 0;
-}
-.styled-table th {
-    background: #CC2936;
-    color: white;
-    padding: 10px 14px;
-    text-align: left;
-    font-weight: 600;
-}
-.styled-table td {
-    padding: 9px 14px;
-    border-bottom: 1px solid #1E3A5F;
-    color: #C8D6E8;
-}
-.styled-table tr:nth-child(even) td { background: rgba(30,58,95,0.25); }
+    /* ── Welcome Banner ── */
+    .welcome-banner {
+        background: linear-gradient(135deg, #0A1628 0%, #1B3A5C 100%);
+        border-radius: 16px;
+        padding: 32px 36px;
+        margin-bottom: 28px;
+        border-left: 6px solid #CC2936;
+    }
+    .welcome-banner h1 { color: white !important; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 8px; }
+    .welcome-banner p { color: #B0C4D8; font-size: 1.05rem; }
 
-/* ── Checkbox overrides ── */
-.stCheckbox label { color: #C8D6E8 !important; font-size: 0.93rem; }
+    /* ── Callout ── */
+    .callout { background: #FEF2F3; border-left: 4px solid #CC2936; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; color: #6B0E16; }
 
-/* ── Radio overrides ── */
-.stRadio label { color: #C8D6E8 !important; }
-.stRadio > div { gap: 6px; }
+    /* ── Dividers ── */
+    hr { border: none; border-top: 1px solid #D8E1EB; margin: 24px 0; }
 
-/* ── Success / Error ── */
-.stSuccess, .stError, .stWarning, .stInfo { border-radius: 8px; }
+    /* ── Resource Library ── */
+    .resource-card {
+        background: white;
+        border-radius: 8px;
+        padding: 13px 16px;
+        margin-bottom: 7px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        border-left: 3px solid transparent;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+    }
+    .resource-card:hover {
+        border-left-color: #0A1628;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+        transform: translateX(3px);
+    }
+    .resource-id {
+        display: inline-block;
+        background: #0A1628;
+        color: white;
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        margin-top: 3px;
+        letter-spacing: 0.03em;
+        min-width: 54px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    /* ─────────────────────────────────────────────────────────────
+       Mobile + Dark Mode Compatibility Patch
+       (keeps desktop exactly the same)
+       ───────────────────────────────────────────────────────────── */
+    @media (max-width: 768px) and (prefers-color-scheme: dark) {
 
-/* ── Sidebar name input ── */
-[data-testid="stSidebar"] input { 
-    background: #1E3A5F !important; 
-    color: #fff !important; 
-    border: 1px solid #2a4a6e !important; 
-}
+      /* App background + default text */
+      div[data-testid="stAppViewContainer"],
+      section.main,
+      .stApp {
+        background: #0B1220 !important;
+        color: #F9FAFB !important;
+      }
 
-/* ── Metric ── */
-[data-testid="metric-container"] {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
-    border-radius: 10px;
-    padding: 16px;
-}
-[data-testid="metric-container"] label { color: #8BA3C7 !important; font-size: 0.8rem; }
-[data-testid="metric-container"] [data-testid="stMetricValue"] { color: #FFFFFF !important; font-size: 1.5rem; font-weight: 700; }
-</style>
-""", unsafe_allow_html=True)
+      /* Streamlit markdown text */
+      div[data-testid="stMarkdownContainer"],
+      div[data-testid="stMarkdownContainer"] p,
+      div[data-testid="stMarkdownContainer"] li,
+      div[data-testid="stMarkdownContainer"] span,
+      div[data-testid="stMarkdownContainer"] div {
+        color: #F9FAFB !important;
+      }
+
+      /* Your custom headings/subtitles (you use these a lot) */
+      .page-title,
+      .page-subtitle {
+        color: #F9FAFB !important;
+      }
+
+      /* Cards you set to white in light mode */
+      .resource-card,
+      .module-card,
+      .welcome-banner + div,
+      div[style*="background:white"],
+      div[style*="background: white"] {
+        background: #111827 !important;
+        border-color: rgba(255,255,255,0.10) !important;
+      }
+
+      /* Override your common “dark ink” inline colors */
+      div[style*="color:#0A1628"],
+      div[style*="color: #0A1628"],
+      span[style*="color:#0A1628"],
+      span[style*="color: #0A1628"] {
+        color: #F9FAFB !important;
+      }
+
+      /* Override your muted slate inline color */
+      div[style*="color:#5A6E8A"],
+      div[style*="color: #5A6E8A"],
+      span[style*="color:#5A6E8A"],
+      span[style*="color: #5A6E8A"] {
+        color: #CBD5E1 !important;
+      }
+
+      /* Inputs (you also set these explicitly on Downloads page) */
+      div[data-testid="stTextInput"] input {
+        background: #0F172A !important;
+        color: #F9FAFB !important;
+        border-color: rgba(255,255,255,0.18) !important;
+      }
+      div[data-testid="stTextInput"] input::placeholder {
+        color: rgba(255,255,255,0.55) !important;
+      }
+
+      /* Tables you render with dark headers + light bodies */
+      table, td, th {
+        color: #E5E7EB !important;
+        border-color: rgba(255,255,255,0.12) !important;
+      }
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  GOOGLE SHEETS INTEGRATION

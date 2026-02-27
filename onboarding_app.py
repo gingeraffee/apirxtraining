@@ -426,11 +426,16 @@ def get_module_pct(module):
     checklist = module.get("checklist", [])
     if not checklist:
         return 0
-    return int(len(st.session_state.progress.get(module["key"], [])) / len(checklist) * 100)
+    raw = st.session_state.progress.get(module["key"], [])
+    completed = raw if isinstance(raw, list) else []
+    return int(len(completed) / len(checklist) * 100)
 
 def get_overall():
     total = sum(len(m["checklist"]) for m in MODULES)
-    done = sum(len(st.session_state.progress.get(m["key"], [])) for m in MODULES)
+    def safe_len(key):
+        raw = st.session_state.progress.get(key, [])
+        return len(raw) if isinstance(raw, list) else 0
+    done = sum(safe_len(m["key"]) for m in MODULES)
     return int(done / total * 100) if total else 0
 
 def get_quiz_score(key):
@@ -977,7 +982,8 @@ else:
         with tab2:
             st.markdown("#### Mark off each item as you complete it.")
             st.markdown("*Progress saves automatically.*")
-            completed = st.session_state.progress.get(key, []).copy()
+            _raw_progress = st.session_state.progress.get(key, [])
+            completed = _raw_progress.copy() if isinstance(_raw_progress, list) else []
             changed = False
             checklist_items = sel.get("checklist", [])
             if key == "new_hire_checklist":

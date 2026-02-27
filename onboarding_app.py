@@ -32,7 +32,7 @@ st.markdown("""
         box-shadow: 4px 0 24px rgba(0,0,0,0.4);
     }
 
-    /* ── Sidebar Header — bright white card so logo stands out ── */
+    /* ── Sidebar Header ── */
     .sidebar-header {
         background: #FFFFFF;
         border-radius: 12px;
@@ -47,7 +47,7 @@ st.markdown("""
         letter-spacing: 0.02em !important;
     }
 
-    /* ── Sidebar Navigation — explicit white text so nothing disappears ── */
+    /* ── Sidebar Navigation ── */
     [data-testid="stSidebar"] .stRadio label {
         color: rgba(255,255,255,0.88) !important;
         border-radius: 8px !important;
@@ -63,6 +63,30 @@ st.markdown("""
     [data-testid="stSidebar"] .stRadio span {
         color: rgba(255,255,255,0.88) !important;
     }
+    [data-testid="stSidebar"] * { color: rgba(255,255,255,0.88); }
+    [data-testid="stSidebar"] .stButton > button {
+        width: 100%;
+        background: transparent;
+        border: 1px solid rgba(255,255,255,0.18);
+        color: rgba(255,255,255,0.88) !important;
+        text-align: left;
+        padding: 10px 16px;
+        border-radius: 8px;
+        margin: 3px 0;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover {
+        background: rgba(204,41,54,0.22) !important;
+        border-color: #CC2936;
+        color: #fff !important;
+    }
+    [data-testid="stSidebar"] input {
+        background: rgba(255,255,255,0.10) !important;
+        color: #fff !important;
+        border: 1px solid rgba(255,255,255,0.25) !important;
+        border-radius: 6px !important;
+    }
 
     /* ── Typography ── */
     h1, h2, h3 { font-family: 'Playfair Display', serif !important; color: #0A1628 !important; }
@@ -77,6 +101,17 @@ st.markdown("""
     }
     .page-subtitle { color: #5A6E8A; font-size: 1.05rem; margin-bottom: 28px; font-weight: 400; }
 
+    /* ── Welcome Banner ── */
+    .welcome-banner {
+        background: linear-gradient(135deg, #0A1628 0%, #1B3A5C 100%);
+        border-radius: 16px;
+        padding: 32px 36px;
+        margin-bottom: 28px;
+        border-left: 6px solid #CC2936;
+    }
+    .welcome-banner h1 { color: white !important; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 8px; }
+    .welcome-banner p { color: #B0C4D8; font-size: 1.05rem; }
+
     /* ── Module Cards ── */
     .module-card {
         background: white;
@@ -89,49 +124,8 @@ st.markdown("""
     }
     .module-card:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,0.11); }
     .module-card.complete { border-left-color: #1A9E5C; background: #F0FFF6; }
-
-    /* ── Progress Bars ── */
-    .stProgress > div > div { background-color: #CC2936 !important; }
-
-    /* ── Primary Buttons — deep navy, red on hover ── */
-    .stButton > button[kind="primary"],
-    .stButton > button[kind="primary"][data-testid],
-    [data-testid="stBaseButton-primary"] {
-        background-color: #0A1628 !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 8px !important;
-        padding: 8px 20px !important;
-        font-weight: 500 !important;
-        letter-spacing: 0.02em !important;
-        transition: background 0.2s ease !important;
-    }
-    .stButton > button[kind="primary"]:hover,
-    [data-testid="stBaseButton-primary"]:hover {
-        background-color: #CC2936 !important;
-    }
-
-    /* ── Secondary Buttons — red underline link ── */
-    .stButton > button[kind="secondary"],
-    [data-testid="stBaseButton-secondary"] {
-        background: none !important;
-        border: none !important;
-        color: #CC2936 !important;
-        font-size: 0.82rem !important;
-        font-weight: 600 !important;
-        padding: 0 4px !important;
-        height: auto !important;
-        min-height: 0 !important;
-        box-shadow: none !important;
-        text-decoration: underline !important;
-        text-underline-offset: 3px !important;
-    }
-    .stButton > button[kind="secondary"]:hover,
-    [data-testid="stBaseButton-secondary"]:hover {
-        background: none !important;
-        color: #A01E27 !important;
-        box-shadow: none !important;
-    }
+    .module-card h3 { color: #0A1628 !important; margin: 0 0 8px 0; font-size: 1.1rem; }
+    .module-card p { color: #5A6E8A; margin: 0; font-size: 0.9rem; }
 
     /* ── Badges ── */
     .badge {
@@ -142,132 +136,172 @@ st.markdown("""
         font-weight: 600;
         padding: 3px 10px;
         border-radius: 20px;
-        margin-left: 8px;
+        margin-bottom: 10px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
-    .badge.done { background: #1A9E5C; }
+    .badge.complete, .badge.done { background: #1A9E5C; }
 
-    /* ── Welcome Banner ── */
-    .welcome-banner {
-        background: linear-gradient(135deg, #0A1628 0%, #1B3A5C 100%);
-        border-radius: 16px;
-        padding: 32px 36px;
-        margin-bottom: 28px;
-        border-left: 6px solid #CC2936;
+    /* ── Content Sections ── */
+    .content-section {
+        background: white;
+        border-radius: 12px;
+        padding: 28px 32px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        border-left: 5px solid #CC2936;
     }
-    .welcome-banner h1 { color: white !important; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 8px; }
-    .welcome-banner p { color: #B0C4D8; font-size: 1.05rem; }
+    .content-section h2 {
+        font-family: 'Playfair Display', serif !important;
+        color: #0A1628 !important;
+        font-size: 1.6rem;
+        margin: 0 0 16px 0;
+        border-bottom: 2px solid #EEF2F7;
+        padding-bottom: 12px;
+    }
+    .content-section h3 { color: #CC2936 !important; font-size: 1.05rem; margin: 20px 0 8px 0; }
+    .content-section p, .content-section li { color: #2C3E55; line-height: 1.7; font-size: 0.95rem; }
+    .content-section ul { padding-left: 20px; }
+    .content-section strong { color: #0A1628; }
 
-    /* ── Callout ── */
+    /* ── Info Boxes ── */
+    .info-box {
+        background: #FEF2F3;
+        border-left: 4px solid #CC2936;
+        border-radius: 0 8px 8px 0;
+        padding: 14px 18px;
+        margin: 14px 0;
+        color: #6B0E16;
+        font-size: 0.9rem;
+    }
+    .info-box.green { background: #F0FFF6; border-left-color: #1A9E5C; color: #0E5C30; }
+    .info-box.yellow { background: #FFFBEB; border-left-color: #F59E0B; color: #78450A; }
+
+    /* ── Progress Bar ── */
+    .progress-container {
+        background: #D8E1EB;
+        border-radius: 8px;
+        height: 10px;
+        margin: 8px 0 4px 0;
+        overflow: hidden;
+    }
+    .progress-fill {
+        background: linear-gradient(90deg, #CC2936, #e8424f);
+        height: 100%;
+        border-radius: 8px;
+        transition: width 0.5s ease;
+    }
+
+    /* ── Progress bar small text ── */
+    small { color: #5A6E8A !important; }
+    [data-testid="stSidebar"] small { color: rgba(255,255,255,0.6) !important; }
+
+    /* ── Quiz ── */
+    .quiz-question {
+        background: white;
+        border: 1px solid #D8E1EB;
+        border-radius: 10px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .quiz-question p { color: #0A1628; font-weight: 500; font-size: 1rem; }
+
+    /* ── Buttons ── */
+    .stButton > button {
+        background-color: #0A1628 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 10px 24px !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.02em !important;
+        transition: background 0.2s ease !important;
+    }
+    .stButton > button:hover {
+        background-color: #CC2936 !important;
+        color: white !important;
+    }
+
+    /* ── Table ── */
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        margin: 14px 0;
+        box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .styled-table th {
+        background: #CC2936;
+        color: white;
+        padding: 10px 14px;
+        text-align: left;
+        font-weight: 600;
+    }
+    .styled-table td {
+        padding: 9px 14px;
+        border-bottom: 1px solid #EEF2F7;
+        color: #2C3E55;
+    }
+    .styled-table tr:nth-child(even) td { background: #F7F9FC; }
+
+    /* ── Checkbox overrides ── */
+    .stCheckbox label { color: #2C3E55 !important; font-size: 0.93rem; }
+
+    /* ── Radio overrides ── */
+    .stRadio label { color: #2C3E55 !important; }
+    .stRadio > div { gap: 6px; }
+
+    /* ── Success / Error ── */
+    .stSuccess, .stError, .stWarning, .stInfo { border-radius: 8px; }
+
+    /* ── Metric ── */
+    [data-testid="metric-container"] {
+        background: white;
+        border: 1px solid #D8E1EB;
+        border-radius: 10px;
+        padding: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    [data-testid="metric-container"] label { color: #5A6E8A !important; font-size: 0.8rem; }
+    [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #0A1628 !important; font-size: 1.5rem; font-weight: 700; }
+
+    /* ── Callout (alias for info-box) ── */
     .callout { background: #FEF2F3; border-left: 4px solid #CC2936; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; color: #6B0E16; }
 
     /* ── Dividers ── */
     hr { border: none; border-top: 1px solid #D8E1EB; margin: 24px 0; }
 
-    /* ── Resource Library ── */
-    .resource-card {
-        background: white;
-        border-radius: 8px;
-        padding: 13px 16px;
-        margin-bottom: 7px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-        border-left: 3px solid transparent;
-        transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
-    }
-    .resource-card:hover {
-        border-left-color: #0A1628;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.10);
-        transform: translateX(3px);
-    }
-    .resource-id {
-        display: inline-block;
-        background: #0A1628;
-        color: white;
-        font-size: 0.68rem;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 6px;
-        white-space: nowrap;
-        margin-top: 3px;
-        letter-spacing: 0.03em;
-        min-width: 54px;
-        text-align: center;
-        flex-shrink: 0;
-    }
-    /* ─────────────────────────────────────────────────────────────
-       Mobile + Dark Mode Compatibility Patch
-       (keeps desktop exactly the same)
-       ───────────────────────────────────────────────────────────── */
+    /* ── Mobile + Dark Mode Compatibility ── */
     @media (max-width: 768px) and (prefers-color-scheme: dark) {
-
-      /* App background + default text */
       div[data-testid="stAppViewContainer"],
       section.main,
-      .stApp {
-        background: #0B1220 !important;
-        color: #F9FAFB !important;
-      }
-
-      /* Streamlit markdown text */
+      .stApp { background: #0B1220 !important; color: #F9FAFB !important; }
       div[data-testid="stMarkdownContainer"],
       div[data-testid="stMarkdownContainer"] p,
       div[data-testid="stMarkdownContainer"] li,
       div[data-testid="stMarkdownContainer"] span,
-      div[data-testid="stMarkdownContainer"] div {
-        color: #F9FAFB !important;
-      }
-
-      /* Your custom headings/subtitles (you use these a lot) */
-      .page-title,
-      .page-subtitle {
-        color: #F9FAFB !important;
-      }
-
-      /* Cards you set to white in light mode */
-      .resource-card,
+      div[data-testid="stMarkdownContainer"] div { color: #F9FAFB !important; }
+      .page-title, .page-subtitle { color: #F9FAFB !important; }
+      .content-section,
       .module-card,
-      .welcome-banner + div,
+      .quiz-question,
       div[style*="background:white"],
-      div[style*="background: white"] {
-        background: #111827 !important;
-        border-color: rgba(255,255,255,0.10) !important;
-      }
-
-      /* Override your common “dark ink” inline colors */
-      div[style*="color:#0A1628"],
-      div[style*="color: #0A1628"],
-      span[style*="color:#0A1628"],
-      span[style*="color: #0A1628"] {
-        color: #F9FAFB !important;
-      }
-
-      /* Override your muted slate inline color */
-      div[style*="color:#5A6E8A"],
-      div[style*="color: #5A6E8A"],
-      span[style*="color:#5A6E8A"],
-      span[style*="color: #5A6E8A"] {
-        color: #CBD5E1 !important;
-      }
-
-      /* Inputs (you also set these explicitly on Downloads page) */
-      div[data-testid="stTextInput"] input {
-        background: #0F172A !important;
-        color: #F9FAFB !important;
-        border-color: rgba(255,255,255,0.18) !important;
-      }
-      div[data-testid="stTextInput"] input::placeholder {
-        color: rgba(255,255,255,0.55) !important;
-      }
-
-      /* Tables you render with dark headers + light bodies */
-      table, td, th {
-        color: #E5E7EB !important;
-        border-color: rgba(255,255,255,0.12) !important;
-      }
+      div[style*="background: white"] { background: #111827 !important; border-color: rgba(255,255,255,0.10) !important; }
+      .content-section h2, .content-section h3,
+      .module-card h3 { color: #F9FAFB !important; }
+      .content-section p, .content-section li,
+      .module-card p { color: #CBD5E1 !important; }
+      .styled-table td { color: #E5E7EB !important; border-color: rgba(255,255,255,0.12) !important; }
+      .info-box { background: #1E293B !important; color: #FCA5A5 !important; }
+      div[data-testid="stTextInput"] input { background: #0F172A !important; color: #F9FAFB !important; border-color: rgba(255,255,255,0.18) !important; }
+      [data-testid="metric-container"] { background: #111827 !important; }
+      [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #F9FAFB !important; }
     }
-    </style>
-    """, unsafe_allow_html=True)
+</style>
+""", unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  GOOGLE SHEETS INTEGRATION

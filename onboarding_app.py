@@ -212,6 +212,42 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 }
 [data-testid="metric-container"] label { color: #8BA3C7 !important; font-size: 0.8rem; }
 [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #FFFFFF !important; font-size: 1.5rem; font-weight: 700; }
+
+/* ── Login page inputs — force dark theme so text is visible ── */
+.login-card input {
+    background: #1E3A5F !important;
+    color: #FFFFFF !important;
+    border: 1px solid #2a4a6e !important;
+    border-radius: 8px !important;
+}
+.login-card input::placeholder { color: #6B8BAF !important; }
+.login-card input:focus { border-color: #CC2936 !important; box-shadow: 0 0 0 2px rgba(204,41,54,0.2) !important; }
+.login-card label { color: #C8D6E8 !important; font-weight: 500 !important; font-size: 0.9rem !important; }
+
+/* ── Login card wrapper ── */
+.login-card {
+    background: #0D1F3C;
+    border: 1px solid #1E3A5F;
+    border-radius: 16px;
+    padding: 40px 44px;
+    max-width: 460px;
+    margin: 0 auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* ── Login sign-in button ── */
+.login-card .stFormSubmitButton > button {
+    background: #CC2936 !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    padding: 12px !important;
+    margin-top: 8px !important;
+    transition: background 0.2s !important;
+}
+.login-card .stFormSubmitButton > button:hover { background: #a5212c !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -444,54 +480,77 @@ def update_progress(module_key):
 #  LOGIN SCREEN
 # ─────────────────────────────────────────────
 def show_login():
+    # ── Outer page: logo + tagline above the card ──
     st.markdown("""
-    <div class="welcome-banner" style="text-align:center;max-width:520px;margin:60px auto 0 auto;">
-        <h1 style="font-size:1.8rem;">💊 AAP New Hire Orientation</h1>
-        <p>Enter the access code provided by HR along with your Employee ID and full name to begin.</p>
+    <div style="text-align:center; padding: 48px 0 28px 0;">
+        <div style="display:inline-block; background:#CC2936; border-radius:16px; padding:14px 20px; margin-bottom:18px;">
+            <span style="font-size:2.2rem;">💊</span>
+        </div>
+        <h1 style="font-family:'Playfair Display', serif; color:#FFFFFF; font-size:2rem; margin:0 0 6px 0;">
+            American Associated Pharmacies
+        </h1>
+        <p style="color:#8BA3C7; font-size:1rem; margin:0;">New Hire Orientation Portal</p>
     </div>
     """, unsafe_allow_html=True)
 
-    with st.form("login_form", clear_on_submit=False):
-        col_l, col_m, col_r = st.columns([1, 2, 1])
-        with col_m:
+    # ── Centered card column ──
+    col_l, col_m, col_r = st.columns([1, 1.4, 1])
+    with col_m:
+        st.markdown('<div class="login-card">', unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style="text-align:center; margin-bottom:28px;">
+            <h2 style="color:#FFFFFF; font-size:1.25rem; margin:0 0 6px 0; font-weight:600;">Welcome! Let's get you started.</h2>
+            <p style="color:#8BA3C7; font-size:0.88rem; margin:0; line-height:1.5;">
+                Enter your credentials below.<br>Your access code and Employee ID were provided by HR.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        with st.form("login_form", clear_on_submit=False):
             access_code = st.text_input(
-                "Access Code",
-                placeholder="Provided by HR during onboarding",
+                "🔑  Access Code",
+                placeholder="Enter the code HR gave you",
                 type="password",
             )
             employee_id = st.text_input(
-                "Employee ID",
+                "🪪  Employee ID",
                 placeholder="e.g. 10042",
             )
             full_name = st.text_input(
-                "Full Name",
-                placeholder="Enter your name exactly as it appears in HR records",
+                "👤  Full Name",
+                placeholder="As it appears in your HR paperwork",
             )
-            submitted = st.form_submit_button("Sign In →", use_container_width=True)
 
-        if submitted:
-            if not access_code or not employee_id or not full_name:
-                st.error("Please fill in all three fields.")
-            else:
-                with st.spinner("Verifying credentials…"):
-                    ok, reason = verify_employee(access_code, employee_id, full_name)
-                if ok:
-                    st.session_state.authenticated = True
-                    st.session_state.username       = full_name.strip()
-                    st.session_state.employee_id    = employee_id.strip()
-                    st.session_state.sheet_loaded   = False
-                    st.rerun()
+            st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+            submitted = st.form_submit_button("Sign In  →", use_container_width=True)
+
+            if submitted:
+                if not access_code or not employee_id or not full_name:
+                    st.error("Please fill in all three fields to continue.")
                 else:
-                    st.error(f"❌ {reason} If you need help, contact HR.")
+                    with st.spinner("Verifying your credentials…"):
+                        ok, reason = verify_employee(access_code, employee_id, full_name)
+                    if ok:
+                        st.session_state.authenticated = True
+                        st.session_state.username       = full_name.strip()
+                        st.session_state.employee_id    = employee_id.strip()
+                        st.session_state.sheet_loaded   = False
+                        st.rerun()
+                    else:
+                        st.error(f"❌ {reason}")
 
-    st.markdown("""
-    <div style="text-align:center;margin-top:16px;">
-        <small style="color:#8BA3C7;">
-        Don't have your access code or Employee ID? Contact HR.<br>
-        Nicole Thornton · nicole.thornton@apirx.com · 256-574-7528
-        </small>
-    </div>
-    """, unsafe_allow_html=True)
+        st.markdown("""
+        <div style="text-align:center; margin-top:20px; padding-top:18px; border-top:1px solid #1E3A5F;">
+            <p style="color:#8BA3C7; font-size:0.82rem; margin:0; line-height:1.7;">
+                Need help signing in?<br>
+                <strong style="color:#C8D6E8;">Nicole Thornton</strong> · HR Administrator<br>
+                nicole.thornton@apirx.com · 256-574-7528
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────

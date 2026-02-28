@@ -19,6 +19,29 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+ROLE_OPTIONS = ["Warehouse", "Administrative"]
+
+def require_role_gate():
+    if "selected_role" not in st.session_state:
+        st.session_state.selected_role = None
+
+    if st.session_state.selected_role not in ROLE_OPTIONS:
+        st.title("Welcome 👋")
+        st.caption("Select your onboarding track to personalize the portal content.")
+        st.session_state.selected_role = st.radio(
+            "Choose your onboarding track",
+            ROLE_OPTIONS,
+            index=None,
+            horizontal=True,
+            key="selected_role_radio",
+        )
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.info("You can change tracks later from the sidebar.", icon="ℹ️")
+        st.stop()
+        
+require_role_gate()
+
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');

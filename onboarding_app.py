@@ -5,7 +5,6 @@ import streamlit as st
 import streamlit_analytics2 as streamlit_analytics
 from datetime import datetime
 import gspread
-from google.oauth2.service_account import Credentials
 
 with streamlit_analytics.track():
     st.title("")
@@ -281,14 +280,22 @@ def get_gsheet_client():
     try:
         creds_dict = dict(st.secrets["gcp_service_account"])
         return gspread.service_account_from_dict(creds_dict)
-    except Exception:
+    except Exception as e:
+        st.error(f"❌ Auth error: {e}")
         return None
 
 def get_sheet():
     try:
-        return get_gsheet_client().open(SHEET_NAME).sheet1
+        client = get_gsheet_client()
+        if client is None:
+            st.warning("⚠️ Google Sheets client failed to initialize.")
+            return None
+        return client.open(SHEET_NAME).sheet1
+    except gspread.exceptions.SpreadsheetNotFound:
+        st.warning(f"⚠️ Spreadsheet \'{SHEET_NAME}\' not found. Check the name matches exactly and is shared with the service account.")
+        return None
     except Exception as e:
-        st.warning(f"⚠️ Could not connect to Google Sheets: {e}")
+        st.warning(f"⚠️ Could not connect to Google Sheets: {type(e).__name__}: {e}")
         return None
 
 def ensure_headers(sheet):

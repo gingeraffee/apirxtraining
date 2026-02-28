@@ -386,43 +386,142 @@ for key, default in SESSION_DEFAULTS.items():
 
 # ── MODULE DATA ───────────────────────────────────────────
 MODULES = [{'key': 'overview', 'icon': '🏢', 'title': 'Company Overview & Culture', 'subtitle': 'Meet the company, the culture, and how we work together.', 'sections': [{'heading': 'Welcome to AAP', 'content': 'AAP\'s CEO, Jon Copeland, R.Ph., says it best:\n\n> *"We believe that each employee contributes directly to AAP\'s growth and success, and we hope you will take pride in being a member of our team."*'}, {'heading': 'Who We Are', 'content': '**American Associated Pharmacies (AAP)** is a national cooperative of more than **2,000 independent pharmacies**, formed in **2009** when United Drugs of Phoenix, AZ and Associated Pharmacies, Inc. (API) of Scottsboro, AL joined forces.\n\n**Locations:**\n\n| Site | Address |\n|------|---------|\n| Scottsboro API | 211 Lonnie E Crawford Blvd, Scottsboro, AL 35769 |\n| Memphis API | 5375 Mineral Wells Road, Memphis, TN 38125 |\n| AAP | 201 Lonnie E Crawford Blvd, Scottsboro, AL 35769 |'}, {'heading': 'Mission, Vision & Values', 'content': '**Mission:** Support and provide customized solutions for independent community pharmacies to enhance profitability, streamline operations, and improve patient care.\n\n**Vision:** Helping independent pharmacies thrive in a competitive healthcare market.\n\n**Values:** 🎯 Customer Focus | ✅ Integrity | 🤝 Respect | ⭐ Excellence | 💼 Ownership'}, {'heading': 'Your Role & Success Standards', 'content': '**HR Administrative Assistant** | Scottsboro, AL | Reports to: HR Manager\n\n| Standard | Meaning |\n|----------|---------|\n| **Accuracy** | Payroll entries, employee data, and documentation are correct and complete |\n| **Confidentiality** | Sensitive information shared only on a need-to-know basis |\n| **Responsiveness** | Requests acknowledged promptly and tracked to completion |\n| **Consistency** | Approved templates and naming conventions used every time |\n| **Professional Tone** | Communication is calm, respectful, and clear |'}, {'heading': 'Confidentiality & Data Privacy (POL-06)', 'content': '**Non-negotiable rules:**\n- Share confidential information only on a **need-to-know basis** — if unsure, pause and consult HR\n- Lock your computer when away from your desk\n- Never discuss HR matters in public areas or with unauthorized employees\n- Do not promise outcomes or interpret sensitive results — route to HR Manager\n- Immediately notify HR if you suspect a privacy breach (misdirected email, lost documents, unauthorized access)\n\n**Categories of confidential information:** Personnel/payroll records, medical/leave documentation, benefits elections, background/drug screen results, I-9 documents, candidate information, business records, proprietary company data.\n\n**Electronic systems:** Company computers, email, and files are for business use only. Do not access files or stored communications without authorization. Usage may be monitored.\n\n**Email & storage rules:** Verify recipient before sending. Use only approved storage (BambooHR / HR SharePoint / designated drives). Never forward confidential documents to personal email or store on personal devices.\n\n**Physical documents:** Keep secured when not in use. Never leave files unattended in shared spaces. Collect from printers immediately. Shred sensitive documents as soon as possible.\n\n**Personnel file requests:** Route through HR. Access is in AAP\'s offices with an appointed representative present. Employees may only review their own file.\n\n**Approved default language:**\n- *"Thanks for bringing this to me — I\'m going to look into it and get you a clear answer."*\n- *"I want to make sure I give you the correct information. Let me verify and follow up with you."*\n- *"I may need to check a couple of things before I answer — thank you for your patience."*'}], 'checklist': ['I understand AAP’s mission, values, and what success looks like here', 'I know where to find core company info and who to ask for help'], 'quiz': [{'question': 'AAP was formed in what year, and by which two organizations?', 'options': ['2005 — AAP and API', '2009 — United Drugs of Phoenix and Associated Pharmacies, Inc.', '2012 — AAP and a wholesaler', '2001 — Two Alabama pharmacy groups'], 'answer': 1, 'explanation': 'AAP was formed in 2009 when United Drugs of Phoenix, AZ and Associated Pharmacies, Inc. (API) of Scottsboro, AL joined forces.'}, {'question': 'An employee asks to view their own personnel file. What do you do?', 'options': ['Pull it up on your computer and let them review it', 'Decline — employees cannot access their own files', "Route the request to HR to schedule a supervised review in AAP's offices", 'Email them the file for convenience'], 'answer': 2, 'explanation': "Per POL-06, personnel file access is routed through HR and conducted in AAP's offices with an appointed representative present."}, {'question': "Which is NOT one of AAP's five core values?", 'options': ['Customer Focus', 'Innovation', 'Integrity', 'Ownership'], 'answer': 1, 'explanation': 'The five values are Customer Focus, Integrity, Respect, Excellence, and Ownership.'}, {'question': 'You accidentally email a confidential document to the wrong person. What do you do?', 'options': ['Wait to see if they notice', 'Delete your sent copy and say nothing', 'Notify HR immediately — this is a privacy breach', 'Ask the recipient to delete it and move on'], 'answer': 2, 'explanation': 'Per POL-06, any suspected privacy breach — including misdirected email — must be reported to HR immediately.'}]}, {'key': 'policies', 'icon': '📜', 'title': 'Policies & Procedures', 'subtitle': 'Know the big policies that affect your day-to-day work.', 'sections': [{'heading': 'Attendance Policy (Section 704)', 'content': "AAP uses a **no-fault point-based system.**\n\n| Situation | Points |\n|-----------|--------|\n| Tardy ≤ 5 minutes (grace period) | 0.0 |\n| Tardy or early leave < half of shift | 0.5 |\n| Full shift absence / tardy / early leave ≥ half of shift | 1.0 |\n| No report or call 15+ min after shift start | 1.5 |\n\n**Corrective Action (12-month rolling):** 5 pts = Coaching | 6 = Verbal | 7 = Written | 8 = Termination\n\n**Earning points back:** 2 perfect months = 1 point removed | 3 perfect months = **$75 bonus**\n\n**Excluded:** FMLA, pre-approved leave, bereavement, jury duty, pre-approved vacation, holidays, short-term disability, unsafe travel.\n\n**2-Day No-Call/No-Show = Voluntary Quit.** Doctor's note required for illness > 1 day.\n\n**Points verification (CS-02):** Use BambooHR, the Point Notebook, OR the Point Website — any is acceptable. Always provide current point total, roll-off dates, and any perfect attendance bonuses."}, {'heading': 'PTO Policies (PTO-01)', 'content': "**Vacation — Regular full-time employees (after 60 days, paid out at termination):**\n\n| Length of Employment | Days/Year | Hours/Year |\n|---------------------|-----------|------------|\n| 60 days–1st Anniversary | 3 | 24 |\n| 1st–2nd Anniversary | 5 | 40 |\n| 2nd–3rd Anniversary | 7 | 56 |\n| 3rd–5th Anniversary | 10 | 80 |\n| 5th–9th Anniversary | 15 | 120 |\n| 10th–19th Anniversary | 17 | 136 |\n| 20th Anniversary+ | 19 | 152 |\n\nVacation must be taken in **2-hour minimum increments.**\nMore than 5 consecutive vacation days requires **written approval from the Company President.**\n\n**Personal Leave (all employees after 60-day waiting period):**\n- Regular full-time: 3 days (24 hrs) initially → 4 days (32 hrs) after 1 yr → 5 days (40 hrs) after 5 yrs\n- Part-time: 1 hour per 30 hours worked (updated Monday of following week)\n- Personal leave accrual date = **full-time hire date** (not original hire date if converted from part-time)\n- Must be taken in **1-hour minimum increments**\n- **Does NOT carry over. NOT paid out at termination.**\n\n**Planned PTO:** Submit request no later than **5:00 PM the day before** time off is needed.\n**Unplanned absence:** Notify supervisor before your scheduled start time on each day of absence.\n\n**Holiday Schedule:**\n- New Year's Day | Memorial Day | Independence Day | Labor Day | Thanksgiving | Day after Thanksgiving or Floating Holiday | Christmas Eve or Floating Holiday | Christmas Day\n- Holidays falling on Saturday → observed Friday; falling on Sunday → observed Monday\n- If required to work a holiday → employee receives a Floating Holiday to be used **within 90 days**"}, {'heading': 'FMLA (FMLA-01)', 'content': '**Eligibility:** Employee must have worked at least **366 days** AND **1,250 hours** in the last 12 months.\n\n**Entitlement:** Up to **480 hours** (12 weeks) unpaid leave per 12-month period.\n\n**Pay status:** FMLA is **unpaid.** Employees are NOT required to exhaust PTO before taking FMLA.\n\n**FMLA may be taken in 1-hour increments.**\n\n**Your role — intake only:**\n1. If an employee asks about FMLA (or even hints at a need for medical leave) → **escalate immediately to HR Manager**\n2. Do NOT discuss details, request medical information, or promise approval\n3. You may provide general answers only: eligibility requirements (366 days + 1,250 hours) and pay status (unpaid)\n4. HR Manager issues the FMLA Certification and processes the leave in BambooHR\n5. If absence approaches/exceeds **30 consecutive work days**, notify HR Manager\n\n⚠️ **FMLA information is strictly confidential — cannot be shared with anyone, including supervisors.**'}, {'heading': 'Benefits Eligibility (BEN-01)', 'content': "| Milestone | Who Is Eligible | Benefits |\n|-----------|----------------|---------|\n| Day 1 | All employees | LinkedIn Learning, EAP, AAP Perks (free) |\n| 1st of month after hire | All employees | Teladoc (free) |\n| 60 days | All employees | Personal Time Off eligibility begins |\n| 60 days (full-time only) | Full-time employees | Vacation Time eligibility begins |\n| 1st of month after 60 days | Full-time employees | Medical, Dental, Vision, 401(k), supplemental — biweekly payroll deductions |\n| 1 year + 1,000 hours + age 21 | Part-time employees | 401(k) eligibility (all three criteria must be met) |\n| 4-year anniversary (then every 5 yrs) | Full-time employees | Long Term Sick Leave: 80 hrs added; bank max 180 hrs; requires 3+ consecutive days + doctor's note |\n| Every 5 years starting at 5th anniversary | All employees | Service Awards |\n\n**401(k) match:** 100% of first 3% + 50% of next 2% (employee contributes 5% → AAP matches 4%).\n**Dental/Vision:** Through Guardian — no insurance cards issued. Coverage via **Guardian Anytime app.**\n**Medical:** PPO or HDHP with HSA options available."}, {'heading': 'Corrective Action Process (CA-01)', 'content': "**Corrective action may be issued for:** Insubordination, carelessness, unsatisfactory productivity, poor attitude, handbook/code of conduct violations, inflammatory statements, and other performance or conduct issues.\n\n**Point Warnings (attendance-specific):**\n- 5 points = Coaching | 6 = Verbal Warning | 7 = Written Warning | 8 = Termination (supervisor discretion)\n- Point warnings issued by **HR** and delivered by the employee's **direct supervisor**\n\n**HR Administrative Assistant role:**\n1. Receive completed corrective action documentation from the manager\n2. Scan (if paper) and upload to employee's **Corrective Action folder in BambooHR**\n3. Verify the file is readable; label consistently: **date + type + reason**\n4. Employee signature = acknowledgment of receipt, not necessarily agreement\n\n**Escalate immediately if:** Harassment, discrimination, retaliation, threats/violence, safety risk, medical/disability accommodation concerns, employee requests leave related to a medical condition, termination is being considered, or 3 corrective actions for the same reason have occurred."}], 'checklist': ['I can explain the attendance point system and corrective action thresholds', 'I know which absences are excluded from the no-fault system', 'I know the full vacation accrual schedule with hours per year (PTO-01)', 'I know personal leave increments (1-hour min), accrual rules, and that it is not paid out at termination', 'I know vacation requires 2-hour minimum increments and 5+ days needs President approval', 'I know FMLA eligibility (366 days + 1,250 hours) and entitlement (480 hours) (FMLA-01)', 'I know FMLA = escalate immediately; confidential from everyone including supervisors', 'I know the benefits eligibility timeline milestones (BEN-01)', 'I know the 401(k) match formula and that Dental/Vision uses Guardian Anytime (no cards)', 'I know where to find the handbook/policy library and how to request clarification.'], 'quiz': [{'question': 'An employee calls in 20 minutes after their shift with no prior notice. How many points?', 'options': ['0 — grace period', '½ point', '1 point', '1½ points'], 'answer': 3, 'explanation': 'Calling in 15+ minutes after shift start without prior notice = 1½ points per the no-fault policy.'}, {'question': 'How many consecutive perfect months earn a $75 bonus?', 'options': ['1', '2', '3', '6'], 'answer': 2, 'explanation': 'Three consecutive months of perfect attendance earns a $75 bonus. Two months removes 1 point.'}, {'question': 'An employee says they need FMLA leave. What do you do?', 'options': ['Start the paperwork yourself', 'Tell them to wait until 366 days of service', 'Escalate immediately to the HR Manager — FMLA is confidential', 'Approve in BambooHR'], 'answer': 2, 'explanation': 'All FMLA requests must be escalated to the HR Manager immediately. FMLA is strictly confidential — you may only provide general info (eligibility requirements and unpaid status).'}, {'question': 'When does a full-time employee become eligible for Medical, Dental, Vision, and 401(k)?', 'options': ['Day 1', 'After 60 days', 'On the 1st of the month after 60 days', 'After 1 year'], 'answer': 2, 'explanation': 'Per BEN-01, full-time employees enroll in Medical, Dental, Vision, 401(k), and supplemental benefits on the 1st of the month after 60 days of employment.'}, {'question': 'A full-time employee hired part-time two years ago asks about their personal leave accrual date. What date applies?', 'options': ['Their original part-time hire date', 'Their full-time conversion date', 'January 1st each year', 'Their 60-day anniversary'], 'answer': 1, 'explanation': 'Per PTO-01, the personal leave annual drop is based on the full-time hire date, not the original hire date.'}]}, {'key': 'pay_benefits', 'icon': '💸', 'title': 'Pay, Benefits & Time Off', 'subtitle': 'How pay works, where to find your info, and what to do when life happens.', 'sections': [{'heading': 'Pay Schedule & What You Can Self-Serve', 'content': 'Most pay-related tasks are self-service in our payroll system (pay stubs, direct deposit, tax forms, and paperless options). If you need help, HR can guide you or provide printed items upon request.'}, {'heading': 'Pay Stubs & Paperless Settings', 'content': 'In Paylocity, you can turn on paperless pay stubs (and paperless W-2/1099) from your profile settings. Once enabled, you can view/download your pay information anytime from mobile or desktop.'}, {'heading': 'Benefits Enrollment Timeline (High-Level)', 'content': 'Full-time benefits enrollment is available **on the 1st of the month after 60 days** of employment. This typically includes Medical, Dental, Vision, 401(k), and supplemental options. Your exact plan details and enrollment steps are provided during onboarding.'}, {'heading': 'Time Off (PTO) Basics', 'content': 'PTO and leave rules are covered in the **Policies** module. Use the handbook/policy resources as the source of truth, and ask HR if anything is unclear.'}], 'checklist': ['I know where to view my pay stubs and tax forms', 'I know how to update direct deposit and enable paperless options', 'I understand when full-time benefits enrollment starts'], 'quiz': [{'question': 'Where do you typically view your pay stubs and update direct deposit settings?', 'options': ['In a shared network drive folder', 'In Paylocity (self-service)', 'By texting your supervisor', 'Only through HR email'], 'answer': 1, 'explanation': 'Most pay settings and pay stub access are self-service in Paylocity.'}, {'question': 'When does full-time benefits enrollment generally begin?', 'options': ['Day 1', 'After 60 days', 'On the 1st of the month after 60 days', 'After 1 year'], 'answer': 2, 'explanation': 'Benefits enrollment is generally the 1st of the month after 60 days (see BEN-01 for details).'}]}, {'key': 'tools', 'icon': '💻', 'title': 'Work Tools & Systems', 'subtitle': 'The basics: logins, passwords, communication tools, and where work lives.', 'sections': [{'heading': 'Accounts & Access', 'content': 'Your supervisor/IT will help ensure you have access to the systems you need for your role. If you can’t log in, your password isn’t working, or you’re missing a tool, contact IT Support promptly.'}, {'heading': 'Passwords & Security', 'content': 'Use strong, unique passwords. If we use a password manager (e.g., Proton Pass), follow the setup instructions and avoid storing passwords in notes, spreadsheets, or email drafts.'}, {'heading': 'Communication Tools', 'content': 'We use tools like email and Zoom/Teams for day-to-day communication. Keep messages clear, professional, and timely—especially when reporting issues that block work.'}], 'checklist': ['I can log into my required systems and know who to contact for access issues', 'I understand basic password/security expectations'], 'quiz': [{'question': 'If you can’t access a required system, what’s the best next step?', 'options': ['Wait until it starts working', 'Ask IT Support (or follow the access process)', 'Share a coworker’s login', 'Create a new account without telling anyone'], 'answer': 1, 'explanation': 'Access issues should be routed to IT/support so they can fix it and keep accounts secure.'}]}, {'key': 'safety', 'icon': '🛡️', 'title': 'Safety & Security Basics', 'subtitle': 'Protect people, protect the building, protect the work.', 'sections': [{'heading': 'Tailgating & Building Access', 'content': 'Do not hold secured doors open for people you don’t recognize. If someone needs access, direct them to follow the proper check-in process. Friendly culture and good security can coexist—be politely suspicious.'}, {'heading': 'Emergencies & Alerts', 'content': 'Follow site-specific procedures for severe weather, fire, medical emergencies, and security events. If your location uses an emergency alert app (e.g., the Red Cross Emergency App), install it and enable alerts for your area.'}, {'heading': 'Reporting Safety Concerns', 'content': 'If you see something unsafe (spills, blocked exits, suspicious behavior), report it immediately to your supervisor and/or the Safety Committee contact for your site.'}], 'checklist': ['I understand that tailgating is a security risk and what to do instead', 'I know how my site communicates emergencies and where alerts come from', 'I know how to report a safety concern'], 'quiz': [{'question': 'Someone you don’t recognize follows closely behind you at a secured door. What should you do?', 'options': ['Let them in—don’t be awkward', 'Politely stop and ask them to badge in / check in properly', 'Ignore it and keep walking', 'Challenge them aggressively'], 'answer': 1, 'explanation': 'The safest approach is polite verification: require proper access/check-in.'}]}, {'key': 'people', 'icon': '🤝', 'title': 'People, Support & Communication', 'subtitle': 'How to get help fast and communicate like a pro.', 'sections': [{'heading': 'Who to Contact', 'content': 'For **HR** questions (pay, benefits, leave, policies), start with HR. For **system access** or technical problems, contact IT Support. For **role/training** questions, start with your supervisor or trainer.'}, {'heading': 'When to Escalate', 'content': 'Escalate immediately if there’s a safety risk, a privacy concern, suspected harassment/discrimination, or anything that could materially impact employees or customers.'}, {'heading': 'Confidentiality', 'content': 'Treat personal and business information with care. If you think confidential info was shared incorrectly (wrong recipient, wrong attachment, etc.), notify HR immediately.'}], 'checklist': ['I know the right starting point for HR vs IT vs role/training questions', 'I know what kinds of issues should be escalated immediately'], 'quiz': [{'question': 'You think you may have sent a confidential file to the wrong person. What should you do?', 'options': ['Ignore it and hope they delete it', 'Ask them to delete it and say nothing else', 'Notify HR immediately', 'Post about it in a group chat'], 'answer': 2, 'explanation': 'Misdirected confidential info is a privacy incident—report it to HR immediately.'}]}, {'key': 'quickref', 'icon': '📌', 'title': 'Quick Reference & Links', 'subtitle': 'The stuff you’ll look up 100 times. We embrace it. 😄', 'sections': [{'heading': 'Common Links', 'content': 'Keep your key links handy (handbook/policies, payroll self-service, timekeeping, IT help, and emergency alerts). Your team may provide a location-specific links sheet during orientation.'}, {'heading': 'Document Library', 'content': 'Use the **Downloads** page for policies and quick guides. Search by keyword, title, or ID.'}], 'checklist': ['I know where to find policies and quick guides', 'I can use the Downloads search to find a document quickly'], 'quiz': [{'question': 'Where should you go to search for company policies and quick guides in this portal?', 'options': ['Downloads', 'Home only', 'Your email inbox', 'A public Google search'], 'answer': 0, 'explanation': 'The Downloads page is the searchable library for policies and guides.'}]},
-    {'key': 'new_hire_checklist', 'icon': '🧾', 'title': 'New Hire Checklist (Role-Based)', 'subtitle': 'Pick your role track and work through your first-week essentials.', 'sections': [
-            {'heading': 'How to use this module', 'content': '1) Select your **role track** (Warehouse or Administrative).\n\n2) Use the **Checklist** tab to mark items complete.\n\n3) Use **My Notes** to keep questions for your supervisor or trainer.\n\n✅ This module is designed to be practical: it is less “reading”, more “do the thing”.'},
-            {'heading': 'Role tracks', 'content': '**Warehouse track** focuses on safety, badge/access, radios, RF/scanners (if applicable), shipping/receiving basics, and where to find help on the floor.\n\n**Administrative track** focuses on tools (email, Teams/Zoom), core workflows, service etiquette, and where to find documents and support.'},
-        ],
-        'checklist_tracks': {
-            'Warehouse': [
-                'Confirm start time, supervisor/trainer, and where to report',
-                'Get your badge/access and learn entry/exit expectations (no tailgating)',
-                'Review emergency procedures: alarms, evacuation routes, and severe weather shelter areas',
-                'Hands-on safety orientation: PPE, forklifts/power equipment rules (if applicable), and incident reporting',
-                'Set up handheld radio basics: power on, correct channel, call etiquette (if used on your shift)',
-                'Tour: receiving, shipping, aisles, break areas, first aid kit/AED locations',
-                'Learn the daily rhythm: shift handoff, breaks, and where priorities are posted',
-                'Understand attendance expectations: call-out procedure, timekeeping, and who to notify',
-                'Complete first task walkthrough with trainer and confirm quality expectations',
-                'Know how to get help fast: supervisor desk, leads, and escalation steps',
-            ],
-            'Administrative': [
-                'Confirm your schedule, reporting structure, and primary responsibilities for week 1',
-                'Set up login + MFA for email and company systems (if required)',
-                'Install/verify core apps: Teams/Zoom, VPN (if used), and any role tools',
-                'Tour: office layout, supply areas, printer/copier basics, and shared mail locations',
-                'Review communication norms: response time expectations, meeting etiquette, and who to include',
-                'Learn timekeeping/time off requests and who approves them',
-                'Review confidentiality & data handling expectations for employee/customer info',
-                'Walk through 2–3 common workflows with your trainer (your role’s “greatest hits”)',
-                'Practice the “where do I find…”: downloads library, policies, and quick reference guides',
-                'Confirm your success metrics for the first 30 days and schedule your check-in',
-            ],
+    {
+    'key': 'new_hire_checklist',
+    'icon': '🧾',
+    'title': 'New Hire Checklist (Role-Based)',
+    'subtitle': 'Pick your role track and work through essentials for your role.',
+    'sections': [
+        {
+            'heading': 'How to use this module',
+            'content': (
+                '1) Select your **role track** (Warehouse or Administrative).\n\n'
+                '2) Use the **Checklist** tab to mark items complete.\n\n'
+                '3) Use **My Notes** to keep questions for your supervisor or trainer.\n\n'
+                '✅ This module is designed to be practical: it is less “reading”, more “do the thing”.'
+            ),
         },
-        'checklist': [],
-        'quiz': [
-            {'q': 'Where should you track your onboarding tasks in this portal?', 'options': ['In the Checklist tab of the module', 'Only in your email', 'On paper only', 'You should not track tasks'], 'answer': 0, 'explanation': 'Use the module Checklist tab so progress is consistent and easy to follow.'},
-            {'q': 'If you are unsure who to ask for help, what is the best first step?', 'options': ['Ask your supervisor/trainer or check the Key Contacts section', 'Ignore it and hope it goes away', 'Ask a random person off-shift', 'Post publicly on social media'], 'answer': 0, 'explanation': 'Start with your trainer/supervisor and the portal’s contact references.'},
-        ]}
-]
+        {
+            'heading': 'Role tracks',
+            'content': (
+                '**Warehouse track** focuses on safety, badge/access, radios, RF/scanners (if applicable), '
+                'shipping/receiving basics, and where to find help on the floor.\n\n'
+                '**Administrative track** focuses on tools (email, Teams/Zoom), core workflows, service etiquette, '
+                'and where to find documents and support.'
+            ),
+        },
+    ],
 
+    # Role-based module: checklist is stored in checklist_tracks
+    'checklist': [],
+    'checklist_tracks': {
+        'Administrative': [
+            "== Complete New Hire Packet ==",
+            "Log in and confirm profile info (name, address, emergency contact)",
+            "Complete New Hire Documents",
+            "Provide 2 forms of ID",
+            "Sign up for LinkedIn Learning (www.linkedin.com/learning)",
+
+            "== Company and Organization Basics ==",
+            "Review: who does what in the organization (org chart)",
+            "Review: locations/teams you will work with",
+            "Know approval routing: PTO → Supervisor; Leave of Absence → HR; Purchases → Supervisor + HR; Exceptions/schedule modifications → Supervisor",
+
+            "== Systems & Tools ==",
+            "Email + calendar expectations: keep calendar current",
+            "Set up email signature per company specs (Franklin Gothic Book, 11pt, black, no background; AAP/API logo; ordered fields)",
+            "Complete SharePoint training (OneDrive file storage + organization)",
+            "Confirm access/logins to: BambooHR, Paylocity, Outlook, Zoom, SharePoint, LinkedIn Learning",
+            "Confirm any additional department tools with your supervisor",
+
+            "== Communication and Professionalism ==",
+            "Dress code: business casual; Fridays casual",
+            "Badge must be visible at all times",
+            "Warehouse reminder: no purses/bags/hats/large jackets in the warehouse",
+            "Review customer service standards",
+            "Review Code of Conduct (no disrespectful conduct toward customers/coworkers/visitors)",
+            "Complete confidentiality training",
+
+            "== Compliance & Security ==",
+            "Timekeeping: do not perform work unless clocked in",
+            "Get supervisor consent before working outside scheduled shift",
+            "Phishing/security basics (email safety)",
+            "Integrity expectations: demonstrate integrity in all aspects of your role",
+
+            "== Company Essentials (Both Tracks) ==",
+            "Understand 30-day and 60-day surveys (completion encouraged; marks end of probationary period)",
+            "Know payroll schedule: pay period runs Sunday–Saturday; payday is biweekly Thursday",
+            "Register for Paylocity (complete setup using company instructions)",
+            "Review company overview (mission, vision, core values)",
+            "Review policy overview (PTO, holidays, benefits, point system, etc.)",
+            "Know where to find the employee handbook",
+            "Understand 90-day performance review + raise eligibility",
+            "Review performance metrics (12): Quality, Productivity, Job Knowledge, Reliability, Attendance, Independence, Adaptability, Initiative, Adherence to Policy, Interpersonal Relationships, Judgment, Teamwork",
+
+            "== Comprehension Confirmations ==",
+            "I have enrolled in LinkedIn Learning",
+            "I have a solid understanding of the company attendance policy",
+            "I understand that I am responsible for keeping my computer and files secure",
+        ],
+
+        'Warehouse': [
+            "== Complete New Hire Packet ==",
+            "Log in and confirm profile info (name, address, emergency contact)",
+            "Complete New Hire Documents",
+            "Provide 2 forms of ID",
+            "Sign up for LinkedIn Learning (www.linkedin.com/learning)",
+
+            "== Company and Organization Basics ==",
+            "Review: who does what in the organization (org chart)",
+            "Review: locations/teams you will work with",
+            "Know approval routing: PTO → Supervisor; Leave of Absence → HR; Purchases → Supervisor + HR; Exceptions/schedule modifications → Supervisor",
+
+            "== Safety & OSHA Guidelines ==",
+            "Box cutter safety",
+            "PPE requirements and usage",
+            "Slip / trip / fall prevention",
+            "Incident reporting: report accidents/near misses to supervisor immediately (even without first aid); near misses must be documented for Safety Committee review",
+            "OSHA guidelines overview: ladders, pallet jacks, forklifts",
+
+            "== Facility & Workflow ==",
+            "Receiving: count/sort/inspect/load product into the computer",
+            "Order processors: move product to shelves; open boxes; rotate expiration dates (most recent behind; earliest exp in front)",
+            "Order pullers: pull medication from shelves",
+            "Order packers: scan/verify; package; send down line for FedEx/UPS",
+
+            "== Equipment & Certifications ==",
+            "Forklift certification info (may be eligible for pay increase if selected)",
+            "RF scanner basics",
+
+            "== Quality & Accuracy ==",
+            "Lot number reading tips & tricks",
+            "Production baseline: ~250 lines/hr average over 2-week period (varies by role)",
+            "Production incentives: each error reduces incentive by 25%",
+            "Accuracy-first mindset (speed comes with time)",
+            "How to handle damaged items",
+
+            "== Attendance & Productivity Expectations ==",
+            "Attendance policy overview (cannot exceed 2.0 points in first 60 days)",
+            "Breaks: 15 minutes per 4 hours worked; paid; no clock-out unless leaving property",
+            "Lunch: eligible if working >6 hours; unpaid; clock out (30 min or 1 hour per schedule)",
+            "Production quotas: pulling 250 lines/hr; packing 275 lines/hr (ask supervisor about incentive details)",
+
+            "== Company Essentials (Both Tracks) ==",
+            "Understand 30-day and 60-day surveys (completion encouraged; marks end of probationary period)",
+            "Know payroll schedule: pay period runs Sunday–Saturday; payday is biweekly Thursday",
+            "Register for Paylocity (complete setup using company instructions)",
+            "Review company overview (mission, vision, core values)",
+            "Review policy overview (PTO, holidays, benefits, point system, etc.)",
+            "Know where to find the employee handbook",
+            "Understand 90-day performance review + raise eligibility",
+            "Review performance metrics (12): Quality, Productivity, Job Knowledge, Reliability, Attendance, Independence, Adaptability, Initiative, Adherence to Policy, Interpersonal Relationships, Judgment, Teamwork",
+        ],
+    },
+
+    # Optional: leave empty for now
+    'quiz': [],
+},
+]
 
 # ── RESOURCES CATALOG ────────────────────────────────────
 # Each doc may have an optional "file" key with the filename
@@ -431,21 +530,7 @@ RESOURCES_CATALOG = [{'category': 'Quick Reference Guides', 'icon': '⚡', 'docs
 
 
 # ── HELPERS ───────────────────────────────────────────────
-def get_module_pct(module):
-    checklist = module.get("checklist", [])
-    if not checklist:
-        return 0
-    raw = st.session_state.progress.get(module["key"], [])
-    completed = raw if isinstance(raw, list) else []
-    return int(len(completed) / len(checklist) * 100)
 
-def get_overall():
-    total = sum(len(m["checklist"]) for m in MODULES)
-    def safe_len(key):
-        raw = st.session_state.progress.get(key, [])
-        return len(raw) if isinstance(raw, list) else 0
-    done = sum(safe_len(m["key"]) for m in MODULES)
-    return int(done / total * 100) if total else 0
 
 def get_quiz_score(key):
     module = next((m for m in MODULES if m["key"] == key), None)
@@ -454,18 +539,89 @@ def get_quiz_score(key):
     results = st.session_state.quiz_results.get(key, {})
     return sum(1 for v in results.values() if v), len(module.get("quiz", []))
 
-def push_to_sheet(key):
+def _role_for_new_hire():
+    return st.session_state.get("new_hire_role", "Warehouse")
+
+def get_effective_checklist(module):
+    """Returns the checklist items that should count toward progress."""
+    if module.get("key") == "new_hire_checklist":
+        role = _role_for_new_hire()
+        return module.get("checklist_tracks", {}).get(role, [])
+    return module.get("checklist", [])
+
+def get_progress_key(module_key: str):
+    """Progress key for session + sheet. Role-based modules store separate keys per role."""
+    if module_key == "new_hire_checklist":
+        role = _role_for_new_hire()
+        return f"{module_key}::{role}"
+    return module_key
+
+def _base_module_key(progress_key: str):
+    """Converts 'new_hire_checklist::Warehouse' -> 'new_hire_checklist'."""
+    return progress_key.split("::", 1)[0] if isinstance(progress_key, str) else progress_key
+
+def get_module_pct(module):
+    items = get_effective_checklist(module)
+
+    # Exclude header lines like "== Systems & Tools ==" from progress math
+    def is_header(x: str) -> bool:
+        return bool(re.match(r"^\s*==.+==\s*$", str(x)))
+
+    real_items = [x for x in items if x and not is_header(x)]
+    if not real_items:
+        return 0
+
+    pkey = get_progress_key(module["key"])
+    raw = st.session_state.progress.get(pkey, [])
+    completed = raw if isinstance(raw, list) else []
+    done = len([x for x in completed if x in real_items])
+    return int(done / len(real_items) * 100)
+
+def get_overall():
+    def is_header(x: str) -> bool:
+        return bool(re.match(r"^\s*==.+==\s*$", str(x)))
+
+    total = 0
+    done = 0
+
+    for m in MODULES:
+        items = get_effective_checklist(m)
+        real_items = [x for x in items if x and not is_header(x)]
+        total += len(real_items)
+
+        pkey = get_progress_key(m["key"])
+        raw = st.session_state.progress.get(pkey, [])
+        completed = raw if isinstance(raw, list) else []
+        done += len([x for x in completed if x in real_items])
+
+    return int(done / total * 100) if total else 0
+
+def push_to_sheet(progress_key: str):
+    """
+    Save progress under progress_key (which may include ::Role),
+    but look up module metadata by base key.
+    """
     if not st.session_state.username:
         return
-    module = next((m for m in MODULES if m["key"] == key), None)
+
+    base_key = _base_module_key(progress_key)
+    module = next((m for m in MODULES if m["key"] == base_key), None)
     if not module:
         return
+
     pct = get_module_pct(module)
-    checklist_items = st.session_state.progress.get(key, [])
-    quiz_results_for_module = st.session_state.quiz_results.get(key, {})
-    save_progress(st.session_state.username, key, module["title"],
-                  checklist_items, quiz_results_for_module, pct)
-                  
+    checklist_items = st.session_state.progress.get(progress_key, [])
+    quiz_results_for_module = st.session_state.quiz_results.get(progress_key, {})
+
+    save_progress(
+        st.session_state.username,
+        progress_key,          # store role-specific key in sheet
+        module["title"],
+        checklist_items if isinstance(checklist_items, list) else [],
+        quiz_results_for_module if isinstance(quiz_results_for_module, dict) else {},
+        pct
+    )
+    
 def _split_sys_desc(desc: str):
     """
     Your SYS desc uses 2+ spaces to separate:
@@ -989,69 +1145,193 @@ else:
             st.markdown("<div class='callout'>💡 Head to the <strong>Checklist</strong> tab to mark what you've reviewed, then test yourself in the <strong>Knowledge Check</strong>.</div>", unsafe_allow_html=True)
 
         with tab2:
-            st.markdown("#### Mark off each item as you complete it.")
-            st.markdown("*Progress saves automatically.*")
-            _raw_progress = st.session_state.progress.get(key, [])
-            completed = _raw_progress.copy() if isinstance(_raw_progress, list) else []
-            changed = False
-            checklist_items = sel.get("checklist", [])
-            if key == "new_hire_checklist":
-                if "new_hire_role" not in st.session_state:
-                    st.session_state.new_hire_role = "Warehouse"
-                role = st.radio("Select your role track", ["Warehouse", "Administrative"], horizontal=True, key="new_hire_role")
-                checklist_items = sel.get("checklist_tracks", {}).get(role, [])
-            for i, item in enumerate(checklist_items):
-                checked = st.checkbox(item, value=(item in completed), key=f"chk_{key}_{i}")
+            import re
+
+def _is_header(line: str) -> bool:
+    return bool(re.match(r"^\s*==.+==\s*$", str(line)))
+
+def _clean_header(line: str) -> str:
+    return re.sub(r"^\s*==\s*|\s*==\s*$", "", str(line)).strip()
+
+def _split_sections(items: list[str]):
+    sections = []
+    current_title = "Checklist"
+    current_items = []
+
+    for line in items:
+        if _is_header(line):
+            if current_items:
+                sections.append((current_title, current_items))
+                current_items = []
+            current_title = _clean_header(line) or "Checklist"
+        else:
+            current_items.append(line)
+
+    if current_items:
+        sections.append((current_title, current_items))
+
+    if not sections and items:
+        sections = [("Checklist", items)]
+
+    return sections
+
+with tab2:
+    st.markdown("#### Checklist")
+    st.caption("Mark items as you complete them. Progress saves automatically.")
+
+    checklist_items = sel.get("checklist", [])
+    pkey = get_progress_key(key)
+
+    if key == "new_hire_checklist":
+        if "new_hire_role" not in st.session_state:
+            st.session_state.new_hire_role = "Warehouse"
+
+        role = st.radio(
+            "Role track",
+            ["Warehouse", "Administrative"],
+            horizontal=True,
+            key="new_hire_role"
+        )
+        checklist_items = sel.get("checklist_tracks", {}).get(role, [])
+        pkey = get_progress_key(key)
+
+    filter_text = st.text_input("Filter items", value="", placeholder="Type to search…")
+
+    raw = st.session_state.progress.get(pkey, [])
+    completed = raw.copy() if isinstance(raw, list) else []
+
+    sections = _split_sections(checklist_items)
+
+    real_items = [x for x in checklist_items if x and not _is_header(x)]
+    total = len(real_items)
+    done = len([x for x in completed if x in real_items])
+    pct = int((done / total) * 100) if total else 0
+
+    st.progress(pct / 100)
+    c1, c2, c3 = st.columns([1, 1, 2])
+    c1.metric("Complete", f"{pct}%")
+    c2.metric("Items", f"{done} / {total}")
+    c3.write("")
+    st.divider()
+
+    changed = False
+
+    for sec_title, sec_items in sections:
+        visible_items = sec_items
+        if filter_text.strip():
+            ft = filter_text.strip().lower()
+            visible_items = [i for i in sec_items if ft in str(i).lower()]
+            if not visible_items:
+                continue
+
+        with st.expander(sec_title, expanded=(pct < 100)):
+            for i, item in enumerate(visible_items):
+                ck = f"chk_{pkey}_{sec_title}_{hash(item)}_{i}"
+                checked = st.checkbox(item, value=(item in completed), key=ck)
+
                 if checked and item not in completed:
-                    completed.append(item); changed = True
+                    completed.append(item)
+                    changed = True
                 elif not checked and item in completed:
-                    completed.remove(item); changed = True
-            if changed:
-                st.session_state.progress[key] = completed
-                push_to_sheet(key)
-            st.markdown("<br>", unsafe_allow_html=True)
-            new_pct = get_module_pct(sel)
-            if new_pct == 100:
-                st.success("🎉 All items complete! Progress saved.")
-            else:
-                st.info(f"{len(sel['checklist']) - len(st.session_state.progress.get(key, []))} item(s) remaining.")
+                    completed.remove(item)
+                    changed = True
 
-        with tab3:
-            st.markdown("#### Test your knowledge.")
-            st.markdown("*Quiz scores save to your HR Manager's dashboard automatically.*")
-            quiz_qs = sel.get("quiz", [])
-            if key not in st.session_state.quiz_results:
-                st.session_state.quiz_results[key] = {}
-            quiz_changed = False
-            for qi, q in enumerate(quiz_qs):
-                st.markdown(f"**Question {qi + 1}:** {q['question']}")
-                answer = st.radio(f"q{qi}", q["options"], index=None, key=f"quiz_{key}_{qi}", label_visibility="collapsed")
-                if answer is not None:
-                    is_correct = q["options"].index(answer) == q["answer"]
-                    if st.session_state.quiz_results[key].get(qi) != is_correct:
-                        quiz_changed = True
-                    st.session_state.quiz_results[key][qi] = is_correct
-                    if is_correct:
-                        st.markdown(f"<div style='background:#D1FAE5;border-radius:8px;padding:12px 16px;margin-top:8px;color:#065F46;'>✅ <strong>Correct!</strong> {q['explanation']}</div>", unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"<div style='background:#FEE2E2;border-radius:8px;padding:12px 16px;margin-top:8px;color:#7F1D1D;'>❌ <strong>Not quite.</strong> {q['explanation']}</div>", unsafe_allow_html=True)
-                st.markdown("<br>", unsafe_allow_html=True)
-            if quiz_changed:
-                push_to_sheet(key)
-            answered = len(st.session_state.quiz_results.get(key, {}))
-            if answered == len(quiz_qs) and quiz_qs:
-                correct_count = sum(1 for v in st.session_state.quiz_results[key].values() if v)
-                if correct_count == len(quiz_qs):
-                    st.success(f"🏆 Perfect score! {correct_count}/{len(quiz_qs)} correct. Saved.")
+    if changed:
+        st.session_state.progress[pkey] = completed
+        push_to_sheet(pkey)
+        st.toast("Progress saved", icon="✅")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    if pct == 100 and total > 0:
+        st.success("🎉 All items complete!")
+    elif total == 0:
+        st.info("No checklist items found for this track yet.")
+    else:
+        st.info(f"{max(0, total - done)} item(s) remaining.")
+
+
+with tab3:
+    st.markdown("#### Knowledge Check")
+    st.caption("Answer each question. Your score saves automatically.")
+
+    quiz_qs = sel.get("quiz", [])
+    pkey = get_progress_key(key)
+
+    if pkey not in st.session_state.quiz_results:
+        st.session_state.quiz_results[pkey] = {}
+
+    total_q = len(quiz_qs)
+    answered = len(st.session_state.quiz_results.get(pkey, {}))
+    correct = sum(1 for v in st.session_state.quiz_results[pkey].values() if v)
+
+    if total_q:
+        st.progress((correct / total_q) if total_q else 0)
+        c1, c2, c3 = st.columns([1, 1, 2])
+        c1.metric("Score", f"{correct} / {total_q}")
+        c2.metric("Answered", f"{min(answered, total_q)} / {total_q}")
+        c3.write("")
+        st.divider()
+    else:
+        st.info("No quiz questions have been added to this module yet.")
+        st.stop()
+
+    quiz_changed = False
+
+    for qi, q in enumerate(quiz_qs):
+        q_text = q.get("question") or q.get("q") or f"Question {qi+1}"
+        options = q.get("options", [])
+        answer_index = q.get("answer", None)
+        explanation = q.get("explanation", "")
+
+        is_answered = (qi in st.session_state.quiz_results.get(pkey, {}))
+        with st.expander(f"Question {qi + 1}", expanded=not is_answered):
+            st.markdown(
+                f"<div style='font-weight:600;color:#0A1628;font-size:1.02rem;margin-bottom:8px;'>{q_text}</div>",
+                unsafe_allow_html=True
+            )
+
+            selected = st.radio(
+                f"quiz_{pkey}_{qi}",
+                options,
+                index=None,
+                key=f"quiz_{pkey}_{qi}",
+                label_visibility="collapsed",
+            )
+
+            if selected is not None and options and isinstance(answer_index, int):
+                is_correct = options.index(selected) == answer_index
+
+                if st.session_state.quiz_results[pkey].get(qi) != is_correct:
+                    quiz_changed = True
+                st.session_state.quiz_results[pkey][qi] = is_correct
+
+                if is_correct:
+                    st.markdown(
+                        f"<div style='background:#D1FAE5;border-radius:10px;padding:12px 14px;margin-top:10px;color:#065F46;'>✅ <strong>Correct.</strong> {explanation}</div>",
+                        unsafe_allow_html=True
+                    )
                 else:
-                    st.warning(f"You got {correct_count}/{len(quiz_qs)} correct. Review and try again!")
+                    st.markdown(
+                        f"<div style='background:#FEE2E2;border-radius:10px;padding:12px 14px;margin-top:10px;color:#7F1D1D;'>❌ <strong>Not quite.</strong> {explanation}</div>",
+                        unsafe_allow_html=True
+                    )
 
-        with tab4:
-            st.markdown("#### Personal notes")
-            st.markdown("*Notes are session-only and are not saved to the dashboard.*")
-            existing = st.session_state.notes.get(key, "")
-            note = st.text_area("Notes", value=existing, height=280, placeholder="Type your notes here...", label_visibility="collapsed", key=f"notes_{key}")
-            if note != existing:
-                st.session_state.notes[key] = note
-            if note:
-                st.markdown(f"<div style='font-size:0.8rem;color:#9CA3AF;'>Last updated: {datetime.now().strftime('%I:%M %p')}</div>", unsafe_allow_html=True)
+    if quiz_changed:
+        push_to_sheet(pkey)
+        st.toast("Quiz saved", icon="📝")
+
+    correct = sum(1 for v in st.session_state.quiz_results[pkey].values() if v)
+    if correct == total_q and total_q > 0:
+        st.success(f"🏆 Perfect score! {correct}/{total_q}.")
+    elif len(st.session_state.quiz_results[pkey]) == total_q and total_q > 0:
+        st.warning(f"Score: {correct}/{total_q}. Review any missed questions above.")
+
+with tab4:
+    st.markdown("#### Personal notes")
+    st.markdown("*Notes are session-only and are not saved to the dashboard.*")
+    existing = st.session_state.notes.get(key, "")
+    note = st.text_area("Notes", value=existing, height=280, placeholder="Type your notes here...", label_visibility="collapsed", key=f"notes_{key}")
+    if note != existing:
+        st.session_state.notes[key] = note
+    if note:
+        st.markdown(f"<div style='font-size:0.8rem;color:#9CA3AF;'>Last updated: {datetime.now().strftime('%I:%M %p')}</div>", unsafe_allow_html=True)

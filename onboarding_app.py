@@ -272,7 +272,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # ── GOOGLE SHEETS ─────────────────────────────────────────
-SHEET_NAME = "AAP HR Training Progress"
+SHEET_NAME = "AAP New Hire Orientation Progress"
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 
 @st.cache_resource

@@ -346,6 +346,13 @@ def load_progress(username):
                 module_key = row[8] if len(row) > 8 else None
                 if not module_key:
                     continue
+                # Restore role track
+                if module_key == "__role_track__":
+                    saved_role = row[1] if len(row) > 1 else None
+                    if saved_role in ("Administrative", "Warehouse"):
+                        st.session_state.role_track = saved_role
+                        st.session_state.new_hire_role = saved_role
+                    continue
                 # Restore checklist items
                 if len(row) > 6 and row[6]:
                     try:
@@ -368,9 +375,28 @@ def load_progress(username):
     except Exception:
         return False
 
+def save_role_track(username, role):
+    """Save the user's role track selection as a special row in the sheet."""
+    sheet = get_sheet()
+    if not sheet:
+        return
+    ensure_headers(sheet)
+    now = datetime.now().strftime("%Y-%m-%d %I:%M %p")
+    row_data = [username, role, "", "", "", now, "", "", "__role_track__"]
+    try:
+        all_rows = sheet.get_all_values()
+        for i, row in enumerate(all_rows[1:], start=2):
+            if len(row) >= 9 and row[0] == username and row[8] == "__role_track__":
+                sheet.update(f"A{i}:I{i}", [row_data])
+                return
+        sheet.append_row(row_data)
+    except Exception:
+        pass
+
 # ── SESSION STATE ─────────────────────────────────────────
 SESSION_DEFAULTS = {
     "username": None,
+    "role_track": None,      # "Administrative" | "Warehouse" — set at login
     "progress": {},
     "quiz_results": {},
     "notes": {},
@@ -541,7 +567,8 @@ def get_quiz_score(key):
     return sum(1 for v in results.values() if v), len(module.get("quiz", []))
 
 def _role_for_new_hire():
-    return st.session_state.get("new_hire_role", "Warehouse")
+    # Primary: role_track set at login. Fallback: in-module selector key.
+    return st.session_state.get("role_track") or st.session_state.get("new_hire_role", "Warehouse")
 
 def get_effective_checklist(module):
     """Returns the checklist items that should count toward progress."""
@@ -687,7 +714,7 @@ def _render_systems_tools_table(sys_docs):
     </table>
     """, unsafe_allow_html=True)
 
-# ── LOGIN ─────────────────────────────────────────────────
+# ── LOGIN (Step 1: Name) ──────────────────────────────────
 if not st.session_state.username:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -701,7 +728,7 @@ if not st.session_state.username:
         """, unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         name_input = st.text_input("Your Full Name", placeholder="e.g. Jane Smith", key="name_field", label_visibility="visible")
-        if st.button("Begin Training →", type="primary", use_container_width=True):
+        if st.button("Next →", type="primary", use_container_width=True):
             if name_input.strip():
                 st.session_state.username = name_input.strip()
                 st.rerun()
@@ -709,23 +736,78 @@ if not st.session_state.username:
                 st.error("Please enter your name to continue.")
     st.stop()
 
-# ── LOAD SAVED PROGRESS ONCE ──────────────────────────────
+# ── LOGIN (Step 2: Track Selection) ───────────────────────
+# Show after name is set but before role_track is chosen.
+# Skip if role was already restored from Google Sheets.
+if not st.session_state.sheet_loaded:
+    with st.spinner("Checking for saved progress..."):
+        load_progress(st.session_state.username)
+    st.session_state.sheet_loaded = True
+
+if not st.session_state.role_track:
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown(f"""
+            <div style='background:white;border-radius:16px;padding:40px 48px;box-shadow:0 6px 28px rgba(0,0,0,0.10);border-top:5px solid #CC2936;text-align:center;'>
+                <img src='data:image/png;base64,{LOGO_B64}' style='width:100%;max-width:200px;margin-bottom:18px;'>
+                <div style='font-size:1.15rem;color:#0A1628;margin-bottom:6px;font-weight:700;'>Welcome, {st.session_state.username}!</div>
+                <div style='color:#5A6E8A;font-size:0.9rem;margin-bottom:28px;'>Select your role track to get started. Your training content will be tailored to your department.</div>
+            </div>
+        """, unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+        # Track choice cards
+        st.markdown("""
+        <div style='display:flex;gap:16px;margin-bottom:20px;'>
+            <div style='flex:1;background:white;border-radius:12px;padding:24px 20px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:2px solid #E5E7EB;text-align:center;'>
+                <div style='font-size:2rem;margin-bottom:8px;'>🏭</div>
+                <div style='font-weight:700;color:#0A1628;font-size:1rem;margin-bottom:6px;'>Warehouse</div>
+                <div style='color:#5A6E8A;font-size:0.82rem;line-height:1.5;'>Safety, equipment, receiving, order pulling &amp; packing, production standards.</div>
+            </div>
+            <div style='flex:1;background:white;border-radius:12px;padding:24px 20px;box-shadow:0 2px 12px rgba(0,0,0,0.08);border:2px solid #E5E7EB;text-align:center;'>
+                <div style='font-size:2rem;margin-bottom:8px;'>💼</div>
+                <div style='font-weight:700;color:#0A1628;font-size:1rem;margin-bottom:6px;'>Administrative</div>
+                <div style='color:#5A6E8A;font-size:0.82rem;line-height:1.5;'>Systems &amp; tools, email, workflows, service standards, SharePoint &amp; BambooHR.</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        track_choice = st.radio(
+            "I work in:",
+            ["Warehouse", "Administrative"],
+            index=0,
+            horizontal=True,
+            label_visibility="visible",
+            key="track_choice_radio",
+        )
+        if st.button("Begin Orientation →", type="primary", use_container_width=True):
+            st.session_state.role_track = track_choice
+            st.session_state.new_hire_role = track_choice  # keep in-module key in sync
+            save_role_track(st.session_state.username, track_choice)
+            track_label = "🏭 Warehouse" if track_choice == "Warehouse" else "💼 Administrative"
+            st.toast(f"Track set: {track_label}. Let's get started!", icon="✅")
+            st.rerun()
+    st.stop()
+
+# ── LOAD SAVED PROGRESS (sheet_loaded already set in step 2) ──
+# This handles the welcome toast — sheet was already loaded during track selection.
+# If somehow sheet_loaded is still False here, load now.
 if not st.session_state.sheet_loaded:
     with st.spinner("Loading your saved progress..."):
-        found = load_progress(st.session_state.username)
-    if found:
-        st.toast(f"Welcome back, {st.session_state.username}! Your progress has been restored.", icon="👋")
-    else:
-        st.toast(f"Welcome, {st.session_state.username}! Let's get started.", icon="🎉")
+        load_progress(st.session_state.username)
     st.session_state.sheet_loaded = True
+    st.toast(f"Welcome back, {st.session_state.username}! Your progress has been restored.", icon="👋")
 
 # ── SIDEBAR ───────────────────────────────────────────────
 with st.sidebar:
+    _track = st.session_state.get("role_track", "")
+    _track_icon = "🏭" if _track == "Warehouse" else "💼" if _track == "Administrative" else "👤"
+    _track_color = "#1E5FA8" if _track == "Administrative" else "#2D7D46"
     st.markdown(f"""
         <div class='sidebar-header' style='text-align:center;'>
             <img src='data:image/png;base64,{LOGO_B64}' style='width:100%;max-width:155px;display:block;margin:0 auto 10px auto;'>
             <div style='font-size:0.68rem;letter-spacing:0.09em;text-transform:uppercase;color:#5A6E8A;'>Employee Onboarding Portal</div>
             <div class='sidebar-username' style='font-size:0.88rem;margin-top:8px;font-weight:600;'>👤 {st.session_state.username}</div>
+            {f"<div style='display:inline-block;margin-top:7px;background:{_track_color};color:white;font-size:0.72rem;font-weight:700;padding:3px 12px;border-radius:20px;letter-spacing:0.04em;'>{_track_icon} {_track} Track</div>" if _track else ""}
         </div>
         <hr style='border:none;border-top:1px solid rgba(255,255,255,0.12);margin:14px 0 18px 0;'>
     """, unsafe_allow_html=True)
@@ -759,7 +841,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("🚪 Log Out", type="primary", use_container_width=True):
-        for k in ["username", "progress", "quiz_results", "notes", "sheet_loaded", "selected_module", "pending_nav", "sidebar_nav"]:
+        for k in ["username", "role_track", "new_hire_role", "progress", "quiz_results", "notes", "sheet_loaded", "selected_module", "pending_nav", "sidebar_nav"]:
             st.session_state.pop(k, None)
         st.rerun()
 
@@ -1184,15 +1266,25 @@ with tab2:
     pkey = get_progress_key(key)
 
     if key == "new_hire_checklist":
-        if "new_hire_role" not in st.session_state:
-            st.session_state.new_hire_role = "Warehouse"
-
-        role = st.radio(
-            "Role track",
-            ["Warehouse", "Administrative"],
-            horizontal=True,
-            key="new_hire_role"
-        )
+        # Role track was set at login — show as read-only with option to change
+        role = st.session_state.get("role_track") or st.session_state.get("new_hire_role", "Warehouse")
+        track_icon = "🏭" if role == "Warehouse" else "💼"
+        track_color = "#2D7D46" if role == "Warehouse" else "#1E5FA8"
+        col_t1, col_t2 = st.columns([3, 1])
+        with col_t1:
+            st.markdown(
+                f"<div style='display:inline-flex;align-items:center;gap:10px;background:{track_color}1A;"
+                f"border:1.5px solid {track_color};border-radius:8px;padding:8px 16px;margin-bottom:8px;'>"
+                f"<span style='font-size:1.1rem;'>{track_icon}</span>"
+                f"<span style='font-weight:700;color:{track_color};font-size:0.95rem;'>{role} Track</span>"
+                f"</div>",
+                unsafe_allow_html=True
+            )
+        with col_t2:
+            if st.button("Change track", key="change_track_btn", type="secondary"):
+                st.session_state.role_track = None
+                st.session_state.new_hire_role = None
+                st.rerun()
         checklist_items = sel.get("checklist_tracks", {}).get(role, [])
         pkey = get_progress_key(key)
 

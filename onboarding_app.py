@@ -280,9 +280,7 @@ SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapi
 def get_gsheet_client():
     try:
         creds_dict = dict(st.secrets["gcp_service_account"])
-        scopes = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-        return gspread.Client(auth=creds)
+        return gspread.service_account_from_dict(creds_dict)
     except Exception:
         return None
 

@@ -472,13 +472,17 @@ TRACK_MODULE_KEYS = {
 
 def visible_modules():
     """Return the module list the current user should see (based on role_track)."""
+    # role_track is set at "login"/portal entry; new_hire_role is the role selector inside
+    # the role-based checklist module. Prefer role_track when present.
     role = st.session_state.get("role_track") or st.session_state.get("new_hire_role")
     keys = TRACK_MODULE_KEYS.get(role)
     if not keys:
         return MODULES
+
     keyset = set(keys)
+
     # Preserve order from MODULES to keep navigation stable.
-    return [m for m in visible_modules() if m.get("key") in keyset]
+    return [m for m in MODULES if m.get("key") in keyset]
 
 def module_by_key(key: str):
     return next((m for m in visible_modules() if m.get("key") == key), None)

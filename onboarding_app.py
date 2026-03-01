@@ -1,7 +1,6 @@
 import streamlit as st
 import json
 import gspread
-from google.oauth2.service_account import Credentials
 from datetime import datetime
 
 # ─────────────────────────────────────────────
@@ -213,6 +212,14 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 [data-testid="metric-container"] label { color: #8BA3C7 !important; font-size: 0.8rem; }
 [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #FFFFFF !important; font-size: 1.5rem; font-weight: 700; }
 
+/* ── Login form labels — force white ── */
+[data-testid="stForm"] label,
+[data-testid="stForm"] .stRadio label,
+[data-testid="stForm"] p,
+[data-testid="stForm"] div[data-testid="stMarkdownContainer"] p {
+    color: #FFFFFF !important;
+}
+
 /* ── Login card header ── */
 .login-card-header {
     background: #0D1F3C;
@@ -242,9 +249,11 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 def get_gsheet_client():
     try:
         creds_dict = dict(st.secrets["gcp_service_account"])
-        scopes = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-        return gspread.authorize(creds)
+        scopes = [
+            "https://spreadsheets.google.com/feeds",
+            "https://www.googleapis.com/auth/drive",
+        ]
+        return gspread.service_account_from_dict(creds_dict, scopes=scopes)
     except Exception:
         return None
 
@@ -513,9 +522,17 @@ def show_login():
     st.markdown("""
     <div style="text-align:center; margin-bottom:32px;">
         <div style="display:inline-flex; align-items:center; justify-content:center;
-                    background:#CC2936; border-radius:18px; width:72px; height:72px;
-                    margin-bottom:16px; box-shadow:0 4px 16px rgba(204,41,54,0.4);">
-            <span style="font-size:2.4rem; line-height:1;">💊</span>
+                    margin-bottom:16px;">
+            <img src="https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
+                 alt="AAP Logo"
+                 style="height:80px; max-width:260px; object-fit:contain;"
+                 onerror="this.style.display='none'; document.getElementById('aap-logo-fallback').style.display='inline-flex';">
+            <div id="aap-logo-fallback"
+                 style="display:none; align-items:center; justify-content:center;
+                        background:#CC2936; border-radius:18px; width:72px; height:72px;
+                        box-shadow:0 4px 16px rgba(204,41,54,0.4);">
+                <span style="color:#fff; font-size:1.2rem; font-weight:700; letter-spacing:-0.03em;">AAP</span>
+            </div>
         </div>
         <h1 style="font-family:'Playfair Display', serif; color:#FFFFFF;
                    font-size:2rem; font-weight:700; margin:0 0 6px 0; letter-spacing:-0.01em;">

@@ -321,6 +321,10 @@ inject_theme_css()
 
 
 
+globals().get("inject_theme_css", lambda: None)()
+
+
+
 # ─────────────────────────────────────────────
 #  GOOGLE SHEETS INTEGRATION
 # ─────────────────────────────────────────────

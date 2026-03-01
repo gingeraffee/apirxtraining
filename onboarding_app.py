@@ -117,7 +117,7 @@ h1, h2, h3, h4 { color: #1A1A2E; }
    WELCOME BANNER
    ══════════════════════════════════════════ */
 .welcome-banner {
-    background: linear-gradient(135deg, #1B2A47 0%, #CC2936 100%);
+    background: linear-gradient(135deg, #1B2A47 0%, #111D33 100%);
     border-radius: 14px;
     padding: 36px 44px;
     margin-bottom: 28px;

@@ -2925,7 +2925,6 @@ def _show_login_screen() -> None:
 def _show_home() -> None:
     overall = _get_overall_pct()
 
-    st.markdown(f"""
     st.markdown(dedent(f"""
         <div class='welcome-banner'>
             <h1>Welcome, {st.session_state.full_name}! 🎉</h1>
@@ -2953,9 +2952,6 @@ def _show_home() -> None:
             else:
                 badge = "<span class='badge'>START</span>"
 
-            st.markdown(f"""
-            cls = "module-card complete" if complete else "module-card"
-            badge = "<span class='badge complete'>COMPLETE</span>" if complete else "<span class='badge'>IN PROGRESS</span>" if pct else "<span class='badge'>START</span>"
             st.markdown(dedent(f"""
                 <div class="{cls}">
                     {badge}
@@ -3067,16 +3063,6 @@ def _show_module_page(mod: dict) -> None:
         renderer = dispatch.get(key)
         if renderer:
             renderer()
-        if st.session_state.role_track == "Warehouse":
-            if key == "wh_welcome": show_wh_module_welcome()
-            elif key == "wh_conduct": show_wh_module_conduct()
-            elif key == "wh_safety": show_wh_module_safety()
-            elif key == "wh_benefits": show_wh_module_benefits()
-            elif key == "wh_firststeps": show_wh_module_firststeps()
-            else:
-                st.info("Content coming soon.")
-        else:
-            st.info("Content coming soon.")
 
     # ── Tab 2: Checklist ────────────────────────────────────────────
     with tab2:

@@ -317,6 +317,10 @@ st.markdown(dedent("""
 """), unsafe_allow_html=True)
 
 
+inject_theme_css()
+
+
+
 # ─────────────────────────────────────────────
 #  GOOGLE SHEETS INTEGRATION
 # ─────────────────────────────────────────────

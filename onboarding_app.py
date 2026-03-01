@@ -18,67 +18,99 @@ st.set_page_config(
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ── Base ── */
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-
-.stApp { background-color: #0A1628; color: #E8EDF5; }
-
-/* ── Sidebar ── */
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0D1F3C 0%, #091629 100%);
-    border-right: 1px solid #1E3A5F;
+/* ══════════════════════════════════════════
+   BASE — Light corporate theme
+   ══════════════════════════════════════════ */
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
 }
-[data-testid="stSidebar"] * { color: #C8D6E8 !important; }
+
+/* Force light background everywhere — overrides Streamlit dark mode */
+.stApp,
+.stApp > div,
+[data-testid="stAppViewContainer"],
+[data-testid="stAppViewBlockContainer"],
+[data-testid="block-container"] {
+    background-color: #F4F6F9 !important;
+    color: #1A1A2E !important;
+}
+
+/* All default text dark */
+p, span, div, li, label { color: #2D3748; }
+h1, h2, h3, h4 { color: #1A1A2E; }
+
+/* ══════════════════════════════════════════
+   SIDEBAR — Deep navy, white text (stays dark for contrast)
+   ══════════════════════════════════════════ */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #1B2A47 0%, #111D33 100%) !important;
+    border-right: 1px solid #243552;
+}
+[data-testid="stSidebar"] * { color: #D1DCF0 !important; }
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] strong { color: #FFFFFF !important; }
+
 [data-testid="stSidebar"] .stButton > button {
     width: 100%;
     background: transparent;
-    border: 1px solid #1E3A5F;
-    color: #C8D6E8 !important;
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #D1DCF0 !important;
     text-align: left;
-    padding: 10px 16px;
+    padding: 10px 14px;
     border-radius: 8px;
-    margin: 3px 0;
+    margin: 2px 0;
     font-size: 13px;
-    transition: all 0.2s;
+    font-weight: 500;
+    transition: all 0.18s;
 }
 [data-testid="stSidebar"] .stButton > button:hover {
-    background: rgba(204, 41, 54, 0.15);
+    background: rgba(204, 41, 54, 0.2);
     border-color: #CC2936;
     color: #fff !important;
 }
 
-/* ── Welcome Banner ── */
+/* ══════════════════════════════════════════
+   WELCOME BANNER
+   ══════════════════════════════════════════ */
 .welcome-banner {
-    background: linear-gradient(135deg, #0D1F3C 0%, #1a2f50 50%, #0D1F3C 100%);
-    border: 1px solid #1E3A5F;
-    border-left: 4px solid #CC2936;
-    border-radius: 12px;
-    padding: 32px 40px;
+    background: linear-gradient(135deg, #1B2A47 0%, #CC2936 100%);
+    border-radius: 14px;
+    padding: 36px 44px;
     margin-bottom: 28px;
+    box-shadow: 0 4px 20px rgba(27,42,71,0.15);
 }
 .welcome-banner h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    color: #FFFFFF;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #FFFFFF !important;
     margin: 0 0 8px 0;
+    letter-spacing: -0.02em;
 }
-.welcome-banner p { color: #8BA3C7; font-size: 1rem; margin: 0; }
+.welcome-banner p { color: rgba(255,255,255,0.82) !important; font-size: 1rem; margin: 0; }
 
-/* ── Module Cards ── */
+/* ══════════════════════════════════════════
+   MODULE CARDS
+   ══════════════════════════════════════════ */
 .module-card {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
     border-radius: 12px;
-    padding: 24px;
-    margin-bottom: 16px;
+    padding: 22px 26px;
+    margin-bottom: 14px;
     transition: all 0.2s;
-    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
-.module-card:hover { border-color: #CC2936; transform: translateY(-2px); }
-.module-card h3 { color: #FFFFFF; margin: 0 0 8px 0; font-size: 1.1rem; }
-.module-card p { color: #8BA3C7; margin: 0; font-size: 0.9rem; }
+.module-card:hover {
+    border-color: #CC2936;
+    box-shadow: 0 4px 16px rgba(204,41,54,0.10);
+    transform: translateY(-2px);
+}
+.module-card h3 { color: #1A1A2E !important; margin: 0 0 6px 0; font-size: 1.05rem; font-weight: 600; }
+.module-card p  { color: #64748B !important; margin: 0; font-size: 0.88rem; }
 .module-card .badge {
     display: inline-block;
     background: #CC2936;
@@ -88,157 +120,228 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     padding: 3px 10px;
     border-radius: 20px;
     margin-bottom: 10px;
+    letter-spacing: 0.02em;
 }
-.module-card .badge.complete {
-    background: #1a6b3c;
-}
+.module-card .badge.complete { background: #16A34A; }
 
-/* ── Section Content ── */
+/* ══════════════════════════════════════════
+   CONTENT SECTIONS
+   ══════════════════════════════════════════ */
 .content-section {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
     border-radius: 12px;
-    padding: 28px 32px;
-    margin-bottom: 20px;
+    padding: 28px 34px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 .content-section h2 {
-    font-family: 'Playfair Display', serif;
-    color: #FFFFFF;
-    font-size: 1.6rem;
+    color: #1A1A2E !important;
+    font-size: 1.55rem;
+    font-weight: 700;
     margin: 0 0 16px 0;
-    border-bottom: 1px solid #1E3A5F;
     padding-bottom: 12px;
+    border-bottom: 2px solid #F1F5F9;
+    letter-spacing: -0.01em;
 }
-.content-section h3 { color: #CC2936; font-size: 1.05rem; margin: 20px 0 8px 0; }
-.content-section p, .content-section li { color: #C8D6E8; line-height: 1.7; font-size: 0.95rem; }
+.content-section h3 {
+    color: #CC2936 !important;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 22px 0 8px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.85rem;
+}
+.content-section p,
+.content-section li { color: #374151 !important; line-height: 1.75; font-size: 0.94rem; }
 .content-section ul { padding-left: 20px; }
-.content-section strong { color: #FFFFFF; }
+.content-section strong { color: #1A1A2E !important; font-weight: 600; }
 
-/* ── Info Boxes ── */
+/* ══════════════════════════════════════════
+   INFO BOXES
+   ══════════════════════════════════════════ */
 .info-box {
-    background: rgba(30, 58, 95, 0.5);
-    border-left: 3px solid #CC2936;
+    background: #FEF9F9;
+    border-left: 4px solid #CC2936;
     border-radius: 6px;
     padding: 14px 18px;
     margin: 14px 0;
-    color: #C8D6E8;
+    color: #374151 !important;
     font-size: 0.9rem;
+    line-height: 1.6;
 }
-.info-box.green { border-left-color: #2ecc71; }
-.info-box.yellow { border-left-color: #f39c12; }
+.info-box.green {
+    background: #F0FDF4;
+    border-left-color: #16A34A;
+}
+.info-box.yellow {
+    background: #FFFBEB;
+    border-left-color: #D97706;
+}
 
-/* ── Progress Bar ── */
+/* ══════════════════════════════════════════
+   PROGRESS BAR
+   ══════════════════════════════════════════ */
 .progress-container {
-    background: #1E3A5F;
+    background: #E2E8F0;
     border-radius: 8px;
-    height: 10px;
-    margin: 8px 0 4px 0;
+    height: 8px;
+    margin: 6px 0 3px 0;
     overflow: hidden;
 }
 .progress-fill {
-    background: linear-gradient(90deg, #CC2936, #e8424f);
+    background: linear-gradient(90deg, #CC2936, #E84455);
     height: 100%;
     border-radius: 8px;
     transition: width 0.5s ease;
 }
 
-/* ── Quiz ── */
-.quiz-question {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
-    border-radius: 10px;
-    padding: 20px 24px;
-    margin-bottom: 16px;
-}
-.quiz-question p { color: #FFFFFF; font-weight: 500; font-size: 1rem; }
-
-/* ── Buttons ── */
+/* ══════════════════════════════════════════
+   BUTTONS
+   ══════════════════════════════════════════ */
 .stButton > button {
-    background: #CC2936;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-weight: 600;
-    transition: all 0.2s;
+    background: #CC2936 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 24px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    transition: all 0.18s !important;
+    box-shadow: 0 2px 6px rgba(204,41,54,0.25) !important;
 }
-.stButton > button:hover { background: #a5212c; color: white; }
+.stButton > button:hover {
+    background: #A8202C !important;
+    box-shadow: 0 4px 12px rgba(204,41,54,0.35) !important;
+    color: white !important;
+}
 
-/* ── Table ── */
+/* ══════════════════════════════════════════
+   TABLES
+   ══════════════════════════════════════════ */
 .styled-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.88rem;
     margin: 14px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 .styled-table th {
-    background: #CC2936;
+    background: #1B2A47;
     color: white;
-    padding: 10px 14px;
+    padding: 11px 14px;
     text-align: left;
     font-weight: 600;
+    letter-spacing: 0.02em;
 }
 .styled-table td {
-    padding: 9px 14px;
-    border-bottom: 1px solid #1E3A5F;
-    color: #C8D6E8;
+    padding: 10px 14px;
+    border-bottom: 1px solid #F1F5F9;
+    color: #374151;
+    background: #FFFFFF;
 }
-.styled-table tr:nth-child(even) td { background: rgba(30,58,95,0.25); }
+.styled-table tr:nth-child(even) td { background: #F8FAFC; }
+.styled-table tr:last-child td { border-bottom: none; }
 
-/* ── Checkbox overrides ── */
-.stCheckbox label { color: #C8D6E8 !important; font-size: 0.93rem; }
-
-/* ── Radio overrides ── */
-.stRadio label { color: #C8D6E8 !important; }
-.stRadio > div { gap: 6px; }
-
-/* ── Success / Error ── */
-.stSuccess, .stError, .stWarning, .stInfo { border-radius: 8px; }
-
-/* ── Sidebar name input ── */
-[data-testid="stSidebar"] input { 
-    background: #1E3A5F !important; 
-    color: #fff !important; 
-    border: 1px solid #2a4a6e !important; 
+/* ══════════════════════════════════════════
+   FORM INPUTS (main area)
+   ══════════════════════════════════════════ */
+[data-baseweb="input"] {
+    background-color: #FFFFFF !important;
+    border-color: #CBD5E1 !important;
+}
+[data-baseweb="base-input"] { background-color: #FFFFFF !important; }
+[data-baseweb="base-input"] input {
+    background-color: #FFFFFF !important;
+    color: #1A1A2E !important;
+    caret-color: #1A1A2E;
+}
+[data-baseweb="base-input"] input::placeholder { color: #94A3B8 !important; }
+[data-baseweb="input"]:focus-within {
+    border-color: #CC2936 !important;
+    box-shadow: 0 0 0 2px rgba(204,41,54,0.15) !important;
 }
 
-/* ── Metric ── */
+/* ══════════════════════════════════════════
+   CHECKBOXES & RADIO
+   ══════════════════════════════════════════ */
+.stCheckbox label { color: #374151 !important; font-size: 0.93rem; }
+.stRadio label    { color: #374151 !important; }
+.stRadio > div    { gap: 6px; }
+
+/* ══════════════════════════════════════════
+   TABS
+   ══════════════════════════════════════════ */
+[data-testid="stTabs"] [data-baseweb="tab"] {
+    color: #64748B !important;
+    font-weight: 500;
+}
+[data-testid="stTabs"] [aria-selected="true"] {
+    color: #CC2936 !important;
+    font-weight: 600;
+    border-bottom-color: #CC2936 !important;
+}
+
+/* ══════════════════════════════════════════
+   METRICS
+   ══════════════════════════════════════════ */
 [data-testid="metric-container"] {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
     border-radius: 10px;
-    padding: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
-[data-testid="metric-container"] label { color: #8BA3C7 !important; font-size: 0.8rem; }
-[data-testid="metric-container"] [data-testid="stMetricValue"] { color: #FFFFFF !important; font-size: 1.5rem; font-weight: 700; }
-
-/* ── Login form labels — force white ── */
-[data-testid="stForm"] label,
-[data-testid="stForm"] .stRadio label,
-[data-testid="stForm"] p,
-[data-testid="stForm"] div[data-testid="stMarkdownContainer"] p {
-    color: #FFFFFF !important;
+[data-testid="metric-container"] label {
+    color: #64748B !important;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+[data-testid="metric-container"] [data-testid="stMetricValue"] {
+    color: #1A1A2E !important;
+    font-size: 1.6rem;
+    font-weight: 700;
 }
 
-/* ── Login card header ── */
-.login-card-header {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
+/* ══════════════════════════════════════════
+   LOGIN PAGE — keep dark for visual impact
+   ══════════════════════════════════════════ */
+.login-page-bg {
+    /* applied via wrapper div in show_login() */
+}
+.login-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
     border-top: 4px solid #CC2936;
     border-radius: 16px;
-    padding: 32px 36px 24px 36px;
+    padding: 32px 36px 28px 36px;
     max-width: 480px;
     margin: 0 auto;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
 }
+.login-card h2 { color: #1A1A2E !important; }
+.login-card p  { color: #64748B !important; }
 
-/* ── Login form inputs ── */
-[data-baseweb="input"] { background-color: #1E3A5F !important; border-color: #2a4a6e !important; }
-[data-baseweb="base-input"] { background-color: #1E3A5F !important; }
-[data-baseweb="base-input"] input { background-color: #1E3A5F !important; color: #FFFFFF !important; caret-color: #FFFFFF; }
-[data-baseweb="base-input"] input::placeholder { color: #6B8BAF !important; }
-[data-baseweb="input"]:focus-within { border-color: #CC2936 !important; box-shadow: 0 0 0 2px rgba(204,41,54,0.2) !important; }
+/* Login form field labels */
+[data-testid="stForm"] label { color: #374151 !important; font-weight: 500; }
+[data-testid="stForm"] .stRadio label { color: #374151 !important; }
+[data-testid="stForm"] p { color: #374151 !important; }
+
+/* ══════════════════════════════════════════
+   MISC
+   ══════════════════════════════════════════ */
+.stSuccess, .stError, .stWarning, .stInfo { border-radius: 8px; }
+hr { border-color: #E2E8F0 !important; }
+
+/* Markdown default text */
+[data-testid="stMarkdownContainer"] p { color: #374151 !important; }
+[data-testid="stMarkdownContainer"] li { color: #374151 !important; }
+[data-testid="stMarkdownContainer"] h3 { color: #1A1A2E !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -518,55 +621,48 @@ def update_progress(module_key):
 #  LOGIN SCREEN
 # ─────────────────────────────────────────────
 def show_login():
-    # Top padding
-    st.markdown("<div style='padding-top:40px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='padding-top:48px'></div>", unsafe_allow_html=True)
 
-    # ── Logo + title (full-width, centered) ──
+    # ── Logo + title ──
     st.markdown("""
-    <div style="text-align:center; margin-bottom:32px;">
-        <div style="display:inline-flex; align-items:center; justify-content:center;
-                    margin-bottom:16px;">
+    <div style="text-align:center; margin-bottom:36px;">
+        <div style="margin-bottom:20px;">
             <img src="https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
                  alt="AAP Logo"
-                 style="height:80px; max-width:260px; object-fit:contain;"
-                 onerror="this.style.display='none'; document.getElementById('aap-logo-fallback').style.display='inline-flex';">
+                 style="height:70px; max-width:240px; object-fit:contain; filter: brightness(0) invert(0);"
+                 onerror="this.style.display='none'; document.getElementById('aap-logo-fallback').style.display='inline-block';">
             <div id="aap-logo-fallback"
-                 style="display:none; align-items:center; justify-content:center;
-                        background:#CC2936; border-radius:18px; width:72px; height:72px;
-                        box-shadow:0 4px 16px rgba(204,41,54,0.4);">
-                <span style="color:#fff; font-size:1.2rem; font-weight:700; letter-spacing:-0.03em;">AAP</span>
+                 style="display:none; background:#CC2936; border-radius:12px;
+                        padding:10px 20px; display:none; margin:0 auto;">
+                <span style="color:#fff; font-size:1.4rem; font-weight:700; letter-spacing:0.05em;">AAP</span>
             </div>
         </div>
-        <h1 style="font-family:'Playfair Display', serif; color:#FFFFFF;
-                   font-size:2rem; font-weight:700; margin:0 0 6px 0; letter-spacing:-0.01em;">
+        <h1 style="font-size:1.9rem; font-weight:700; color:#1A1A2E;
+                   margin:0 0 6px 0; letter-spacing:-0.02em;">
             American Associated Pharmacies
         </h1>
-        <p style="color:#8BA3C7; font-size:1rem; margin:0; font-weight:400;">
+        <p style="color:#64748B; font-size:1rem; margin:0;">
             New Hire Orientation Portal
         </p>
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Card header (pure HTML — branding only) ──
     col_l, col_m, col_r = st.columns([1, 1.3, 1])
     with col_m:
         st.markdown("""
-        <div class="login-card-header">
-            <h2 style="color:#FFFFFF; font-size:1.15rem; font-weight:600; margin:0 0 8px 0;">
+        <div class="login-card">
+            <h2 style="font-size:1.15rem; font-weight:600; margin:0 0 6px 0; text-align:center;">
                 Welcome! Let's get you started.
             </h2>
-            <p style="color:#8BA3C7; font-size:0.87rem; margin:0; line-height:1.6;">
-                Your <strong style="color:#C8D6E8;">Access Code</strong> and
-                <strong style="color:#C8D6E8;">Employee ID</strong>
+            <p style="font-size:0.87rem; margin:0 0 4px 0; text-align:center; line-height:1.6;">
+                Your <strong>Access Code</strong> and <strong>Employee ID</strong>
                 were provided by HR during onboarding.
             </p>
         </div>
         """, unsafe_allow_html=True)
 
-        # Small gap between card header and form fields
-        st.markdown("<div style='height:2px'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
-        # ── Streamlit form (inputs rendered natively, CSS handles their styling) ──
         with st.form("login_form", clear_on_submit=False):
             access_code = st.text_input(
                 "Access Code",
@@ -581,7 +677,7 @@ def show_login():
                 "Full Name",
                 placeholder="As it appears in your HR paperwork",
             )
-            st.markdown("<div style='margin-top:12px;margin-bottom:4px;color:#C8D6E8;font-size:0.9rem;font-weight:500;'>Department Track</div>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-top:12px;margin-bottom:4px;color:#374151;font-size:0.9rem;font-weight:500;'>Department Track</div>", unsafe_allow_html=True)
             role_track = st.radio(
                 "Department Track",
                 options=["General / Administrative", "Warehouse"],
@@ -597,7 +693,6 @@ def show_login():
                         ok, reason = verify_employee(access_code, employee_id, full_name)
                     if ok:
                         track = "warehouse" if role_track == "Warehouse" else "general"
-                        # Initialize progress keys based on track
                         if track == "warehouse":
                             prog_keys = {m["key"]: 0 for m in WAREHOUSE_MODULES}
                             chk_keys  = {m["key"]: {} for m in WAREHOUSE_MODULES}
@@ -616,13 +711,12 @@ def show_login():
                     else:
                         st.error(f"❌ {reason}")
 
-        # ── Footer contact info ──
         st.markdown("""
         <div style="text-align:center; margin-top:20px; padding-top:16px;
-                    border-top:1px solid #1E3A5F; max-width:360px; margin-left:auto; margin-right:auto;">
-            <p style="color:#6B8BAF; font-size:0.82rem; margin:0; line-height:1.8;">
+                    border-top:1px solid #E2E8F0;">
+            <p style="color:#94A3B8; font-size:0.82rem; margin:0; line-height:1.8;">
                 Need help? Contact HR<br>
-                <span style="color:#C8D6E8; font-weight:500;">Nicole Thornton</span>
+                <span style="color:#475569; font-weight:500;">Nicole Thornton</span>
                 · nicole.thornton@apirx.com · 256-574-7528
             </p>
         </div>
@@ -637,7 +731,16 @@ if st.session_state.authenticated:
     active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
 
     with st.sidebar:
-        st.markdown("### 💊 AAP Orientation")
+        # Logo in sidebar
+        st.markdown("""
+        <div style="text-align:center; padding:16px 8px 8px 8px; margin-bottom:4px;">
+            <img src="https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
+                 alt="AAP"
+                 style="height:44px; max-width:160px; object-fit:contain;"
+                 onerror="this.style.display='none'; document.getElementById('sb-logo-fallback').style.display='block';">
+            <div id="sb-logo-fallback" style="display:none; color:#fff; font-size:1.1rem; font-weight:700; letter-spacing:0.05em;">AAP</div>
+        </div>
+        """, unsafe_allow_html=True)
         st.markdown("---")
 
         track_label = "🏭 Warehouse Track" if st.session_state.get("role_track") == "warehouse" else "🖥️ General Track"

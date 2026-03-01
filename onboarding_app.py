@@ -339,6 +339,63 @@ def get_employee_sheet(client):
     except Exception:
         return None
 
+
+def get_profile(employee_id, full_name):
+    """Return a normalized profile dict from Employee Roster."""
+    client = get_gsheet_client()
+    if not client:
+        return None
+    emp_sheet = get_employee_sheet(client)
+    if not emp_sheet:
+        return None
+
+    try:
+        records = emp_sheet.get_all_records()
+    except Exception:
+        return None
+
+    lookup_id = employee_id.strip().lower()
+    lookup_name = full_name.strip().lower()
+    for row in records:
+        row_id = str(row.get("Employee ID", "")).strip()
+        row_name = str(row.get("Full Name", "")).strip()
+        if row_id.lower() != lookup_id:
+            continue
+        if row_name.lower() != lookup_name:
+            return None
+
+        # Track inference from roster fields (fail-safe to Admin)
+        role_hint = " ".join([
+            str(row.get("Role", "")),
+            str(row.get("Department", "")),
+            str(row.get("Track", "")),
+            str(row.get("Location", "")),
+        ]).lower()
+        track = "Warehouse" if "warehouse" in role_hint else "Admin"
+        return {
+            "employee_id": row_id,
+            "full_name": row_name,
+            "track": track,
+        }
+    return None
+
+
+def authenticate(access_code, employee_id, full_name):
+    """Authenticate using shared access code + roster-backed identity."""
+    try:
+        correct_code = st.secrets["orientation_access_code"]
+    except Exception as e:
+        return False, f"Access code configuration error: {e}", None
+
+    if access_code.strip() != str(correct_code).strip():
+        return False, "Incorrect access code.", None
+
+    profile = get_profile(employee_id, full_name)
+    if not profile:
+        return False, "Employee ID and Full Name could not be verified.", None
+
+    return True, "", profile
+
 # ─────────────────────────────────────────────
 #  AUTHENTICATION
 #
@@ -356,43 +413,8 @@ def verify_employee(access_code, employee_id, full_name):
     Returns (False, reason_string) on failure.
     Fails closed - any sheet/network error denies access.
     """
-    # ── Step 1: Check access code against Streamlit secret ──────────────────
-    try:
-        correct_code = st.secrets["orientation_access_code"]
-    except Exception as e:
-        return False, f"Access code configuration error: {e}"
-
-    if access_code.strip() != correct_code.strip():
-        return False, f"Incorrect access code. (Entered {len(access_code.strip())} chars, expected {len(correct_code.strip())} chars)"
-
-    # ── Step 2 & 3: Validate Employee ID + Name against roster ──────────────
-    client = get_gsheet_client()
-    if not client:
-        return False, "Unable to connect to Google Sheets. Check gcp_service_account secret and service account permissions."
-
-    emp_sheet = get_employee_sheet(client)
-    if not emp_sheet:
-        return False, "Could not open 'Employee Roster' tab. Check that the tab exists in 'AAP New Hire Orientation Progress'."
-
-    try:
-        records = emp_sheet.get_all_records()
-        if not records:
-            return False, "Employee Roster sheet appears to be empty. Please check the sheet has data."
-
-        # Show what columns were found (first record keys)
-        col_names = list(records[0].keys()) if records else []
-
-        for row in records:
-            row_id   = str(row.get("Employee ID", "")).strip().lower()
-            row_name = str(row.get("Full Name",   "")).strip().lower()
-            if row_id == employee_id.strip().lower():
-                if row_name == full_name.strip().lower():
-                    return True, ""
-                else:
-                    return False, f"ID matched but name did not. Sheet has: '{row.get('Full Name', '')}' - you entered: '{full_name.strip()}'"
-        return False, f"Employee ID '{employee_id.strip()}' not found. Sheet has {len(records)} rows. Columns found: {col_names}"
-    except Exception as e:
-        return False, f"Verification error: {e}"
+    ok, msg, _ = authenticate(access_code, employee_id, full_name)
+    return ok, msg
 
 
 def _upsert_progress_row(sheet, employee_id, employee_name, module_key, pct, checklist_items, quiz_score=None):
@@ -585,21 +607,13 @@ WAREHOUSE_MODULES = [
     },
 ]
 
-defaults = {
-    "authenticated": False,
-    "username": "",
-    "employee_id": "",
-    "role_track": "",          # "general" or "warehouse"
-    "selected_module": None,
-    "sheet_loaded": False,
-    "progress": {m["key"]: 0 for m in MODULES},
-    "quiz_results": {},
-    "checklist_items": {m["key"]: {} for m in MODULES},
-    "auth_error": "",
-}
-for k, v in defaults.items():
-    if k not in st.session_state:
-        st.session_state[k] = v
+TRACK_ADMIN = "Admin"
+TRACK_WAREHOUSE = "Warehouse"
+
+
+def visible_modules(track):
+    return WAREHOUSE_MODULES if track == TRACK_WAREHOUSE else MODULES
+
 
 # ─────────────────────────────────────────────
 #  HELPER FUNCTIONS
@@ -2547,25 +2561,30 @@ def show_wh_module_firststeps():
 # ─────────────────────────────────────────────
 
 # ── Template-style helpers ────────────────────────────────
-def _init_state():
+def ensure_session_defaults():
     defaults = {
         "authenticated": False,
         "employee_id": "",
         "full_name": "",
-        "role_track": "General / Administrative",
+        "role_track": TRACK_ADMIN,
         "progress": {},          # module_key -> list[str] completed checklist items
         "notes": {},             # module_key -> str
         "selected_module": None, # dict module
         "pending_nav": None,
         "sidebar_nav": "🏠  Home",
+        "auth_error": "",
     }
     for k, v in defaults.items():
         if k not in st.session_state:
             st.session_state[k] = v
 
 
+def _init_state():
+    ensure_session_defaults()
+
+
 def _modules_for_track():
-    return WAREHOUSE_MODULES if st.session_state.role_track == "Warehouse" else MODULES
+    return visible_modules(st.session_state.role_track)
 
 
 def _get_checklist_for_module(module_key: str):
@@ -2662,7 +2681,7 @@ def _show_login_screen():
             st.markdown("#### Track")
             role_track = st.radio(
                 "Department Track",
-                options=["General / Administrative", "Warehouse"],
+                options=[TRACK_ADMIN, TRACK_WAREHOUSE],
                 label_visibility="collapsed",
             )
 
@@ -2673,12 +2692,12 @@ def _show_login_screen():
                 st.error("Please fill in all fields to continue.")
             else:
                 with st.spinner("Verifying…"):
-                    ok, reason = verify_employee(access_code, employee_id, full_name)
+                    ok, reason, profile = authenticate(access_code, employee_id, full_name)
                 if ok:
                     st.session_state.authenticated = True
-                    st.session_state.employee_id = employee_id.strip()
-                    st.session_state.full_name = full_name.strip()
-                    st.session_state.role_track = "Warehouse" if role_track == "Warehouse" else "General / Administrative"
+                    st.session_state.employee_id = profile["employee_id"]
+                    st.session_state.full_name = profile["full_name"]
+                    st.session_state.role_track = profile.get("track") or role_track
 
                     st.session_state.progress = load_progress(st.session_state.employee_id) or {}
                     st.session_state.notes = load_notes(st.session_state.employee_id) or {}
@@ -2762,11 +2781,11 @@ def _show_module_page(mod):
 
     with tab1:
         if st.session_state.role_track == "Warehouse":
-            if key == "welcome": show_wh_module_welcome()
-            elif key == "conduct": show_wh_module_conduct()
-            elif key == "safety": show_wh_module_safety()
-            elif key == "benefits": show_wh_module_benefits()
-            elif key == "firststeps": show_wh_module_firststeps()
+            if key == "wh_welcome": show_wh_module_welcome()
+            elif key == "wh_conduct": show_wh_module_conduct()
+            elif key == "wh_safety": show_wh_module_safety()
+            elif key == "wh_benefits": show_wh_module_benefits()
+            elif key == "wh_firststeps": show_wh_module_firststeps()
             else:
                 st.info("Content coming soon.")
         else:

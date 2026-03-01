@@ -395,28 +395,49 @@ def verify_employee(access_code, employee_id, full_name):
         return False, f"Verification error: {e}"
 
 
-def save_progress(employee_id, employee_name, module_key, pct, checklist_items, quiz_score):
+def _upsert_progress_row(sheet, employee_id, employee_name, module_key, pct, checklist_items, quiz_score=None):
+    """Upsert a single row in the progress sheet."""
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    checklist_json = json.dumps(checklist_items)
+    records = sheet.get_all_records()
+    row_idx = None
+    for i, row in enumerate(records, start=2):
+        if str(row.get("Employee ID", "")).strip() == str(employee_id).strip() and str(row.get("Module Key", "")).strip() == str(module_key).strip():
+            row_idx = i
+            break
+    data = [employee_id, employee_name, module_key, pct, checklist_json, quiz_score or "", now]
+    if row_idx:
+        sheet.update(f"A{row_idx}:G{row_idx}", [data])
+    else:
+        sheet.append_row(data)
+
+
+def save_progress(employee_id, progress_dict):
+    """Persist per-module checklist completion.
+
+    Internal structure used by this app:
+      progress_dict[module_key] -> list[str] of completed checklist items
+    """
     client = get_gsheet_client()
     if not client:
         return
     sheet = get_sheet(client)
     if not sheet:
         return
+    employee_name = st.session_state.get("full_name", "")
     try:
-        now = datetime.now().strftime("%Y-%m-%d %H:%M")
-        checklist_json = json.dumps(checklist_items)
-        records = sheet.get_all_records()
-        row_idx = None
-        for i, row in enumerate(records, start=2):
-            if row.get("Employee ID") == employee_id and row.get("Module Key") == module_key:
-                row_idx = i
-                break
-        # Store both ID and name so the sheet is human-readable for HR
-        data = [employee_id, employee_name, module_key, pct, checklist_json, quiz_score, now]
-        if row_idx:
-            sheet.update(f"A{row_idx}:G{row_idx}", [data])
-        else:
-            sheet.append_row(data)
+        # Save each module row
+        for m in _modules_for_track():
+            mk = m["key"]
+            items = _get_checklist_for_module(mk)
+            completed = progress_dict.get(mk, []) or []
+            pct = int(round((len(completed) / len(items)) * 100)) if items else 0
+            _upsert_progress_row(sheet, employee_id, employee_name, mk, pct, completed, "")
+
+        # Also persist notes in the same sheet under a reserved module key
+        notes = st.session_state.get("notes", {}) or {}
+        if notes:
+            _upsert_progress_row(sheet, employee_id, employee_name, "__notes__", 0, {"notes": notes}, "")
     except Exception:
         pass
 
@@ -431,16 +452,52 @@ def load_progress(employee_id):
         records = sheet.get_all_records()
         result = {}
         for row in records:
-            if str(row.get("Employee ID", "")).strip() == employee_id.strip():
-                mk = row.get("Module Key", "")
-                result[mk] = {
-                    "pct": row.get("Completion %", 0),
-                    "checklist": json.loads(row.get("Checklist Items", "{}")),
-                    "quiz_score": row.get("Quiz Score", None),
-                }
+            if str(row.get("Employee ID", "")).strip() != str(employee_id).strip():
+                continue
+            mk = str(row.get("Module Key", "")).strip()
+            if not mk or mk == "__notes__":
+                continue
+            raw = row.get("Checklist Items", "")
+            try:
+                checklist = json.loads(raw) if raw else []
+            except Exception:
+                checklist = []
+            if isinstance(checklist, dict):
+                checklist = checklist.get("items", []) or []
+            result[mk] = checklist
         return result
     except Exception:
         return {}
+
+
+def load_notes(employee_id):
+    """Load notes dict from the progress sheet (reserved module key: __notes__)."""
+    client = get_gsheet_client()
+    if not client:
+        return {}
+    sheet = get_sheet(client)
+    if not sheet:
+        return {}
+    try:
+        records = sheet.get_all_records()
+        for row in records:
+            if str(row.get("Employee ID", "")).strip() != str(employee_id).strip():
+                continue
+            if str(row.get("Module Key", "")).strip() != "__notes__":
+                continue
+            raw = row.get("Checklist Items", "")
+            payload = json.loads(raw) if raw else {}
+            if isinstance(payload, dict):
+                return payload.get("notes", {}) or {}
+        return {}
+    except Exception:
+        return {}
+
+
+def save_notes(employee_id, notes_dict):
+    """Persist notes (and also update progress rows via save_progress)."""
+    st.session_state.notes = notes_dict or {}
+    save_progress(employee_id, st.session_state.get("progress", {}) or {})
 
 # ─────────────────────────────────────────────
 #  MODULE DATA
@@ -568,20 +625,13 @@ def calculate_module_pct(module_key, checklists, quiz_results):
     return int(checklist_pct + quiz_pct)
 
 def update_progress(module_key):
-    pct = calculate_module_pct(
-        module_key,
-        st.session_state.checklist_items,
-        st.session_state.quiz_results,
-    )
-    st.session_state.progress[module_key] = pct
-    if st.session_state.authenticated and st.session_state.employee_id:
-        items = st.session_state.checklist_items.get(module_key, {})
-        score = st.session_state.quiz_results.get(module_key)
-        save_progress(
-            st.session_state.employee_id,
-            st.session_state.username,
-            module_key, pct, items, score,
-        )
+    """Backward-compat shim.
+
+    The rebuilt app tracks progress as a list of completed checklist items per module.
+    Progress is persisted via save_progress(employee_id, progress_dict).
+    """
+    if st.session_state.get("authenticated") and st.session_state.get("employee_id"):
+        save_progress(st.session_state.employee_id, st.session_state.get("progress", {}) or {})
 
 # ─────────────────────────────────────────────
 #  LOGIN SCREEN

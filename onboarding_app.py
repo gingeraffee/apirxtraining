@@ -213,7 +213,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 [data-testid="metric-container"] label { color: #8BA3C7 !important; font-size: 0.8rem; }
 [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #FFFFFF !important; font-size: 1.5rem; font-weight: 700; }
 
-/* ── Login card header (pure HTML block, no Streamlit inputs inside) ── */
+/* ── Login card header ── */
 .login-card-header {
     background: #0D1F3C;
     border: 1px solid #1E3A5F;
@@ -225,6 +225,13 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     text-align: center;
 }
+
+/* ── Login form inputs ── */
+[data-baseweb="input"] { background-color: #1E3A5F !important; border-color: #2a4a6e !important; }
+[data-baseweb="base-input"] { background-color: #1E3A5F !important; }
+[data-baseweb="base-input"] input { background-color: #1E3A5F !important; color: #FFFFFF !important; caret-color: #FFFFFF; }
+[data-baseweb="base-input"] input::placeholder { color: #6B8BAF !important; }
+[data-baseweb="input"]:focus-within { border-color: #CC2936 !important; box-shadow: 0 0 0 2px rgba(204,41,54,0.2) !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -457,44 +464,6 @@ def update_progress(module_key):
 #  LOGIN SCREEN
 # ─────────────────────────────────────────────
 def show_login():
-    # ── Inject login-only CSS (scoped to this page only, removed after login) ──
-    st.markdown("""
-    <style>
-    input, [data-baseweb="input"] input {
-        background-color: #1E3A5F !important;
-        color: #FFFFFF !important;
-        caret-color: #FFFFFF !important;
-    }
-    input::placeholder { color: #6B8BAF !important; opacity: 1 !important; }
-    [data-baseweb="input"], [data-baseweb="base-input"] {
-        background-color: #1E3A5F !important;
-        border-color: #2a4a6e !important;
-    }
-    [data-baseweb="input"]:focus-within {
-        border-color: #CC2936 !important;
-        box-shadow: 0 0 0 2px rgba(204,41,54,0.25) !important;
-    }
-    .stTextInput label {
-        color: #C8D6E8 !important;
-        font-weight: 500 !important;
-        font-size: 0.9rem !important;
-    }
-    [data-testid="stFormSubmitButton"] > button {
-        background: #CC2936 !important;
-        color: #fff !important;
-        border: none !important;
-        border-radius: 8px !important;
-        font-size: 1rem !important;
-        font-weight: 600 !important;
-        padding: 12px 0 !important;
-        margin-top: 6px !important;
-        width: 100% !important;
-        transition: background 0.2s !important;
-    }
-    [data-testid="stFormSubmitButton"] > button:hover { background: #a5212c !important; }
-    </style>
-    """, unsafe_allow_html=True)
-
     # Top padding
     st.markdown("<div style='padding-top:40px'></div>", unsafe_allow_html=True)
 

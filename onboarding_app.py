@@ -17,16 +17,13 @@ st.set_page_config(
 # ─────────────────────────────────────────────
 #  CUSTOM CSS
 # ─────────────────────────────────────────────
-st.markdown("""
+st.html("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
-/* ── Base ── */
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-
 .stApp { background-color: #F3F4F6; color: #1F2937; }
 
-/* ── Sidebar ── */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0D1F3C 0%, #091629 100%);
     border-right: none;
@@ -50,7 +47,6 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     color: #fff !important;
 }
 
-/* ── Welcome Banner ── */
 .welcome-banner {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
@@ -68,7 +64,6 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 }
 .welcome-banner p { color: #6B7280; font-size: 1rem; margin: 0; }
 
-/* ── Module Cards ── */
 .module-card {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
@@ -76,7 +71,6 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     padding: 24px;
     margin-bottom: 16px;
     transition: all 0.2s;
-    cursor: pointer;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 .module-card:hover { border-color: #CC2936; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(204,41,54,0.1); }
@@ -92,11 +86,8 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     border-radius: 20px;
     margin-bottom: 10px;
 }
-.module-card .badge.complete {
-    background: #059669;
-}
+.module-card .badge.complete { background: #059669; }
 
-/* ── Section Content ── */
 .content-section {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
@@ -118,7 +109,6 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .content-section ul { padding-left: 20px; }
 .content-section strong { color: #0D1F3C; }
 
-/* ── Info Boxes ── */
 .info-box {
     background: #FFF7F7;
     border-left: 3px solid #CC2936;
@@ -131,7 +121,6 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .info-box.green { background: #F0FDF4; border-left-color: #059669; }
 .info-box.yellow { background: #FFFBEB; border-left-color: #D97706; }
 
-/* ── Progress Bar ── */
 .progress-container {
     background: #E5E7EB;
     border-radius: 8px;
@@ -139,6 +128,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     margin: 8px 0 4px 0;
     overflow: hidden;
 }
+[data-testid="stSidebar"] .progress-container { background: #1E3A5F !important; }
 .progress-fill {
     background: linear-gradient(90deg, #CC2936, #e8424f);
     height: 100%;
@@ -146,21 +136,10 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     transition: width 0.5s ease;
 }
 
-/* ── Quiz ── */
-.quiz-question {
-    background: #F9FAFB;
-    border: 1px solid #E5E7EB;
-    border-radius: 10px;
-    padding: 20px 24px;
-    margin-bottom: 16px;
-}
-.quiz-question p { color: #0D1F3C; font-weight: 500; font-size: 1rem; }
-
-/* ── Buttons ── */
 .stButton > button {
-    background: #CC2936;
+    background: #CC2936 !important;
     color: white !important;
-    border: none;
+    border: none !important;
     border-radius: 8px;
     padding: 10px 24px;
     font-weight: 600;
@@ -168,7 +147,6 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 }
 .stButton > button:hover { background: #a5212c !important; color: white !important; }
 
-/* ── Table ── */
 .styled-table {
     width: 100%;
     border-collapse: collapse;
@@ -193,23 +171,10 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 }
 .styled-table tr:nth-child(even) td { background: #F9FAFB; }
 
-/* ── Checkbox overrides ── */
 .stCheckbox label { color: #374151 !important; font-size: 0.93rem; }
-
-/* ── Radio overrides ── */
 .stRadio label { color: #374151 !important; }
 .stRadio > div { gap: 6px; }
 
-/* ── Success / Error ── */
-.stSuccess, .stError, .stWarning, .stInfo { border-radius: 8px; }
-
-/* ── Sidebar progress bar text ── */
-[data-testid="stSidebar"] small { color: #8BA3C7 !important; }
-
-/* ── Sidebar progress track ── */
-[data-testid="stSidebar"] .progress-container { background: #1E3A5F !important; }
-
-/* ── Metric ── */
 [data-testid="metric-container"] {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
@@ -221,7 +186,6 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 [data-testid="metric-container"] label { color: #6B7280 !important; font-size: 0.8rem; font-weight: 500; }
 [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #0D1F3C !important; font-size: 1.5rem; font-weight: 700; }
 
-/* ── Login card header ── */
 .login-card-header {
     background: #FFFFFF;
     border: 1px solid #E5E7EB;
@@ -234,24 +198,21 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     text-align: center;
 }
 
-/* ── Login form inputs ── */
 [data-baseweb="input"] { background-color: #F9FAFB !important; border-color: #D1D5DB !important; }
 [data-baseweb="base-input"] { background-color: #F9FAFB !important; }
 [data-baseweb="base-input"] input { background-color: #F9FAFB !important; color: #1F2937 !important; caret-color: #1F2937; }
 [data-baseweb="base-input"] input::placeholder { color: #9CA3AF !important; }
 [data-baseweb="input"]:focus-within { border-color: #CC2936 !important; box-shadow: 0 0 0 2px rgba(204,41,54,0.15) !important; }
 
-/* ── Divider ── */
 hr { border-color: #E5E7EB !important; }
 
-/* ── Tab styling ── */
 .stTabs [data-baseweb="tab-list"] { background: #F3F4F6; border-radius: 8px; padding: 4px; gap: 4px; }
 .stTabs [data-baseweb="tab"] { background: transparent; border-radius: 6px; color: #6B7280 !important; font-weight: 500; }
 .stTabs [aria-selected="true"] { background: #FFFFFF !important; color: #CC2936 !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
 .stTabs [data-baseweb="tab-border"] { display: none !important; }
 .stTabs [data-baseweb="tab-panel"] { padding-top: 16px; }
 </style>
-""", unsafe_allow_html=True)
+""")
 
 # ─────────────────────────────────────────────
 #  GOOGLE SHEETS INTEGRATION
@@ -483,10 +444,10 @@ def update_progress(module_key):
 # ─────────────────────────────────────────────
 def show_login():
     # Top padding
-    st.markdown("<div style='padding-top:40px'></div>", unsafe_allow_html=True)
+    st.html("<div style='padding-top:40px'></div>")
 
     # ── Logo + title (full-width, centered) ──
-    st.markdown("""
+    st.html("""
     <div style="text-align:center; margin-bottom:32px;">
         <div style="display:inline-flex; align-items:center; justify-content:center;
                     background:#CC2936; border-radius:18px; width:72px; height:72px;
@@ -501,12 +462,12 @@ def show_login():
             New Hire Orientation Portal
         </p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     # ── Card header (pure HTML — branding only) ──
     col_l, col_m, col_r = st.columns([1, 1.3, 1])
     with col_m:
-        st.markdown("""
+        st.html("""
         <div class="login-card-header">
             <h2 style="color:#0D1F3C; font-size:1.15rem; font-weight:600; margin:0 0 8px 0;">
                 Welcome! Let's get you started.
@@ -517,10 +478,10 @@ def show_login():
                 were provided by HR during onboarding.
             </p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         # Small gap between card header and form fields
-        st.markdown("<div style='height:2px'></div>", unsafe_allow_html=True)
+        st.html("<div style='height:2px'></div>")
 
         # ── Streamlit form (inputs rendered natively, CSS handles their styling) ──
         with st.form("login_form", clear_on_submit=False):
@@ -555,7 +516,7 @@ def show_login():
                         st.error(f"❌ {reason}")
 
         # ── Footer contact info ──
-        st.markdown("""
+        st.html("""
         <div style="text-align:center; margin-top:20px; padding-top:16px;
                     border-top:1px solid #E5E7EB; max-width:360px; margin-left:auto; margin-right:auto;">
             <p style="color:#9CA3AF; font-size:0.82rem; margin:0; line-height:1.8;">
@@ -564,7 +525,7 @@ def show_login():
                 · nicole.thornton@apirx.com · 256-574-7528
             </p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
 
 # ─────────────────────────────────────────────
@@ -575,13 +536,13 @@ if st.session_state.authenticated:
         st.markdown("### 💊 AAP Orientation")
         st.markdown("---")
 
-        st.markdown(f"""
+        st.html(f"""
         <div style="margin-bottom:12px;">
             <small style="color:#8BA3C7;">Signed in as</small><br>
             <strong style="color:#fff;">{st.session_state.username}</strong><br>
             <small style="color:#8BA3C7;">ID: {st.session_state.employee_id}</small>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
         if st.button("🚪 Sign Out", key="sign_out"):
             for key in list(st.session_state.keys()):
@@ -610,15 +571,15 @@ if st.session_state.authenticated:
             label = f"{m['icon']}  {m['number']}. {m['title']}"
             if st.button(label, key=f"nav_{m['key']}"):
                 st.session_state.selected_module = m["key"]
-            st.markdown(pct_bar(pct), unsafe_allow_html=True)
+            st.html(pct_bar(pct))
 
         st.markdown("---")
         total_pct = int(sum(st.session_state.progress.values()) / len(MODULES))
         st.markdown(f"**Overall Progress: {total_pct}%**")
-        st.markdown(pct_bar(total_pct), unsafe_allow_html=True)
+        st.html(pct_bar(total_pct))
 
         st.markdown("---")
-        st.markdown("""
+        st.html("""
         <small style='color:#8BA3C7'>
         <b>HR Contact</b><br>
         Nicole Thornton<br>
@@ -626,19 +587,19 @@ if st.session_state.authenticated:
         📞 256-574-7528<br>
         ✉ Nicole.thornton@apirx.com
         </small>
-        """, unsafe_allow_html=True)
+        """)
 
 # ─────────────────────────────────────────────
 #  MAIN CONTENT — HOME
 # ─────────────────────────────────────────────
 def show_home():
     name_display = f", {st.session_state.username}" if st.session_state.username else ""
-    st.markdown(f"""
+    st.html(f"""
     <div class="welcome-banner">
         <h1>Welcome to American Associated Pharmacies{name_display}! 🎉</h1>
         <p>We're thrilled to have you on board. Complete all five orientation modules below to finish your onboarding.</p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     # Summary metrics
     completed = sum(1 for p in st.session_state.progress.values() if p == 100)
@@ -655,13 +616,13 @@ def show_home():
         pct = st.session_state.progress.get(m["key"], 0)
         badge_class = "complete" if pct == 100 else ""
         badge_text = "✅ Complete" if pct == 100 else f"⏳ {pct}% Done"
-        st.markdown(f"""
+        st.html(f"""
         <div class="module-card">
             <span class="badge {badge_class}">{badge_text}</span>
             <h3>{m['icon']} Module {m['number']}: {m['title']}</h3>
             <p>{m['subtitle']}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
         if st.button(f"Open Module {m['number']}", key=f"open_{m['key']}"):
             st.session_state.selected_module = m["key"]
             st.rerun()
@@ -670,7 +631,7 @@ def show_home():
 #  MODULE 1 — WELCOME TO AAP
 # ─────────────────────────────────────────────
 def show_module_welcome():
-    st.markdown("""
+    st.html("""
     <div class="content-section">
         <h2>🏢 Module 1: Welcome to AAP</h2>
 
@@ -703,7 +664,7 @@ def show_module_welcome():
         <p>Our values guide every decision, discussion and behavior. It's not only <em>what</em> we do that matters,
         but <em>how</em> we do it.</p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     values = [
         ("🎯", "Customer Focus", "Our primary focus is to meet customer requirements and strive to exceed customer expectations. Excellent service to the outside customer is dependent upon healthy internal customer service practices and teamwork. Customer Service is not just a department — it is an attitude."),
@@ -714,12 +675,12 @@ def show_module_welcome():
     ]
 
     for icon, value, desc in values:
-        st.markdown(f"""
+        st.html(f"""
         <div class="content-section" style="padding:18px 24px;margin-bottom:10px;">
-            <h3 style="margin-top:0;color:#CC2936;">{icon} {value}</h3>
-            <p style="margin:0;color:#374151;">{desc}</p>
+            <h3 style="margin-top:0">{icon} {value}</h3>
+            <p style="margin:0">{desc}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     # CHECKLIST
     st.markdown("### ✅ Module 1 Checklist")
@@ -782,7 +743,7 @@ def show_module_welcome():
 #  MODULE 2 — CODE OF CONDUCT
 # ─────────────────────────────────────────────
 def show_module_conduct():
-    st.markdown("""
+    st.html("""
     <div class="content-section">
         <h2>⚖️ Module 2: Code of Conduct & Ethics</h2>
 
@@ -814,9 +775,9 @@ def show_module_conduct():
             or potential conflict of interest.</li>
         </ul>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    st.markdown("""
+    st.html("""
     <div class="content-section">
         <h3>⚠️ Unacceptable Conduct</h3>
         <p>The following are examples of conduct that may result in disciplinary action, <strong>up to and including
@@ -839,9 +800,9 @@ def show_module_conduct():
             <li>Unsatisfactory performance or conduct</li>
         </ul>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    st.markdown("""
+    st.html("""
     <div class="content-section">
         <h3>🛡️ Equal Employment Opportunity (EEO)</h3>
         <p>Employment decisions at AAP are based on <strong>merit, qualifications, and abilities.</strong> AAP does
@@ -875,7 +836,7 @@ def show_module_conduct():
         unless otherwise permitted by your supervisor or by Company policy. <strong>Refusal to sign is grounds for
         immediate termination.</strong></p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     st.markdown("### ✅ Module 2 Checklist")
     checklist_items = {
@@ -943,7 +904,7 @@ def show_module_conduct():
 #  MODULE 3 — WORKPLACE POLICIES
 # ─────────────────────────────────────────────
 def show_module_policies():
-    st.markdown("""
+    st.html("""
     <div class="content-section">
         <h2>📋 Module 3: Workplace Policies</h2>
 
@@ -958,9 +919,9 @@ def show_module_policies():
 
         <p><strong>Point Values:</strong></p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    st.markdown("""
+    st.html("""
     <table class="styled-table">
         <tr><th>Reason</th><th>Points</th></tr>
         <tr><td>Tardy up to 5 minutes (grace period)</td><td>0</td></tr>
@@ -968,9 +929,9 @@ def show_module_policies():
         <tr><td>Full shift absence, tardy or early leave (4+ hours)</td><td>1</td></tr>
         <tr><td>Absence with no report or call 15+ minutes after start of workday</td><td>1½</td></tr>
     </table>
-    """, unsafe_allow_html=True)
+    """)
 
-    st.markdown("""
+    st.html("""
     <table class="styled-table">
         <tr><th>Points Accumulated (in 12 months)</th><th>Action</th></tr>
         <tr><td>5 points</td><td>Coaching Session</td></tr>
@@ -978,13 +939,13 @@ def show_module_policies():
         <tr><td>7 points</td><td>Written Warning</td></tr>
         <tr><td>8 points</td><td>Termination</td></tr>
     </table>
-    """, unsafe_allow_html=True)
+    """)
 
-    st.markdown(info_box("💡 <b>Perfect Attendance Rewards:</b> 1 point is removed after <b>2 consecutive months</b> of perfect attendance. Employees with <b>3 consecutive months</b> of perfect attendance receive a <b>$75 bonus</b> on their next paycheck."), unsafe_allow_html=True)
-    st.markdown(info_box("⚠️ <b>No Call / No Show:</b> 2 consecutive days without reporting in will be treated as a voluntary resignation.", "yellow"), unsafe_allow_html=True)
-    st.markdown(info_box("📋 <b>Doctor's Notes:</b> Required for illness greater than 1 day, up to a maximum of 3 consecutive days. The note must include dates of absence and the return-to-work date."), unsafe_allow_html=True)
+    st.html(info_box("💡 <b>Perfect Attendance Rewards:</b> 1 point is removed after <b>2 consecutive months</b> of perfect attendance. Employees with <b>3 consecutive months</b> of perfect attendance receive a <b>$75 bonus</b> on their next paycheck."))
+    st.html(info_box("⚠️ <b>No Call / No Show:</b> 2 consecutive days without reporting in will be treated as a voluntary resignation.", "yellow"))
+    st.html(info_box("📋 <b>Doctor's Notes:</b> Required for illness greater than 1 day, up to a maximum of 3 consecutive days. The note must include dates of absence and the return-to-work date."))
 
-    st.markdown("""
+    st.html("""
     <div class="content-section">
         <h3>👔 Personal Appearance</h3>
         <p>Dress requirements vary by department. Your supervisor will advise you on department-specific expectations.
@@ -1038,7 +999,7 @@ def show_module_policies():
         in hours. <strong>All overtime must be approved by your supervisor before it is performed.</strong>
         Unauthorized overtime or failure to work scheduled overtime may result in disciplinary action.</p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     st.markdown("### ✅ Module 3 Checklist")
     checklist_items = {
@@ -1101,24 +1062,24 @@ def show_module_policies():
 #  MODULE 4 — BENEFITS & TIME OFF
 # ─────────────────────────────────────────────
 def show_module_benefits():
-    st.markdown("""
+    st.html("""
     <div class="content-section">
         <h2>💼 Module 4: Benefits & Time Off</h2>
         <p>Benefits eligibility depends on your employment classification. Review the key differences below, then
         explore each benefit area.</p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["⏰ Leave & Holidays", "🏥 Health Benefits", "💰 401k & Life", "🌟 Perks & EAP", "FT vs PT Summary"])
 
     with tab1:
-        st.markdown("""
+        st.html("""
         <div class="content-section">
             <h3>🏖️ Vacation (Full-Time Only)</h3>
             <p>Vacation begins accruing after <strong>60 days of full-time service</strong> and is accrued weekly.</p>
         </div>
-        """, unsafe_allow_html=True)
-        st.markdown("""
+        """)
+        st.html("""
         <table class="styled-table">
             <tr><th>Length of Employment</th><th>Days Per Year</th><th>Hours Per Year</th><th>Accrual Rate</th></tr>
             <tr><td>60 days → 1st Anniversary</td><td>3</td><td>24</td><td>0.46 hrs/week</td></tr>
@@ -1129,25 +1090,25 @@ def show_module_benefits():
             <tr><td>10th → 19th Anniversary</td><td>17</td><td>136</td><td>2.62 hrs/week</td></tr>
             <tr><td>20th Anniversary+</td><td>19</td><td>152</td><td>2.93 hrs/week</td></tr>
         </table>
-        """, unsafe_allow_html=True)
-        st.markdown(info_box("Unused vacation may be banked up to 19 days (152 hours) total. Any remaining time beyond the bank limit is paid out. Accrued vacation is paid out upon termination."), unsafe_allow_html=True)
+        """)
+        st.html(info_box("Unused vacation may be banked up to 19 days (152 hours) total. Any remaining time beyond the bank limit is paid out. Accrued vacation is paid out upon termination."))
 
-        st.markdown("""
+        st.html("""
         <div class="content-section">
             <h3>📅 Personal Leave</h3>
             <p>Available to full-time and part-time employees after the initial 60-day waiting period.
             Personal leave <strong>does not carry over</strong> year to year and is not paid out upon termination.</p>
         </div>
-        """, unsafe_allow_html=True)
-        st.markdown("""
+        """)
+        st.html("""
         <table class="styled-table">
             <tr><th>Classification</th><th>Upon Initial Eligibility</th><th>After 1 Year</th><th>After 5 Years</th></tr>
             <tr><td>Full-Time</td><td>24 hours (3 days)</td><td>32 hours (4 days)</td><td>40 hours (5 days)</td></tr>
             <tr><td>Part-Time</td><td>1 hr per 30 hrs worked, up to 24 hrs</td><td>Up to 32 hrs</td><td>Up to 40 hrs</td></tr>
         </table>
-        """, unsafe_allow_html=True)
+        """)
 
-        st.markdown("""
+        st.html("""
         <div class="content-section">
             <h3>🎄 Paid Holidays</h3>
             <p>Eligible after <strong>60 days of service.</strong> To receive holiday pay, employees must work the
@@ -1169,8 +1130,8 @@ def show_module_benefits():
             as mandated by a physician. Cannot be used for cosmetic procedures, routine follow-up visits, or
             absences under 3 consecutive days.</p>
         </div>
-        """, unsafe_allow_html=True)
-        st.markdown("""
+        """)
+        st.html("""
         <table class="styled-table">
             <tr><th>Years of Service</th><th>Days Earned</th></tr>
             <tr><td>4 years</td><td>10 days (80 hours)</td></tr>
@@ -1179,10 +1140,10 @@ def show_module_benefits():
             <tr><td>19 years</td><td>Additional 10 days</td></tr>
             <tr><td>Every 5 years thereafter</td><td>Additional 10 days</td></tr>
         </table>
-        """, unsafe_allow_html=True)
-        st.markdown(info_box("Long-term sick leave can be banked up to 40 days (320 hours) total. It is NOT paid out upon termination."), unsafe_allow_html=True)
+        """)
+        st.html(info_box("Long-term sick leave can be banked up to 40 days (320 hours) total. It is NOT paid out upon termination."))
 
-        st.markdown("""
+        st.html("""
         <div class="content-section">
             <h3>🏥 FMLA Leave</h3>
             <p>Eligible full-time employees who have completed <strong>365 calendar days of service</strong> may
@@ -1203,10 +1164,10 @@ def show_module_benefits():
                 <li><strong>Voting:</strong> Employees unable to vote outside of work hours may request reasonable time off.</li>
             </ul>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with tab2:
-        st.markdown("""
+        st.html("""
         <div class="content-section">
             <h3>🏥 Medical Insurance</h3>
             <p>Eligible after <strong>60 days of employment.</strong> Benefits are effective the
@@ -1214,8 +1175,8 @@ def show_module_benefits():
             30+ hours per week are eligible.</p>
             <p>AAP offers <strong>two plans through BlueCross BlueShield of Alabama:</strong></p>
         </div>
-        """, unsafe_allow_html=True)
-        st.markdown("""
+        """)
+        st.html("""
         <table class="styled-table">
             <tr><th></th><th>Option 1: PPO Plan</th><th>Option 2: HDHP + HSA</th></tr>
             <tr><td><b>Employee Only</b></td><td>$157.20/mo</td><td>$136.34/mo</td></tr>
@@ -1230,15 +1191,15 @@ def show_module_benefits():
             <tr><td><b>PCP / Specialist Copay</b></td><td>$30 / $45</td><td>Ded then 10%</td></tr>
             <tr><td><b>Telehealth (Teladoc)</b></td><td>FREE (company paid)</td><td>FREE (company paid)</td></tr>
         </table>
-        """, unsafe_allow_html=True)
-        st.markdown(info_box("📌 <b>HDHP HSA tip:</b> The HSA is owned by <b>you</b> — funds roll over year to year and go with you if you leave AAP. 2026 contribution limits: $4,400 (Single) / $8,750 (Family). If age 55+, add an extra $1,000."), unsafe_allow_html=True)
+        """)
+        st.html(info_box("📌 <b>HDHP HSA tip:</b> The HSA is owned by <b>you</b> — funds roll over year to year and go with you if you leave AAP. 2026 contribution limits: $4,400 (Single) / $8,750 (Family). If age 55+, add an extra $1,000."))
 
-        st.markdown("""
+        st.html("""
         <div class="content-section">
             <h3>🦷 Dental Insurance (Guardian)</h3>
         </div>
-        """, unsafe_allow_html=True)
-        st.markdown("""
+        """)
+        st.html("""
         <table class="styled-table">
             <tr><th></th><th>Base Plan</th><th>High Plan</th></tr>
             <tr><td>Employee</td><td>$6.78/mo</td><td>$10.66/mo</td></tr>
@@ -1251,14 +1212,14 @@ def show_module_benefits():
             <tr><td>Major Services</td><td>50% after deductible</td><td>50% after deductible</td></tr>
             <tr><td>Orthodontics Lifetime Max</td><td>$1,000</td><td>$1,500</td></tr>
         </table>
-        """, unsafe_allow_html=True)
+        """)
 
-        st.markdown("""
+        st.html("""
         <div class="content-section">
             <h3>👓 Vision Insurance (Guardian / Davis Vision)</h3>
         </div>
-        """, unsafe_allow_html=True)
-        st.markdown("""
+        """)
+        st.html("""
         <table class="styled-table">
             <tr><th></th><th>Cost / Coverage</th></tr>
             <tr><td>Employee</td><td>$6.93/mo</td></tr>
@@ -1269,11 +1230,11 @@ def show_module_benefits():
             <tr><td>Frames Allowance</td><td>$130 (every 24 months)</td></tr>
             <tr><td>Contacts</td><td>$130 max (every 12 months)</td></tr>
         </table>
-        """, unsafe_allow_html=True)
-        st.markdown(info_box("📅 <b>Enrollment reminder:</b> New employees must enroll within <b>30 days of hire.</b> Benefits take effect the 1st of the month following 60 days. Qualified life events allow mid-year changes within 30 days of the event."), unsafe_allow_html=True)
+        """)
+        st.html(info_box("📅 <b>Enrollment reminder:</b> New employees must enroll within <b>30 days of hire.</b> Benefits take effect the 1st of the month following 60 days. Qualified life events allow mid-year changes within 30 days of the event."))
 
     with tab3:
-        st.markdown("""
+        st.html("""
         <div class="content-section">
             <h3>💰 401(k) Savings Plan</h3>
             <p>Eligible on the <strong>1st of the month following 60 days</strong> of continuous full-time employment.</p>
@@ -1303,10 +1264,10 @@ def show_module_benefits():
                 <li><strong>Long-Term Disability:</strong> 60% of basic monthly earnings up to $10,000/month, after a 90-day waiting period. <em>AAP pays 100% of the premium.</em></li>
             </ul>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with tab4:
-        st.markdown("""
+        st.html("""
         <div class="content-section">
             <h3>📞 Teladoc — Free Telehealth (Day 1)</h3>
             <p>Teladoc is a <strong>company-paid benefit effective on your date of hire</strong> — no copays,
@@ -1347,18 +1308,18 @@ def show_module_benefits():
             <p>AAP employees are eligible for a <strong>22% discount</strong> on Verizon Wireless.
             The account must be in your name. Ask HR for details.</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
     with tab5:
-        st.markdown("""
+        st.html("""
         <div class="content-section">
             <h3>Full-Time vs. Part-Time: Key Differences</h3>
             <p>Full-time employees work <strong>30+ hours per week.</strong> Part-time employees work
             <strong>fewer than 30 hours per week.</strong> Any part-time employee who averages 30+ scheduled
             hours per week over a 6-month rolling period will be reclassified as full-time.</p>
         </div>
-        """, unsafe_allow_html=True)
-        st.markdown("""
+        """)
+        st.html("""
         <table class="styled-table">
             <tr><th>Benefit</th><th>Full-Time</th><th>Part-Time</th></tr>
             <tr><td>Vacation Time</td><td>✅ Accrues weekly based on tenure</td><td>❌ Not eligible</td></tr>
@@ -1373,7 +1334,7 @@ def show_module_benefits():
             <tr><td>LinkedIn Learning</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
             <tr><td>EAP / LifeMatters</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
         </table>
-        """, unsafe_allow_html=True)
+        """)
 
     st.markdown("### ✅ Module 4 Checklist")
     checklist_items = {
@@ -1448,7 +1409,7 @@ def show_module_benefits():
 #  MODULE 5 — FIRST STEPS
 # ─────────────────────────────────────────────
 def show_module_firststeps():
-    st.markdown("""
+    st.html("""
     <div class="content-section">
         <h2>🚀 Module 5: Your First Steps</h2>
         <p>This module covers everything you need to get set up and hit the ground running on Day 1 and beyond.</p>
@@ -1472,9 +1433,9 @@ def show_module_firststeps():
             <li>Employee Handbook Acknowledgment</li>
         </ul>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    st.markdown("""
+    st.html("""
     <div class="content-section">
         <h3>💻 Systems You'll Use</h3>
 
@@ -1499,13 +1460,13 @@ def show_module_firststeps():
         Select your health insurance plan from the drop-down and confirm coverage. Once set up, general medical
         visits, mental health visits, and more are <strong>completely free.</strong></p>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
-    st.markdown("""
+    st.html("""
     <div class="content-section">
         <h3>👥 Key Contacts</h3>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     contacts = [
         ("Brandy Hooper", "VP of Human Resources", "brandy.hooper@rxaap.com", "256-574-7526"),
@@ -1518,13 +1479,13 @@ def show_module_firststeps():
         ("HealthEquity", "HSA Accounts", "866-274-9887 | healthequity.com", ""),
     ]
 
-    st.markdown("""
+    st.html("""
     <table class="styled-table">
         <tr><th>Name / Resource</th><th>Role</th><th>Contact</th></tr>
     """ + "".join(
         f"<tr><td><b>{c[0]}</b></td><td>{c[1]}</td><td>{c[2]}{(' | ' + c[3]) if c[3] else ''}</td></tr>"
         for c in contacts
-    ) + "</table>", unsafe_allow_html=True)
+    ) + "</table>")
 
     st.markdown("""
     <div class="content-section">
@@ -1549,7 +1510,7 @@ def show_module_firststeps():
             then escalating to HR and management if needed.</li>
         </ul>
     </div>
-    """, unsafe_allow_html=True)
+    """)
 
     st.markdown("### ✅ Module 5 Checklist")
     checklist_items = {
@@ -1612,13 +1573,13 @@ def show_module_firststeps():
     # Completion check
     total_pct = int(sum(st.session_state.progress.values()) / len(MODULES))
     if total_pct == 100:
-        st.markdown("""
+        st.html("""
         <div class="content-section" style="border-left:4px solid #059669;text-align:center;padding:36px;">
             <h2 style="color:#059669;">🎉 Congratulations!</h2>
             <p style="font-size:1.1rem;">You have completed all five AAP orientation modules.
             Welcome to the team — we're glad you're here!</p>
         </div>
-        """, unsafe_allow_html=True)
+        """)
 
 # ─────────────────────────────────────────────
 #  ROUTER  — gate everything behind authentication

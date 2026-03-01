@@ -30,7 +30,6 @@ LOGO_B64 = "iVBORw0KGgoAAAANSUhEUgAABdYAAAHjCAYAAAAudE3GAAAAAXNSR0IArs4c6QAAAARn
 # ─────────────────────────────────────────────
 #  THEME  —  verbatim CSS from training_app.py
 # ─────────────────────────────────────────────
-st.markdown("""
 st.markdown(dedent("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');

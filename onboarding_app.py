@@ -291,37 +291,40 @@ def verify_employee(access_code, employee_id, full_name):
     # ── Step 1: Check access code against Streamlit secret ──────────────────
     try:
         correct_code = st.secrets["orientation_access_code"]
-    except Exception:
-        return False, "Access code configuration error. Please contact HR."
+    except Exception as e:
+        return False, f"Access code configuration error: {e}"
 
     if access_code.strip() != correct_code.strip():
-        return False, "Incorrect access code. Please try again or contact HR."
+        return False, f"Incorrect access code. (Entered {len(access_code.strip())} chars, expected {len(correct_code.strip())} chars)"
 
     # ── Step 2 & 3: Validate Employee ID + Name against roster ──────────────
     client = get_gsheet_client()
     if not client:
-        return False, "Unable to reach the employee database. Please try again or contact HR."
+        return False, "Unable to connect to Google Sheets. Check gcp_service_account secret and service account permissions."
 
     emp_sheet = get_employee_sheet(client)
     if not emp_sheet:
-        return False, "Employee roster not found. Please contact HR."
+        return False, "Could not open 'Employee Roster' tab. Check that the tab exists in 'AAP New Hire Orientation Progress'."
 
     try:
         records = emp_sheet.get_all_records()
+        if not records:
+            return False, "Employee Roster sheet appears to be empty. Please check the sheet has data."
+
+        # Show what columns were found (first record keys)
+        col_names = list(records[0].keys()) if records else []
+
         for row in records:
             row_id   = str(row.get("Employee ID", "")).strip().lower()
             row_name = str(row.get("Full Name",   "")).strip().lower()
             if row_id == employee_id.strip().lower():
-                # ID found — now check name matches
                 if row_name == full_name.strip().lower():
                     return True, ""
                 else:
-                    # ID exists but name doesn't match — generic error (don't confirm ID is valid)
-                    return False, "Employee ID and name do not match our records."
-        # ID not found at all
-        return False, "Employee ID not found. Please check your ID or contact HR."
-    except Exception:
-        return False, "Verification error. Please try again or contact HR."
+                    return False, f"ID matched but name did not. Sheet has: '{row.get('Full Name', '')}' — you entered: '{full_name.strip()}'"
+        return False, f"Employee ID '{employee_id.strip()}' not found. Sheet has {len(records)} rows. Columns found: {col_names}"
+    except Exception as e:
+        return False, f"Verification error: {e}"
 
 
 def save_progress(employee_id, employee_name, module_key, pct, checklist_items, quiz_score):

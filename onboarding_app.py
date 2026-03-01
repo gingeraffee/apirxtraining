@@ -2805,73 +2805,6 @@ def show_wh_module_firststeps():
         """), unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
-#  ROUTER  - gate everything behind authentication
-# ─────────────────────────────────────────────
-
-# ── Template-style helpers ────────────────────────────────
-def ensure_session_defaults():
-    defaults = {
-        "authenticated": False,
-        "employee_id": "",
-        "full_name": "",
-        "role_track": TRACK_ADMIN,
-        "progress": {},          # module_key -> list[str] completed checklist items
-        "notes": {},             # module_key -> str
-        "selected_module": None, # dict module
-        "pending_nav": None,
-        "sidebar_nav": "🏠  Home",
-        "auth_error": "",
-    }
-    for k, v in defaults.items():
-        if k not in st.session_state:
-            st.session_state[k] = v
-
-
-def _init_state():
-    ensure_session_defaults()
-
-
-def _modules_for_track():
-    return visible_modules(st.session_state.role_track)
-
-
-def _get_checklist_for_module(module_key: str):
-    base = [
-        "Read the content in this module",
-        "Ask your supervisor/HR any questions you have",
-        "Confirm you understand the key expectations",
-    ]
-    if module_key in ("safety",):
-        base = [
-            "Review required PPE and safety rules",
-            "Understand emergency procedures and reporting",
-            "Confirm you know who to contact for safety concerns",
-        ]
-    return base
-
-
-def _get_module_pct(mod):
-    key = mod["key"]
-    items = _get_checklist_for_module(key)
-    if not items:
-        return 0
-    done = st.session_state.progress.get(key, [])
-    return int(round(100 * (len(set(done)) / len(items))))
-
-
-def _get_overall_pct():
-    mods = _modules_for_track()
-    if not mods:
-        return 0
-    return int(round(sum(_get_module_pct(m) for m in mods) / len(mods)))
-
-# ─────────────────────────────────────────────
-#  UI  —  SIDEBAR HEADER
-# ─────────────────────────────────────────────
-
-def _render_sidebar_header() -> None:
-    st.markdown(f"""
 def _render_sidebar_header():
     st.markdown(dedent(f"""
         <div class="sidebar-header">
@@ -2945,8 +2878,6 @@ def _show_login_screen() -> None:
             role_track = st.radio(
                 "Track",
                 options=["General / Administrative", "Warehouse"],
-                "Department Track",
-                options=[TRACK_ADMIN, TRACK_WAREHOUSE],
                 label_visibility="collapsed",
             )
 

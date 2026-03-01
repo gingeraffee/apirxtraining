@@ -395,13 +395,6 @@ hr { border-color: #E2E8F0 !important; }
 """), unsafe_allow_html=True)
 
 
-inject_theme_css()
-
-
-
-globals().get("inject_theme_css", lambda: None)()
-
-
 
 # ─────────────────────────────────────────────
 #  GOOGLE SHEETS

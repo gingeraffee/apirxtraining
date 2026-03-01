@@ -912,7 +912,7 @@ with st.sidebar:
             <img src='data:image/png;base64,{LOGO_B64}' style='width:100%;max-width:155px;display:block;margin:0 auto 10px auto;'>
             <div style='font-size:0.68rem;letter-spacing:0.09em;text-transform:uppercase;color:#5A6E8A;'>Employee Onboarding Portal</div>
             <div class='sidebar-username' style='font-size:0.88rem;margin-top:8px;font-weight:600;'>👤 {st.session_state.username}</div>
-            {f"<div style='display:inline-block;margin-top:7px;background:#0A1628;color:#2875B4;font-size:0.72rem;font-weight:700;padding:3px 12px;border-radius:20px;letter-spacing:0.04em;'>{_track} Track</div>" if _track else ""}
+            {f"<div style='display:inline-block;margin-top:7px;background:#FFFFFF;color:#2875B4;font-size:0.72rem;font-weight:700;padding:3px 12px;border-radius:20px;letter-spacing:0.04em;'>{_track} Track</div>" if _track else ""}
         </div>
         <hr style='border:none;border-top:1px solid rgba(255,255,255,0.12);margin:14px 0 18px 0;'>
     """, unsafe_allow_html=True)

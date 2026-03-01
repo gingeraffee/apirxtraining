@@ -18,330 +18,358 @@ st.set_page_config(
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
-/* ══════════════════════════════════════════
-   BASE — Light corporate theme
-   ══════════════════════════════════════════ */
-html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
-}
+    /* ── Base ── */
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    .stApp { background-color: #EEF2F7; }
 
-/* Force light background everywhere — overrides Streamlit dark mode */
-.stApp,
-.stApp > div,
-[data-testid="stAppViewContainer"],
-[data-testid="stAppViewBlockContainer"],
-[data-testid="block-container"] {
-    background-color: #F4F6F9 !important;
-    color: #1A1A2E !important;
-}
+    /* ── Sidebar Container ── */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #0A1628 0%, #12213A 50%, #1B3A5C 100%);
+        border-right: 2px solid #CC2936;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+    }
 
-/* All default text dark */
-p, span, div, li, label { color: #2D3748; }
-h1, h2, h3, h4 { color: #1A1A2E; }
+    /* ── Sidebar Header — bright white card so logo stands out ── */
+    .sidebar-header {
+        background: #FFFFFF;
+        border-radius: 12px;
+        padding: 16px 14px 14px 14px;
+        margin-bottom: 18px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    }
+    .sidebar-header * { color: #0A1628 !important; }
+    .sidebar-header .sidebar-username {
+        color: #CC2936 !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.02em !important;
+    }
 
-/* ══════════════════════════════════════════
-   SIDEBAR — Deep navy, white text (stays dark for contrast)
-   ══════════════════════════════════════════ */
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #1B2A47 0%, #111D33 100%) !important;
-    border-right: 1px solid #243552;
-}
-[data-testid="stSidebar"] * { color: #D1DCF0 !important; }
-[data-testid="stSidebar"] h1,
-[data-testid="stSidebar"] h2,
-[data-testid="stSidebar"] h3,
-[data-testid="stSidebar"] strong { color: #FFFFFF !important; }
+    /* ── Sidebar Navigation — explicit white text so nothing disappears ── */
+    [data-testid="stSidebar"] .stRadio label {
+        color: rgba(255,255,255,0.88) !important;
+        border-radius: 8px !important;
+        padding: 7px 10px !important;
+        transition: all 0.15s ease !important;
+        font-size: 0.9rem !important;
+    }
+    [data-testid="stSidebar"] .stRadio label:hover {
+        background: rgba(204,41,54,0.22) !important;
+        color: #FFFFFF !important;
+    }
+    [data-testid="stSidebar"] .stRadio p,
+    [data-testid="stSidebar"] .stRadio span {
+        color: rgba(255,255,255,0.88) !important;
+    }
 
-[data-testid="stSidebar"] .stButton > button {
-    width: 100%;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.12);
-    color: #D1DCF0 !important;
-    text-align: left;
-    padding: 10px 14px;
-    border-radius: 8px;
-    margin: 2px 0;
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.18s;
-}
-[data-testid="stSidebar"] .stButton > button:hover {
-    background: rgba(204, 41, 54, 0.2);
-    border-color: #CC2936;
-    color: #fff !important;
-}
+    /* ── Typography ── */
+    h1, h2, h3 { font-family: 'Playfair Display', serif !important; color: #0A1628 !important; }
+    .page-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #0A1628;
+        border-bottom: 3px solid #CC2936;
+        padding-bottom: 12px;
+        margin-bottom: 8px;
+    }
+    .page-subtitle { color: #5A6E8A; font-size: 1.05rem; margin-bottom: 28px; font-weight: 400; }
 
-/* ══════════════════════════════════════════
-   WELCOME BANNER
-   ══════════════════════════════════════════ */
-.welcome-banner {
-    background: linear-gradient(135deg, #1B2A47 0%, #CC2936 100%);
-    border-radius: 14px;
-    padding: 36px 44px;
-    margin-bottom: 28px;
-    box-shadow: 0 4px 20px rgba(27,42,71,0.15);
-}
-.welcome-banner h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #FFFFFF !important;
-    margin: 0 0 8px 0;
-    letter-spacing: -0.02em;
-}
-.welcome-banner p { color: rgba(255,255,255,0.82) !important; font-size: 1rem; margin: 0; }
+    /* ── Module Cards ── */
+    .module-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        border-left: 5px solid #CC2936;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .module-card:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,0.11); }
+    .module-card.complete { border-left-color: #1A9E5C; background: #F0FFF6; }
 
-/* ══════════════════════════════════════════
-   MODULE CARDS
-   ══════════════════════════════════════════ */
-.module-card {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 22px 26px;
-    margin-bottom: 14px;
-    transition: all 0.2s;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.module-card:hover {
-    border-color: #CC2936;
-    box-shadow: 0 4px 16px rgba(204,41,54,0.10);
-    transform: translateY(-2px);
-}
-.module-card h3 { color: #1A1A2E !important; margin: 0 0 6px 0; font-size: 1.05rem; font-weight: 600; }
-.module-card p  { color: #64748B !important; margin: 0; font-size: 0.88rem; }
-.module-card .badge {
-    display: inline-block;
-    background: #CC2936;
-    color: white;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    letter-spacing: 0.02em;
-}
-.module-card .badge.complete { background: #16A34A; }
+    /* ── Progress Bars ── */
+    .stProgress > div > div { background-color: #CC2936 !important; }
 
-/* ══════════════════════════════════════════
-   CONTENT SECTIONS
-   ══════════════════════════════════════════ */
-.content-section {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 28px 34px;
-    margin-bottom: 18px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-.content-section h2 {
-    color: #1A1A2E !important;
-    font-size: 1.55rem;
-    font-weight: 700;
-    margin: 0 0 16px 0;
-    padding-bottom: 12px;
-    border-bottom: 2px solid #F1F5F9;
-    letter-spacing: -0.01em;
-}
-.content-section h3 {
-    color: #CC2936 !important;
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 22px 0 8px 0;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    font-size: 0.85rem;
-}
-.content-section p,
-.content-section li { color: #374151 !important; line-height: 1.75; font-size: 0.94rem; }
-.content-section ul { padding-left: 20px; }
-.content-section strong { color: #1A1A2E !important; font-weight: 600; }
+    /* ── Primary Buttons — deep navy, red on hover ── */
+    .stButton > button[kind="primary"],
+    .stButton > button[kind="primary"][data-testid],
+    [data-testid="stBaseButton-primary"] {
+        background-color: #0A1628 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 20px !important;
+        font-weight: 500 !important;
+        letter-spacing: 0.02em !important;
+        transition: background 0.2s ease !important;
+    }
+    .stButton > button[kind="primary"]:hover,
+    [data-testid="stBaseButton-primary"]:hover {
+        background-color: #CC2936 !important;
+    }
 
-/* ══════════════════════════════════════════
-   INFO BOXES
-   ══════════════════════════════════════════ */
-.info-box {
-    background: #FEF9F9;
-    border-left: 4px solid #CC2936;
-    border-radius: 6px;
-    padding: 14px 18px;
-    margin: 14px 0;
-    color: #374151 !important;
-    font-size: 0.9rem;
-    line-height: 1.6;
-}
-.info-box.green {
-    background: #F0FDF4;
-    border-left-color: #16A34A;
-}
-.info-box.yellow {
-    background: #FFFBEB;
-    border-left-color: #D97706;
-}
+    /* ── Secondary Buttons — red underline link ── */
+    .stButton > button[kind="secondary"],
+    [data-testid="stBaseButton-secondary"] {
+        background: none !important;
+        border: none !important;
+        color: #CC2936 !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        padding: 0 4px !important;
+        height: auto !important;
+        min-height: 0 !important;
+        box-shadow: none !important;
+        text-decoration: underline !important;
+        text-underline-offset: 3px !important;
+    }
+    .stButton > button[kind="secondary"]:hover,
+    [data-testid="stBaseButton-secondary"]:hover {
+        background: none !important;
+        color: #A01E27 !important;
+        box-shadow: none !important;
+    }
 
-/* ══════════════════════════════════════════
-   PROGRESS BAR
-   ══════════════════════════════════════════ */
-.progress-container {
-    background: #E2E8F0;
-    border-radius: 8px;
-    height: 8px;
-    margin: 6px 0 3px 0;
-    overflow: hidden;
-}
-.progress-fill {
-    background: linear-gradient(90deg, #CC2936, #E84455);
-    height: 100%;
-    border-radius: 8px;
-    transition: width 0.5s ease;
-}
+    /* ── Badges ── */
+    .badge {
+        display: inline-block;
+        background: #CC2936;
+        color: white;
+        font-size: 0.74rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-left: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .badge.done { background: #1A9E5C; }
 
-/* ══════════════════════════════════════════
-   BUTTONS
-   ══════════════════════════════════════════ */
-.stButton > button {
-    background: #CC2936 !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 10px 24px !important;
-    font-weight: 600 !important;
-    font-size: 0.9rem !important;
-    transition: all 0.18s !important;
-    box-shadow: 0 2px 6px rgba(204,41,54,0.25) !important;
-}
-.stButton > button:hover {
-    background: #A8202C !important;
-    box-shadow: 0 4px 12px rgba(204,41,54,0.35) !important;
-    color: white !important;
-}
+    /* ── Welcome Banner ── */
+    .welcome-banner {
+        background: linear-gradient(135deg, #0A1628 0%, #1B3A5C 100%);
+        border-radius: 16px;
+        padding: 32px 36px;
+        margin-bottom: 28px;
+        border-left: 6px solid #CC2936;
+    }
+    .welcome-banner h1 { color: white !important; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 8px; }
+    .welcome-banner p { color: #B0C4D8; font-size: 1.05rem; }
 
-/* ══════════════════════════════════════════
-   TABLES
-   ══════════════════════════════════════════ */
-.styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.88rem;
-    margin: 14px 0;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.styled-table th {
-    background: #1B2A47;
-    color: white;
-    padding: 11px 14px;
-    text-align: left;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-.styled-table td {
-    padding: 10px 14px;
-    border-bottom: 1px solid #F1F5F9;
-    color: #374151;
-    background: #FFFFFF;
-}
-.styled-table tr:nth-child(even) td { background: #F8FAFC; }
-.styled-table tr:last-child td { border-bottom: none; }
+    /* ── Callout ── */
+    .callout { background: #FEF2F3; border-left: 4px solid #CC2936; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; color: #6B0E16; }
 
-/* ══════════════════════════════════════════
-   FORM INPUTS (main area)
-   ══════════════════════════════════════════ */
-[data-baseweb="input"] {
-    background-color: #FFFFFF !important;
-    border-color: #CBD5E1 !important;
-}
-[data-baseweb="base-input"] { background-color: #FFFFFF !important; }
-[data-baseweb="base-input"] input {
-    background-color: #FFFFFF !important;
-    color: #1A1A2E !important;
-    caret-color: #1A1A2E;
-}
-[data-baseweb="base-input"] input::placeholder { color: #94A3B8 !important; }
-[data-baseweb="input"]:focus-within {
-    border-color: #CC2936 !important;
-    box-shadow: 0 0 0 2px rgba(204,41,54,0.15) !important;
-}
+    /* ── Dividers ── */
+    hr { border: none; border-top: 1px solid #D8E1EB; margin: 24px 0; }
 
-/* ══════════════════════════════════════════
-   CHECKBOXES & RADIO
-   ══════════════════════════════════════════ */
-.stCheckbox label { color: #374151 !important; font-size: 0.93rem; }
-.stRadio label    { color: #374151 !important; }
-.stRadio > div    { gap: 6px; }
+    /* ── Resource Library ── */
+    .resource-card {
+        background: white;
+        border-radius: 8px;
+        padding: 13px 16px;
+        margin-bottom: 7px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        border-left: 3px solid transparent;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+    }
+    .resource-card:hover {
+        border-left-color: #0A1628;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+        transform: translateX(3px);
+    }
+    .resource-id {
+        display: inline-block;
+        background: #0A1628;
+        color: white;
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        margin-top: 3px;
+        letter-spacing: 0.03em;
+        min-width: 54px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+    /* ─────────────────────────────────────────────────────────────
+       Mobile + Dark Mode Compatibility Patch
+       (keeps desktop exactly the same)
+       ───────────────────────────────────────────────────────────── */
+    @media (max-width: 768px) and (prefers-color-scheme: dark) {
 
-/* ══════════════════════════════════════════
-   TABS
-   ══════════════════════════════════════════ */
-[data-testid="stTabs"] [data-baseweb="tab"] {
-    color: #64748B !important;
-    font-weight: 500;
-}
-[data-testid="stTabs"] [aria-selected="true"] {
-    color: #CC2936 !important;
-    font-weight: 600;
-    border-bottom-color: #CC2936 !important;
-}
+      /* App background + default text */
+      div[data-testid="stAppViewContainer"],
+      section.main,
+      .stApp {
+        background: #0B1220 !important;
+        color: #F9FAFB !important;
+      }
 
-/* ══════════════════════════════════════════
-   METRICS
-   ══════════════════════════════════════════ */
-[data-testid="metric-container"] {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
-    padding: 18px 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-[data-testid="metric-container"] label {
-    color: #64748B !important;
-    font-size: 0.8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-[data-testid="metric-container"] [data-testid="stMetricValue"] {
-    color: #1A1A2E !important;
-    font-size: 1.6rem;
-    font-weight: 700;
-}
+      /* Streamlit markdown text */
+      div[data-testid="stMarkdownContainer"],
+      div[data-testid="stMarkdownContainer"] p,
+      div[data-testid="stMarkdownContainer"] li,
+      div[data-testid="stMarkdownContainer"] span,
+      div[data-testid="stMarkdownContainer"] div {
+        color: #F9FAFB !important;
+      }
 
-/* ══════════════════════════════════════════
-   LOGIN PAGE — keep dark for visual impact
-   ══════════════════════════════════════════ */
-.login-page-bg {
-    /* applied via wrapper div in show_login() */
-}
-.login-card {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-top: 4px solid #CC2936;
-    border-radius: 16px;
-    padding: 32px 36px 28px 36px;
-    max-width: 480px;
-    margin: 0 auto;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
-}
-.login-card h2 { color: #1A1A2E !important; }
-.login-card p  { color: #64748B !important; }
+      /* Your custom headings/subtitles (you use these a lot) */
+      .page-title,
+      .page-subtitle {
+        color: #F9FAFB !important;
+      }
 
-/* Login form field labels */
-[data-testid="stForm"] label { color: #374151 !important; font-weight: 500; }
-[data-testid="stForm"] .stRadio label { color: #374151 !important; }
-[data-testid="stForm"] p { color: #374151 !important; }
+      /* Cards you set to white in light mode */
+      .resource-card,
+      .module-card,
+      .welcome-banner + div,
+      div[style*="background:white"],
+      div[style*="background: white"] {
+        background: #111827 !important;
+        border-color: rgba(255,255,255,0.10) !important;
+      }
 
-/* ══════════════════════════════════════════
-   MISC
-   ══════════════════════════════════════════ */
-.stSuccess, .stError, .stWarning, .stInfo { border-radius: 8px; }
-hr { border-color: #E2E8F0 !important; }
+      /* Override your common “dark ink” inline colors */
+      div[style*="color:#0A1628"],
+      div[style*="color: #0A1628"],
+      span[style*="color:#0A1628"],
+      span[style*="color: #0A1628"] {
+        color: #F9FAFB !important;
+      }
 
-/* Markdown default text */
-[data-testid="stMarkdownContainer"] p { color: #374151 !important; }
-[data-testid="stMarkdownContainer"] li { color: #374151 !important; }
-[data-testid="stMarkdownContainer"] h3 { color: #1A1A2E !important; }
+      /* Override your muted slate inline color */
+      div[style*="color:#5A6E8A"],
+      div[style*="color: #5A6E8A"],
+      span[style*="color:#5A6E8A"],
+      span[style*="color: #5A6E8A"] {
+        color: #CBD5E1 !important;
+      }
+
+      /* Inputs (you also set these explicitly on Downloads page) */
+      div[data-testid="stTextInput"] input {
+        background: #0F172A !important;
+        color: #F9FAFB !important;
+        border-color: rgba(255,255,255,0.18) !important;
+      }
+      div[data-testid="stTextInput"] input::placeholder {
+        color: rgba(255,255,255,0.55) !important;
+      }
+
+      /* Tables you render with dark headers + light bodies */
+      table, td, th {
+        color: #E5E7EB !important;
+        border-color: rgba(255,255,255,0.12) !important;
+      }
+    }
+
+    /* ── Onboarding App Compatibility: map onboarding classes to Training App look ── */
+
+    /* Sidebar buttons (onboarding uses st.button vs training uses st.radio) */
+    [data-testid="stSidebar"] .stButton > button {
+        width: 100% !important;
+        background: transparent !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
+        color: rgba(255,255,255,0.88) !important;
+        text-align: left !important;
+        padding: 10px 12px !important;
+        border-radius: 8px !important;
+        margin: 3px 0 !important;
+        font-size: 0.9rem !important;
+        font-weight: 500 !important;
+        transition: all 0.15s ease !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover {
+        background: rgba(204,41,54,0.22) !important;
+        border-color: #CC2936 !important;
+        color: #FFFFFF !important;
+        transform: translateY(-1px);
+    }
+
+    /* Content sections used heavily in onboarding */
+    .content-section {
+        background: #FFFFFF;
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin: 18px 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        border-top: 3px solid #CC2936;
+    }
+    .content-section h2 {
+        font-family: 'Playfair Display', serif;
+        color: #0A1628 !important;
+        font-size: 1.7rem;
+        font-weight: 700;
+        margin: 0 0 14px 0;
+        border-bottom: 2px solid #D8E1EB;
+        padding-bottom: 10px;
+    }
+    .content-section h3 {
+        color: #CC2936 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin: 18px 0 8px 0;
+    }
+
+    /* Info boxes (onboarding) → training callout vibe */
+    .info-box {
+        background: #FFF5F5;
+        border-left: 4px solid #CC2936;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 16px 0;
+        color: #0A1628 !important;
+    }
+    .info-box.green { background: #F0FFF6; border-left-color: #1A9E5C; }
+    .info-box.yellow { background: #FFF7ED; border-left-color: #D97706; }
+
+    /* Tables (onboarding styled-table) aligned to training palette */
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+        margin: 14px 0;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    }
+    .styled-table th {
+        background: #0A1628;
+        color: #FFFFFF;
+        padding: 12px 14px;
+        text-align: left;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+    }
+    .styled-table td {
+        padding: 11px 14px;
+        border-bottom: 1px solid #E6EDF5;
+        color: #0A1628;
+        background: #FFFFFF;
+    }
+    .styled-table tr:nth-child(even) td { background: #F7FAFD; }
+    .styled-table tr:last-child td { border-bottom: none; }
+
+    /* Form submit button styling (login) */
+    div[data-testid="stFormSubmitButton"] button {
+        background-color: #0A1628 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 20px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.02em !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.12) !important;
+    }
+    div[data-testid="stFormSubmitButton"] button:hover {
+        background-color: #CC2936 !important;
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -753,7 +781,7 @@ if st.session_state.authenticated:
         </div>
         """, unsafe_allow_html=True)
 
-        if st.button("🚪 Sign Out", key="sign_out"):
+        if st.button("🚪 Sign Out", key="sign_out", type="primary", use_container_width=True):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
             st.rerun()
@@ -772,13 +800,13 @@ if st.session_state.authenticated:
         st.markdown("---")
         st.markdown("**Modules**")
 
-        if st.button("🏠  Home", key="nav_home"):
+        if st.button("🏠  Home", key="nav_home", use_container_width=True):
             st.session_state.selected_module = None
 
         for m in active_modules:
             pct = st.session_state.progress.get(m["key"], 0)
             label = f"{m['icon']}  {m['number']}. {m['title']}"
-            if st.button(label, key=f"nav_{m['key']}"):
+            if st.button(label, key=f"nav_{m['key']}", use_container_width=True):
                 st.session_state.selected_module = m["key"]
             st.markdown(pct_bar(pct), unsafe_allow_html=True)
 
@@ -836,7 +864,7 @@ def show_home():
             <p>{m['subtitle']}</p>
         </div>
         """, unsafe_allow_html=True)
-        if st.button(f"Open Module {m['number']}", key=f"open_{m['key']}"):
+        if st.button(f"Open Module {m['number']}", key=f"open_{m['key']}", type="secondary"):
             st.session_state.selected_module = m["key"]
             st.rerun()
 

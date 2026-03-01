@@ -2629,7 +2629,7 @@ def _show_login_screen():
     st.markdown("<div class='page-title'>💊 AAP New Hire Orientation</div>", unsafe_allow_html=True)
     st.markdown("<div class='page-subtitle'>Sign in to begin your onboarding modules.</div>", unsafe_allow_html=True)
 
-    col1, col2 = st.columns([1.05, 0.95], vertical_alignment="top")
+    col1, col2 = st.columns([1.05, 0.95])
 
     with col1:
         st.markdown("""
@@ -2699,7 +2699,7 @@ def _show_home():
         </div>
     """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns([2, 1], vertical_alignment="top")
+    col1, col2 = st.columns([2, 1])
 
     with col1:
         st.markdown("<div class='page-title'>📚 Your Modules</div>", unsafe_allow_html=True)

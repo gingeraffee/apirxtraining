@@ -213,41 +213,61 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 [data-testid="metric-container"] label { color: #8BA3C7 !important; font-size: 0.8rem; }
 [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #FFFFFF !important; font-size: 1.5rem; font-weight: 700; }
 
-/* ── Login page inputs — force dark theme so text is visible ── */
-.login-card input {
-    background: #1E3A5F !important;
+/* ── Global input overrides (dark theme) ── */
+input, textarea, [data-baseweb="input"] input, [data-baseweb="textarea"] textarea {
+    background-color: #1E3A5F !important;
     color: #FFFFFF !important;
-    border: 1px solid #2a4a6e !important;
-    border-radius: 8px !important;
+    border-color: #2a4a6e !important;
+    caret-color: #FFFFFF !important;
 }
-.login-card input::placeholder { color: #6B8BAF !important; }
-.login-card input:focus { border-color: #CC2936 !important; box-shadow: 0 0 0 2px rgba(204,41,54,0.2) !important; }
-.login-card label { color: #C8D6E8 !important; font-weight: 500 !important; font-size: 0.9rem !important; }
+input::placeholder, textarea::placeholder { color: #6B8BAF !important; opacity: 1 !important; }
+[data-baseweb="input"], [data-baseweb="base-input"] {
+    background-color: #1E3A5F !important;
+    border-color: #2a4a6e !important;
+}
+[data-baseweb="input"]:focus-within, [data-baseweb="base-input"]:focus-within {
+    border-color: #CC2936 !important;
+    box-shadow: 0 0 0 2px rgba(204,41,54,0.25) !important;
+}
 
-/* ── Login card wrapper ── */
-.login-card {
+/* ── All text input labels ── */
+.stTextInput label, [data-testid="stTextInput"] label {
+    color: #C8D6E8 !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 4px !important;
+}
+
+/* ── Login card (visual wrapper only — doesn't affect Streamlit inputs) ── */
+.login-card-header {
     background: #0D1F3C;
     border: 1px solid #1E3A5F;
+    border-top: 4px solid #CC2936;
     border-radius: 16px;
-    padding: 40px 44px;
-    max-width: 460px;
-    margin: 0 auto;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    padding: 32px 36px 24px 36px;
+    max-width: 480px;
+    margin: 0 auto 0 auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    text-align: center;
 }
 
-/* ── Login sign-in button ── */
-.login-card .stFormSubmitButton > button {
+/* ── Login submit button ── */
+[data-testid="stFormSubmitButton"] > button,
+.stFormSubmitButton > button {
     background: #CC2936 !important;
     color: #fff !important;
     border: none !important;
     border-radius: 8px !important;
     font-size: 1rem !important;
     font-weight: 600 !important;
-    padding: 12px !important;
-    margin-top: 8px !important;
+    letter-spacing: 0.02em !important;
+    padding: 12px 0 !important;
+    margin-top: 6px !important;
+    width: 100% !important;
     transition: background 0.2s !important;
 }
-.login-card .stFormSubmitButton > button:hover { background: #a5212c !important; }
+[data-testid="stFormSubmitButton"] > button:hover,
+.stFormSubmitButton > button:hover { background: #a5212c !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -480,49 +500,61 @@ def update_progress(module_key):
 #  LOGIN SCREEN
 # ─────────────────────────────────────────────
 def show_login():
-    # ── Outer page: logo + tagline above the card ──
+    # Top padding
+    st.markdown("<div style='padding-top:40px'></div>", unsafe_allow_html=True)
+
+    # ── Logo + title (full-width, centered) ──
     st.markdown("""
-    <div style="text-align:center; padding: 48px 0 28px 0;">
-        <div style="display:inline-block; background:#CC2936; border-radius:16px; padding:14px 20px; margin-bottom:18px;">
-            <span style="font-size:2.2rem;">💊</span>
+    <div style="text-align:center; margin-bottom:32px;">
+        <div style="display:inline-flex; align-items:center; justify-content:center;
+                    background:#CC2936; border-radius:18px; width:72px; height:72px;
+                    margin-bottom:16px; box-shadow:0 4px 16px rgba(204,41,54,0.4);">
+            <span style="font-size:2.4rem; line-height:1;">💊</span>
         </div>
-        <h1 style="font-family:'Playfair Display', serif; color:#FFFFFF; font-size:2rem; margin:0 0 6px 0;">
+        <h1 style="font-family:'Playfair Display', serif; color:#FFFFFF;
+                   font-size:2rem; font-weight:700; margin:0 0 6px 0; letter-spacing:-0.01em;">
             American Associated Pharmacies
         </h1>
-        <p style="color:#8BA3C7; font-size:1rem; margin:0;">New Hire Orientation Portal</p>
+        <p style="color:#8BA3C7; font-size:1rem; margin:0; font-weight:400;">
+            New Hire Orientation Portal
+        </p>
     </div>
     """, unsafe_allow_html=True)
 
-    # ── Centered card column ──
-    col_l, col_m, col_r = st.columns([1, 1.4, 1])
+    # ── Card header (pure HTML — branding only) ──
+    col_l, col_m, col_r = st.columns([1, 1.3, 1])
     with col_m:
-        st.markdown('<div class="login-card">', unsafe_allow_html=True)
-
         st.markdown("""
-        <div style="text-align:center; margin-bottom:28px;">
-            <h2 style="color:#FFFFFF; font-size:1.25rem; margin:0 0 6px 0; font-weight:600;">Welcome! Let's get you started.</h2>
-            <p style="color:#8BA3C7; font-size:0.88rem; margin:0; line-height:1.5;">
-                Enter your credentials below.<br>Your access code and Employee ID were provided by HR.
+        <div class="login-card-header">
+            <h2 style="color:#FFFFFF; font-size:1.15rem; font-weight:600; margin:0 0 8px 0;">
+                Welcome! Let's get you started.
+            </h2>
+            <p style="color:#8BA3C7; font-size:0.87rem; margin:0; line-height:1.6;">
+                Your <strong style="color:#C8D6E8;">Access Code</strong> and
+                <strong style="color:#C8D6E8;">Employee ID</strong>
+                were provided by HR during onboarding.
             </p>
         </div>
         """, unsafe_allow_html=True)
 
+        # Small gap between card header and form fields
+        st.markdown("<div style='height:2px'></div>", unsafe_allow_html=True)
+
+        # ── Streamlit form (inputs rendered natively, CSS handles their styling) ──
         with st.form("login_form", clear_on_submit=False):
             access_code = st.text_input(
-                "🔑  Access Code",
+                "Access Code",
                 placeholder="Enter the code HR gave you",
                 type="password",
             )
             employee_id = st.text_input(
-                "🪪  Employee ID",
+                "Employee ID",
                 placeholder="e.g. 10042",
             )
             full_name = st.text_input(
-                "👤  Full Name",
+                "Full Name",
                 placeholder="As it appears in your HR paperwork",
             )
-
-            st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
             submitted = st.form_submit_button("Sign In  →", use_container_width=True)
 
             if submitted:
@@ -540,17 +572,17 @@ def show_login():
                     else:
                         st.error(f"❌ {reason}")
 
+        # ── Footer contact info ──
         st.markdown("""
-        <div style="text-align:center; margin-top:20px; padding-top:18px; border-top:1px solid #1E3A5F;">
-            <p style="color:#8BA3C7; font-size:0.82rem; margin:0; line-height:1.7;">
-                Need help signing in?<br>
-                <strong style="color:#C8D6E8;">Nicole Thornton</strong> · HR Administrator<br>
-                nicole.thornton@apirx.com · 256-574-7528
+        <div style="text-align:center; margin-top:20px; padding-top:16px;
+                    border-top:1px solid #1E3A5F; max-width:360px; margin-left:auto; margin-right:auto;">
+            <p style="color:#6B8BAF; font-size:0.82rem; margin:0; line-height:1.8;">
+                Need help? Contact HR<br>
+                <span style="color:#C8D6E8; font-weight:500;">Nicole Thornton</span>
+                · nicole.thornton@apirx.com · 256-574-7528
             </p>
         </div>
         """, unsafe_allow_html=True)
-
-        st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ─────────────────────────────────────────────

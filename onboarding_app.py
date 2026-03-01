@@ -131,8 +131,8 @@ h1, h2, h3, h4 { color: #1A1A2E; }
     letter-spacing: -0.02em;
 }
 .welcome-banner p { color: rgba(255,255,255,0.82) !important; font-size: 1rem; margin: 0; }
-.stMarkdown .welcome-banner h1 { color: #FFFFFF !important; }
-.stMarkdown .welcome-banner p  { color: rgba(255,255,255,0.82) !important; }
+[data-testid="stMarkdownContainer"] .welcome-banner h1 { color: #FFFFFF !important; }
+[data-testid="stMarkdownContainer"] .welcome-banner p  { color: rgba(255,255,255,0.85) !important; }
 
 /* ══════════════════════════════════════════
    MODULE CARDS
@@ -2913,8 +2913,8 @@ def _show_home() -> None:
 
     st.markdown(dedent(f"""
         <div class='welcome-banner'>
-            <h1 style='color:#FFFFFF !important;'>Welcome, {st.session_state.full_name}! 🎉</h1>
-            <p style='color:rgba(255,255,255,0.85) !important;'>Work through each module at your own pace.
+            <h1 style='color:#FFFFFF;'>Welcome, {st.session_state.full_name}! 🎉</h1>
+            <p style='color:rgba(255,255,255,0.85);'>Work through each module at your own pace.
                Your progress saves automatically.</p>
         </div>
     """), unsafe_allow_html=True)

@@ -213,32 +213,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 [data-testid="metric-container"] label { color: #8BA3C7 !important; font-size: 0.8rem; }
 [data-testid="metric-container"] [data-testid="stMetricValue"] { color: #FFFFFF !important; font-size: 1.5rem; font-weight: 700; }
 
-/* ── Global input overrides (dark theme) ── */
-input, textarea, [data-baseweb="input"] input, [data-baseweb="textarea"] textarea {
-    background-color: #1E3A5F !important;
-    color: #FFFFFF !important;
-    border-color: #2a4a6e !important;
-    caret-color: #FFFFFF !important;
-}
-input::placeholder, textarea::placeholder { color: #6B8BAF !important; opacity: 1 !important; }
-[data-baseweb="input"], [data-baseweb="base-input"] {
-    background-color: #1E3A5F !important;
-    border-color: #2a4a6e !important;
-}
-[data-baseweb="input"]:focus-within, [data-baseweb="base-input"]:focus-within {
-    border-color: #CC2936 !important;
-    box-shadow: 0 0 0 2px rgba(204,41,54,0.25) !important;
-}
-
-/* ── All text input labels ── */
-.stTextInput label, [data-testid="stTextInput"] label {
-    color: #C8D6E8 !important;
-    font-weight: 500 !important;
-    font-size: 0.9rem !important;
-    margin-bottom: 4px !important;
-}
-
-/* ── Login card (visual wrapper only — doesn't affect Streamlit inputs) ── */
+/* ── Login card header (pure HTML block, no Streamlit inputs inside) ── */
 .login-card-header {
     background: #0D1F3C;
     border: 1px solid #1E3A5F;
@@ -246,28 +221,10 @@ input::placeholder, textarea::placeholder { color: #6B8BAF !important; opacity: 
     border-radius: 16px;
     padding: 32px 36px 24px 36px;
     max-width: 480px;
-    margin: 0 auto 0 auto;
+    margin: 0 auto;
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     text-align: center;
 }
-
-/* ── Login submit button ── */
-[data-testid="stFormSubmitButton"] > button,
-.stFormSubmitButton > button {
-    background: #CC2936 !important;
-    color: #fff !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-size: 1rem !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.02em !important;
-    padding: 12px 0 !important;
-    margin-top: 6px !important;
-    width: 100% !important;
-    transition: background 0.2s !important;
-}
-[data-testid="stFormSubmitButton"] > button:hover,
-.stFormSubmitButton > button:hover { background: #a5212c !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -318,14 +275,11 @@ def verify_employee(access_code, employee_id, full_name):
     # ── Step 1: Check access code against Streamlit secret ──────────────────
     try:
         correct_code = st.secrets["orientation_access_code"]
-    except KeyError:
-        available_keys = list(st.secrets.keys())
-        return False, f"DEBUG — Secret key not found. Available keys: {available_keys}"
-    except Exception as e:
-        return False, f"DEBUG — Secrets error: {type(e).__name__}: {e}"
+    except Exception:
+        return False, "Access code configuration error. Please contact HR."
 
     if access_code.strip() != correct_code.strip():
-        return False, f"DEBUG — Code mismatch. You entered: '{access_code.strip()}' | Expected length: {len(correct_code.strip())} chars."
+        return False, "Incorrect access code. Please try again or contact HR."
 
     # ── Step 2 & 3: Validate Employee ID + Name against roster ──────────────
     client = get_gsheet_client()
@@ -503,6 +457,44 @@ def update_progress(module_key):
 #  LOGIN SCREEN
 # ─────────────────────────────────────────────
 def show_login():
+    # ── Inject login-only CSS (scoped to this page only, removed after login) ──
+    st.markdown("""
+    <style>
+    input, [data-baseweb="input"] input {
+        background-color: #1E3A5F !important;
+        color: #FFFFFF !important;
+        caret-color: #FFFFFF !important;
+    }
+    input::placeholder { color: #6B8BAF !important; opacity: 1 !important; }
+    [data-baseweb="input"], [data-baseweb="base-input"] {
+        background-color: #1E3A5F !important;
+        border-color: #2a4a6e !important;
+    }
+    [data-baseweb="input"]:focus-within {
+        border-color: #CC2936 !important;
+        box-shadow: 0 0 0 2px rgba(204,41,54,0.25) !important;
+    }
+    .stTextInput label {
+        color: #C8D6E8 !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
+    }
+    [data-testid="stFormSubmitButton"] > button {
+        background: #CC2936 !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        padding: 12px 0 !important;
+        margin-top: 6px !important;
+        width: 100% !important;
+        transition: background 0.2s !important;
+    }
+    [data-testid="stFormSubmitButton"] > button:hover { background: #a5212c !important; }
+    </style>
+    """, unsafe_allow_html=True)
+
     # Top padding
     st.markdown("<div style='padding-top:40px'></div>", unsafe_allow_html=True)
 

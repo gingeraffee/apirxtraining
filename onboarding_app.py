@@ -299,6 +299,55 @@ def get_sheet():
         st.warning(f"⚠️ Could not connect to Google Sheets: {type(e).__name__}: {e}")
         return None
 
+def get_employee_sheet():
+    """Employee roster sheet — tab named 'Employee Roster'."""
+    try:
+        client = get_gsheet_client()
+        if client is None:
+            return None
+        return client.open(SHEET_NAME).worksheet("Employee Roster")
+    except Exception:
+        return None
+
+def verify_employee(access_code, employee_id, full_name):
+    """
+    Returns (True, "") on success.
+    Returns (False, reason_string) on failure.
+    Fails closed — any sheet/network error denies access.
+
+    Three-part check:
+      1. Access Code  — shared company-wide password stored in Streamlit secrets.
+      2. Employee ID  — must exist in the Employee Roster sheet.
+      3. Full Name    — must match the name on file for that Employee ID.
+    """
+    # ── Step 1: Check access code ────────────────────────────────────────────
+    try:
+        correct_code = st.secrets["orientation_access_code"]
+    except Exception:
+        return False, "Access code configuration error. Please contact HR."
+
+    if access_code.strip() != correct_code.strip():
+        return False, "Incorrect access code. Please try again or contact HR."
+
+    # ── Step 2 & 3: Validate Employee ID + Name against roster ──────────────
+    emp_sheet = get_employee_sheet()
+    if not emp_sheet:
+        return False, "Unable to reach the employee database. Please try again or contact HR."
+
+    try:
+        records = emp_sheet.get_all_records()
+        for row in records:
+            row_id   = str(row.get("Employee ID", "")).strip().lower()
+            row_name = str(row.get("Full Name",   "")).strip().lower()
+            if row_id == employee_id.strip().lower():
+                if row_name == full_name.strip().lower():
+                    return True, ""
+                else:
+                    return False, "Employee ID and name do not match our records."
+        return False, "Employee ID not found. Please check your ID or contact HR."
+    except Exception:
+        return False, "Verification error. Please try again or contact HR."
+
 def ensure_headers(sheet):
     try:
         if not sheet.row_values(1):
@@ -396,6 +445,8 @@ def save_role_track(username, role):
 # ── SESSION STATE ─────────────────────────────────────────
 SESSION_DEFAULTS = {
     "username": None,
+    "employee_id": "",
+    "auth_error": "",
     "role_track": None,      # "Administrative" | "Warehouse" — set at login
     "progress": {},
     "quiz_results": {},
@@ -712,7 +763,7 @@ def _render_systems_tools_table(sys_docs):
     </table>
     """, unsafe_allow_html=True)
 
-# ── LOGIN (Step 1: Name) ──────────────────────────────────
+# ── LOGIN (Step 1: Validated Sign-In) ────────────────────
 if not st.session_state.username:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -721,17 +772,29 @@ if not st.session_state.username:
             <div style='background:white;border-radius:16px;padding:40px 48px;box-shadow:0 6px 28px rgba(0,0,0,0.10);border-top:5px solid #CC2936;text-align:center;'>
                 <img src='data:image/png;base64,{LOGO_B64}' style='width:100%;max-width:260px;margin-bottom:18px;'>
                 <div style='font-size:1.1rem;color:#0A1628;margin-bottom:4px;font-weight:600;'>Employee Onboarding Portal</div>
-                <div style='color:#5A6E8A;font-size:0.9rem;margin-bottom:24px;'>Enter your full name to begin. Your progress will be saved automatically.</div>
+                <div style='color:#5A6E8A;font-size:0.9rem;margin-bottom:24px;'>Enter your access code, Employee ID, and full name to begin. Your progress will be saved automatically.</div>
             </div>
         """, unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
+        access_code_input = st.text_input("Access Code", placeholder="Provided by HR", key="access_code_field", type="password", label_visibility="visible")
+        employee_id_input = st.text_input("Employee ID", placeholder="e.g. EMP001", key="employee_id_field", label_visibility="visible")
         name_input = st.text_input("Your Full Name", placeholder="e.g. Jane Smith", key="name_field", label_visibility="visible")
+        if st.session_state.auth_error:
+            st.error(st.session_state.auth_error)
         if st.button("Next →", type="primary", use_container_width=True):
-            if name_input.strip():
-                st.session_state.username = name_input.strip()
+            if not access_code_input.strip() or not employee_id_input.strip() or not name_input.strip():
+                st.session_state.auth_error = "Please fill in all fields to continue."
                 st.rerun()
             else:
-                st.error("Please enter your name to continue.")
+                ok, reason = verify_employee(access_code_input, employee_id_input, name_input)
+                if ok:
+                    st.session_state.username = name_input.strip()
+                    st.session_state.employee_id = employee_id_input.strip()
+                    st.session_state.auth_error = ""
+                    st.rerun()
+                else:
+                    st.session_state.auth_error = reason
+                    st.rerun()
     st.stop()
 
 # ── LOGIN (Step 2: Track Selection) ───────────────────────

@@ -442,6 +442,48 @@ def save_role_track(username, role):
     except Exception:
         pass
 
+
+# ── TRACK → VISIBLE MODULES ────────────────────────────────
+# We keep one master MODULES list (content library) and then show a tailored
+# subset based on the user’s selected role track. This keeps the UI sleek and
+# ensures "what they see" matches the checklist path they picked at entry.
+TRACK_MODULE_KEYS = {
+    "Warehouse": [
+        "overview",
+        "policies",
+        "safety",
+        "tools",
+        "pay_benefits",
+        "people",
+        "quickref",
+        "new_hire_checklist",
+    ],
+    "Administrative": [
+        "overview",
+        "policies",
+        "pay_benefits",
+        "tools",
+        "people",
+        "safety",
+        "quickref",
+        "new_hire_checklist",
+    ],
+}
+
+def visible_modules():
+    """Return the module list the current user should see (based on role_track)."""
+    role = st.session_state.get("role_track") or st.session_state.get("new_hire_role")
+    keys = TRACK_MODULE_KEYS.get(role)
+    if not keys:
+        return MODULES
+    keyset = set(keys)
+    # Preserve order from MODULES to keep navigation stable.
+    return [m for m in visible_modules() if m.get("key") in keyset]
+
+def module_by_key(key: str):
+    return next((m for m in visible_modules() if m.get("key") == key), None)
+
+
 # ── SESSION STATE ─────────────────────────────────────────
 SESSION_DEFAULTS = {
     "username": None,
@@ -609,7 +651,7 @@ RESOURCES_CATALOG = [{'category': 'Quick Reference Guides', 'icon': '⚡', 'docs
 
 
 def get_quiz_score(key):
-    module = next((m for m in MODULES if m["key"] == key), None)
+    module = next((m for m in visible_modules() if m["key"] == key), None)
     if not module:
         return 0, 0
     results = st.session_state.quiz_results.get(key, {})
@@ -661,7 +703,7 @@ def get_overall():
     total = 0
     done = 0
 
-    for m in MODULES:
+    for m in visible_modules():
         items = get_effective_checklist(m)
         real_items = [x for x in items if x and not is_header(x)]
         total += len(real_items)
@@ -682,7 +724,7 @@ def push_to_sheet(progress_key: str):
         return
 
     base_key = _base_module_key(progress_key)
-    module = next((m for m in MODULES if m["key"] == base_key), None)
+    module = next((m for m in visible_modules() if m["key"] == base_key), None)
     if not module:
         return
 
@@ -860,15 +902,12 @@ if not st.session_state.sheet_loaded:
 
 # ── SIDEBAR ───────────────────────────────────────────────
 with st.sidebar:
-    _track = st.session_state.get("role_track", "")
-    _track_icon = "🏭" if _track == "Warehouse" else "💼" if _track == "Administrative" else "👤"
-    _track_color = "#1E5FA8" if _track == "Administrative" else "#2D7D46"
     st.markdown(f"""
         <div class='sidebar-header' style='text-align:center;'>
             <img src='data:image/png;base64,{LOGO_B64}' style='width:100%;max-width:155px;display:block;margin:0 auto 10px auto;'>
             <div style='font-size:0.68rem;letter-spacing:0.09em;text-transform:uppercase;color:#5A6E8A;'>Employee Onboarding Portal</div>
             <div class='sidebar-username' style='font-size:0.88rem;margin-top:8px;font-weight:600;'>👤 {st.session_state.username}</div>
-            {f"<div style='display:inline-block;margin-top:7px;background:{_track_color};color:white;font-size:0.72rem;font-weight:700;padding:3px 12px;border-radius:20px;letter-spacing:0.04em;'>{_track_icon} {_track} Track</div>" if _track else ""}
+            {f"<div style='display:inline-block;margin-top:7px;background:;color:white;font-size:0.72rem;font-weight:700;padding:3px 12px;border-radius:20px;letter-spacing:0.04em;'>  Track</div>" if _track else ""}
         </div>
         <hr style='border:none;border-top:1px solid rgba(255,255,255,0.12);margin:14px 0 18px 0;'>
     """, unsafe_allow_html=True)
@@ -876,7 +915,7 @@ with st.sidebar:
     st.markdown(f"<div style='font-size:0.72rem;color:#FFFFFF;margin-bottom:6px;letter-spacing:0.07em;text-transform:uppercase;'>Progress &nbsp;&middot;&nbsp; {overall}%</div>", unsafe_allow_html=True)
     st.progress(overall / 100)
     st.markdown("<br>", unsafe_allow_html=True)
-    nav_options = ["🏠  Home"] + [f"{m['icon']}  {m['title']}" for m in MODULES] + ["📚  Downloads"]
+    nav_options = ["🏠  Home"] + [f"{m['icon']}  {m['title']}" for m in visible_modules()] + ["📚  Downloads"]
     if st.session_state.pending_nav in nav_options:
         st.session_state.sidebar_nav = st.session_state.pending_nav
         st.session_state.pending_nav = None
@@ -918,7 +957,7 @@ if selected_nav == "🏠  Home" and not st.session_state.selected_module:
     with col1:
         st.markdown("<div class='page-title'>Your Training Modules</div>", unsafe_allow_html=True)
         st.markdown("<div class='page-subtitle'>Click any module card to open it, or use the sidebar.</div>", unsafe_allow_html=True)
-        for m in MODULES:
+        for m in visible_modules():
             pct = get_module_pct(m)
             badge = '<span class="badge done">✓ Complete</span>' if pct == 100 else f'<span class="badge">{pct}%</span>'
             cls = "module-card complete" if pct == 100 else "module-card"
@@ -934,7 +973,7 @@ if selected_nav == "🏠  Home" and not st.session_state.selected_module:
         st.markdown("<div class='page-title'>Your Progress</div>", unsafe_allow_html=True)
         st.markdown(f"<div style='background:white;border-radius:12px;padding:24px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.07);border-top:3px solid #CC2936;'><div style='font-size:3rem;font-weight:700;color:#CC2936;font-family:Playfair Display,serif;'>{overall}%</div><div style='color:#5A6E8A;font-size:0.9rem;'>Overall Complete</div></div>", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
-        for m in MODULES:
+        for m in visible_modules():
             pct = get_module_pct(m)
             st.markdown(f"<div style='font-size:0.85rem;color:#0A1628;margin-bottom:2px;'>{m['icon']} {m['title']}</div>", unsafe_allow_html=True)
             st.progress(pct / 100)
@@ -1270,7 +1309,7 @@ elif selected_nav == "📚  Downloads":
 # ── MODULE PAGES ──────────────────────────────────────────
 else:
     # Card click takes priority over sidebar selection
-    sel = st.session_state.selected_module or next((m for m in MODULES if selected_nav == f"{m['icon']}  {m['title']}"), None)
+    sel = st.session_state.selected_module or next((m for m in visible_modules() if selected_nav == f"{m['icon']}  {m['title']}"), None)
     if sel:
         key = sel["key"]
         pct = get_module_pct(sel)

@@ -24,18 +24,18 @@ st.markdown("""
 /* ── Base ── */
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
-.stApp { background-color: #0A1628; color: #E8EDF5; }
+.stApp { background-color: #F3F4F6; color: #1F2937; }
 
 /* ── Sidebar ── */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0D1F3C 0%, #091629 100%);
-    border-right: 1px solid #1E3A5F;
+    border-right: none;
 }
 [data-testid="stSidebar"] * { color: #C8D6E8 !important; }
 [data-testid="stSidebar"] .stButton > button {
     width: 100%;
     background: transparent;
-    border: 1px solid #1E3A5F;
+    border: 1px solid rgba(255,255,255,0.1);
     color: #C8D6E8 !important;
     text-align: left;
     padding: 10px 16px;
@@ -45,41 +45,43 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     transition: all 0.2s;
 }
 [data-testid="stSidebar"] .stButton > button:hover {
-    background: rgba(204, 41, 54, 0.15);
+    background: rgba(204, 41, 54, 0.2);
     border-color: #CC2936;
     color: #fff !important;
 }
 
 /* ── Welcome Banner ── */
 .welcome-banner {
-    background: linear-gradient(135deg, #0D1F3C 0%, #1a2f50 50%, #0D1F3C 100%);
-    border: 1px solid #1E3A5F;
-    border-left: 4px solid #CC2936;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-left: 5px solid #CC2936;
     border-radius: 12px;
     padding: 32px 40px;
     margin-bottom: 28px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 .welcome-banner h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 2.2rem;
-    color: #FFFFFF;
+    font-size: 2rem;
+    color: #0D1F3C;
     margin: 0 0 8px 0;
 }
-.welcome-banner p { color: #8BA3C7; font-size: 1rem; margin: 0; }
+.welcome-banner p { color: #6B7280; font-size: 1rem; margin: 0; }
 
 /* ── Module Cards ── */
 .module-card {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 16px;
     transition: all 0.2s;
     cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
-.module-card:hover { border-color: #CC2936; transform: translateY(-2px); }
-.module-card h3 { color: #FFFFFF; margin: 0 0 8px 0; font-size: 1.1rem; }
-.module-card p { color: #8BA3C7; margin: 0; font-size: 0.9rem; }
+.module-card:hover { border-color: #CC2936; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(204,41,54,0.1); }
+.module-card h3 { color: #0D1F3C; margin: 0 0 8px 0; font-size: 1.1rem; }
+.module-card p { color: #6B7280; margin: 0; font-size: 0.9rem; }
 .module-card .badge {
     display: inline-block;
     background: #CC2936;
@@ -91,48 +93,49 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     margin-bottom: 10px;
 }
 .module-card .badge.complete {
-    background: #1a6b3c;
+    background: #059669;
 }
 
 /* ── Section Content ── */
 .content-section {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
     border-radius: 12px;
     padding: 28px 32px;
     margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 .content-section h2 {
     font-family: 'Playfair Display', serif;
-    color: #FFFFFF;
+    color: #0D1F3C;
     font-size: 1.6rem;
     margin: 0 0 16px 0;
-    border-bottom: 1px solid #1E3A5F;
+    border-bottom: 2px solid #F3F4F6;
     padding-bottom: 12px;
 }
-.content-section h3 { color: #CC2936; font-size: 1.05rem; margin: 20px 0 8px 0; }
-.content-section p, .content-section li { color: #C8D6E8; line-height: 1.7; font-size: 0.95rem; }
+.content-section h3 { color: #CC2936; font-size: 1.05rem; margin: 20px 0 8px 0; font-weight: 600; }
+.content-section p, .content-section li { color: #374151; line-height: 1.7; font-size: 0.95rem; }
 .content-section ul { padding-left: 20px; }
-.content-section strong { color: #FFFFFF; }
+.content-section strong { color: #0D1F3C; }
 
 /* ── Info Boxes ── */
 .info-box {
-    background: rgba(30, 58, 95, 0.5);
+    background: #FFF7F7;
     border-left: 3px solid #CC2936;
     border-radius: 6px;
     padding: 14px 18px;
     margin: 14px 0;
-    color: #C8D6E8;
+    color: #374151;
     font-size: 0.9rem;
 }
-.info-box.green { border-left-color: #2ecc71; }
-.info-box.yellow { border-left-color: #f39c12; }
+.info-box.green { background: #F0FDF4; border-left-color: #059669; }
+.info-box.yellow { background: #FFFBEB; border-left-color: #D97706; }
 
 /* ── Progress Bar ── */
 .progress-container {
-    background: #1E3A5F;
+    background: #E5E7EB;
     border-radius: 8px;
-    height: 10px;
+    height: 8px;
     margin: 8px 0 4px 0;
     overflow: hidden;
 }
@@ -145,25 +148,25 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
 /* ── Quiz ── */
 .quiz-question {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
     border-radius: 10px;
     padding: 20px 24px;
     margin-bottom: 16px;
 }
-.quiz-question p { color: #FFFFFF; font-weight: 500; font-size: 1rem; }
+.quiz-question p { color: #0D1F3C; font-weight: 500; font-size: 1rem; }
 
 /* ── Buttons ── */
 .stButton > button {
     background: #CC2936;
-    color: white;
+    color: white !important;
     border: none;
     border-radius: 8px;
     padding: 10px 24px;
     font-weight: 600;
     transition: all 0.2s;
 }
-.stButton > button:hover { background: #a5212c; color: white; }
+.stButton > button:hover { background: #a5212c !important; color: white !important; }
 
 /* ── Table ── */
 .styled-table {
@@ -171,9 +174,12 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     border-collapse: collapse;
     font-size: 0.88rem;
     margin: 14px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 .styled-table th {
-    background: #CC2936;
+    background: #0D1F3C;
     color: white;
     padding: 10px 14px;
     text-align: left;
@@ -181,57 +187,69 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 }
 .styled-table td {
     padding: 9px 14px;
-    border-bottom: 1px solid #1E3A5F;
-    color: #C8D6E8;
+    border-bottom: 1px solid #E5E7EB;
+    color: #374151;
+    background: #FFFFFF;
 }
-.styled-table tr:nth-child(even) td { background: rgba(30,58,95,0.25); }
+.styled-table tr:nth-child(even) td { background: #F9FAFB; }
 
 /* ── Checkbox overrides ── */
-.stCheckbox label { color: #C8D6E8 !important; font-size: 0.93rem; }
+.stCheckbox label { color: #374151 !important; font-size: 0.93rem; }
 
 /* ── Radio overrides ── */
-.stRadio label { color: #C8D6E8 !important; }
+.stRadio label { color: #374151 !important; }
 .stRadio > div { gap: 6px; }
 
 /* ── Success / Error ── */
 .stSuccess, .stError, .stWarning, .stInfo { border-radius: 8px; }
 
-/* ── Sidebar name input ── */
-[data-testid="stSidebar"] input { 
-    background: #1E3A5F !important; 
-    color: #fff !important; 
-    border: 1px solid #2a4a6e !important; 
-}
+/* ── Sidebar progress bar text ── */
+[data-testid="stSidebar"] small { color: #8BA3C7 !important; }
+
+/* ── Sidebar progress track ── */
+[data-testid="stSidebar"] .progress-container { background: #1E3A5F !important; }
 
 /* ── Metric ── */
 [data-testid="metric-container"] {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-top: 3px solid #CC2936;
     border-radius: 10px;
     padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
-[data-testid="metric-container"] label { color: #8BA3C7 !important; font-size: 0.8rem; }
-[data-testid="metric-container"] [data-testid="stMetricValue"] { color: #FFFFFF !important; font-size: 1.5rem; font-weight: 700; }
+[data-testid="metric-container"] label { color: #6B7280 !important; font-size: 0.8rem; font-weight: 500; }
+[data-testid="metric-container"] [data-testid="stMetricValue"] { color: #0D1F3C !important; font-size: 1.5rem; font-weight: 700; }
 
 /* ── Login card header ── */
 .login-card-header {
-    background: #0D1F3C;
-    border: 1px solid #1E3A5F;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
     border-top: 4px solid #CC2936;
     border-radius: 16px;
     padding: 32px 36px 24px 36px;
     max-width: 480px;
     margin: 0 auto;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     text-align: center;
 }
 
 /* ── Login form inputs ── */
-[data-baseweb="input"] { background-color: #1E3A5F !important; border-color: #2a4a6e !important; }
-[data-baseweb="base-input"] { background-color: #1E3A5F !important; }
-[data-baseweb="base-input"] input { background-color: #1E3A5F !important; color: #FFFFFF !important; caret-color: #FFFFFF; }
-[data-baseweb="base-input"] input::placeholder { color: #6B8BAF !important; }
-[data-baseweb="input"]:focus-within { border-color: #CC2936 !important; box-shadow: 0 0 0 2px rgba(204,41,54,0.2) !important; }
+[data-baseweb="input"] { background-color: #F9FAFB !important; border-color: #D1D5DB !important; }
+[data-baseweb="base-input"] { background-color: #F9FAFB !important; }
+[data-baseweb="base-input"] input { background-color: #F9FAFB !important; color: #1F2937 !important; caret-color: #1F2937; }
+[data-baseweb="base-input"] input::placeholder { color: #9CA3AF !important; }
+[data-baseweb="input"]:focus-within { border-color: #CC2936 !important; box-shadow: 0 0 0 2px rgba(204,41,54,0.15) !important; }
+
+/* ── Divider ── */
+hr { border-color: #E5E7EB !important; }
+
+/* ── Tab styling ── */
+.stTabs [data-baseweb="tab-list"] { background: #F3F4F6; border-radius: 8px; padding: 4px; gap: 4px; }
+.stTabs [data-baseweb="tab"] { background: transparent; border-radius: 6px; color: #6B7280 !important; font-weight: 500; }
+.stTabs [aria-selected="true"] { background: #FFFFFF !important; color: #CC2936 !important; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.stTabs [data-baseweb="tab-border"] { display: none !important; }
+.stTabs [data-baseweb="tab-panel"] { padding-top: 16px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -475,11 +493,11 @@ def show_login():
                     margin-bottom:16px; box-shadow:0 4px 16px rgba(204,41,54,0.4);">
             <span style="font-size:2.4rem; line-height:1;">💊</span>
         </div>
-        <h1 style="font-family:'Playfair Display', serif; color:#FFFFFF;
+        <h1 style="font-family:'Playfair Display', serif; color:#0D1F3C;
                    font-size:2rem; font-weight:700; margin:0 0 6px 0; letter-spacing:-0.01em;">
             American Associated Pharmacies
         </h1>
-        <p style="color:#8BA3C7; font-size:1rem; margin:0; font-weight:400;">
+        <p style="color:#6B7280; font-size:1rem; margin:0; font-weight:400;">
             New Hire Orientation Portal
         </p>
     </div>
@@ -490,12 +508,12 @@ def show_login():
     with col_m:
         st.markdown("""
         <div class="login-card-header">
-            <h2 style="color:#FFFFFF; font-size:1.15rem; font-weight:600; margin:0 0 8px 0;">
+            <h2 style="color:#0D1F3C; font-size:1.15rem; font-weight:600; margin:0 0 8px 0;">
                 Welcome! Let's get you started.
             </h2>
-            <p style="color:#8BA3C7; font-size:0.87rem; margin:0; line-height:1.6;">
-                Your <strong style="color:#C8D6E8;">Access Code</strong> and
-                <strong style="color:#C8D6E8;">Employee ID</strong>
+            <p style="color:#6B7280; font-size:0.87rem; margin:0; line-height:1.6;">
+                Your <strong style="color:#374151;">Access Code</strong> and
+                <strong style="color:#374151;">Employee ID</strong>
                 were provided by HR during onboarding.
             </p>
         </div>
@@ -539,10 +557,10 @@ def show_login():
         # ── Footer contact info ──
         st.markdown("""
         <div style="text-align:center; margin-top:20px; padding-top:16px;
-                    border-top:1px solid #1E3A5F; max-width:360px; margin-left:auto; margin-right:auto;">
-            <p style="color:#6B8BAF; font-size:0.82rem; margin:0; line-height:1.8;">
+                    border-top:1px solid #E5E7EB; max-width:360px; margin-left:auto; margin-right:auto;">
+            <p style="color:#9CA3AF; font-size:0.82rem; margin:0; line-height:1.8;">
                 Need help? Contact HR<br>
-                <span style="color:#C8D6E8; font-weight:500;">Nicole Thornton</span>
+                <span style="color:#374151; font-weight:500;">Nicole Thornton</span>
                 · nicole.thornton@apirx.com · 256-574-7528
             </p>
         </div>
@@ -698,8 +716,8 @@ def show_module_welcome():
     for icon, value, desc in values:
         st.markdown(f"""
         <div class="content-section" style="padding:18px 24px;margin-bottom:10px;">
-            <h3 style="margin-top:0">{icon} {value}</h3>
-            <p style="margin:0">{desc}</p>
+            <h3 style="margin-top:0;color:#CC2936;">{icon} {value}</h3>
+            <p style="margin:0;color:#374151;">{desc}</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1595,8 +1613,8 @@ def show_module_firststeps():
     total_pct = int(sum(st.session_state.progress.values()) / len(MODULES))
     if total_pct == 100:
         st.markdown("""
-        <div class="content-section" style="border-left:4px solid #2ecc71;text-align:center;padding:36px;">
-            <h2 style="color:#2ecc71;">🎉 Congratulations!</h2>
+        <div class="content-section" style="border-left:4px solid #059669;text-align:center;padding:36px;">
+            <h2 style="color:#059669;">🎉 Congratulations!</h2>
             <p style="font-size:1.1rem;">You have completed all five AAP orientation modules.
             Welcome to the team — we're glad you're here!</p>
         </div>

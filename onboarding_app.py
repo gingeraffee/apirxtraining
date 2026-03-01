@@ -472,21 +472,6 @@ def get_profile(employee_id, full_name):
     return None
 
 
-def authenticate(access_code, employee_id, full_name):
-    """Authenticate using shared access code + roster-backed identity."""
-    try:
-        correct_code = st.secrets["orientation_access_code"]
-    except Exception as e:
-        return False, f"Access code configuration error: {e}", None
-
-    if access_code.strip() != str(correct_code).strip():
-        return False, "Incorrect access code.", None
-
-    profile = get_profile(employee_id, full_name)
-    if not profile:
-        return False, "Employee ID and Full Name could not be verified.", None
-
-    return True, "", profile
 
 # ─────────────────────────────────────────────
 #  DATA LAYER
@@ -503,39 +488,47 @@ def authenticate(access_code: str, employee_id: str, full_name: str):
     try:
         correct_code = st.secrets["orientation_access_code"]
     except Exception as exc:
-        return False, f"Access code config error: {exc}"
+        return False, f"Access code config error: {exc}", None
+
 
     if access_code.strip() != correct_code.strip():
-        return False, "Incorrect access code."
+        return False, "Incorrect access code.", None
+
 
     # 2 & 3. Employee ID + name against roster
     client = get_gsheet_client()
     if not client:
-        return False, "Cannot connect to Google Sheets. Check gcp_service_account secret."
+        return False, "Cannot connect to Google Sheets. Check gcp_service_account secret.", None
+
 
     emp_sheet = get_employee_sheet(client)
     if not emp_sheet:
-        return False, "Could not open 'Employee Roster' tab in the spreadsheet."
+        return False, "Could not open 'Employee Roster' tab in the spreadsheet.", None
+
 
     try:
         records = emp_sheet.get_all_records()
         if not records:
-            return False, "Employee Roster is empty."
+            return False, "Employee Roster is empty.", None
+
 
         for row in records:
             row_id   = str(row.get("Employee ID", "")).strip().lower()
             row_name = str(row.get("Full Name",   "")).strip().lower()
             if row_id == employee_id.strip().lower():
                 if row_name == full_name.strip().lower():
-                    return True, ""
+                    return True, "", dict(row)
                 return (
                     False,
                     f"Name mismatch. Sheet has '{row.get('Full Name', '')}'; "
                     f"you entered '{full_name.strip()}'.",
+                    None,
                 )
-        return False, f"Employee ID '{employee_id.strip()}' not found in roster."
+        return False, f"Employee ID '{employee_id.strip()}' not found in roster.", None
+
     except Exception as exc:
-        return False, f"Verification error: {exc}"
+        return False, f"Verification error: {exc}", None
+
 
 
 def get_profile(employee_id: str) -> dict:
@@ -553,8 +546,6 @@ def get_profile(employee_id: str) -> dict:
     except Exception:
         pass
     return {}
-    ok, msg, _ = authenticate(access_code, employee_id, full_name)
-    return ok, msg
 
 
 def _upsert_progress_row(sheet, employee_id, employee_name, module_key,

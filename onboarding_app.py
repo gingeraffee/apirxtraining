@@ -318,11 +318,14 @@ def verify_employee(access_code, employee_id, full_name):
     # ── Step 1: Check access code against Streamlit secret ──────────────────
     try:
         correct_code = st.secrets["orientation_access_code"]
-    except Exception:
-        return False, "Access code configuration error. Please contact HR."
+    except KeyError:
+        available_keys = list(st.secrets.keys())
+        return False, f"DEBUG — Secret key not found. Available keys: {available_keys}"
+    except Exception as e:
+        return False, f"DEBUG — Secrets error: {type(e).__name__}: {e}"
 
     if access_code.strip() != correct_code.strip():
-        return False, "Incorrect access code."
+        return False, f"DEBUG — Code mismatch. You entered: '{access_code.strip()}' | Expected length: {len(correct_code.strip())} chars."
 
     # ── Step 2 & 3: Validate Employee ID + Name against roster ──────────────
     client = get_gsheet_client()

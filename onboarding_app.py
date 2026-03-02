@@ -6,6 +6,8 @@ from datetime import datetime
 # ─────────────────────────────────────────────
 #  PAGE CONFIG
 # ─────────────────────────────────────────────
+COMPANY_LOGO_URL = "https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
+
 st.set_page_config(
     page_title="AAP New Hire Orientation",
     page_icon="💊",
@@ -268,25 +270,43 @@ st.markdown("""
 
     /* ── Onboarding App Compatibility: map onboarding classes to Training App look ── */
 
-    /* Sidebar buttons (onboarding uses st.button vs training uses st.radio) */
+    /* Sidebar buttons — modern, minimal navigation look */
     [data-testid="stSidebar"] .stButton > button {
         width: 100% !important;
-        background: transparent !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        color: rgba(255,255,255,0.88) !important;
+        background: rgba(255,255,255,0.04) !important;
+        border: 0 !important;
+        border-left: 2px solid transparent !important;
+        color: rgba(255,255,255,0.92) !important;
         text-align: left !important;
-        padding: 10px 12px !important;
-        border-radius: 8px !important;
-        margin: 3px 0 !important;
+        padding: 9px 12px !important;
+        border-radius: 6px !important;
+        margin: 2px 0 !important;
         font-size: 0.9rem !important;
         font-weight: 500 !important;
-        transition: all 0.15s ease !important;
+        box-shadow: none !important;
+        transition: background-color 0.18s ease, border-left-color 0.18s ease, color 0.18s ease !important;
     }
     [data-testid="stSidebar"] .stButton > button:hover {
-        background: rgba(204,41,54,0.22) !important;
-        border-color: #CC2936 !important;
+        background: rgba(255,255,255,0.10) !important;
+        border-left-color: #CC2936 !important;
         color: #FFFFFF !important;
-        transform: translateY(-1px);
+        transform: none !important;
+    }
+
+    [data-testid="stSidebar"] .stButton > button[kind="primary"],
+    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
+        background: linear-gradient(135deg, #CC2936 0%, #A01E27 100%) !important;
+        color: #FFFFFF !important;
+        border-radius: 8px !important;
+        border: none !important;
+        text-align: center !important;
+        font-weight: 600 !important;
+        margin: 6px 0 !important;
+    }
+    [data-testid="stSidebar"] .stButton > button[kind="primary"]:hover,
+    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"]:hover {
+        background: linear-gradient(135deg, #D93A46 0%, #B32630 100%) !important;
+        border-left-color: transparent !important;
     }
 
     /* Content sections used heavily in onboarding */
@@ -759,16 +779,7 @@ if st.session_state.authenticated:
     active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
 
     with st.sidebar:
-        # Logo in sidebar
-        st.markdown("""
-        <div style="text-align:center; padding:16px 8px 8px 8px; margin-bottom:4px;">
-            <img src="https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
-                 alt="AAP"
-                 style="height:44px; max-width:160px; object-fit:contain;"
-                 onerror="this.style.display='none'; document.getElementById('sb-logo-fallback').style.display='block';">
-            <div id="sb-logo-fallback" style="display:none; color:#fff; font-size:1.1rem; font-weight:700; letter-spacing:0.05em;">AAP</div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.image(COMPANY_LOGO_URL, use_container_width=True)
         st.markdown("---")
 
         track_label = "🏭 Warehouse Track" if st.session_state.get("role_track") == "warehouse" else "🖥️ General Track"

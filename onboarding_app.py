@@ -1,6 +1,5 @@
 import streamlit as st
 import json
-import html
 import gspread
 from datetime import datetime
 
@@ -266,7 +265,112 @@ st.markdown("""
         border-color: rgba(255,255,255,0.12) !important;
       }
     }
-    </style>
+
+    /* ── Onboarding App Compatibility: map onboarding classes to Training App look ── */
+
+    /* Sidebar buttons (onboarding uses st.button vs training uses st.radio) */
+    [data-testid="stSidebar"] .stButton > button {
+        width: 100% !important;
+        background: transparent !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
+        color: rgba(255,255,255,0.88) !important;
+        text-align: left !important;
+        padding: 10px 12px !important;
+        border-radius: 8px !important;
+        margin: 3px 0 !important;
+        font-size: 0.9rem !important;
+        font-weight: 500 !important;
+        transition: all 0.15s ease !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover {
+        background: rgba(204,41,54,0.22) !important;
+        border-color: #CC2936 !important;
+        color: #FFFFFF !important;
+        transform: translateY(-1px);
+    }
+
+    /* Content sections used heavily in onboarding */
+    .content-section {
+        background: #FFFFFF;
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin: 18px 0;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        border-top: 3px solid #CC2936;
+    }
+    .content-section h2 {
+        font-family: 'Playfair Display', serif;
+        color: #0A1628 !important;
+        font-size: 1.7rem;
+        font-weight: 700;
+        margin: 0 0 14px 0;
+        border-bottom: 2px solid #D8E1EB;
+        padding-bottom: 10px;
+    }
+    .content-section h3 {
+        color: #CC2936 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin: 18px 0 8px 0;
+    }
+
+    /* Info boxes (onboarding) → training callout vibe */
+    .info-box {
+        background: #FFF5F5;
+        border-left: 4px solid #CC2936;
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 16px 0;
+        color: #0A1628 !important;
+    }
+    .info-box.green { background: #F0FFF6; border-left-color: #1A9E5C; }
+    .info-box.yellow { background: #FFF7ED; border-left-color: #D97706; }
+
+    /* Tables (onboarding styled-table) aligned to training palette */
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+        margin: 14px 0;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    }
+    .styled-table th {
+        background: #0A1628;
+        color: #FFFFFF;
+        padding: 12px 14px;
+        text-align: left;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+    }
+    .styled-table td {
+        padding: 11px 14px;
+        border-bottom: 1px solid #E6EDF5;
+        color: #0A1628;
+        background: #FFFFFF;
+    }
+    .styled-table tr:nth-child(even) td { background: #F7FAFD; }
+    .styled-table tr:last-child td { border-bottom: none; }
+
+    /* Form submit button styling (login) */
+    div[data-testid="stFormSubmitButton"] button {
+        background-color: #0A1628 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 8px 20px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.02em !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.12) !important;
+    }
+    div[data-testid="stFormSubmitButton"] button:hover {
+        background-color: #CC2936 !important;
+    }
+
+</style>
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
@@ -383,55 +487,6 @@ def load_progress(employee_id):
     client = get_gsheet_client()
     if not client:
         return {}
-
-# ─────────────────────────────────────────────
-#  CLEAN DATA LAYER (required API)
-# ─────────────────────────────────────────────
-def authenticate(access_code: str, employee_id: str, full_name: str):
-    """
-    Returns (ok: bool, reason: str)
-    Auth is backed by Google Sheets (Employee Roster) + shared access code in Streamlit secrets.
-    """
-    return verify_employee(access_code, employee_id, full_name)
-
-def get_profile():
-    """
-    Returns a minimal profile dict for the logged-in user.
-    (Roster is the authoritative source; we keep the session profile lightweight.)
-    """
-    return {
-        "full_name": st.session_state.get("username", ""),
-        "employee_id": st.session_state.get("employee_id", ""),
-        "track": st.session_state.get("role_track", ""),
-    }
-
-def save_notes(employee_id: str, employee_name: str, module_key: str, note_text: str):
-    """
-    Persist notes into the same Sheet1 as progress using a reserved Module Key prefix.
-    """
-    mk = f"__note__:{module_key}"
-    payload = {"note": note_text or ""}
-    save_progress(employee_id, employee_name, mk, 0, payload, None)
-
-def load_notes(employee_id: str):
-    """
-    Load notes stored with Module Key prefix __note__:<module_key>.
-    """
-    saved = load_progress(employee_id)
-    notes = {}
-    for mk, data in saved.items():
-        if isinstance(mk, str) and mk.startswith("__note__:"):
-            base = mk.split(":", 1)[1]
-            chk = data.get("checklist", {}) if isinstance(data, dict) else {}
-            if isinstance(chk, dict):
-                notes[base] = str(chk.get("note", "") or "")
-    return notes
-
-def visible_modules(track: str):
-    """
-    Non-recursive. Returns the module list for the given track.
-    """
-    return WAREHOUSE_MODULES if track == "warehouse" else MODULES
     sheet = get_sheet(client)
     if not sheet:
         return {}
@@ -598,31 +653,41 @@ def show_login():
 
     # ── Logo + title ──
     st.markdown("""
-    <div sty
-# ─────────────────────────────────────────────
-#  SESSION STATE DEFAULTS (deterministic contract)
-# ─────────────────────────────────────────────
-def ensure_session_defaults():
-    defaults = {
-        "authenticated": False,
-        "username": "",
-        "employee_id": "",
-        "role_track": "",          # "general" or "warehouse"
-        "selected_module": None,   # module key or None
-        "pending_nav": "🏠  Home",
-        "sheet_loaded": False,
-        "progress": {},            # module_key -> pct int
-        "quiz_results": {},        # module_key -> score or None
-        "checklist_items": {},     # module_key -> {item_key: bool}
-        "notes": {},               # module_key -> str
-        "auth_error": "",
-    }
-    for k, v in defaults.items():
-        if k not in st.session_state:
-            st.session_state[k] = v
+    <div style="text-align:center; margin-bottom:36px;">
+        <div style="margin-bottom:20px;">
+            <img src="https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
+                 alt="AAP Logo"
+                 style="height:70px; max-width:240px; object-fit:contain; filter: brightness(0) invert(0);"
+                 onerror="this.style.display='none'; document.getElementById('aap-logo-fallback').style.display='inline-block';">
+            <div id="aap-logo-fallback"
+                 style="display:none; background:#CC2936; border-radius:12px;
+                        padding:10px 20px; display:none; margin:0 auto;">
+                <span style="color:#fff; font-size:1.4rem; font-weight:700; letter-spacing:0.05em;">AAP</span>
+            </div>
+        </div>
+        <h1 style="font-size:1.9rem; font-weight:700; color:#1A1A2E;
+                   margin:0 0 6px 0; letter-spacing:-0.02em;">
+            American Associated Pharmacies
+        </h1>
+        <p style="color:#64748B; font-size:1rem; margin:0;">
+            New Hire Orientation Portal
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-ensure_session_defaults()
-low_html=True)
+    col_l, col_m, col_r = st.columns([1, 1.3, 1])
+    with col_m:
+        st.markdown("""
+        <div class="login-card">
+            <h2 style="font-size:1.15rem; font-weight:600; margin:0 0 6px 0; text-align:center;">
+                Welcome! Let's get you started.
+            </h2>
+            <p style="font-size:0.87rem; margin:0 0 4px 0; text-align:center; line-height:1.6;">
+                Your <strong>Access Code</strong> and <strong>Employee ID</strong>
+                were provided by HR during onboarding.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
 
         st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
@@ -653,7 +718,7 @@ low_html=True)
                     st.error("Please fill in all three fields to continue.")
                 else:
                     with st.spinner("Verifying your credentials…"):
-                        ok, reason = authenticate(access_code, employee_id, full_name)
+                        ok, reason = verify_employee(access_code, employee_id, full_name)
                     if ok:
                         track = "warehouse" if role_track == "Warehouse" else "general"
                         if track == "warehouse":
@@ -669,7 +734,6 @@ low_html=True)
                         st.session_state.progress        = prog_keys
                         st.session_state.checklist_items = chk_keys
                         st.session_state.quiz_results    = {}
-                        st.session_state.notes           = {}
                         st.session_state.sheet_loaded    = False
                         st.rerun()
                     else:
@@ -736,85 +800,18 @@ if st.session_state.authenticated:
         st.markdown("---")
         st.markdown("**Modules**")
 
-        if st.button("🏠  Home", key="nav_home
-# ─────────────────────────────────────────────
-#  SIDEBAR  (only rendered when authenticated)
-# ─────────────────────────────────────────────
-def _build_nav_options(active_modules):
-    opts = ["🏠  Home"]
-    for m in active_modules:
-        opts.append(f"{m['icon']}  {m['number']}. {m['title']}")
-    return opts
+        if st.button("🏠  Home", key="nav_home", use_container_width=True):
+            st.session_state.selected_module = None
 
-def _label_to_module_key(label: str, active_modules):
-    if label == "🏠  Home":
-        return None
-    # label format: "🏢  1. Title"
-    for m in active_modules:
-        if f"{m['icon']}  {m['number']}. {m['title']}" == label:
-            return m["key"]
-    return None
-
-if st.session_state.authenticated:
-    active_modules = visible_modules(st.session_state.get("role_track"))
-
-    # Load progress + notes once per login session
-    if not st.session_state.sheet_loaded and st.session_state.employee_id:
-        saved = load_progress(st.session_state.employee_id)
-        if saved:
-            # Progress rows
-            for mk, data in saved.items():
-                if isinstance(mk, str) and mk.startswith("__note__:"):
-                    continue
-                st.session_state.progress[mk] = int(data.get("pct", 0)) if isinstance(data, dict) else 0
-                if isinstance(data, dict):
-                    st.session_state.checklist_items[mk] = data.get("checklist", {}) or {}
-                    if data.get("quiz_score") is not None:
-                        st.session_state.quiz_results[mk] = data["quiz_score"]
-        # Notes rows
-        st.session_state.notes = load_notes(st.session_state.employee_id)
-        st.session_state.sheet_loaded = True
-
-    with st.sidebar:
-        st.markdown("""
-        <div class="sidebar-header">
-            <div style="text-align:center; margin-bottom:10px;">
-                <img src="https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
-                     alt="AAP"
-                     style="height:44px; max-width:160px; object-fit:contain;"
-                     onerror="this.style.display='none'; document.getElementById('sb-logo-fallback').style.display='block';">
-                <div id="sb-logo-fallback" style="display:none; color:#0A1628; font-size:1.2rem; font-weight:800; letter-spacing:0.06em;">AAP</div>
-            </div>
-            <div style="font-size:0.85rem; color:#5A6E8A;">Signed in as</div>
-            <div class="sidebar-username" style="font-size:1.02rem;">{name}</div>
-            <div style="font-size:0.82rem; color:#5A6E8A;">ID: {eid}</div>
-            <div style="margin-top:6px; font-size:0.82rem; font-weight:700; color:#CC2936;">{track_label}</div>
-        </div>
-        """.format(
-            name=html.escape(st.session_state.username or ""),
-            eid=html.escape(st.session_state.employee_id or ""),
-            track_label="🏭 Warehouse Track" if st.session_state.get("role_track") == "warehouse" else "🖥️ General Track",
-        ), unsafe_allow_html=True)
-
-        if st.button("🚪 Sign Out", key="sign_out", type="primary", use_container_width=True):
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
-            st.rerun()
-
-        st.markdown("**Modules**")
-        nav_opts = _build_nav_options(active_modules)
-        # Keep a deterministic selection key in session_state
-        if st.session_state.pending_nav not in nav_opts:
-            st.session_state.pending_nav = "🏠  Home"
-        chosen = st.radio("Navigation", nav_opts, index=nav_opts.index(st.session_state.pending_nav), label_visibility="collapsed")
-        st.session_state.pending_nav = chosen
-
-        # Update selected module from radio
-        st.session_state.selected_module = _label_to_module_key(chosen, active_modules)
+        for m in active_modules:
+            pct = st.session_state.progress.get(m["key"], 0)
+            label = f"{m['icon']}  {m['number']}. {m['title']}"
+            if st.button(label, key=f"nav_{m['key']}", use_container_width=True):
+                st.session_state.selected_module = m["key"]
+            st.markdown(pct_bar(pct), unsafe_allow_html=True)
 
         st.markdown("---")
-        # Overall progress bar (exclude note rows, only real modules)
-        total_pct = int(sum(st.session_state.progress.get(m["key"], 0) for m in active_modules) / max(1, len(active_modules)))
+        total_pct = int(sum(st.session_state.progress.values()) / len(active_modules))
         st.markdown(f"**Overall Progress: {total_pct}%**")
         st.markdown(pct_bar(total_pct), unsafe_allow_html=True)
 
@@ -830,8 +827,57 @@ if st.session_state.authenticated:
         """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-#  MAIN CONTENT — HOME / MODULE ROUTER
+#  MAIN CONTENT — HOME
 # ─────────────────────────────────────────────
+def show_home():
+    is_warehouse = st.session_state.get("role_track") == "warehouse"
+    active_modules = WAREHOUSE_MODULES if is_warehouse else MODULES
+    track_label = "Warehouse" if is_warehouse else "General"
+    name_display = f", {st.session_state.username}" if st.session_state.username else ""
+    subtitle = "Complete all five warehouse orientation modules below to finish your onboarding." if is_warehouse else "We're thrilled to have you on board. Complete all five orientation modules below to finish your onboarding."
+    st.markdown(f"""
+    <div class="welcome-banner">
+        <h1>Welcome to American Associated Pharmacies{name_display}! 🎉</h1>
+        <p>{subtitle}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Summary metrics
+    completed = sum(1 for p in st.session_state.progress.values() if p == 100)
+    total_pct = int(sum(st.session_state.progress.values()) / len(active_modules))
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Modules Complete", f"{completed} / {len(active_modules)}")
+    col2.metric("Overall Progress", f"{total_pct}%")
+    col3.metric("Quizzes Passed", f"{sum(1 for v in st.session_state.quiz_results.values() if v is not None)} / {len(active_modules)}")
+
+    st.markdown("---")
+    st.markdown(f"### 📚 Your {track_label} Orientation Modules")
+
+    for m in active_modules:
+        pct = st.session_state.progress.get(m["key"], 0)
+        badge_class = "complete" if pct == 100 else ""
+        badge_text = "✅ Complete" if pct == 100 else f"⏳ {pct}% Done"
+        st.markdown(f"""
+        <div class="module-card">
+            <span class="badge {badge_class}">{badge_text}</span>
+            <h3>{m['icon']} Module {m['number']}: {m['title']}</h3>
+            <p>{m['subtitle']}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button(f"Open Module {m['number']}", key=f"open_{m['key']}", type="secondary"):
+            st.session_state.selected_module = m["key"]
+            st.rerun()
+
+# ─────────────────────────────────────────────
+#  MODULE 1 — WELCOME TO AAP
+# ─────────────────────────────────────────────
+def show_module_welcome():
+    st.markdown("""
+    <div class="content-section">
+        <h2>🏢 Module 1: Welcome to AAP</h2>
+
+        <h3>A Message From Our CEO</h3>
+        <p>On behalf of your colleagues, I welcome you to AAP and wish you every success here. We believe that each
         employee contributes directly to AAP's growth and success, and we hope you will take pride in being a member
         of our team. This handbook was developed to describe some of the expectations of our employees and to outline
         the policies, programs, and benefits available to eligible employees.</p>
@@ -2757,15 +2803,5 @@ else:
     selected = st.session_state.selected_module
     if selected and selected in module_map:
         module_map[selected]()
-
-        # ── Notes (persisted) ───────────────────────────────────────────────
-        st.markdown("---")
-        st.markdown("<div class='page-title'>Your Notes</div>", unsafe_allow_html=True)
-        current_note = st.session_state.notes.get(selected, "")
-        note_text = st.text_area("Notes", value=current_note, height=160, key=f"note_{selected}")
-        if note_text != current_note:
-            st.session_state.notes[selected] = note_text
-            if st.session_state.employee_id:
-                save_notes(st.session_state.employee_id, st.session_state.username, selected, note_text)
     else:
         show_home()

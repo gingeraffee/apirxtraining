@@ -1,5 +1,6 @@
 import streamlit as st
 import json
+import os
 import gspread
 from datetime import datetime
 
@@ -7,6 +8,8 @@ from datetime import datetime
 #  PAGE CONFIG
 # ─────────────────────────────────────────────
 COMPANY_LOGO_URL = "https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
+API_LOGO_PATH = "assets/api_logo.png"
+_sidebar_logo = API_LOGO_PATH if os.path.exists(API_LOGO_PATH) else COMPANY_LOGO_URL
 
 st.set_page_config(
     page_title="AAP New Hire Orientation",
@@ -14,6 +17,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+# Native Streamlit logo — appears in the top-left corner of the sidebar
+st.logo(_sidebar_logo, link="https://apirx.com")
 
 # ─────────────────────────────────────────────
 #  CUSTOM CSS
@@ -779,7 +785,7 @@ if st.session_state.authenticated:
     active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
 
     with st.sidebar:
-        st.image(COMPANY_LOGO_URL, use_container_width=True)
+        st.image(_sidebar_logo, use_container_width=True)
         st.markdown("---")
 
         track_label = "🏭 Warehouse Track" if st.session_state.get("role_track") == "warehouse" else "🖥️ General Track"

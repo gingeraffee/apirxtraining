@@ -6,6 +6,8 @@ from datetime import datetime
 # ─────────────────────────────────────────────
 #  PAGE CONFIG
 # ─────────────────────────────────────────────
+COMPANY_LOGO_URL = "https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
+
 st.set_page_config(
     page_title="AAP New Hire Orientation",
     page_icon="💊",
@@ -759,16 +761,7 @@ if st.session_state.authenticated:
     active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
 
     with st.sidebar:
-        # Logo in sidebar
-        st.markdown("""
-        <div style="text-align:center; padding:16px 8px 8px 8px; margin-bottom:4px;">
-            <img src="https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
-                 alt="AAP"
-                 style="height:44px; max-width:160px; object-fit:contain;"
-                 onerror="this.style.display='none'; document.getElementById('sb-logo-fallback').style.display='block';">
-            <div id="sb-logo-fallback" style="display:none; color:#fff; font-size:1.1rem; font-weight:700; letter-spacing:0.05em;">AAP</div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.image(COMPANY_LOGO_URL, use_container_width=True)
         st.markdown("---")
 
         track_label = "🏭 Warehouse Track" if st.session_state.get("role_track") == "warehouse" else "🖥️ General Track"

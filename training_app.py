@@ -1635,7 +1635,10 @@ def _show_login_screen() -> None:
         </div>
     """), unsafe_allow_html=True)
 
-    col_l, col_c, col_r = st.columns([1, 1.6, 1])
+    # Render the form inside a centered column for layout only.
+    # Critically: submitted + all result handling are checked OUTSIDE
+    # the column so Streamlit's form state is read at the top-level scope.
+    _, col_c, _ = st.columns([1, 1.6, 1])
     with col_c:
         with st.form("login_form", clear_on_submit=False):
             st.markdown("#### Sign In")
@@ -1645,7 +1648,6 @@ def _show_login_screen() -> None:
                                         placeholder="e.g. 12345")
             full_name   = st.text_input("Full Name",
                                         placeholder="As listed in HR records")
-
             st.markdown("#### Training Track")
             role_track = st.radio(
                 "Select your track",
@@ -1654,24 +1656,25 @@ def _show_login_screen() -> None:
             )
             submitted = st.form_submit_button("Sign In  →", use_container_width=True)
 
-        if submitted:
-            if not access_code or not employee_id or not full_name:
-                st.error("Please fill in all fields to continue.")
+    # ── Handle submission outside column context ─────────────────────
+    if submitted:
+        if not access_code or not employee_id or not full_name:
+            st.error("Please fill in all fields to continue.")
+        else:
+            with st.spinner("Verifying credentials…"):
+                ok, reason, profile = authenticate(access_code, employee_id, full_name)
+            if ok:
+                st.session_state.authenticated   = True
+                st.session_state.employee_id     = profile["employee_id"]
+                st.session_state.full_name       = profile["full_name"]
+                st.session_state.role_track      = profile.get("track") or role_track
+                st.session_state.progress        = load_progress(profile["employee_id"]) or {}
+                st.session_state.notes           = load_notes(profile["employee_id"]) or {}
+                st.session_state.sidebar_nav     = "🏠  Home"
+                st.session_state.selected_module = None
+                st.rerun()
             else:
-                with st.spinner("Verifying…"):
-                    ok, reason, profile = authenticate(access_code, employee_id, full_name)
-                if ok:
-                    st.session_state.authenticated  = True
-                    st.session_state.employee_id    = profile["employee_id"]
-                    st.session_state.full_name      = profile["full_name"]
-                    st.session_state.role_track     = profile.get("track") or role_track
-                    st.session_state.progress       = load_progress(profile["employee_id"]) or {}
-                    st.session_state.notes          = load_notes(profile["employee_id"]) or {}
-                    st.session_state.sidebar_nav    = "🏠  Home"
-                    st.session_state.selected_module = None
-                    st.rerun()
-                else:
-                    st.error(reason or "Unable to verify credentials.")
+                st.error(reason or "Unable to verify credentials.")
 
 
 # ─────────────────────────────────────────────

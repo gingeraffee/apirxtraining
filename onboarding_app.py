@@ -236,12 +236,12 @@ def save_notes(username: str, module_key: str, note: str) -> None:
 # Training theme: import or extract verbatim CSS from training_app.py
 # -----------------------------------------------------------------------------
 def _extract_training_css_from_file(py_path: Path) -> str:
-    """
+    '''
     Extracts *verbatim* CSS blocks from training_app.py.
     Strategy:
       - If training_app defines TRAINING_THEME_CSS or THEME_CSS as triple-quoted string, use it.
       - Else, collect any st.markdown("""<style> ... </style>""", unsafe_allow_html=True) blocks.
-    """
+    '''
     if not py_path.exists():
         return ""
 

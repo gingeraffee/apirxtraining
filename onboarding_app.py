@@ -7,6 +7,7 @@ from datetime import datetime
 #  PAGE CONFIG
 # ─────────────────────────────────────────────
 COMPANY_LOGO_URL = "https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
+API_LOGO_URL = "https://rxaap.com/wp-content/uploads/2021/03/API_Logo_White.png"
 
 st.set_page_config(
     page_title="AAP New Hire Orientation",
@@ -40,6 +41,31 @@ st.markdown("""
         padding: 16px 14px 14px 14px;
         margin-bottom: 18px;
         box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    }
+    .sidebar-logo-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    .sidebar-logo-row img {
+        max-height: 56px;
+        width: auto;
+        object-fit: contain;
+    }
+    .sidebar-brand-line {
+        text-align: center;
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        font-weight: 700;
+        margin-top: 2px;
+        margin-bottom: 8px;
+    }
+    .sidebar-username {
+        text-align: center;
+        font-size: 1rem;
+        margin: 0;
     }
     .sidebar-header * { color: #0A1628 !important; }
     .sidebar-header .sidebar-username {
@@ -779,7 +805,18 @@ if st.session_state.authenticated:
     active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
 
     with st.sidebar:
-        st.image(COMPANY_LOGO_URL, use_container_width=True)
+        st.markdown(f"""
+        <div class="sidebar-header">
+            <div class="sidebar-logo-row">
+                <img src="{COMPANY_LOGO_URL}" alt="AAP Logo">
+                <img src="{API_LOGO_URL}" alt="API Logo"
+                     onerror="this.style.display='none'; document.getElementById('api-logo-fallback').style.display='inline-block';">
+                <span id="api-logo-fallback" style="display:none;font-weight:800;color:#CC2936;">API</span>
+            </div>
+            <div class="sidebar-brand-line">HR ASSISTANT TRAINING</div>
+            <p class="sidebar-username">👤 {st.session_state.username}</p>
+        </div>
+        """, unsafe_allow_html=True)
         st.markdown("---")
 
         track_label = "🏭 Warehouse Track" if st.session_state.get("role_track") == "warehouse" else "🖥️ General Track"

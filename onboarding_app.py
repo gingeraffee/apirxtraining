@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import os
+import base64
 import gspread
 from datetime import datetime
 
@@ -10,6 +11,14 @@ from datetime import datetime
 COMPANY_LOGO_URL = "https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
 API_LOGO_PATH = "assets/api_logo.png"
 _sidebar_logo = API_LOGO_PATH if os.path.exists(API_LOGO_PATH) else COMPANY_LOGO_URL
+
+def _logo_img_src():
+    """Return an img src usable inside raw HTML: base64 for local file, URL otherwise."""
+    if os.path.exists(API_LOGO_PATH):
+        with open(API_LOGO_PATH, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode()
+        return f"data:image/png;base64,{b64}"
+    return COMPANY_LOGO_URL
 
 st.set_page_config(
     page_title="AAP New Hire Orientation",
@@ -54,21 +63,29 @@ st.markdown("""
         letter-spacing: 0.02em !important;
     }
 
-    /* ── Sidebar Navigation — explicit white text so nothing disappears ── */
+    /* ── Sidebar Radio Navigation ── */
+    [data-testid="stSidebar"] .stRadio > div { gap: 2px !important; }
     [data-testid="stSidebar"] .stRadio label {
         color: rgba(255,255,255,0.88) !important;
         border-radius: 8px !important;
-        padding: 7px 10px !important;
-        transition: all 0.15s ease !important;
-        font-size: 0.9rem !important;
+        padding: 6px 10px !important;
+        transition: background 0.15s ease !important;
+        font-size: 0.88rem !important;
+        width: 100% !important;
     }
     [data-testid="stSidebar"] .stRadio label:hover {
-        background: rgba(204,41,54,0.22) !important;
+        background: rgba(204,41,54,0.18) !important;
         color: #FFFFFF !important;
     }
     [data-testid="stSidebar"] .stRadio p,
     [data-testid="stSidebar"] .stRadio span {
         color: rgba(255,255,255,0.88) !important;
+    }
+    /* Red dot for selected radio option */
+    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
+    [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
+        background-color: #CC2936 !important;
+        border-color: #CC2936 !important;
     }
 
     /* ── Typography ── */
@@ -785,21 +802,6 @@ if st.session_state.authenticated:
     active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
 
     with st.sidebar:
-        track_label = "🏭 Warehouse Track" if st.session_state.get("role_track") == "warehouse" else "🖥️ General Track"
-        st.markdown(f"""
-        <div style="margin-bottom:12px;">
-            <small style="color:#8BA3C7;">Signed in as</small><br>
-            <strong style="color:#fff;">{st.session_state.username}</strong><br>
-            <small style="color:#8BA3C7;">ID: {st.session_state.employee_id}</small><br>
-            <small style="color:#CC2936;font-weight:600;">{track_label}</small>
-        </div>
-        """, unsafe_allow_html=True)
-
-        if st.button("🚪 Sign Out", key="sign_out", type="primary", use_container_width=True):
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
-            st.rerun()
-
         # Load progress from sheet once per login session
         if not st.session_state.sheet_loaded:
             saved = load_progress(st.session_state.employee_id)
@@ -811,23 +813,64 @@ if st.session_state.authenticated:
                         st.session_state.quiz_results[mk] = data["quiz_score"]
             st.session_state.sheet_loaded = True
 
-        st.markdown("---")
-        st.markdown("**Modules**")
+        # ── White card: logo + label + username ──
+        logo_src = _logo_img_src()
+        st.markdown(f"""
+        <div class="sidebar-header">
+            <img src="{logo_src}"
+                 style="max-height:56px; width:100%; object-fit:contain; margin-bottom:10px;" />
+            <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.13em;
+                        color:#5A7A9F; text-transform:uppercase; margin-bottom:6px;">
+                HR Assistant Training
+            </div>
+            <div style="font-size:0.93rem; font-weight:600; color:#CC2936;">
+                👤 {st.session_state.username}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        if st.button("🏠  Home", key="nav_home", use_container_width=True):
-            st.session_state.selected_module = None
-
-        for m in active_modules:
-            pct = st.session_state.progress.get(m["key"], 0)
-            label = f"{m['icon']}  {m['number']}. {m['title']}"
-            if st.button(label, key=f"nav_{m['key']}", use_container_width=True):
-                st.session_state.selected_module = m["key"]
-            st.markdown(pct_bar(pct), unsafe_allow_html=True)
-
-        st.markdown("---")
-        total_pct = int(sum(st.session_state.progress.values()) / len(active_modules))
-        st.markdown(f"**Overall Progress: {total_pct}%**")
+        # ── Overall progress ──
+        total_pct = int(sum(st.session_state.progress.values()) / max(len(active_modules), 1))
+        st.markdown(f"""
+        <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.1em;
+                    color:#8BA3C7; text-transform:uppercase; margin: 6px 0 4px 0;">
+            Progress &middot; {total_pct}%
+        </div>
+        """, unsafe_allow_html=True)
         st.markdown(pct_bar(total_pct), unsafe_allow_html=True)
+
+        st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
+
+        # ── Radio navigation ──
+        nav_options = ["🏠  Home"] + [
+            f"{m['icon']}  {m['number']}. {m['title']}" for m in active_modules
+        ]
+        module_keys = [None] + [m["key"] for m in active_modules]
+
+        try:
+            current_idx = module_keys.index(st.session_state.selected_module)
+        except ValueError:
+            current_idx = 0
+
+        selected_nav = st.radio(
+            "Navigation",
+            nav_options,
+            index=current_idx,
+            label_visibility="collapsed",
+        )
+
+        new_key = module_keys[nav_options.index(selected_nav)]
+        if new_key != st.session_state.selected_module:
+            st.session_state.selected_module = new_key
+            st.rerun()
+
+        st.markdown("---")
+
+        # ── Sign Out ──
+        if st.button("🚪 Sign Out", key="sign_out", type="primary", use_container_width=True):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.rerun()
 
         st.markdown("---")
         st.markdown("""

@@ -785,9 +785,6 @@ if st.session_state.authenticated:
     active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
 
     with st.sidebar:
-        st.image(_sidebar_logo, use_container_width=True)
-        st.markdown("---")
-
         track_label = "🏭 Warehouse Track" if st.session_state.get("role_track") == "warehouse" else "🖥️ General Track"
         st.markdown(f"""
         <div style="margin-bottom:12px;">

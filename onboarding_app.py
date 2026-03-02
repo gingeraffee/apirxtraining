@@ -270,25 +270,43 @@ st.markdown("""
 
     /* ── Onboarding App Compatibility: map onboarding classes to Training App look ── */
 
-    /* Sidebar buttons (onboarding uses st.button vs training uses st.radio) */
+    /* Sidebar buttons — modern, minimal navigation look */
     [data-testid="stSidebar"] .stButton > button {
         width: 100% !important;
-        background: transparent !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        color: rgba(255,255,255,0.88) !important;
+        background: rgba(255,255,255,0.04) !important;
+        border: 0 !important;
+        border-left: 2px solid transparent !important;
+        color: rgba(255,255,255,0.92) !important;
         text-align: left !important;
-        padding: 10px 12px !important;
-        border-radius: 8px !important;
-        margin: 3px 0 !important;
+        padding: 9px 12px !important;
+        border-radius: 6px !important;
+        margin: 2px 0 !important;
         font-size: 0.9rem !important;
         font-weight: 500 !important;
-        transition: all 0.15s ease !important;
+        box-shadow: none !important;
+        transition: background-color 0.18s ease, border-left-color 0.18s ease, color 0.18s ease !important;
     }
     [data-testid="stSidebar"] .stButton > button:hover {
-        background: rgba(204,41,54,0.22) !important;
-        border-color: #CC2936 !important;
+        background: rgba(255,255,255,0.10) !important;
+        border-left-color: #CC2936 !important;
         color: #FFFFFF !important;
-        transform: translateY(-1px);
+        transform: none !important;
+    }
+
+    [data-testid="stSidebar"] .stButton > button[kind="primary"],
+    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
+        background: linear-gradient(135deg, #CC2936 0%, #A01E27 100%) !important;
+        color: #FFFFFF !important;
+        border-radius: 8px !important;
+        border: none !important;
+        text-align: center !important;
+        font-weight: 600 !important;
+        margin: 6px 0 !important;
+    }
+    [data-testid="stSidebar"] .stButton > button[kind="primary"]:hover,
+    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"]:hover {
+        background: linear-gradient(135deg, #D93A46 0%, #B32630 100%) !important;
+        border-left-color: transparent !important;
     }
 
     /* Content sections used heavily in onboarding */

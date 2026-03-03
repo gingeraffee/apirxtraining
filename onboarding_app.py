@@ -821,7 +821,7 @@ if st.session_state.authenticated:
                  style="max-height:56px; width:100%; object-fit:contain; margin-bottom:10px;" />
             <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.13em;
                         color:#5A7A9F; text-transform:uppercase; margin-bottom:6px;">
-                Onboarding Portal
+                          Onboarding Portal
             </div>
             <div style="font-size:0.93rem; font-weight:600; color:#CC2936;">
                 👤 {st.session_state.username}

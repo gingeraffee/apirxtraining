@@ -1073,6 +1073,7 @@ def show_login():
             background: #FFFFFF;
             border-radius: 22px;
             padding: 32px 30px 28px !important;
+            min-height: 460px;
             box-shadow: 0 28px 72px rgba(6,14,30,0.38), 0 1px 3px rgba(6,14,30,0.1);
             border: 1px solid rgba(148,163,184,0.15);
         }

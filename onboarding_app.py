@@ -12,9 +12,855 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+
 # ─── Google Sheets Auth ───
 def validate_login(access_code, employee_num, full_name):
     """Validate credentials against Google Sheet."""
+=======
+# Native Streamlit logo — appears in the top-left corner of the sidebar
+st.logo(_sidebar_logo, link="https://apirx.com")
+
+# ─────────────────────────────────────────────
+#  CUSTOM CSS
+# ─────────────────────────────────────────────
+render_html("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    /* ════════════════════════════════════════════════
+       MODERN APPLE — MIDNIGHT & CRIMSON DESIGN SYSTEM
+       Glassmorphism · 8pt Grid · Inter Typeface
+       ════════════════════════════════════════════════ */
+
+    /* ── Design Tokens ── */
+    :root {
+        --apple-ink: #0A0A0B;
+        --apple-surface: #F5F5F7;
+        --apple-crimson: #B11226;
+        --apple-crimson-soft: rgba(177,18,38,0.08);
+        --apple-crimson-glow: rgba(177,18,38,0.18);
+        --apple-gray-100: #F5F5F7;
+        --apple-gray-200: #E8E8ED;
+        --apple-gray-300: #D2D2D7;
+        --apple-gray-400: #86868B;
+        --apple-gray-500: #6E6E73;
+        --apple-gray-600: #424245;
+        --apple-white: #FFFFFF;
+        --apple-radius-lg: 24px;
+        --apple-radius-md: 16px;
+        --apple-radius-sm: 12px;
+        --apple-radius-xs: 8px;
+        --apple-glass-bg: rgba(255,255,255,0.72);
+        --apple-glass-border: 1px solid rgba(255,255,255,0.18);
+        --apple-glass-blur: blur(20px);
+        --apple-shadow-soft: 0 20px 50px rgba(0,0,0,0.05);
+        --apple-shadow-hover: 0 24px 56px rgba(0,0,0,0.09);
+        --apple-shadow-deep: 0 32px 64px rgba(0,0,0,0.12);
+        --apple-transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* ── Base Reset ── */
+    html, body, [class*="css"] {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    body { line-height: 1.7; color: var(--apple-ink); }
+
+    .stApp {
+        background: var(--apple-surface) !important;
+    }
+
+    /* ── Typography — Clear Hierarchy ── */
+    h1, h2, h3 {
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif !important;
+        color: var(--apple-ink) !important;
+        letter-spacing: -0.025em;
+        line-height: 1.2;
+    }
+    h1 { font-weight: 700 !important; }
+    h2 { font-weight: 700 !important; }
+    h3 { font-weight: 600 !important; }
+    p, li, td, span { font-weight: 400; line-height: 1.7; }
+
+    .page-title {
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif;
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: var(--apple-ink);
+        letter-spacing: -0.035em;
+        border-bottom: 2px solid var(--apple-gray-200);
+        padding-bottom: 16px;
+        margin-bottom: 8px;
+    }
+    .page-subtitle { color: var(--apple-gray-500); font-size: 1.05rem; margin-bottom: 32px; font-weight: 400; line-height: 1.7; }
+
+    /* ── Sidebar Container — Frosted Midnight Glass ── */
+    [data-testid="stSidebar"] {
+        background: rgba(10,10,11,0.92) !important;
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+        border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    [data-testid="stSidebar"] .block-container {
+        padding-top: 1rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .sidebar-header {
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-md);
+        padding: 20px 16px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-header * { color: var(--apple-gray-100) !important; }
+    .sidebar-header .sidebar-username {
+        color: #FFFFFF !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.01em !important;
+    }
+
+    .progress-container {
+        width: 100%;
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.08);
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: var(--apple-crimson);
+        transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .sidebar-section-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: rgba(255,255,255,0.36);
+        margin: 12px 2px 8px;
+        font-weight: 600;
+    }
+
+    /* ── Sidebar Radio Navigation — Subtle Glass Pills ── */
+    [data-testid="stSidebar"] .stRadio > div { gap: 4px !important; }
+    [data-testid="stSidebar"] .stRadio label {
+        color: rgba(255,255,255,0.72) !important;
+        border-radius: var(--apple-radius-sm) !important;
+        padding: 10px 14px !important;
+        transition: var(--apple-transition) !important;
+        font-size: 0.84rem !important;
+        font-weight: 500 !important;
+        width: 100% !important;
+        border: 1px solid transparent !important;
+        background: transparent !important;
+    }
+    [data-testid="stSidebar"] .stRadio label:hover {
+        color: #FFFFFF !important;
+        background: rgba(255,255,255,0.06) !important;
+        transform: translateX(2px) !important;
+    }
+    [data-testid="stSidebar"] .stRadio p,
+    [data-testid="stSidebar"] .stRadio span {
+        color: rgba(255,255,255,0.72) !important;
+    }
+    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
+        background: rgba(255,255,255,0.10) !important;
+        border-color: rgba(255,255,255,0.20) !important;
+        color: #FFFFFF !important;
+    }
+    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) p,
+    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) span {
+        color: #FFFFFF !important;
+        background: transparent !important;
+    }
+    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] > div:first-child {
+        background: rgba(255,255,255,0.08) !important;
+        border-color: rgba(255,255,255,0.20) !important;
+    }
+    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
+    [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
+        background: transparent !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* ── Module Cards ── */
+    .module-card {
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-md);
+        padding: 24px;
+        margin-bottom: 16px;
+        border-left: 4px solid var(--apple-crimson);
+        border-top: none;
+        border-right: 1px solid rgba(255,255,255,0.18);
+        border-bottom: 1px solid rgba(255,255,255,0.18);
+        box-shadow: var(--apple-shadow-soft);
+        transition: var(--apple-transition);
+    }
+    .module-card:hover { transform: translateY(-2px); box-shadow: var(--apple-shadow-hover); }
+    .module-card.complete { border-left-color: #34C759; background: rgba(52,199,89,0.06); }
+
+    /* ── Post-login Shell ── */
+    .post-auth-shell {
+        background: transparent;
+        border-radius: var(--apple-radius-lg);
+        padding: 0;
+        margin-bottom: 24px;
+    }
+
+    .module-shell {
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-lg);
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow: var(--apple-shadow-deep);
+        padding: 32px;
+        margin-bottom: 24px;
+    }
+
+    .module-page-hero {
+        background: var(--apple-ink);
+        border-radius: var(--apple-radius-lg);
+        padding: 32px;
+        border: 1px solid rgba(255,255,255,0.06);
+        box-shadow: var(--apple-shadow-deep);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    .module-page-hero::after {
+        content: "";
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        right: -160px;
+        top: -200px;
+        background: radial-gradient(circle, var(--apple-crimson-glow) 0%, transparent 70%);
+    }
+    .module-page-title {
+        color: var(--apple-gray-100) !important;
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif !important;
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        margin: 4px 0 8px;
+        position: relative;
+        z-index: 1;
+    }
+    .module-page-sub {
+        color: var(--apple-gray-400);
+        font-size: 0.92rem;
+        line-height: 1.7;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        max-width: 920px;
+    }
+    .module-meta-row {
+        margin-top: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ── Premium Hero (Home Dashboard) ── */
+    .premium-hero {
+        background: var(--apple-ink);
+        border-radius: var(--apple-radius-lg);
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.06);
+        box-shadow: var(--apple-shadow-deep);
+    }
+    .premium-hero::before {
+        content: "";
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        right: -180px;
+        top: -200px;
+        background: radial-gradient(circle, rgba(177,18,38,0.25) 0%, transparent 65%);
+    }
+    .premium-hero::after {
+        content: "";
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        left: -150px;
+        bottom: -200px;
+        background: radial-gradient(circle, rgba(177,18,38,0.10) 0%, transparent 70%);
+    }
+    .premium-hero h1 {
+        color: var(--apple-gray-100) !important;
+        font-size: 2.2rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.035em !important;
+        margin: 0 0 8px 0 !important;
+        position: relative;
+        z-index: 1;
+    }
+    .premium-hero p {
+        color: var(--apple-gray-400) !important;
+        font-size: 1rem;
+        line-height: 1.7;
+        margin: 0 !important;
+        max-width: 760px;
+        position: relative;
+        z-index: 1;
+    }
+    .premium-kicker {
+        display: inline-block;
+        font-size: 0.68rem;
+        color: var(--apple-crimson);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ── Stat Cards ── */
+    .premium-stat {
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: var(--apple-radius-md);
+        padding: 20px;
+        box-shadow: var(--apple-shadow-soft);
+        min-height: 110px;
+        transition: var(--apple-transition);
+    }
+    .premium-stat:hover { transform: translateY(-2px); box-shadow: var(--apple-shadow-hover); }
+    .premium-stat-label {
+        font-size: 0.68rem;
+        color: var(--apple-gray-500);
+        letter-spacing: 0.10em;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+    .premium-stat-value {
+        color: var(--apple-ink);
+        font-size: 1.8rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-top: 4px;
+    }
+    .premium-stat-sub { color: var(--apple-gray-400); font-size: 0.78rem; margin-top: 6px; line-height: 1.5; }
+
+    /* ── Module Cards (Home Grid) ── */
+    .module-card-premium {
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-md);
+        border: 1px solid rgba(255,255,255,0.18);
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: var(--apple-shadow-soft);
+        transition: var(--apple-transition);
+    }
+    .module-card-premium:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--apple-shadow-hover);
+        border-color: rgba(177,18,38,0.20);
+    }
+    .module-topline { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .module-name { color: var(--apple-ink); font-weight:700; margin:0; font-size:1.01rem; letter-spacing:-0.015em; }
+    .module-sub { color: var(--apple-gray-500); margin:8px 0 16px 0; font-size:0.86rem; line-height:1.7; }
+    .module-meter { height:6px; background: var(--apple-gray-200); border-radius:999px; overflow:hidden; }
+    .module-meter > span {
+        display:block;
+        height:100%;
+        background: var(--apple-crimson);
+        border-radius:inherit;
+        transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* ── Pills / Chips ── */
+    .pill {
+        font-size: 0.64rem;
+        border-radius: 99px;
+        padding: 4px 12px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    .pill.pending { background: var(--apple-gray-200); color: var(--apple-gray-600); }
+    .pill.live { background: var(--apple-crimson-soft); color: var(--apple-crimson); }
+    .pill.done { background: rgba(52,199,89,0.10); color: #248A3D; }
+
+    .elite-chip {
+        display: inline-block;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.10);
+        color: var(--apple-gray-400);
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: 0.64rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-right: 6px;
+    }
+
+    .sidebar-mini {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--apple-radius-sm);
+        padding: 12px 14px;
+        margin-top: 16px;
+    }
+
+    /* ── Progress Bars ── */
+    .stProgress > div > div { background-color: var(--apple-crimson) !important; }
+
+    /* ── Primary Buttons — Crimson Accent ── */
+    .stButton > button[kind="primary"],
+    .stButton > button[kind="primary"][data-testid],
+    [data-testid="stBaseButton-primary"] {
+        background: var(--apple-crimson) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: var(--apple-radius-sm) !important;
+        padding: 10px 24px !important;
+        font-weight: 600 !important;
+        font-size: 0.88rem !important;
+        letter-spacing: -0.01em !important;
+        transition: var(--apple-transition) !important;
+        box-shadow: 0 4px 16px rgba(177,18,38,0.20) !important;
+    }
+    .stButton > button[kind="primary"]:hover,
+    [data-testid="stBaseButton-primary"]:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 24px rgba(177,18,38,0.30) !important;
+        filter: brightness(1.08) !important;
+    }
+    .stButton > button:focus-visible {
+        outline: 2px solid var(--apple-crimson) !important;
+        outline-offset: 2px !important;
+    }
+
+    /* ── Secondary Buttons — Quiet Glass ── */
+    .stButton > button[kind="secondary"],
+    [data-testid="stBaseButton-secondary"] {
+        background: var(--apple-glass-bg) !important;
+        backdrop-filter: var(--apple-glass-blur) !important;
+        border: 1px solid var(--apple-gray-300) !important;
+        color: var(--apple-ink) !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        padding: 8px 20px !important;
+        box-shadow: var(--apple-shadow-soft) !important;
+        letter-spacing: -0.01em !important;
+        border-radius: var(--apple-radius-sm) !important;
+        transition: var(--apple-transition) !important;
+    }
+    .stButton > button[kind="secondary"]:hover,
+    [data-testid="stBaseButton-secondary"]:hover {
+        border-color: var(--apple-crimson) !important;
+        box-shadow: var(--apple-shadow-hover) !important;
+        transform: translateY(-2px) !important;
+        color: var(--apple-crimson) !important;
+    }
+
+    /* ── Badges ── */
+    .badge {
+        display: inline-block;
+        background: var(--apple-crimson);
+        color: white;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 99px;
+        margin-left: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .badge.done { background: #34C759; }
+
+    /* ── Welcome Banner ── */
+    .welcome-banner {
+        background: var(--apple-ink);
+        border-radius: var(--apple-radius-lg);
+        padding: 40px;
+        margin-bottom: 32px;
+        border-left: none;
+    }
+    .welcome-banner h1 {
+        color: var(--apple-gray-100) !important;
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        margin-bottom: 8px;
+    }
+    .welcome-banner p { color: var(--apple-gray-400); font-size: 1.05rem; line-height: 1.7; }
+
+    /* ── Callout ── */
+    .callout {
+        background: var(--apple-crimson-soft);
+        border-left: 3px solid var(--apple-crimson);
+        border-radius: 0 var(--apple-radius-xs) var(--apple-radius-xs) 0;
+        padding: 16px 20px;
+        margin: 16px 0;
+        color: #6B0E16;
+    }
+
+    /* ── Dividers ── */
+    hr { border: none; border-top: 1px solid var(--apple-gray-200); margin: 32px 0; }
+
+    /* ── Resource Library ── */
+    .resource-card {
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-md);
+        padding: 16px 20px;
+        margin-bottom: 8px;
+        box-shadow: var(--apple-shadow-soft);
+        border: 1px solid rgba(255,255,255,0.18);
+        transition: var(--apple-transition);
+    }
+    .resource-card:hover {
+        border-color: rgba(177,18,38,0.20);
+        box-shadow: var(--apple-shadow-hover);
+        transform: translateY(-2px);
+    }
+    .resource-id {
+        display: inline-block;
+        background: var(--apple-ink);
+        color: white;
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: var(--apple-radius-xs);
+        white-space: nowrap;
+        margin-top: 3px;
+        letter-spacing: 0.02em;
+        min-width: 54px;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    /* ── Mobile + Dark Mode Compatibility ── */
+    @media (max-width: 768px) and (prefers-color-scheme: dark) {
+      div[data-testid="stAppViewContainer"],
+      section.main,
+      .stApp {
+        background: var(--apple-ink) !important;
+        color: var(--apple-gray-100) !important;
+      }
+      div[data-testid="stMarkdownContainer"],
+      div[data-testid="stMarkdownContainer"] p,
+      div[data-testid="stMarkdownContainer"] li,
+      div[data-testid="stMarkdownContainer"] span,
+      div[data-testid="stMarkdownContainer"] div {
+        color: var(--apple-gray-100) !important;
+      }
+      .page-title, .page-subtitle { color: var(--apple-gray-100) !important; }
+      .resource-card, .module-card, .welcome-banner + div,
+      div[style*="background:white"], div[style*="background: white"] {
+        background: rgba(20,20,22,0.90) !important;
+        border-color: rgba(255,255,255,0.08) !important;
+      }
+      div[style*="color:#0A1628"], div[style*="color: #0A1628"],
+      span[style*="color:#0A1628"], span[style*="color: #0A1628"] { color: var(--apple-gray-100) !important; }
+      div[style*="color:#5A6E8A"], div[style*="color: #5A6E8A"],
+      span[style*="color:#5A6E8A"], span[style*="color: #5A6E8A"] { color: var(--apple-gray-300) !important; }
+      div[data-testid="stTextInput"] input {
+        background: rgba(20,20,22,0.90) !important;
+        color: var(--apple-gray-100) !important;
+        border-color: rgba(255,255,255,0.12) !important;
+      }
+      div[data-testid="stTextInput"] input::placeholder { color: rgba(255,255,255,0.40) !important; }
+      table, td, th { color: var(--apple-gray-200) !important; border-color: rgba(255,255,255,0.08) !important; }
+    }
+
+    /* ── Sidebar Buttons ── */
+    [data-testid="stSidebar"] .stButton > button {
+        width: 100% !important;
+        border-radius: var(--apple-radius-sm) !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
+        background: rgba(255,255,255,0.06) !important;
+        color: var(--apple-gray-100) !important;
+        text-align: center !important;
+        font-size: 0.84rem !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.01em !important;
+        transition: var(--apple-transition) !important;
+    }
+    [data-testid="stSidebar"] .stButton > button:hover {
+        transform: translateY(-2px) !important;
+        background: rgba(255,255,255,0.10) !important;
+    }
+    [data-testid="stSidebar"] .stButton > button[kind="primary"],
+    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
+        background: rgba(177,18,38,0.25) !important;
+        border-color: rgba(177,18,38,0.35) !important;
+        color: #FFFFFF !important;
+    }
+
+    /* ── Content Sections — Glassmorphism Cards ── */
+    .content-section {
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-md);
+        padding: 32px;
+        margin: 24px 0;
+        box-shadow: var(--apple-shadow-soft);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-top: none;
+    }
+    .content-section h2 {
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif;
+        color: var(--apple-ink) !important;
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin: 0 0 16px 0;
+        border-bottom: 1px solid var(--apple-gray-200);
+        padding-bottom: 12px;
+    }
+    .content-section h3 {
+        color: var(--apple-crimson) !important;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.76rem;
+        font-weight: 700;
+        margin: 24px 0 8px 0;
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif !important;
+    }
+    .content-section p {
+        color: var(--apple-gray-600);
+        line-height: 1.7;
+    }
+    .content-section li {
+        color: var(--apple-gray-600);
+        line-height: 1.7;
+    }
+
+    /* ── Info Boxes — Refined Callouts ── */
+    .info-box {
+        background: var(--apple-crimson-soft);
+        border-left: 3px solid var(--apple-crimson);
+        border-radius: 0 var(--apple-radius-xs) var(--apple-radius-xs) 0;
+        padding: 16px 20px;
+        margin: 20px 0;
+        color: var(--apple-ink) !important;
+        font-size: 0.9rem;
+        line-height: 1.7;
+    }
+    .info-box.green { background: rgba(52,199,89,0.08); border-left-color: #34C759; }
+    .info-box.yellow { background: rgba(255,159,10,0.08); border-left-color: #FF9F0A; }
+
+    /* ── Tables — Clean Apple Style ── */
+    .styled-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.88rem;
+        margin: 16px 0;
+        border-radius: var(--apple-radius-sm);
+        overflow: hidden;
+        box-shadow: var(--apple-shadow-soft);
+        border: 1px solid var(--apple-gray-200);
+    }
+    .styled-table th {
+        background: var(--apple-ink);
+        color: var(--apple-gray-100);
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.78rem;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+    .styled-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--apple-gray-200);
+        color: var(--apple-gray-600);
+        background: var(--apple-white);
+        line-height: 1.6;
+    }
+    .styled-table tr:nth-child(even) td { background: var(--apple-surface); }
+    .styled-table tr:last-child td { border-bottom: none; }
+
+    /* ── Premium Login — Hero Card ── */
+    .lp-info-card {
+        background: var(--apple-ink);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--apple-radius-lg);
+        padding: 48px 40px;
+        box-shadow: var(--apple-shadow-deep);
+        min-height: 460px;
+        position: relative;
+        overflow: hidden;
+    }
+    .lp-info-card::before {
+        content: "";
+        position: absolute;
+        top: -100px; right: -80px;
+        width: 320px; height: 320px;
+        background: radial-gradient(circle, rgba(177,18,38,0.20) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .lp-info-card::after {
+        content: "";
+        position: absolute;
+        bottom: -120px; left: -80px;
+        width: 300px; height: 300px;
+        background: radial-gradient(circle, rgba(177,18,38,0.08) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .lp-kicker {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--apple-crimson);
+        font-weight: 700;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+    .lp-headline {
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif !important;
+        font-size: 1.9rem !important;
+        font-weight: 800 !important;
+        color: #FFFFFF !important;
+        line-height: 1.2 !important;
+        letter-spacing: -0.035em !important;
+        margin: 0 0 20px 0 !important;
+        position: relative;
+        z-index: 1;
+    }
+    .lp-body {
+        color: var(--apple-gray-400);
+        font-size: 0.92rem;
+        line-height: 1.7;
+        margin: 0 0 32px 0;
+        position: relative;
+        z-index: 1;
+    }
+    .lp-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        position: relative;
+        z-index: 1;
+    }
+    .lp-features li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--apple-radius-sm);
+        padding: 12px 16px;
+        color: var(--apple-gray-300);
+        font-size: 0.86rem;
+        font-weight: 500;
+        transition: var(--apple-transition);
+    }
+    .lp-features li:hover {
+        background: rgba(255,255,255,0.06);
+        transform: translateX(4px);
+    }
+    .lp-divider {
+        width: 40px;
+        height: 3px;
+        background: var(--apple-crimson);
+        border-radius: 2px;
+        margin: 0 0 24px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ── Form Submit Button ── */
+    div[data-testid="stFormSubmitButton"] button {
+        background: var(--apple-crimson) !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        border-radius: var(--apple-radius-sm) !important;
+        padding: 12px 24px !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.01em !important;
+        font-size: 0.88rem !important;
+        box-shadow: 0 4px 16px rgba(177,18,38,0.20) !important;
+        transition: var(--apple-transition) !important;
+    }
+    div[data-testid="stFormSubmitButton"] button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 24px rgba(177,18,38,0.30) !important;
+        filter: brightness(1.08) !important;
+    }
+
+    /* ── Streamlit Tabs — Apple Style ── */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 0;
+        background: var(--apple-gray-200);
+        border-radius: var(--apple-radius-sm);
+        padding: 4px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        border-radius: var(--apple-radius-xs) !important;
+        font-weight: 600 !important;
+        font-size: 0.82rem !important;
+        color: var(--apple-gray-500) !important;
+        padding: 8px 16px !important;
+        transition: var(--apple-transition) !important;
+    }
+    .stTabs [data-baseweb="tab"]:hover { color: var(--apple-ink) !important; }
+    .stTabs [aria-selected="true"] {
+        background: var(--apple-white) !important;
+        color: var(--apple-ink) !important;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
+    }
+    .stTabs [data-baseweb="tab-highlight"] { display: none !important; }
+    .stTabs [data-baseweb="tab-border"] { display: none !important; }
+
+    /* ── Streamlit Checkboxes ── */
+    .stCheckbox label { font-size: 0.88rem !important; color: var(--apple-gray-600) !important; }
+
+    /* ── Form Inputs ── */
+    .stTextInput input, .stSelectbox select {
+        border-radius: var(--apple-radius-sm) !important;
+        border: 1.5px solid var(--apple-gray-200) !important;
+        font-size: 0.92rem !important;
+        padding: 10px 14px !important;
+        transition: var(--apple-transition) !important;
+    }
+    .stTextInput input:focus, .stSelectbox select:focus {
+        border-color: var(--apple-crimson) !important;
+        box-shadow: 0 0 0 3px rgba(177,18,38,0.08) !important;
+    }
+
+</style>
+""")
+
+# ─────────────────────────────────────────────
+#  GOOGLE SHEETS INTEGRATION
+# ─────────────────────────────────────────────
+@st.cache_resource
+def get_gsheet_client():
+
     try:
         import gspread
         from google.oauth2.service_account import Credentials
@@ -29,7 +875,7 @@ def validate_login(access_code, employee_num, full_name):
             return False
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
         client = gspread.authorize(creds)
-        sheet = client.open("AAP_Onboarding_Employees").sheet1
+        sheet = client.open("AAP New Hire Orientation Progress").sheet1
         records = sheet.get_all_records()
         for row in records:
             if (str(row.get("Access Code", "")).strip().lower() == access_code.strip().lower()
@@ -60,6 +906,7 @@ for k, v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
 
+
 # Initialize progress tracking
 MODULE_KEYS = ["welcome", "conduct", "attendance", "workplace", "benefits", "firststeps"]
 MODULE_NAMES = {
@@ -78,6 +925,18 @@ MODULE_ICONS = {
     "benefits": "🩺",
     "firststeps": "🚀"
 }
+
+# ─────────────────────────────────────────────
+#  HELPER FUNCTIONS
+# ─────────────────────────────────────────────
+def pct_bar(pct):
+    return dedent(f"""
+    <div class="progress-container">
+        <div class="progress-fill" style="width:{pct}%"></div>
+    </div>
+    <small style="color:rgba(255,255,255,0.36); font-size:0.72rem;">{pct}% complete</small>
+    """).strip()
+
 
 for mk in MODULE_KEYS:
     if f"quiz_{mk}_passed" not in st.session_state:
@@ -306,10 +1165,53 @@ def inject_css():
         border-bottom: 1px solid #e2e8f0;
     }
     .styled-table tr:nth-child(even) td { background: #f8fafc; }
+
+        /* Page background for login — Midnight */
+        .stApp { background: #0A0A0B !important; }
+        /* Style the form container as a frosted glass sign-in card */
+        [data-testid="stForm"] {
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px 36px 32px !important;
+            box-shadow: 0 32px 64px rgba(0,0,0,0.12);
+            border: 1px solid rgba(255,255,255,0.18);
+        }
+        /* Input label styling */
+        [data-testid="stForm"] label p {
+            font-size: 0.72rem !important;
+            font-weight: 600 !important;
+            color: #86868B !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.10em !important;
+        }
+        /* Input field styling */
+        [data-testid="stForm"] input {
+            border: 1.5px solid #E8E8ED !important;
+            border-radius: 12px !important;
+            font-size: 0.92rem !important;
+            background: #F5F5F7 !important;
+            color: #0A0A0B !important;
+            padding: 10px 14px !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+        }
+        [data-testid="stForm"] input:focus {
+            border-color: #B11226 !important;
+            box-shadow: 0 0 0 3px rgba(177,18,38,0.08) !important;
+            background: #FFFFFF !important;
+        }
+        /* Radio label styling */
+        [data-testid="stForm"] .stRadio label {
+            color: #424245 !important;
+            font-size: 0.88rem !important;
+        }
+>>>>>>> 527c6a4dfbae1df9f2c82ca8f7a67b16d4a7a281
     </style>
     """, unsafe_allow_html=True)
 
 inject_css()
+    render_html("<div style='padding-top:48px'></div>")
 
 
 # ═══════════════════════════════════════════════
@@ -323,6 +1225,17 @@ def show_login():
             st.markdown(f'<div style="text-align:center;margin-bottom:8px;"><img src="data:image/png;base64,{logo_b64}" style="height:90px;"></div>', unsafe_allow_html=True)
         st.markdown('<h2 style="text-align:center;color:#0a1628;margin-bottom:4px;">Employee Onboarding Portal</h2>', unsafe_allow_html=True)
         st.markdown('<p style="text-align:center;color:#64748b;margin-bottom:28px;">Please log in with your onboarding credentials.</p>', unsafe_allow_html=True)
+
+    outer_l, outer_m, outer_r = st.columns([0.5, 2, 0.5])
+    with outer_m:
+        # Logo
+        render_html(f"""
+        <div style="text-align:center; margin-bottom:40px;">
+            <img src="{_login_logo_src}" alt="AAP / API Logo"
+                 style="height:80px; max-width:280px; object-fit:contain;
+                        filter: brightness(1.1);">
+        </div>
+        """)
 
         with st.form("login_form"):
             access_code = st.text_input("Access Code", placeholder="Enter your access code")
@@ -339,12 +1252,94 @@ def show_login():
                             st.session_state["logged_in"] = True
                             st.session_state["emp_name"] = full_name.strip().title()
                             st.session_state["emp_number"] = employee_num.strip()
+
+        with panel_l:
+            render_html("""
+            <div class="lp-info-card">
+                <div class="lp-kicker">New Hire Orientation</div>
+                <h2 class="lp-headline">Welcome to your<br>orientation hub.</h2>
+                <div class="lp-divider"></div>
+                <p class="lp-body">
+                    Begin your journey with a secure, guided onboarding experience.
+                    Sign in to access your personalized modules and track your progress in real time.
+                </p>
+                <ul class="lp-features">
+                    <li><span style="font-size:1rem;">&#9679;</span> Secure employee credential verification</li>
+                    <li><span style="font-size:1rem;">&#9679;</span> Role-based learning path assignment</li>
+                    <li><span style="font-size:1rem;">&#9679;</span> Live progress sync and tracking</li>
+                </ul>
+            </div>
+            """)
+
+        with panel_r:
+            with st.form("login_form", clear_on_submit=False):
+                render_html("""
+                <p style="font-size:1.2rem; font-weight:800; color:#0A0A0B; margin:0 0 4px 0; letter-spacing:-0.025em;">
+                    Employee Sign In
+                </p>
+                <p style="color:#86868B; font-size:0.86rem; margin:0 0 24px 0; line-height:1.7;">
+                    Use the details provided by HR to continue.
+                </p>
+                """)
+
+                access_code = st.text_input(
+                    "Access Code",
+                    placeholder="Enter the code HR gave you",
+                    type="password",
+                )
+                employee_id = st.text_input(
+                    "Employee ID",
+                    placeholder="e.g. 10042",
+                )
+                full_name = st.text_input(
+                    "Full Name",
+                    placeholder="As it appears in your HR paperwork",
+                )
+                render_html("<div style='margin-top:6px;'></div>")
+                submitted = st.form_submit_button("Sign In  →", use_container_width=True)
+
+                if submitted:
+                    if not access_code or not employee_id or not full_name:
+                        st.error("Please fill in all three fields to continue.")
+                    else:
+                        with st.spinner("Verifying your credentials…"):
+                            ok, track, reason = verify_employee(access_code, employee_id, full_name)
+                        if ok:
+                            if track == "warehouse":
+                                prog_keys = {m["key"]: 0 for m in WAREHOUSE_MODULES}
+                                chk_keys  = {m["key"]: {} for m in WAREHOUSE_MODULES}
+                            else:
+                                prog_keys = {m["key"]: 0 for m in MODULES}
+                                chk_keys  = {m["key"]: {} for m in MODULES}
+                            st.session_state.authenticated   = True
+                            st.session_state.username        = full_name.strip()
+                            st.session_state.employee_id     = employee_id.strip()
+                            st.session_state.role_track      = track
+                            st.session_state.progress        = prog_keys
+                            st.session_state.checklist_items = chk_keys
+                            st.session_state.quiz_results    = {}
+                            st.session_state.sheet_loaded    = False
+
                             st.rerun()
                         else:
                             st.error("Invalid credentials. Please check your access code, employee number, and name.")
 
+
         st.markdown("---")
         st.markdown('<p style="text-align:center;color:#94a3b8;font-size:0.82rem;">If you need login assistance, contact HR:<br><strong>Nicole Thornton</strong> · 256-574-7528 · nicole.thornton@apirx.com</p>', unsafe_allow_html=True)
+
+        # Footer
+        render_html("""
+        <div style="text-align:center; margin-top:32px; padding-top:20px;
+                    border-top:1px solid rgba(255,255,255,0.06);">
+            <p style="color:#86868B; font-size:0.78rem; margin:0; line-height:2; letter-spacing:0.01em;">
+                Need help? Contact HR &nbsp;·&nbsp;
+                <strong style="color:#D2D2D7;">Nicole Thornton</strong>
+                &nbsp;·&nbsp; nicole.thornton@apirx.com &nbsp;·&nbsp; 256-574-7528
+            </p>
+        </div>
+        """)
+
 
 
 # ═══════════════════════════════════════════════
@@ -355,6 +1350,7 @@ def show_sidebar():
         logo_b64 = get_logo_base64()
         if logo_b64:
             st.markdown(f'<div style="text-align:center;padding:12px 0;"><img src="data:image/png;base64,{logo_b64}" style="height:70px;"></div>', unsafe_allow_html=True)
+
 
         st.markdown("### Onboarding Portal")
         st.markdown("---")
@@ -384,6 +1380,54 @@ def show_sidebar():
                 <div class="emp-card-value">{st.session_state['emp_position']}</div>
             </div>
             """, unsafe_allow_html=True)
+        # ── White card: logo + label + username ──
+        logo_src = _logo_img_src()
+        render_html(f"""
+        <div class="sidebar-header">
+            <img src="{logo_src}"
+                 style="max-height:48px; width:100%; object-fit:contain; margin-bottom:12px; opacity:0.9;" />
+            <div style="font-size:0.62rem; font-weight:600; letter-spacing:0.14em;
+                        color:rgba(255,255,255,0.36); text-transform:uppercase; margin-bottom:6px;">
+                    Learning Interface
+            </div>
+            <div class="sidebar-username" style="font-size:0.93rem;">{st.session_state.username}</div>
+        </div>
+        """)
+
+        # ── Overall progress ──
+        total_pct = int(sum(st.session_state.progress.values()) / max(len(active_modules), 1))
+        render_html(f"""
+        <div style="font-size:0.66rem; font-weight:600; letter-spacing:0.10em;
+                    color:rgba(255,255,255,0.36); text-transform:uppercase; margin: 8px 0 4px 0;">
+            Progress &middot; {total_pct}%
+        </div>
+        """)
+        render_html(pct_bar(total_pct))
+
+        render_html("<div class='sidebar-section-label'>Navigation</div>")
+
+        # ── Radio navigation ──
+        nav_options = ["🏠  Home"] + [
+            f"{m['icon']}  {m['number']}. {m['title']}" for m in active_modules
+        ]
+        module_keys = [None] + [m["key"] for m in active_modules]
+
+        try:
+            current_idx = module_keys.index(st.session_state.selected_module)
+        except ValueError:
+            current_idx = 0
+
+        selected_nav = st.radio(
+            "Navigation",
+            nav_options,
+            index=current_idx,
+            label_visibility="collapsed",
+        )
+
+        new_key = module_keys[nav_options.index(selected_nav)]
+        if new_key != st.session_state.selected_module:
+            st.session_state.selected_module = new_key
+            st.rerun()
 
         st.markdown("---")
 
@@ -426,6 +1470,20 @@ def show_sidebar():
                 del st.session_state[key]
             st.rerun()
 
+        st.markdown("---")
+        render_html("""
+        <small style='color:rgba(255,255,255,0.40); line-height:1.7;'>
+        <b style="color:rgba(255,255,255,0.56);">HR Contact</b><br>
+        Nicole Thornton<br>
+        HR Administrator<br>
+        256-574-7528<br>
+        Nicole.thornton@apirx.com
+        </small>
+        <div class="sidebar-mini">
+            <div style="font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.28); font-weight:600; margin-bottom:4px;">Experience</div>
+            <div style="color:rgba(255,255,255,0.50); font-size:0.8rem; line-height:1.6;">Glassmorphism interface designed for clarity and focus.</div>
+        </div>
+        """)
 
 def get_checklist_count(mk):
     counts = {
@@ -465,12 +1523,34 @@ def show_home():
     name = st.session_state["emp_name"]
     first = name.split()[0] if name else "there"
 
+
     st.markdown(f"""
     <div class="welcome-banner">
         <h1>Welcome, {first}! 👋</h1>
         <p>We're glad to have you on the AAP team. Complete each training module below to finish your onboarding.</p>
+    module_progress = [st.session_state.progress.get(m["key"], 0) for m in active_modules]
+    completed = sum(1 for p in module_progress if p == 100)
+    total_pct = int(sum(module_progress) / len(active_modules)) if active_modules else 0
+    quizzes_done = sum(1 for m in active_modules if st.session_state.quiz_results.get(m["key"]) is not None)
+
+    st.markdown('<div class="post-auth-shell">', unsafe_allow_html=True)
+
+    render_html(f"""
+    <div class="premium-hero">
+        <span class="premium-kicker">Orientation</span>
+        <h1>{track_label} Learning Center &middot; {name_display}</h1>
+        <p>
+            Your personalized orientation experience. Navigate modules, track milestones,
+            and complete every checkpoint with confidence.
+        </p>
+        <div style="margin-top:16px; position:relative; z-index:1;">
+            <span class="elite-chip">Progress Sync</span>
+            <span class="elite-chip">Role-Based Path</span>
+            <span class="elite-chip">Verified</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
+
 
     # Progress
     done, total = calc_progress()
@@ -480,11 +1560,36 @@ def show_home():
         <div style="display:flex;justify-content:space-between;align-items:center;">
             <strong style="color:#1e293b;">Onboarding Progress</strong>
             <span style="color:#3b82f6;font-weight:700;">{pct}%</span>
+
+    render_html('<div style="margin-top: 32px;"></div>')
+
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        render_html(f"""
+        <div class="premium-stat">
+            <div class="premium-stat-label">Milestones Closed</div>
+            <div class="premium-stat-value">{completed}/{len(active_modules)}</div>
+            <div class="premium-stat-sub">Completed training modules in your path</div>
         </div>
         <div class="progress-bar-bg">
             <div class="progress-bar-fill" style="width:{pct}%;"></div>
         </div>
         <div style="color:#64748b;font-size:0.82rem;margin-top:6px;">{done} of {total} items completed</div>
+
+        """)
+    with c3:
+        render_html(f"""
+        <div class="premium-stat">
+            <div class="premium-stat-label">Assessments Submitted</div>
+            <div class="premium-stat-value">{quizzes_done}/{len(active_modules)}</div>
+            <div class="premium-stat-sub">Knowledge verifications completed</div>
+        </div>
+        """)
+
+    render_html("""
+    <div style="margin:24px 0 12px 0; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div style="font-size:0.70rem; letter-spacing:0.10em; text-transform:uppercase; color:#86868B; font-weight:600;">Training Modules</div>
+        <div style="font-size:0.78rem; color:#86868B;">Select a module to continue.</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -522,12 +1627,20 @@ def show_home():
                 </div>
                 <p>{descriptions[mk]}</p>
             </div>
+
             """, unsafe_allow_html=True)
             if st.button(f"Open Module →", key=f"open_{mk}", use_container_width=True):
                 st.session_state["current_page"] = "module"
                 st.session_state["current_module"] = mk
                 st.rerun()
 
+            <p class="module-sub">{m['subtitle']}</p>
+            <div class="module-meter"><span style="width:{pct}%"></span></div>
+            <div style="margin-top:10px; color:#86868B; font-size:0.78rem; display:flex; justify-content:space-between;">
+                <span>Progress</span><strong style="color:#0A0A0B;">{pct}%</strong>
+            </div>
+        </div>
+        """)
 
 # ═══════════════════════════════════════════════
 # QUIZ HELPER
@@ -609,8 +1722,8 @@ def module_welcome():
     st.markdown("## Who We Are")
     st.markdown("""
     American Associated Pharmacies (AAP) is a national cooperative of more than **2,000 independent pharmacies**. 
-    AAP was formed in 2009 when two major pharmacy cooperatives — **United Drugs** of Phoenix, Arizona and 
-    **Associated Pharmacies, Inc. (API)** of Scottsboro, Alabama — joined forces to create one of America's largest 
+    AAP was formed in 2009 when two major pharmacy cooperatives, **United Drugs** of Phoenix, Arizona and 
+    **Associated Pharmacies, Inc. (API)** of Scottsboro, Alabama, joined forces to create one of America's largest 
     independent pharmacy organizations.
 
     Today, AAP continues to operate API, its independent warehouse and distributor, with two warehouse locations 

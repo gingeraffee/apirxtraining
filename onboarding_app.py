@@ -114,6 +114,86 @@ st.markdown("""
     .module-card:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,0.11); }
     .module-card.complete { border-left-color: #1A9E5C; background: #F0FFF6; }
 
+    /* ── Post-login Premium Shell ── */
+    .post-auth-shell {
+        background: linear-gradient(150deg, #FFFFFF 0%, #F4F7FC 42%, #EEF3FA 100%);
+        border-radius: 22px;
+        border: 1px solid rgba(10,22,40,0.06);
+        padding: 24px;
+        box-shadow: 0 24px 50px rgba(10,22,40,0.08);
+        margin-bottom: 20px;
+    }
+    .premium-hero {
+        background: linear-gradient(135deg, #071325 0%, #0C1B32 52%, #132A4A 100%);
+        border-radius: 18px;
+        padding: 28px 30px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .premium-hero::after {
+        content: "";
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        right: -80px;
+        top: -120px;
+        background: radial-gradient(circle, rgba(204,41,54,0.34) 0%, transparent 70%);
+    }
+    .premium-hero h1 { color: #F8FAFC !important; font-size: 2rem !important; margin: 0 0 8px 0 !important; }
+    .premium-hero p { color: #C5D4E7 !important; font-size: 0.98rem; margin: 0 !important; max-width: 760px; }
+    .premium-kicker {
+        display: inline-block;
+        font-size: 0.66rem;
+        color: #FCA5A5;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .premium-stat {
+        background: linear-gradient(160deg, #FFFFFF 0%, #F8FAFD 100%);
+        border: 1px solid #DFE8F3;
+        border-radius: 14px;
+        padding: 14px 16px;
+        box-shadow: 0 8px 18px rgba(10,22,40,0.05);
+    }
+    .premium-stat-label { font-size: 0.68rem; color: #5C6B81; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; }
+    .premium-stat-value { color: #09172A; font-size: 1.4rem; font-weight: 700; margin-top: 2px; }
+    .premium-stat-sub { color: #71839A; font-size: 0.76rem; margin-top: 3px; }
+    .module-card-premium {
+        background: linear-gradient(145deg, #FFFFFF 0%, #F6F9FD 100%);
+        border-radius: 16px;
+        border: 1px solid #E2EAF5;
+        padding: 18px 18px 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 12px 28px rgba(10,22,40,0.07);
+    }
+    .module-topline { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .module-name { color:#0A1628; font-weight:700; margin:0; font-size:1.01rem; }
+    .module-sub { color:#5E7088; margin:6px 0 14px 0; font-size:0.85rem; }
+    .module-meter { height:8px; background:#E6EDF5; border-radius:999px; overflow:hidden; }
+    .module-meter > span { display:block; height:100%; background:linear-gradient(90deg, #CC2936 0%, #204F9D 100%); }
+    .pill {
+        font-size: 0.66rem;
+        border-radius: 99px;
+        padding: 4px 9px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    .pill.pending { background: #FEE2E2; color: #7F1D1D; }
+    .pill.live { background: #DBEAFE; color: #1E3A8A; }
+    .pill.done { background: #DCFCE7; color: #166534; }
+    .sidebar-mini {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-top: 12px;
+    }
+
     /* ── Progress Bars ── */
     .stProgress > div > div { background-color: #CC2936 !important; }
 
@@ -1021,6 +1101,10 @@ if st.session_state.authenticated:
         📞 256-574-7528<br>
         ✉ Nicole.thornton@apirx.com
         </small>
+        <div class="sidebar-mini">
+            <div style="font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:#9CB3CF; font-weight:700; margin-bottom:4px;">Experience</div>
+            <div style="color:#EEF4FB; font-size:0.8rem; line-height:1.45;">Premium interface enabled with dynamic gradients and role-aware navigation.</div>
+        </div>
         """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
@@ -1031,39 +1115,82 @@ def show_home():
     active_modules = WAREHOUSE_MODULES if is_warehouse else MODULES
     track_label = "Warehouse" if is_warehouse else "General"
     name_display = f", {st.session_state.username}" if st.session_state.username else ""
-    subtitle = "Complete all five warehouse orientation modules below to finish your onboarding." if is_warehouse else "We're thrilled to have you on board. Complete all five orientation modules below to finish your onboarding."
+
+    subtitle = (
+        "Complete your warehouse onboarding journey with live progress, structured learning, and readiness checks."
+        if is_warehouse
+        else "Complete your onboarding journey with live progress, structured learning, and readiness checks."
+    )
+
+    module_progress = [st.session_state.progress.get(m["key"], 0) for m in active_modules]
+    completed = sum(1 for p in module_progress if p == 100)
+    total_pct = int(sum(module_progress) / len(active_modules)) if active_modules else 0
+    quizzes_done = sum(1 for m in active_modules if st.session_state.quiz_results.get(m["key"]) is not None)
+
+    st.markdown('<div class="post-auth-shell">', unsafe_allow_html=True)
+
     st.markdown(f"""
-    <div class="welcome-banner">
-        <h1>Welcome to American Associated Pharmacies{name_display}! 🎉</h1>
+    <div class="premium-hero">
+        <span class="premium-kicker">Post-Authorization Workspace</span>
+        <h1>Welcome back{name_display}.</h1>
         <p>{subtitle}</p>
     </div>
     """, unsafe_allow_html=True)
 
-    # Summary metrics
-    completed = sum(1 for p in st.session_state.progress.values() if p == 100)
-    total_pct = int(sum(st.session_state.progress.values()) / len(active_modules))
     col1, col2, col3 = st.columns(3)
-    col1.metric("Modules Complete", f"{completed} / {len(active_modules)}")
-    col2.metric("Overall Progress", f"{total_pct}%")
-    col3.metric("Quizzes Passed", f"{sum(1 for v in st.session_state.quiz_results.values() if v is not None)} / {len(active_modules)}")
+    with col1:
+        st.markdown(f"""
+        <div class="premium-stat">
+            <div class="premium-stat-label">Modules complete</div>
+            <div class="premium-stat-value">{completed}/{len(active_modules)}</div>
+            <div class="premium-stat-sub">{track_label} track milestones closed</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col2:
+        st.markdown(f"""
+        <div class="premium-stat">
+            <div class="premium-stat-label">Overall progress</div>
+            <div class="premium-stat-value">{total_pct}%</div>
+            <div class="premium-stat-sub">Live completion synchronization</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with col3:
+        st.markdown(f"""
+        <div class="premium-stat">
+            <div class="premium-stat-label">Quizzes completed</div>
+            <div class="premium-stat-value">{quizzes_done}/{len(active_modules)}</div>
+            <div class="premium-stat-sub">Knowledge checks submitted</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown(f"### 📚 Your {track_label} Orientation Modules")
+    st.markdown("<div style='margin-top:18px; margin-bottom:8px; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:#657890; font-weight:700;'>Orientation Modules</div>", unsafe_allow_html=True)
 
     for m in active_modules:
         pct = st.session_state.progress.get(m["key"], 0)
-        badge_class = "complete" if pct == 100 else ""
-        badge_text = "✅ Complete" if pct == 100 else f"⏳ {pct}% Done"
+        if pct == 100:
+            pill_class, pill_text = "done", "Complete"
+        elif pct > 0:
+            pill_class, pill_text = "live", "In Progress"
+        else:
+            pill_class, pill_text = "pending", "Pending"
+
         st.markdown(f"""
-        <div class="module-card">
-            <span class="badge {badge_class}">{badge_text}</span>
-            <h3>{m['icon']} Module {m['number']}: {m['title']}</h3>
-            <p>{m['subtitle']}</p>
+        <div class="module-card-premium">
+            <div class="module-topline">
+                <p class="module-name">{m['icon']} Module {m['number']}: {m['title']}</p>
+                <span class="pill {pill_class}">{pill_text}</span>
+            </div>
+            <p class="module-sub">{m['subtitle']}</p>
+            <div class="module-meter"><span style="width:{pct}%"></span></div>
+            <div style="margin-top:8px; color:#5E7088; font-size:0.78rem;">Progress: <strong style="color:#0B1C33;">{pct}%</strong></div>
         </div>
         """, unsafe_allow_html=True)
+
         if st.button(f"Open Module {m['number']}", key=f"open_{m['key']}", type="secondary"):
             st.session_state.selected_module = m["key"]
             st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  MODULE 1 — WELCOME TO AAP

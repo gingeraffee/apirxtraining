@@ -546,37 +546,41 @@ def get_employee_sheet(client):
 #                      Ensures only real, active employees can log in.
 #    3. Full Name    — must match the name on file for that Employee ID.
 #                      Prevents Employee A from logging in as Employee B.
+#
+#  The Employee Roster sheet must have these columns:
+#    Employee ID | Full Name | Track
+#  where Track is "General" or "Warehouse" (case-insensitive).
 # ─────────────────────────────────────────────
 def verify_employee(access_code, employee_id, full_name):
     """
-    Returns (True, "") on success.
-    Returns (False, reason_string) on failure.
+    Returns (True, track_string, "") on success, where track_string is
+    "general" or "warehouse" as set in the Employee Roster sheet.
+    Returns (False, "", reason_string) on failure.
     Fails closed — any sheet/network error denies access.
     """
     # ── Step 1: Check access code against Streamlit secret ──────────────────
     try:
         correct_code = st.secrets["orientation_access_code"]
     except Exception as e:
-        return False, f"Access code configuration error: {e}"
+        return False, "", f"Access code configuration error: {e}"
 
     if access_code.strip() != correct_code.strip():
-        return False, f"Incorrect access code. (Entered {len(access_code.strip())} chars, expected {len(correct_code.strip())} chars)"
+        return False, "", f"Incorrect access code. (Entered {len(access_code.strip())} chars, expected {len(correct_code.strip())} chars)"
 
     # ── Step 2 & 3: Validate Employee ID + Name against roster ──────────────
     client = get_gsheet_client()
     if not client:
-        return False, "Unable to connect to Google Sheets. Check gcp_service_account secret and service account permissions."
+        return False, "", "Unable to connect to Google Sheets. Check gcp_service_account secret and service account permissions."
 
     emp_sheet = get_employee_sheet(client)
     if not emp_sheet:
-        return False, "Could not open 'Employee Roster' tab. Check that the tab exists in 'AAP New Hire Orientation Progress'."
+        return False, "", "Could not open 'Employee Roster' tab. Check that the tab exists in 'AAP New Hire Orientation Progress'."
 
     try:
         records = emp_sheet.get_all_records()
         if not records:
-            return False, "Employee Roster sheet appears to be empty. Please check the sheet has data."
+            return False, "", "Employee Roster sheet appears to be empty. Please check the sheet has data."
 
-        # Show what columns were found (first record keys)
         col_names = list(records[0].keys()) if records else []
 
         for row in records:
@@ -584,12 +588,15 @@ def verify_employee(access_code, employee_id, full_name):
             row_name = str(row.get("Full Name",   "")).strip().lower()
             if row_id == employee_id.strip().lower():
                 if row_name == full_name.strip().lower():
-                    return True, ""
+                    # Read the Track column; fall back to "general" if missing/blank
+                    raw_track = str(row.get("Track", "")).strip().lower()
+                    track = "warehouse" if raw_track == "warehouse" else "general"
+                    return True, track, ""
                 else:
-                    return False, f"ID matched but name did not. Sheet has: '{row.get('Full Name', '')}' — you entered: '{full_name.strip()}'"
-        return False, f"Employee ID '{employee_id.strip()}' not found. Sheet has {len(records)} rows. Columns found: {col_names}"
+                    return False, "", f"ID matched but name did not. Sheet has: '{row.get('Full Name', '')}' — you entered: '{full_name.strip()}'"
+        return False, "", f"Employee ID '{employee_id.strip()}' not found. Sheet has {len(records)} rows. Columns found: {col_names}"
     except Exception as e:
-        return False, f"Verification error: {e}"
+        return False, "", f"Verification error: {e}"
 
 
 def save_progress(employee_id, employee_name, module_key, pct, checklist_items, quiz_score):
@@ -886,17 +893,6 @@ def show_login():
                     "Full Name",
                     placeholder="As it appears in your HR paperwork",
                 )
-                st.markdown(
-                    "<div style='margin:10px 0 4px; color:#475569; font-size:0.75rem;"
-                    "font-weight:700; text-transform:uppercase; letter-spacing:0.09em;'>"
-                    "Department Track</div>",
-                    unsafe_allow_html=True,
-                )
-                role_track = st.radio(
-                    "Department Track",
-                    options=["General / Administrative", "Warehouse"],
-                    label_visibility="collapsed",
-                )
                 st.markdown("<div style='margin-top:6px;'></div>", unsafe_allow_html=True)
                 submitted = st.form_submit_button("Sign In  →", use_container_width=True)
 
@@ -905,9 +901,8 @@ def show_login():
                         st.error("Please fill in all three fields to continue.")
                     else:
                         with st.spinner("Verifying your credentials…"):
-                            ok, reason = verify_employee(access_code, employee_id, full_name)
+                            ok, track, reason = verify_employee(access_code, employee_id, full_name)
                         if ok:
-                            track = "warehouse" if role_track == "Warehouse" else "general"
                             if track == "warehouse":
                                 prog_keys = {m["key"]: 0 for m in WAREHOUSE_MODULES}
                                 chk_keys  = {m["key"]: {} for m in WAREHOUSE_MODULES}

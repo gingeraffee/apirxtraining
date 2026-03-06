@@ -646,13 +646,14 @@ render_html("""
     .styled-table tr:last-child td { border-bottom: none; }
 
     /* ── Premium Login ── */
+    :root { --login-card-height: 520px; }
     .lp-info-card {
         background: linear-gradient(155deg, #060E1E 0%, #0A1628 45%, #112038 100%);
         border: 1px solid rgba(255,255,255,0.07);
         border-radius: 22px;
         padding: 40px 36px;
         box-shadow: 0 28px 72px rgba(6,14,30,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
-        min-height: 460px;
+        min-height: var(--login-card-height);
         position: relative;
         overflow: hidden;
     }
@@ -1073,8 +1074,12 @@ def show_login():
             background: #FFFFFF;
             border-radius: 22px;
             padding: 32px 30px 28px !important;
+            min-height: var(--login-card-height);
             box-shadow: 0 28px 72px rgba(6,14,30,0.38), 0 1px 3px rgba(6,14,30,0.1);
             border: 1px solid rgba(148,163,184,0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         /* Input label styling */
         [data-testid="stForm"] label p {

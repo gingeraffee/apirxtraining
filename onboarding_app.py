@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import json
 import os
 import base64
@@ -646,90 +647,128 @@ render_html("""
     .styled-table tr:last-child td { border-bottom: none; }
 
     /* ── Premium Login ── */
+    :root { --login-card-height: 560px; }
+    @keyframes lpAuroraMove {
+        0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.42; }
+        50% { transform: translate3d(-16px, 12px, 0) scale(1.08); opacity: 0.7; }
+        100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.42; }
+    }
+    @keyframes lpShimmer {
+        0% { transform: translateX(-140%); }
+        100% { transform: translateX(180%); }
+    }
     .lp-info-card {
-        background: linear-gradient(155deg, #060E1E 0%, #0A1628 45%, #112038 100%);
-        border: 1px solid rgba(255,255,255,0.07);
-        border-radius: 22px;
-        padding: 40px 36px;
-        box-shadow: 0 28px 72px rgba(6,14,30,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
-        min-height: 460px;
+        background: linear-gradient(155deg, #050D1F 0%, #081830 42%, #142A49 100%);
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 24px;
+        padding: 44px 40px;
+        box-shadow: 0 30px 78px rgba(6,14,30,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+        min-height: var(--login-card-height);
         position: relative;
         overflow: hidden;
+        transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+    }
+    .lp-info-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(147,197,253,0.45);
+        box-shadow: 0 40px 92px rgba(6,14,30,0.68), inset 0 1px 0 rgba(255,255,255,0.12);
     }
     .lp-info-card::before {
         content: "";
         position: absolute;
-        top: -90px; right: -70px;
-        width: 280px; height: 280px;
-        background: radial-gradient(circle, rgba(204,41,54,0.22) 0%, transparent 70%);
+        top: -90px;
+        right: -80px;
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(circle, rgba(236,72,153,0.28) 0%, transparent 72%);
         pointer-events: none;
+        animation: lpAuroraMove 9s ease-in-out infinite;
     }
     .lp-info-card::after {
         content: "";
         position: absolute;
-        bottom: -110px; left: -60px;
-        width: 260px; height: 260px;
-        background: radial-gradient(circle, rgba(30,58,138,0.28) 0%, transparent 70%);
+        inset: 0;
+        background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.1) 45%, transparent 70%);
+        opacity: 0.35;
         pointer-events: none;
+        animation: lpShimmer 7s linear infinite;
     }
+    .lp-kicker, .lp-headline, .lp-body, .lp-features, .lp-divider, .lp-stat-row { position: relative; z-index: 1; }
     .lp-kicker {
-        font-size: 0.66rem;
+        font-size: 0.68rem;
         text-transform: uppercase;
         letter-spacing: 0.24em;
-        color: #F87171;
+        color: #FCA5A5;
         font-weight: 800;
-        margin-bottom: 16px;
-        position: relative;
-        z-index: 1;
+        margin-bottom: 18px;
     }
     .lp-headline {
         font-family: 'Playfair Display', serif !important;
-        font-size: 1.78rem !important;
+        font-size: 2.1rem !important;
         font-weight: 700 !important;
         color: #FFFFFF !important;
-        line-height: 1.27 !important;
+        line-height: 1.2 !important;
         margin: 0 0 18px 0 !important;
-        position: relative;
-        z-index: 1;
     }
     .lp-body {
-        color: #94A3B8;
-        font-size: 0.875rem;
-        line-height: 1.74;
-        margin: 0 0 26px 0;
-        position: relative;
-        z-index: 1;
+        color: #CBD5E1;
+        font-size: 0.93rem;
+        line-height: 1.8;
+        margin: 0 0 24px 0;
     }
+    .lp-stat-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin: 0 auto 20px auto;
+        max-width: 420px;
+    }
+    .lp-stat {
+        border: 1px solid rgba(255,255,255,0.16);
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: rgba(255,255,255,0.05);
+        transition: transform 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+    }
+    .lp-stat:hover {
+        transform: translateY(-2px);
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(191,219,254,0.45);
+    }
+    .lp-stat-label { color: #A9BEDA; font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; }
+    .lp-stat-value { color: #F8FAFC; font-size: 1rem; font-weight: 700; margin-top: 3px; }
     .lp-features {
         list-style: none;
         padding: 0;
         margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        position: relative;
-        z-index: 1;
+        gap: 11px;
     }
     .lp-features li {
         display: flex;
         align-items: center;
         gap: 12px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.085);
-        border-radius: 11px;
-        padding: 11px 15px;
-        color: #CBD5E1;
-        font-size: 0.83rem;
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 12px;
+        padding: 12px 15px;
+        color: #E2E8F0;
+        font-size: 0.84rem;
         font-weight: 500;
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .lp-features li:hover {
+        transform: translateX(4px);
+        border-color: rgba(147,197,253,0.48);
+        background: rgba(59,130,246,0.12);
     }
     .lp-divider {
-        width: 36px;
+        width: 42px;
         height: 3px;
-        background: linear-gradient(90deg, #CC2936, #1E3A8A);
+        background: linear-gradient(90deg, #CC2936, #60A5FA);
         border-radius: 2px;
         margin: 0 0 20px 0;
-        position: relative;
-        z-index: 1;
     }
     /* Form submit button styling */
     div[data-testid="stFormSubmitButton"] button {
@@ -746,9 +785,9 @@ render_html("""
         transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
     }
     div[data-testid="stFormSubmitButton"] button:hover {
-        filter: brightness(1.1) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 14px 30px rgba(30,58,138,0.4) !important;
+        filter: brightness(1.08) saturate(1.08) !important;
+        transform: translateY(-2px) scale(1.01) !important;
+        box-shadow: 0 16px 34px rgba(30,58,138,0.45), 0 0 0 1px rgba(255,255,255,0.08) inset !important;
     }
 
 </style>
@@ -989,6 +1028,9 @@ defaults = {
     "quiz_results": {},
     "checklist_items": {m["key"]: {} for m in MODULES},
     "auth_error": "",
+    "sound_enabled": True,
+    "pending_sound": "",
+    "last_milestone_bucket": 0,
 }
 for k, v in defaults.items():
     if k not in st.session_state:
@@ -1017,13 +1059,85 @@ def calculate_module_pct(module_key, checklists, quiz_results):
     quiz_pct = 30 if quiz_results.get(module_key) is not None else 0
     return int(checklist_pct + quiz_pct)
 
+def trigger_sound(event_name: str):
+    st.session_state.pending_sound = f"{event_name}:{datetime.now().timestamp()}"
+
+def render_sound_engine():
+    event_payload = st.session_state.get("pending_sound", "")
+    enabled = "true" if st.session_state.get("sound_enabled", True) else "false"
+    components.html(f"""
+    <script>
+    (() => {{
+        const enabled = {enabled};
+        const payload = {json.dumps(event_payload)};
+        if (!enabled || !payload) return;
+
+        const event = payload.split(':')[0];
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+
+        const hit = (freq, type='sine', dur=0.12, gain=0.04, delay=0) => {{
+            const now = ctx.currentTime + delay;
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = type;
+            o.frequency.setValueAtTime(freq, now);
+            g.gain.setValueAtTime(0.0001, now);
+            g.gain.exponentialRampToValueAtTime(gain, now + 0.015);
+            g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+            o.connect(g); g.connect(ctx.destination);
+            o.start(now); o.stop(now + dur + 0.01);
+        }};
+
+        if (event === 'success') {{
+            hit(523.25, 'triangle', 0.14, 0.045, 0);
+            hit(659.25, 'triangle', 0.16, 0.04, 0.08);
+            hit(783.99, 'triangle', 0.18, 0.038, 0.16);
+        }} else if (event === 'correct') {{
+            hit(587.33, 'sine', 0.1, 0.04, 0);
+            hit(739.99, 'sine', 0.14, 0.035, 0.09);
+        }} else if (event === 'milestone') {{
+            hit(440.0, 'triangle', 0.09, 0.03, 0);
+            hit(554.37, 'triangle', 0.12, 0.03, 0.08);
+        }} else if (event === 'lesson_complete') {{
+            hit(493.88, 'triangle', 0.12, 0.038, 0);
+            hit(659.25, 'triangle', 0.15, 0.035, 0.08);
+            hit(880.0, 'triangle', 0.18, 0.03, 0.16);
+        }}
+    }})();
+    </script>
+    """, height=0)
+
+    st.session_state.pending_sound = ""
+
+def finalize_quiz_submission(module_key, score, max_score):
+    st.session_state.quiz_results[module_key] = score
+    if score >= max_score:
+        trigger_sound("correct")
+    update_progress(module_key)
+
 def update_progress(module_key):
+    previous_pct = st.session_state.progress.get(module_key, 0)
     pct = calculate_module_pct(
         module_key,
         st.session_state.checklist_items,
         st.session_state.quiz_results,
     )
     st.session_state.progress[module_key] = pct
+
+    if previous_pct < 100 and pct == 100 and not st.session_state.get("pending_sound"):
+        trigger_sound("lesson_complete")
+
+    active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
+    overall_pct = int(sum(st.session_state.progress.values()) / max(len(active_modules), 1))
+    milestone_bucket = overall_pct // 25
+    last_bucket = st.session_state.get("last_milestone_bucket", 0)
+    if milestone_bucket > last_bucket and milestone_bucket in (1, 2, 3, 4):
+        st.session_state.last_milestone_bucket = milestone_bucket
+        if not st.session_state.get("pending_sound"):
+            trigger_sound("milestone")
+
     if st.session_state.authenticated and st.session_state.employee_id:
         items = st.session_state.checklist_items.get(module_key, {})
         score = st.session_state.quiz_results.get(module_key)
@@ -1068,40 +1182,84 @@ def show_login():
     <style>
         /* Page background for login */
         .stApp { background: #0B1220 !important; }
+
+        .login-shell { max-width: 1240px; margin: 0 auto; perspective: 1200px; }
+
         /* Style the form container as the white sign-in card */
         [data-testid="stForm"] {
-            background: #FFFFFF;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F9FBFF 100%);
             border-radius: 22px;
-            padding: 32px 30px 28px !important;
+            padding: 36px 34px 30px !important;
+            min-height: var(--login-card-height);
             box-shadow: 0 28px 72px rgba(6,14,30,0.38), 0 1px 3px rgba(6,14,30,0.1);
-            border: 1px solid rgba(148,163,184,0.15);
+            border: 1px solid rgba(148,163,184,0.18);
+            transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+            will-change: transform;
         }
+        [data-testid="stForm"]:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59,130,246,0.34);
+            box-shadow: 0 36px 84px rgba(6,14,30,0.42), 0 1px 3px rgba(6,14,30,0.12);
+        }
+        [data-testid="stForm"] > div {
+            min-height: calc(var(--login-card-height) - 66px);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .login-form-intro {
+            margin-bottom: 6px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(148,163,184,0.22);
+        }
+        .login-form-footnote {
+            margin-top: auto;
+            padding-top: 8px;
+            font-size: 0.75rem;
+            color: #64748B;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+        .login-celebrate {
+            margin-top: 10px;
+            background: linear-gradient(120deg, #ECFDF5 0%, #EFF6FF 100%);
+            border: 1px solid rgba(16,185,129,0.25);
+            color: #065F46;
+            border-radius: 10px;
+            padding: 9px 11px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-align: center;
+            animation: fadeIn 0.35s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Input label styling */
         [data-testid="stForm"] label p {
             font-size: 0.75rem !important;
             font-weight: 700 !important;
-            color: #475569 !important;
+            color: #334155 !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.09em !important;
+            letter-spacing: 0.11em !important;
+            margin-top: 6px !important;
         }
         /* Input field styling */
         [data-testid="stForm"] input {
-            border: 1.5px solid #E2E8F0 !important;
-            border-radius: 10px !important;
-            font-size: 0.9rem !important;
+            border: 1.5px solid #D7E0EC !important;
+            border-radius: 11px !important;
+            font-size: 0.92rem !important;
             background: #F8FAFC !important;
             color: #0F172A !important;
+            min-height: 44px !important;
             transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
         }
         [data-testid="stForm"] input:focus {
             border-color: #1E3A8A !important;
             box-shadow: 0 0 0 3px rgba(30,58,138,0.12) !important;
             background: #FFFFFF !important;
-        }
-        /* Radio label styling */
-        [data-testid="stForm"] .stRadio label {
-            color: #334155 !important;
-            font-size: 0.87rem !important;
         }
     </style>
     """)
@@ -1114,7 +1272,7 @@ def show_login():
     with outer_m:
         # Logo
         render_html(f"""
-        <div style="text-align:center; margin-bottom:32px;">
+        <div class="login-shell"><div style="text-align:center; margin-bottom:32px;">
             <img src="{_login_logo_src}" alt="AAP / API Logo"
                  style="height:88px; max-width:300px; object-fit:contain;
                         filter: drop-shadow(0 6px 20px rgba(6,14,30,0.5)) brightness(1.05);">
@@ -1122,22 +1280,26 @@ def show_login():
         """)
 
         # Two-panel layout: dark info card left, white form card right
-        panel_l, panel_r = st.columns([1.1, 1], gap="large")
+        panel_l, panel_r = st.columns([1.4, 1], gap="large")
 
         with panel_l:
             render_html("""
             <div class="lp-info-card">
-                <div class="lp-kicker">Premium Onboarding Experience</div>
-                <h2 class="lp-headline">Welcome to your<br>orientation hub.</h2>
+                <div class="lp-kicker">Welcome, we're glad you're here</div>
+                <h2 class="lp-headline">Let’s make your first week feel easy, clear, and exciting.</h2>
                 <div class="lp-divider"></div>
                 <p class="lp-body">
-                    Start your first day with a secure, guided setup. Sign in to access
-                    your personalized onboarding modules and real-time completion tracking.
+                    Your onboarding space is designed to guide you step-by-step, celebrate your progress,
+                    and help you feel confident from day one. Everything you need is right here.
                 </p>
+                <div class="lp-stat-row">
+                    <div class="lp-stat"><div class="lp-stat-label">Modules</div><div class="lp-stat-value">5 Guided Steps</div></div>
+                    <div class="lp-stat"><div class="lp-stat-label">Progress</div><div class="lp-stat-value">Live + Saved</div></div>
+                </div>
                 <ul class="lp-features">
-                    <li><span>🔒</span> Secure employee credential check</li>
-                    <li><span>🧭</span> Role-based learning path assignment</li>
-                    <li><span>📈</span> Live progress sync and verification</li>
+                    <li><span>🔒</span> Secure employee credential verification</li>
+                    <li><span>🧭</span> Role-calibrated module sequencing</li>
+                    <li><span>📈</span> Progress visibility for HR and leadership</li>
                 </ul>
             </div>
             """)
@@ -1145,12 +1307,14 @@ def show_login():
         with panel_r:
             with st.form("login_form", clear_on_submit=False):
                 render_html("""
-                <p style="font-size:1.15rem; font-weight:700; color:#0A1628; margin:0 0 4px 0;">
-                    Employee Sign In
-                </p>
-                <p style="color:#64748B; font-size:0.83rem; margin:0 0 22px 0;">
-                    Use the details provided by HR to continue.
-                </p>
+                <div class="login-form-intro">
+                    <p style="font-size:1.2rem; font-weight:700; color:#0A1628; margin:0 0 4px 0;">
+                        Employee Sign In
+                    </p>
+                    <p style="color:#64748B; font-size:0.84rem; margin:0;">
+                        Access your onboarding inbox and continue where you left off.
+                    </p>
+                </div>
                 """)
 
                 access_code = st.text_input(
@@ -1166,8 +1330,11 @@ def show_login():
                     "Full Name",
                     placeholder="As it appears in your HR paperwork",
                 )
-                render_html("<div style='margin-top:6px;'></div>")
+                render_html("<div style='margin-top:10px;'></div>")
                 submitted = st.form_submit_button("Sign In  →", use_container_width=True)
+                render_html("<div class='login-form-footnote'>Enterprise access is monitored and encrypted.</div>")
+                if st.session_state.get("auth_error") == "":
+                    render_html("<div class='login-celebrate'>Ready when you are — your onboarding workspace is one sign-in away.</div>")
 
                 if submitted:
                     if not access_code or not employee_id or not full_name:
@@ -1190,9 +1357,18 @@ def show_login():
                             st.session_state.checklist_items = chk_keys
                             st.session_state.quiz_results    = {}
                             st.session_state.sheet_loaded    = False
+                            st.session_state.auth_error      = ""
+                            st.toast("Welcome aboard! Launching your training workspace.", icon="✨")
+                            trigger_sound("success")
+                            st.balloons()
                             st.rerun()
                         else:
+                            st.session_state.auth_error = reason
                             st.error(f"❌ {reason}")
+
+        st.toggle("🔈 Interface sounds", key="sound_enabled", help="Mute/unmute subtle interaction sounds.")
+
+        render_html("</div>")
 
         # Footer
         render_html("""
@@ -1276,6 +1452,8 @@ if st.session_state.authenticated:
             st.rerun()
 
         st.markdown("---")
+
+        st.toggle("🔈 Interface sounds", key="sound_enabled", help="Play subtle UI sounds for progress and confirmations.")
 
         # ── Sign Out ──
         if st.button("🚪 Sign Out", key="sign_out", type="primary", use_container_width=True):
@@ -1500,8 +1678,7 @@ def show_module_welcome():
                     q3 == "Innovation",
                     q4 == "An attitude shared by all employees",
                 ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
+                finalize_quiz_submission(mk, score, 4)
                 st.rerun()
 
 # ─────────────────────────────────────────────
@@ -1661,8 +1838,7 @@ def show_module_conduct():
                     q3 == "Giving a coworker a professional performance evaluation",
                     q4 == "Immediate termination",
                 ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
+                finalize_quiz_submission(mk, score, 4)
                 st.rerun()
 
 # ─────────────────────────────────────────────
@@ -1819,8 +1995,7 @@ def show_module_policies():
                     q4 == "The VP of Human Resources",
                     q5 == "True",
                 ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
+                finalize_quiz_submission(mk, score, 5)
                 st.rerun()
 
 # ─────────────────────────────────────────────
@@ -2166,8 +2341,7 @@ def show_module_benefits():
                     q4 == "At least 3 consecutive days mandated by a physician",
                     q5 == "Teladoc and LinkedIn Learning from Day 1",
                 ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
+                finalize_quiz_submission(mk, score, 5)
                 st.rerun()
 
 # ─────────────────────────────────────────────
@@ -2333,8 +2507,7 @@ def show_module_firststeps():
                     q3 == "Teladoc and LinkedIn Learning",
                     q4 == "At-will, meaning either party may end employment at any time for any lawful reason",
                 ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
+                finalize_quiz_submission(mk, score, 4)
                 st.rerun()
 
     # Completion check
@@ -2456,8 +2629,7 @@ def show_wh_module_welcome():
                     q3 == "Innovation",
                     q4 == "Report damage, errors, and near-misses honestly and help fix them",
                 ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
+                finalize_quiz_submission(mk, score, 4)
                 st.rerun()
 
 
@@ -2616,8 +2788,7 @@ def show_wh_module_conduct():
                     q3 == "Report it to your supervisor immediately and document it accurately",
                     q4 == "Immediate termination",
                 ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
+                finalize_quiz_submission(mk, score, 4)
                 st.rerun()
 
 
@@ -2876,8 +3047,7 @@ def show_wh_module_safety():
                     q4 == "First In, First Out — older stock goes to the front",
                     q5 == "You are trained, authorized, and certified for that specific equipment",
                 ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
+                finalize_quiz_submission(mk, score, 5)
                 st.rerun()
 
 
@@ -3092,8 +3262,7 @@ def show_wh_module_benefits():
                     q4 == "3 days",
                     q5 == "12 months and at least 1,250 hours worked",
                 ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
+                finalize_quiz_submission(mk, score, 5)
                 st.rerun()
 
 
@@ -3287,8 +3456,7 @@ def show_wh_module_firststeps():
                     q3 == "Only after you have been formally trained and authorized for that specific equipment",
                     q4 == "At-will, meaning either party may end employment at any time for any lawful reason",
                 ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
+                finalize_quiz_submission(mk, score, 4)
                 st.rerun()
 
     # Completion check
@@ -3307,6 +3475,8 @@ def show_wh_module_firststeps():
 # ─────────────────────────────────────────────
 #  ROUTER  — gate everything behind authentication
 # ─────────────────────────────────────────────
+render_sound_engine()
+
 if not st.session_state.authenticated:
     show_login()
 else:

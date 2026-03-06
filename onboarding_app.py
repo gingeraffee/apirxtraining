@@ -1206,12 +1206,11 @@ def inject_css():
             color: #424245 !important;
             font-size: 0.88rem !important;
         }
->>>>>>> 527c6a4dfbae1df9f2c82ca8f7a67b16d4a7a281
     </style>
     """, unsafe_allow_html=True)
 
-inject_css()
-    render_html("<div style='padding-top:48px'></div>")
+    inject_css()
+        render_html("<div style='padding-top:48px'></div>")
 
 
 # ═══════════════════════════════════════════════

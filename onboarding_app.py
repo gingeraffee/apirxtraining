@@ -998,12 +998,12 @@ for k, v in defaults.items():
 #  HELPER FUNCTIONS
 # ─────────────────────────────────────────────
 def pct_bar(pct):
-    return f"""
+    return dedent(f"""
     <div class="progress-container">
         <div class="progress-fill" style="width:{pct}%"></div>
     </div>
     <small style="color:#8BA3C7">{pct}% complete</small>
-    """
+    """).strip()
 
 def info_box(text, color="default"):
     cls = "info-box " + ("green" if color == "green" else "yellow" if color == "yellow" else "")
@@ -1248,7 +1248,7 @@ if st.session_state.authenticated:
             Progress &middot; {total_pct}%
         </div>
         """)
-        st.markdown(pct_bar(total_pct), unsafe_allow_html=True)
+        render_html(pct_bar(total_pct))
 
         render_html("<div class='sidebar-section-label'>Navigation</div>")
 
@@ -2244,13 +2244,15 @@ def show_module_firststeps():
         ("HealthEquity", "HSA Accounts", "866-274-9887 | healthequity.com", ""),
     ]
 
-    render_html("""
-    <table class="styled-table">
-        <tr><th>Name / Resource</th><th>Role</th><th>Contact</th></tr>
-    """ + "".join(
+    contact_rows = "".join(
         f"<tr><td><b>{c[0]}</b></td><td>{c[1]}</td><td>{c[2]}{(' | ' + c[3]) if c[3] else ''}</td></tr>"
         for c in contacts
-    ) + "</table>")
+    )
+    render_html(
+        f'<table class="styled-table">'
+        f"<tr><th>Name / Resource</th><th>Role</th><th>Contact</th></tr>"
+        f"{contact_rows}</table>"
+    )
 
     render_html("""
     <div class="content-section">
@@ -3218,13 +3220,15 @@ def show_wh_module_firststeps():
         ("HealthEquity", "HSA Accounts", "866-274-9887 | healthequity.com", ""),
     ]
 
-    render_html("""
-    <table class="styled-table">
-        <tr><th>Name / Resource</th><th>Role</th><th>Contact</th></tr>
-    """ + "".join(
+    contact_rows = "".join(
         f"<tr><td><b>{c[0]}</b></td><td>{c[1]}</td><td>{c[2]}{(' | ' + c[3]) if c[3] else ''}</td></tr>"
         for c in contacts
-    ) + "</table>")
+    )
+    render_html(
+        f'<table class="styled-table">'
+        f"<tr><th>Name / Resource</th><th>Role</th><th>Contact</th></tr>"
+        f"{contact_rows}</table>"
+    )
 
     st.markdown("### ✅ Module 5 Checklist")
     checklist_items = {

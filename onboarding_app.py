@@ -646,13 +646,22 @@ render_html("""
     .styled-table tr:last-child td { border-bottom: none; }
 
     /* ── Premium Login ── */
-    :root { --login-card-height: 520px; }
+    :root { --login-card-height: 560px; }
+    @keyframes lpAuroraMove {
+        0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.42; }
+        50% { transform: translate3d(-16px, 12px, 0) scale(1.08); opacity: 0.7; }
+        100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.42; }
+    }
+    @keyframes lpShimmer {
+        0% { transform: translateX(-140%); }
+        100% { transform: translateX(180%); }
+    }
     .lp-info-card {
-        background: linear-gradient(155deg, #060E1E 0%, #0A1628 45%, #112038 100%);
-        border: 1px solid rgba(255,255,255,0.07);
-        border-radius: 22px;
-        padding: 40px 36px;
-        box-shadow: 0 28px 72px rgba(6,14,30,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+        background: linear-gradient(155deg, #050D1F 0%, #081830 42%, #142A49 100%);
+        border: 1px solid rgba(255,255,255,0.10);
+        border-radius: 24px;
+        padding: 44px 40px;
+        box-shadow: 0 30px 78px rgba(6,14,30,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
         min-height: var(--login-card-height);
         position: relative;
         overflow: hidden;
@@ -660,77 +669,86 @@ render_html("""
     .lp-info-card::before {
         content: "";
         position: absolute;
-        top: -90px; right: -70px;
-        width: 280px; height: 280px;
-        background: radial-gradient(circle, rgba(204,41,54,0.22) 0%, transparent 70%);
+        top: -90px;
+        right: -80px;
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(circle, rgba(236,72,153,0.28) 0%, transparent 72%);
         pointer-events: none;
+        animation: lpAuroraMove 9s ease-in-out infinite;
     }
     .lp-info-card::after {
         content: "";
         position: absolute;
-        bottom: -110px; left: -60px;
-        width: 260px; height: 260px;
-        background: radial-gradient(circle, rgba(30,58,138,0.28) 0%, transparent 70%);
+        inset: 0;
+        background: linear-gradient(115deg, transparent 20%, rgba(255,255,255,0.1) 45%, transparent 70%);
+        opacity: 0.35;
         pointer-events: none;
+        animation: lpShimmer 7s linear infinite;
     }
+    .lp-kicker, .lp-headline, .lp-body, .lp-features, .lp-divider, .lp-stat-row { position: relative; z-index: 1; }
     .lp-kicker {
-        font-size: 0.66rem;
+        font-size: 0.68rem;
         text-transform: uppercase;
         letter-spacing: 0.24em;
-        color: #F87171;
+        color: #FCA5A5;
         font-weight: 800;
-        margin-bottom: 16px;
-        position: relative;
-        z-index: 1;
+        margin-bottom: 18px;
     }
     .lp-headline {
         font-family: 'Playfair Display', serif !important;
-        font-size: 1.78rem !important;
+        font-size: 2.1rem !important;
         font-weight: 700 !important;
         color: #FFFFFF !important;
-        line-height: 1.27 !important;
+        line-height: 1.2 !important;
         margin: 0 0 18px 0 !important;
-        position: relative;
-        z-index: 1;
     }
     .lp-body {
-        color: #94A3B8;
-        font-size: 0.875rem;
-        line-height: 1.74;
-        margin: 0 0 26px 0;
-        position: relative;
-        z-index: 1;
+        color: #CBD5E1;
+        font-size: 0.93rem;
+        line-height: 1.8;
+        margin: 0 0 24px 0;
     }
+    .lp-stat-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin: 0 0 20px 0;
+    }
+    .lp-stat {
+        border: 1px solid rgba(255,255,255,0.16);
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: rgba(255,255,255,0.05);
+    }
+    .lp-stat-label { color: #A9BEDA; font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; }
+    .lp-stat-value { color: #F8FAFC; font-size: 1rem; font-weight: 700; margin-top: 3px; }
     .lp-features {
         list-style: none;
         padding: 0;
         margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        position: relative;
-        z-index: 1;
+        gap: 11px;
     }
     .lp-features li {
         display: flex;
         align-items: center;
         gap: 12px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.085);
-        border-radius: 11px;
-        padding: 11px 15px;
-        color: #CBD5E1;
-        font-size: 0.83rem;
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 12px;
+        padding: 12px 15px;
+        color: #E2E8F0;
+        font-size: 0.84rem;
         font-weight: 500;
     }
     .lp-divider {
-        width: 36px;
+        width: 42px;
         height: 3px;
-        background: linear-gradient(90deg, #CC2936, #1E3A8A);
+        background: linear-gradient(90deg, #CC2936, #60A5FA);
         border-radius: 2px;
         margin: 0 0 20px 0;
-        position: relative;
-        z-index: 1;
     }
     /* Form submit button styling */
     div[data-testid="stFormSubmitButton"] button {
@@ -1069,44 +1087,60 @@ def show_login():
     <style>
         /* Page background for login */
         .stApp { background: #0B1220 !important; }
+
+        .login-shell { max-width: 1240px; margin: 0 auto; }
+
         /* Style the form container as the white sign-in card */
         [data-testid="stForm"] {
-            background: #FFFFFF;
+            background: linear-gradient(180deg, #FFFFFF 0%, #F9FBFF 100%);
             border-radius: 22px;
-            padding: 32px 30px 28px !important;
+            padding: 36px 34px 30px !important;
             min-height: var(--login-card-height);
             box-shadow: 0 28px 72px rgba(6,14,30,0.38), 0 1px 3px rgba(6,14,30,0.1);
-            border: 1px solid rgba(148,163,184,0.15);
+            border: 1px solid rgba(148,163,184,0.18);
+        }
+        [data-testid="stForm"] > div {
+            min-height: calc(var(--login-card-height) - 66px);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 16px;
         }
+        .login-form-intro {
+            margin-bottom: 6px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(148,163,184,0.22);
+        }
+        .login-form-footnote {
+            margin-top: auto;
+            padding-top: 6px;
+            font-size: 0.75rem;
+            color: #64748B;
+            text-align: center;
+        }
+
         /* Input label styling */
         [data-testid="stForm"] label p {
             font-size: 0.75rem !important;
             font-weight: 700 !important;
-            color: #475569 !important;
+            color: #334155 !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.09em !important;
+            letter-spacing: 0.11em !important;
+            margin-top: 6px !important;
         }
         /* Input field styling */
         [data-testid="stForm"] input {
-            border: 1.5px solid #E2E8F0 !important;
-            border-radius: 10px !important;
-            font-size: 0.9rem !important;
+            border: 1.5px solid #D7E0EC !important;
+            border-radius: 11px !important;
+            font-size: 0.92rem !important;
             background: #F8FAFC !important;
             color: #0F172A !important;
+            min-height: 44px !important;
             transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
         }
         [data-testid="stForm"] input:focus {
             border-color: #1E3A8A !important;
             box-shadow: 0 0 0 3px rgba(30,58,138,0.12) !important;
             background: #FFFFFF !important;
-        }
-        /* Radio label styling */
-        [data-testid="stForm"] .stRadio label {
-            color: #334155 !important;
-            font-size: 0.87rem !important;
         }
     </style>
     """)
@@ -1119,7 +1153,7 @@ def show_login():
     with outer_m:
         # Logo
         render_html(f"""
-        <div style="text-align:center; margin-bottom:32px;">
+        <div class="login-shell"><div style="text-align:center; margin-bottom:32px;">
             <img src="{_login_logo_src}" alt="AAP / API Logo"
                  style="height:88px; max-width:300px; object-fit:contain;
                         filter: drop-shadow(0 6px 20px rgba(6,14,30,0.5)) brightness(1.05);">
@@ -1127,22 +1161,27 @@ def show_login():
         """)
 
         # Two-panel layout: dark info card left, white form card right
-        panel_l, panel_r = st.columns([1.1, 1], gap="large")
+        panel_l, panel_r = st.columns([1.4, 1], gap="large")
 
         with panel_l:
             render_html("""
             <div class="lp-info-card">
-                <div class="lp-kicker">Premium Onboarding Experience</div>
-                <h2 class="lp-headline">Welcome to your<br>orientation hub.</h2>
+                <div class="lp-kicker">Elite Training Workspace</div>
+                <h2 class="lp-headline">Welcome to your<br>orientation command center.</h2>
                 <div class="lp-divider"></div>
                 <p class="lp-body">
-                    Start your first day with a secure, guided setup. Sign in to access
-                    your personalized onboarding modules and real-time completion tracking.
+                    Designed like a premium enterprise inbox, this portal keeps every training module,
+                    verification checkpoint, and onboarding milestone in one secure, focused workspace.
                 </p>
+                <div class="lp-stat-row">
+                    <div class="lp-stat"><div class="lp-stat-label">Tracks</div><div class="lp-stat-value">2 Paths</div></div>
+                    <div class="lp-stat"><div class="lp-stat-label">Modules</div><div class="lp-stat-value">5 Core</div></div>
+                    <div class="lp-stat"><div class="lp-stat-label">Sync</div><div class="lp-stat-value">Realtime</div></div>
+                </div>
                 <ul class="lp-features">
-                    <li><span>🔒</span> Secure employee credential check</li>
-                    <li><span>🧭</span> Role-based learning path assignment</li>
-                    <li><span>📈</span> Live progress sync and verification</li>
+                    <li><span>🔒</span> Secure employee credential verification</li>
+                    <li><span>🧭</span> Role-calibrated module sequencing</li>
+                    <li><span>📈</span> Progress visibility for HR and leadership</li>
                 </ul>
             </div>
             """)
@@ -1150,12 +1189,14 @@ def show_login():
         with panel_r:
             with st.form("login_form", clear_on_submit=False):
                 render_html("""
-                <p style="font-size:1.15rem; font-weight:700; color:#0A1628; margin:0 0 4px 0;">
-                    Employee Sign In
-                </p>
-                <p style="color:#64748B; font-size:0.83rem; margin:0 0 22px 0;">
-                    Use the details provided by HR to continue.
-                </p>
+                <div class="login-form-intro">
+                    <p style="font-size:1.2rem; font-weight:700; color:#0A1628; margin:0 0 4px 0;">
+                        Employee Sign In
+                    </p>
+                    <p style="color:#64748B; font-size:0.84rem; margin:0;">
+                        Access your onboarding inbox and continue where you left off.
+                    </p>
+                </div>
                 """)
 
                 access_code = st.text_input(
@@ -1171,8 +1212,9 @@ def show_login():
                     "Full Name",
                     placeholder="As it appears in your HR paperwork",
                 )
-                render_html("<div style='margin-top:6px;'></div>")
+                render_html("<div style='margin-top:10px;'></div>")
                 submitted = st.form_submit_button("Sign In  →", use_container_width=True)
+                render_html("<div class='login-form-footnote'>Enterprise access is monitored and encrypted.</div>")
 
                 if submitted:
                     if not access_code or not employee_id or not full_name:
@@ -1198,6 +1240,8 @@ def show_login():
                             st.rerun()
                         else:
                             st.error(f"❌ {reason}")
+
+        render_html("</div>")
 
         # Footer
         render_html("""

@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import json
+import inspect
 import os
 import base64
 import gspread
@@ -11,7 +12,7 @@ from textwrap import dedent
 
 def render_html(content: str):
     """Render HTML/Markdown blocks reliably by removing Python indentation."""
-    st.markdown(dedent(content).strip(), unsafe_allow_html=True)
+    st.markdown(inspect.cleandoc(content), unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  PAGE CONFIG
@@ -234,12 +235,18 @@ render_html("""
         background: radial-gradient(circle, rgba(125,211,252,0.20) 0%, transparent 72%);
     }
     .module-page-title {
-        color: #F8FAFC;
+        color: #F8FAFC !important;
         font-family: 'Playfair Display', serif;
         font-size: 1.58rem;
         margin: 3px 0 8px;
         position: relative;
         z-index: 1;
+        text-shadow: 0 6px 24px rgba(2,8,23,0.6);
+    }
+    .module-page-hero h1,
+    .module-page-hero h2,
+    .module-page-hero h3 {
+        color: #F8FAFC !important;
     }
     .module-page-sub {
         color: #CCDAEF;

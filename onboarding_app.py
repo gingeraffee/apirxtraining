@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import json
+import inspect
 import os
 import base64
 import gspread
@@ -11,7 +12,7 @@ from textwrap import dedent
 
 def render_html(content: str):
     """Render HTML/Markdown blocks reliably by removing Python indentation."""
-    st.markdown(dedent(content).strip(), unsafe_allow_html=True)
+    st.markdown(inspect.cleandoc(content), unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  PAGE CONFIG
@@ -247,13 +248,19 @@ render_html("""
         animation: pulseGlow 6s ease-in-out infinite;
     }
     .module-page-title {
-        color: #FAFAFA;
-        font-family: 'Outfit', sans-serif;
-        font-size: 1.6rem;
-        font-weight: 700;
+        color: #F8FAFC !important;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.58rem;
+
         margin: 3px 0 8px;
         position: relative;
         z-index: 1;
+        text-shadow: 0 6px 24px rgba(2,8,23,0.6);
+    }
+    .module-page-hero h1,
+    .module-page-hero h2,
+    .module-page-hero h3 {
+        color: #F8FAFC !important;
     }
     .module-page-sub {
         color: rgba(255,255,255,0.6);
@@ -948,15 +955,22 @@ MODULES = [
         "icon": "📋",
     },
     {
-        "key": "benefits",
+        "key": "timeoff",
         "number": 4,
-        "title": "Benefits & Time Off",
-        "subtitle": "Health, leave, 401k & employee perks",
+        "title": "Time Off & Leave",
+        "subtitle": "PTO, holidays, sick leave & attendance rules",
+        "icon": "⏰",
+    },
+    {
+        "key": "benefits",
+        "number": 5,
+        "title": "Benefits",
+        "subtitle": "Health, 401k, life insurance & employee perks",
         "icon": "💼",
     },
     {
         "key": "firststeps",
-        "number": 5,
+        "number": 6,
         "title": "Your First Steps",
         "subtitle": "Systems, contacts & what to expect",
         "icon": "🚀",
@@ -992,15 +1006,22 @@ WAREHOUSE_MODULES = [
         "icon": "🦺",
     },
     {
-        "key": "wh_benefits",
+        "key": "wh_timeoff",
         "number": 4,
-        "title": "Benefits & Time Off",
-        "subtitle": "Health, leave, 401k & employee perks",
+        "title": "Time Off & Leave",
+        "subtitle": "PTO, holidays, sick leave & attendance rules",
+        "icon": "⏰",
+    },
+    {
+        "key": "wh_benefits",
+        "number": 5,
+        "title": "Benefits",
+        "subtitle": "Health, 401k, life insurance & employee perks",
         "icon": "💼",
     },
     {
         "key": "wh_firststeps",
-        "number": 5,
+        "number": 6,
         "title": "Your First Steps — Warehouse",
         "subtitle": "Systems, contacts, equipment & what to expect on Day 1",
         "icon": "🚀",
@@ -1989,299 +2010,40 @@ def show_module_policies():
                 st.rerun()
 
 # ─────────────────────────────────────────────
-#  MODULE 4 — BENEFITS & TIME OFF
+#  MODULE 4 — TIME OFF & LEAVE
 # ─────────────────────────────────────────────
-def show_module_benefits():
+def show_module_timeoff():
     render_html("""
     <div class="content-section">
-        <h2>💼 Module 4: Benefits & Time Off</h2>
-        <p>Benefits eligibility depends on your employment classification. Review the key differences below, then
-        explore each benefit area.</p>
+        <h2>⏰ Module 4: Time Off & Leave</h2>
+        <p>Understand how attendance, leave, and time-off requests work so you can plan ahead with confidence.</p>
+
+        <h3>🏖️ Vacation & Holiday Basics</h3>
+        <ul>
+            <li>Vacation eligibility and accrual depend on employment classification.</li>
+            <li>Pre-approved vacation days are excluded from the attendance point system.</li>
+            <li>AAP observes designated company holidays each year.</li>
+        </ul>
+
+        <h3>🩺 Sick Leave & Protected Time</h3>
+        <ul>
+            <li>Long-Term Sick Leave requires at least 3 consecutive physician-mandated days.</li>
+            <li>FMLA eligibility requires 12 months of service and 1,250 hours worked.</li>
+            <li>Notify HR within 30 days for qualifying life events affecting coverage.</li>
+        </ul>
     </div>
     """)
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["⏰ Leave & Holidays", "🏥 Health Benefits", "💰 401k & Life", "🌟 Perks & EAP", "FT vs PT Summary"])
-
-    with tab1:
-        render_html("""
-        <div class="content-section">
-            <h3>🏖️ Vacation (Full-Time Only)</h3>
-            <p>Vacation begins accruing after <strong>60 days of full-time service</strong> and is accrued weekly.</p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Length of Employment</th><th>Days Per Year</th><th>Hours Per Year</th><th>Accrual Rate</th></tr>
-            <tr><td>60 days → 1st Anniversary</td><td>3</td><td>24</td><td>0.46 hrs/week</td></tr>
-            <tr><td>1st → 2nd Anniversary</td><td>5</td><td>40</td><td>0.77 hrs/week</td></tr>
-            <tr><td>2nd → 3rd Anniversary</td><td>7</td><td>56</td><td>1.07 hrs/week</td></tr>
-            <tr><td>3rd → 5th Anniversary</td><td>10</td><td>80</td><td>1.54 hrs/week</td></tr>
-            <tr><td>5th → 9th Anniversary</td><td>15</td><td>120</td><td>2.31 hrs/week</td></tr>
-            <tr><td>10th → 19th Anniversary</td><td>17</td><td>136</td><td>2.62 hrs/week</td></tr>
-            <tr><td>20th Anniversary+</td><td>19</td><td>152</td><td>2.93 hrs/week</td></tr>
-        </table>
-        """)
-        st.markdown(info_box("Unused vacation may be banked up to 19 days (152 hours) total. Any remaining time beyond the bank limit is paid out. Accrued vacation is paid out upon termination."), unsafe_allow_html=True)
-
-        render_html("""
-        <div class="content-section">
-            <h3>📅 Personal Leave</h3>
-            <p>Available to full-time and part-time employees after the initial 60-day waiting period.
-            Personal leave <strong>does not carry over</strong> year to year and is not paid out upon termination.</p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Classification</th><th>Upon Initial Eligibility</th><th>After 1 Year</th><th>After 5 Years</th></tr>
-            <tr><td>Full-Time</td><td>24 hours (3 days)</td><td>32 hours (4 days)</td><td>40 hours (5 days)</td></tr>
-            <tr><td>Part-Time</td><td>1 hr per 30 hrs worked, up to 24 hrs</td><td>Up to 32 hrs</td><td>Up to 40 hrs</td></tr>
-        </table>
-        """)
-
-        render_html("""
-        <div class="content-section">
-            <h3>🎄 Paid Holidays</h3>
-            <p>Eligible after <strong>60 days of service.</strong> To receive holiday pay, employees must work the
-            last scheduled day <em>before</em> and the first scheduled day <em>after</em> the holiday.</p>
-            <ul>
-                <li>New Year's Day (January 1)</li>
-                <li>Memorial Day (last Monday in May)</li>
-                <li>Independence Day (July 4)</li>
-                <li>Labor Day (first Monday in September)</li>
-                <li>Thanksgiving (fourth Thursday in November)</li>
-                <li>Christmas Day (December 25)</li>
-                <li><strong>Floating Holiday:</strong> Christmas Eve OR Day After Thanksgiving (based on scheduling needs)</li>
-                <li><strong>Floating Holiday:</strong> Same as above — department-dependent</li>
-            </ul>
-            <p>Employees asked to work a designated holiday will receive a floating holiday to use within 90 days.</p>
-
-            <h3>😷 Long-Term Sick Leave (Full-Time Only)</h3>
-            <p>Reserved for serious illness requiring <strong>3 or more consecutive days</strong> away from work,
-            as mandated by a physician. Cannot be used for cosmetic procedures, routine follow-up visits, or
-            absences under 3 consecutive days.</p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Years of Service</th><th>Days Earned</th></tr>
-            <tr><td>4 years</td><td>10 days (80 hours)</td></tr>
-            <tr><td>9 years</td><td>Additional 10 days</td></tr>
-            <tr><td>14 years</td><td>Additional 10 days</td></tr>
-            <tr><td>19 years</td><td>Additional 10 days</td></tr>
-            <tr><td>Every 5 years thereafter</td><td>Additional 10 days</td></tr>
-        </table>
-        """)
-        st.markdown(info_box("Long-term sick leave can be banked up to 40 days (320 hours) total. It is NOT paid out upon termination."), unsafe_allow_html=True)
-
-        render_html("""
-        <div class="content-section">
-            <h3>🏥 FMLA Leave</h3>
-            <p>Eligible full-time employees who have completed <strong>365 calendar days of service</strong> may
-            request up to <strong>12 weeks of unpaid, job-protected leave</strong> in a 12-month period for:</p>
-            <ul>
-                <li>A serious health condition of the employee</li>
-                <li>Birth or adoption of a child</li>
-                <li>Care for a spouse, child, or parent with a serious health condition</li>
-                <li>Qualifying military exigencies (up to 26 weeks for care of a seriously injured service member)</li>
-            </ul>
-            <p>Health insurance benefits continue during approved FMLA leave. Requests should be made at least
-            <strong>30 days in advance</strong> for foreseeable events.</p>
-
-            <h3>🌸 Other Leave Types</h3>
-            <ul>
-                <li><strong>Bereavement:</strong> Up to 5 paid days for immediate family members (spouse, parent, child, sibling, grandparents, grandchildren, and their spouses).</li>
-                <li><strong>Jury Duty:</strong> Up to 2 weeks paid leave per year.</li>
-                <li><strong>Voting:</strong> Employees unable to vote outside of work hours may request reasonable time off.</li>
-            </ul>
-        </div>
-        """)
-
-    with tab2:
-        render_html("""
-        <div class="content-section">
-            <h3>🏥 Medical Insurance</h3>
-            <p>Eligible after <strong>60 days of employment.</strong> Benefits are effective the
-            <strong>1st of the month following 60 days</strong> of service. Full-time employees working
-            30+ hours per week are eligible.</p>
-            <p>AAP offers <strong>two plans through BlueCross BlueShield of Alabama:</strong></p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th></th><th>Option 1: PPO Plan</th><th>Option 2: HDHP + HSA</th></tr>
-            <tr><td><b>Employee Only</b></td><td>$157.20/mo</td><td>$136.34/mo</td></tr>
-            <tr><td><b>Employee + Spouse</b></td><td>$492.32/mo</td><td>$404.66/mo</td></tr>
-            <tr><td><b>Employee + Child(ren)</b></td><td>$444.36/mo</td><td>$373.04/mo</td></tr>
-            <tr><td><b>Employee + Family</b></td><td>$678.62/mo</td><td>$581.72/mo</td></tr>
-            <tr><td><b>Deductible (Ind/Fam)</b></td><td>$500 / $1,000</td><td>$1,700 / $3,400</td></tr>
-            <tr><td><b>Coinsurance</b></td><td>20%</td><td>10%</td></tr>
-            <tr><td><b>AAP HSA Contribution</b></td><td>N/A</td><td>$900 / $1,800 per year</td></tr>
-            <tr><td><b>Out-of-Pocket Max (Ind/Fam)</b></td><td>$2,250 / $4,500</td><td>$3,400 / $6,800</td></tr>
-            <tr><td><b>Preventive Care</b></td><td>100%</td><td>100%</td></tr>
-            <tr><td><b>PCP / Specialist Copay</b></td><td>$30 / $45</td><td>Ded then 10%</td></tr>
-            <tr><td><b>Telehealth (Teladoc)</b></td><td>FREE (company paid)</td><td>FREE (company paid)</td></tr>
-        </table>
-        """)
-        st.markdown(info_box("📌 <b>HDHP HSA tip:</b> The HSA is owned by <b>you</b> — funds roll over year to year and go with you if you leave AAP. 2026 contribution limits: $4,400 (Single) / $8,750 (Family). If age 55+, add an extra $1,000."), unsafe_allow_html=True)
-
-        render_html("""
-        <div class="content-section">
-            <h3>🦷 Dental Insurance (Guardian)</h3>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th></th><th>Base Plan</th><th>High Plan</th></tr>
-            <tr><td>Employee</td><td>$6.78/mo</td><td>$10.66/mo</td></tr>
-            <tr><td>Employee + Spouse</td><td>$20.56/mo</td><td>$28.80/mo</td></tr>
-            <tr><td>Employee + Child(ren)</td><td>$20.76/mo</td><td>$28.32/mo</td></tr>
-            <tr><td>Employee + Family</td><td>$34.54/mo</td><td>$47.10/mo</td></tr>
-            <tr><td>Annual Max Benefit</td><td>$1,500/member</td><td>$3,000/member</td></tr>
-            <tr><td>Preventive (exams, cleanings)</td><td>100%</td><td>100%</td></tr>
-            <tr><td>Basic Services</td><td>80% after deductible</td><td>100%</td></tr>
-            <tr><td>Major Services</td><td>50% after deductible</td><td>50% after deductible</td></tr>
-            <tr><td>Orthodontics Lifetime Max</td><td>$1,000</td><td>$1,500</td></tr>
-        </table>
-        """)
-
-        render_html("""
-        <div class="content-section">
-            <h3>👓 Vision Insurance (Guardian / Davis Vision)</h3>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th></th><th>Cost / Coverage</th></tr>
-            <tr><td>Employee</td><td>$6.93/mo</td></tr>
-            <tr><td>Employee + One Dependent</td><td>$10.04/mo</td></tr>
-            <tr><td>Employee + Family</td><td>$18.00/mo</td></tr>
-            <tr><td>Eye Exam</td><td>$10 copay (every 12 months)</td></tr>
-            <tr><td>Lenses</td><td>$25 copay (every 12 months)</td></tr>
-            <tr><td>Frames Allowance</td><td>$130 (every 24 months)</td></tr>
-            <tr><td>Contacts</td><td>$130 max (every 12 months)</td></tr>
-        </table>
-        """)
-        st.markdown(info_box("📅 <b>Enrollment reminder:</b> New employees must enroll within <b>30 days of hire.</b> Benefits take effect the 1st of the month following 60 days. Qualified life events allow mid-year changes within 30 days of the event."), unsafe_allow_html=True)
-
-    with tab3:
-        render_html("""
-        <div class="content-section">
-            <h3>💰 401(k) Savings Plan</h3>
-            <p>Eligible on the <strong>1st of the month following 60 days</strong> of continuous full-time employment.</p>
-            <ul>
-                <li>AAP matches <strong>100%</strong> of the first <strong>3%</strong> you contribute.</li>
-                <li>AAP matches <strong>50%</strong> of the next <strong>2%</strong> you contribute.</li>
-                <li>Company match is <strong>100% vested immediately</strong> — it's yours from day one.</li>
-            </ul>
-            <p>Part-time employees are eligible after <strong>1 year of service and 1,000 hours worked.</strong></p>
-
-            <h3>🛡️ Life Insurance & AD&D</h3>
-            <p>AAP provides <strong>Basic Life and AD&D insurance at no cost to you</strong>, equal to your annual
-            earnings up to a maximum of $270,000, through Guardian. This coverage is effective the 1st of the month
-            after 60 days of employment.</p>
-            <p>You may also elect <strong>Voluntary Life and AD&D</strong> for yourself, your spouse, and/or
-            dependents during your initial enrollment period:</p>
-            <ul>
-                <li><strong>Employee:</strong> $10,000 minimum up to 5x annual salary or $500,000 (guarantee issue up to $100,000)</li>
-                <li><strong>Spouse:</strong> $5,000 minimum up to $100,000 (guarantee issue up to $50,000)</li>
-                <li><strong>Child(ren):</strong> $2,000–$10,000 (guarantee issue up to $10,000)</li>
-            </ul>
-            <p>⚠️ If you do not enroll during initial enrollment, future enrollment requires Evidence of Insurability (EOI) approval from Guardian.</p>
-
-            <h3>♿ Disability Insurance</h3>
-            <ul>
-                <li><strong>Short-Term Disability:</strong> 60% of basic weekly earnings up to $1,250/week, after a 7-day elimination period. Benefits continue up to 12 weeks. <em>Employee pays the premium.</em></li>
-                <li><strong>Long-Term Disability:</strong> 60% of basic monthly earnings up to $10,000/month, after a 90-day waiting period. <em>AAP pays 100% of the premium.</em></li>
-            </ul>
-        </div>
-        """)
-
-    with tab4:
-        render_html("""
-        <div class="content-section">
-            <h3>📞 Teladoc — Free Telehealth (Day 1)</h3>
-            <p>Teladoc is a <strong>company-paid benefit effective on your date of hire</strong> — no copays,
-            no appointments needed. Available to <strong>everyone in your household.</strong></p>
-            <ul>
-                <li>General Medical: Board-certified clinicians by phone or video, 24/7</li>
-                <li>Mental Health: Connect with a therapist or psychiatrist, 7 days/week</li>
-                <li>Access at Teladoc.com or by calling 1-800-835-2362</li>
-            </ul>
-
-            <h3>🤝 Employee Assistance Program — LifeMatters (Day 1)</h3>
-            <p>Free, confidential counseling and support services available <strong>24/7/365</strong> to you
-            and your eligible dependents.</p>
-            <ul>
-                <li>Stress, depression, and personal problems</li>
-                <li>Balancing work and personal needs</li>
-                <li>Family and relationship concerns</li>
-                <li>Financial consultation and legal consultation</li>
-                <li>Child and elder care resources</li>
-            </ul>
-            <p>Call: <strong>1-800-634-6433</strong> | Web: mylifematters.com (password: AAP1)</p>
-
-            <h3>🎁 Employee Perks — BenefitHub</h3>
-            <p>AAP has partnered with BenefitHub to give you access to discounts on travel, entertainment,
-            restaurants, auto, electronics, fitness, and more — across 1,000s of brands including Hertz,
-            Groupon, Sam's Club, Dell, and Legoland.</p>
-            <ul>
-                <li>Register at: <strong>aapperks.benefithub.com</strong></li>
-                <li>Referral Code: <strong>9Y7G26</strong></li>
-            </ul>
-
-            <h3>📚 LinkedIn Learning (Day 1)</h3>
-            <p>AAP provides a company-paid LinkedIn Learning subscription effective on your date of hire.
-            Access over 16,000 courses in business, technology, personal development, and more.
-            Check your email for your activation invitation from HR.</p>
-
-            <h3>📱 Verizon Wireless Discount</h3>
-            <p>AAP employees are eligible for a <strong>22% discount</strong> on Verizon Wireless.
-            The account must be in your name. Ask HR for details.</p>
-        </div>
-        """)
-
-    with tab5:
-        render_html("""
-        <div class="content-section">
-            <h3>Full-Time vs. Part-Time: Key Differences</h3>
-            <p>Full-time employees work <strong>30+ hours per week.</strong> Part-time employees work
-            <strong>fewer than 30 hours per week.</strong> Any part-time employee who averages 30+ scheduled
-            hours per week over a 6-month rolling period will be reclassified as full-time.</p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Benefit</th><th>Full-Time</th><th>Part-Time</th></tr>
-            <tr><td>Vacation Time</td><td>✅ Accrues weekly based on tenure</td><td>❌ Not eligible</td></tr>
-            <tr><td>Personal Time</td><td>✅ Lump sum annually</td><td>✅ 1 hr per 30 hrs worked</td></tr>
-            <tr><td>Paid Holidays</td><td>✅ 8 paid holidays</td><td>✅ 8 paid holidays</td></tr>
-            <tr><td>Health/Dental/Vision</td><td>✅ After 60 days</td><td>❌ Not eligible</td></tr>
-            <tr><td>401(k)</td><td>✅ After 60 days</td><td>✅ After 1 year + 1,000 hours</td></tr>
-            <tr><td>Company-Paid Life Insurance</td><td>✅ After 60 days</td><td>❌ Not eligible</td></tr>
-            <tr><td>Long-Term Disability</td><td>✅ After 60 days</td><td>❌ Not eligible</td></tr>
-            <tr><td>Long-Term Sick Leave</td><td>✅ After 4 years</td><td>❌ Not eligible</td></tr>
-            <tr><td>Teladoc</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>LinkedIn Learning</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>EAP / LifeMatters</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-        </table>
-        """)
-
     st.markdown("### ✅ Module 4 Checklist")
     checklist_items = {
-        "vacation_schedule": "I understand the vacation accrual schedule and when I become eligible.",
-        "personal_leave": "I understand personal leave amounts and that they do not roll over.",
-        "holidays": "I know the 6 standard paid holidays plus 2 floating holidays.",
-        "medical_plans": "I understand the two medical plan options (PPO and HDHP/HSA).",
-        "dental_vision": "I know dental and vision are available through Guardian.",
-        "401k": "I understand the 401k match formula and immediate vesting.",
-        "life_insurance": "I know AAP provides basic life insurance at no cost to me.",
-        "teladoc": "I know Teladoc is free, effective Day 1, and available to my household.",
-        "eap": "I know the EAP (LifeMatters) is free, confidential, and available 24/7.",
-        "benefithub": "I know about the BenefitHub perks program and the referral code.",
-        "ft_pt_diff": "I understand the key differences between full-time and part-time benefits.",
+        "vacation_rules": "I understand how pre-approved vacation impacts attendance points.",
+        "holiday_awareness": "I know holiday/time-off expectations for my schedule.",
+        "sick_leave_trigger": "I understand when Long-Term Sick Leave applies.",
+        "fmla_baseline": "I know the baseline eligibility requirements for FMLA.",
+        "life_event_window": "I know I must notify HR within 30 days for qualifying life events.",
     }
 
-    mk = "benefits"
+    mk = "timeoff"
     if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
         st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
 
@@ -2297,41 +2059,94 @@ def show_module_benefits():
     st.markdown("### 📝 Module 4 Quiz")
     if st.session_state.quiz_results.get(mk) is not None:
         score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/5.")
+        st.success(f"✅ Quiz completed! You scored {score}/4.")
+    else:
+        with st.form("quiz_timeoff"):
+            q1 = st.radio("1. Pre-approved vacation days are excluded from the attendance point system.", ["True", "False"], key="to_q1", index=None)
+            q2 = st.radio("2. Long-Term Sick Leave requires that an absence be:", ["At least 1 day", "At least 3 consecutive physician-mandated days", "At least 5 days", "Any absence with a doctor note"], key="to_q2", index=None)
+            q3 = st.radio("3. FMLA eligibility requires:", ["60 days of employment", "6 months of employment", "12 months and 1,250 hours worked", "Manager approval only"], key="to_q3", index=None)
+            q4 = st.radio("4. For qualifying life events that affect benefits, you should notify HR within:", ["7 days", "14 days", "30 days", "60 days"], key="to_q4", index=None)
+            submitted = st.form_submit_button("Submit Quiz")
+            if submitted:
+                score = sum([
+                    q1 == "True",
+                    q2 == "At least 3 consecutive physician-mandated days",
+                    q3 == "12 months and 1,250 hours worked",
+                    q4 == "30 days",
+                ])
+                finalize_quiz_submission(mk, score, 4)
+                st.rerun()
+
+# ─────────────────────────────────────────────
+#  MODULE 5 — BENEFITS
+# ─────────────────────────────────────────────
+def show_module_benefits():
+    render_html("""
+    <div class="content-section">
+        <h2>💼 Module 5: Benefits</h2>
+        <p>This module focuses on your benefit programs: medical, dental/vision, retirement, and employee support resources.</p>
+
+        <h3>🏥 Health Benefits</h3>
+        <ul>
+            <li>Medical, dental, and vision become effective on the 1st of the month after 60 days of employment.</li>
+            <li>AAP offers PPO and HDHP plan options for eligible employees.</li>
+            <li>Teladoc is available day one for everyone in your household.</li>
+        </ul>
+
+        <h3>💰 Financial & Wellbeing Benefits</h3>
+        <ul>
+            <li>401(k) includes a 100% company match on the first 3% you contribute.</li>
+            <li>Company-paid life insurance and EAP support are available for eligible employees.</li>
+            <li>BenefitHub and LinkedIn Learning are available from day one.</li>
+        </ul>
+    </div>
+    """)
+
+    st.markdown("### ✅ Module 5 Checklist")
+    checklist_items = {
+        "health_effective": "I understand when medical/dental/vision coverage becomes active.",
+        "plan_options": "I know there are multiple medical plan options available.",
+        "401k_match": "I understand AAP's 401(k) match structure.",
+        "teladoc_day1": "I know Teladoc is available on day one for my household.",
+        "support_resources": "I know where to find EAP, BenefitHub, and LinkedIn Learning resources.",
+    }
+
+    mk = "benefits"
+    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
+        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
+
+    changed = False
+    for key, label in checklist_items.items():
+        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
+        if val != st.session_state.checklist_items[mk].get(key, False):
+            st.session_state.checklist_items[mk][key] = val
+            changed = True
+    if changed:
+        update_progress(mk)
+
+    st.markdown("### 📝 Module 5 Quiz")
+    if st.session_state.quiz_results.get(mk) is not None:
+        score = st.session_state.quiz_results[mk]
+        st.success(f"✅ Quiz completed! You scored {score}/4.")
     else:
         with st.form("quiz_benefits"):
             q1 = st.radio("1. Medical, dental, and vision benefits become effective on:",
-                ["Your first day of work",
-                 "The 1st of the month following 60 days of employment",
-                 "After 90 days of employment",
-                 "January 1 of the following year"], key="b_q1", index=None)
+                ["Your first day of work", "The 1st of the month following 60 days of employment", "After 90 days of employment", "January 1 of the following year"], key="b_q1", index=None)
             q2 = st.radio("2. What is AAP's 401(k) match for the first 3% you contribute?",
                 ["50%", "75%", "100%", "200%"], key="b_q2", index=None)
             q3 = st.radio("3. Teladoc is available to:",
-                ["Full-time employees only",
-                 "Full-time and part-time employees",
-                 "Everyone in your household, effective Day 1",
-                 "Employees after 60 days of service"], key="b_q3", index=None)
-            q4 = st.radio("4. Long-Term Sick Leave requires that the absence be:",
-                ["Any absence longer than 1 day",
-                 "Any physician-mandated absence",
-                 "At least 3 consecutive days mandated by a physician",
-                 "At least 5 consecutive days"], key="b_q4", index=None)
-            q5 = st.radio("5. Part-time employees are eligible for which of the following?",
-                ["Vacation accrual",
-                 "Company-paid life insurance",
-                 "Health insurance after 60 days",
-                 "Teladoc and LinkedIn Learning from Day 1"], key="b_q5", index=None)
+                ["Full-time employees only", "Full-time and part-time employees", "Everyone in your household, effective Day 1", "Employees after 60 days of service"], key="b_q3", index=None)
+            q4 = st.radio("4. Which of the following is a day-one resource?",
+                ["BenefitHub and LinkedIn Learning", "Medical plan enrollment only", "401(k) contributions", "FMLA leave"], key="b_q4", index=None)
             submitted = st.form_submit_button("Submit Quiz")
             if submitted:
                 score = sum([
                     q1 == "The 1st of the month following 60 days of employment",
                     q2 == "100%",
                     q3 == "Everyone in your household, effective Day 1",
-                    q4 == "At least 3 consecutive days mandated by a physician",
-                    q5 == "Teladoc and LinkedIn Learning from Day 1",
+                    q4 == "BenefitHub and LinkedIn Learning",
                 ])
-                finalize_quiz_submission(mk, score, 5)
+                finalize_quiz_submission(mk, score, 4)
                 st.rerun()
 
 # ─────────────────────────────────────────────
@@ -2340,7 +2155,7 @@ def show_module_benefits():
 def show_module_firststeps():
     render_html("""
     <div class="content-section">
-        <h2>🚀 Module 5: Your First Steps</h2>
+        <h2>🚀 Module 6: Your First Steps</h2>
         <p>This module covers everything you need to get set up and hit the ground running on Day 1 and beyond.</p>
 
         <h3>📋 Documents to Sign at Hire</h3>
@@ -2443,7 +2258,7 @@ def show_module_firststeps():
     </div>
     """)
 
-    st.markdown("### ✅ Module 5 Checklist")
+    st.markdown("### ✅ Module 6 Checklist")
     checklist_items = {
         "paperwork": "I understand which documents I need to sign during orientation.",
         "paylocity": "I know how to register for Paylocity (Company ID: 123959).",
@@ -2469,7 +2284,7 @@ def show_module_firststeps():
     if changed:
         update_progress(mk)
 
-    st.markdown("### 📝 Module 5 Quiz")
+    st.markdown("### 📝 Module 6 Quiz")
     if st.session_state.quiz_results.get(mk) is not None:
         score = st.session_state.quiz_results[mk]
         st.success(f"✅ Quiz completed! You scored {score}/4.")
@@ -2504,9 +2319,9 @@ def show_module_firststeps():
     total_pct = int(sum(st.session_state.progress.values()) / len(MODULES))
     if total_pct == 100:
         render_html("""
-        <div class="content-section" style="border-left:4px solid #22C55E;text-align:center;padding:36px;">
-            <h2 style="color:#22C55E;">🎉 Congratulations!</h2>
-            <p style="font-size:1.1rem;">You have completed all five AAP orientation modules.
+        <div class="content-section" style="border-left:4px solid #2ecc71;text-align:center;padding:36px;">
+            <h2 style="color:#2ecc71;">🎉 Congratulations!</h2>
+            <p style="font-size:1.1rem;">You have completed all six AAP orientation modules.
             Welcome to the team — we're glad you're here!</p>
         </div>
         """)
@@ -3042,171 +2857,40 @@ def show_wh_module_safety():
 
 
 # ─────────────────────────────────────────────
-#  WAREHOUSE MODULE 4 — BENEFITS (WAREHOUSE)
+#  WAREHOUSE MODULE 4 — TIME OFF & LEAVE
 # ─────────────────────────────────────────────
-def show_wh_module_benefits():
-    # Benefits content is the same for all employees — reuse the general version
-    # but with a warehouse-framed header
+def show_wh_module_timeoff():
     render_html("""
     <div class="content-section">
-        <h2>💼 Module 4: Benefits & Time Off</h2>
-        <p>Your benefits are the same regardless of which department you work in — AAP is committed to supporting
-        all employees equally. Benefits eligibility depends on your employment classification (full-time vs. part-time).
-        Review the key details below.</p>
+        <h2>⏰ Module 4: Time Off & Leave — Warehouse Edition</h2>
+        <p>Plan your time with confidence by understanding attendance points, leave, and request expectations.</p>
+
+        <h3>🗓️ Attendance & Time-Off Essentials</h3>
+        <ul>
+            <li>Pre-approved vacation does not count toward attendance points.</li>
+            <li>No-call/no-show and repeated absences accumulate points quickly.</li>
+            <li>Use approved channels to report absences and request time off.</li>
+        </ul>
+
+        <h3>🩺 Leave Coverage</h3>
+        <ul>
+            <li>Long-Term Sick Leave applies to qualifying physician-mandated absences.</li>
+            <li>FMLA eligibility requires 12 months of service and 1,250 hours worked.</li>
+            <li>Report qualifying life events to HR within 30 days.</li>
+        </ul>
     </div>
     """)
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["⏰ Leave & Holidays", "🏥 Health Benefits", "💰 401k & Life", "🌟 Perks & EAP", "FT vs PT Summary"])
-
-    with tab1:
-        render_html("""
-        <div class="content-section">
-            <h3>🏖️ Vacation (Full-Time Only)</h3>
-            <p>Vacation begins accruing after <strong>60 days of full-time service</strong> and is accrued weekly.</p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Years of Service</th><th>Vacation Days/Year</th><th>Accrual Rate (per week)</th></tr>
-            <tr><td>0–4 years</td><td>10 days (2 weeks)</td><td>0.1923 hours/week</td></tr>
-            <tr><td>5–9 years</td><td>15 days (3 weeks)</td><td>0.2885 hours/week</td></tr>
-            <tr><td>10+ years</td><td>20 days (4 weeks)</td><td>0.3846 hours/week</td></tr>
-        </table>
-        """)
-        st.markdown(info_box("💡 Vacation is accrued from your hire date but cannot be used until after the 60-day introductory period. No payout for unused vacation upon termination unless required by state law."), unsafe_allow_html=True)
-        render_html("""
-        <div class="content-section">
-            <h3>🏥 Sick Leave</h3>
-            <p>All employees (full-time and part-time) receive <strong>3 paid sick days per year</strong>,
-            available after 60 days of employment. Sick leave does not roll over. A physician's note is required
-            for illness lasting more than 1 day, for up to a maximum of 3 consecutive days.</p>
-
-            <h3>👶 Personal Days</h3>
-            <p>Full-time employees receive <strong>2 personal days per calendar year</strong> after completing
-            the 60-day introductory period. Personal days must be pre-approved by your supervisor.</p>
-
-            <h3>🏛️ Holidays</h3>
-            <p>Full-time employees receive <strong>6 paid holidays per year:</strong>
-            New Year's Day, Memorial Day, Independence Day, Labor Day, Thanksgiving Day, and Christmas Day.
-            Part-time employees receive holiday pay proportional to their scheduled hours.</p>
-
-            <h3>💔 Bereavement Leave</h3>
-            <p><strong>3 paid days</strong> for the death of an immediate family member (spouse, child, parent,
-            sibling, grandparent, in-law). Additional unpaid leave may be approved by HR at their discretion.</p>
-
-            <h3>⚖️ Jury Duty & Witness Duty</h3>
-            <p>AAP provides <strong>paid leave for the duration</strong> of jury duty or court-mandated witness duty.
-            Provide a copy of your summons to HR as soon as you receive it.</p>
-
-            <h3>🤱 Family & Medical Leave (FMLA)</h3>
-            <p>Employees who have worked for AAP for at least <strong>12 months</strong> and at least
-            <strong>1,250 hours</strong> in the past year may be eligible for up to <strong>12 weeks of unpaid,
-            job-protected leave</strong> under the Family and Medical Leave Act (FMLA) for qualifying reasons.</p>
-        </div>
-        """)
-
-    with tab2:
-        render_html("""
-        <div class="content-section">
-            <h3>🏥 Medical Insurance — BCBS of Alabama</h3>
-            <p>Medical coverage through <strong>Blue Cross Blue Shield of Alabama</strong> is available to
-            full-time employees effective the <strong>1st of the month following 60 days of employment.</strong></p>
-            <ul>
-                <li>AAP covers <strong>100% of the employee-only premium.</strong></li>
-                <li>Dependent coverage is available at the employee's expense.</li>
-                <li>Your entire household is eligible for coverage on your effective date.</li>
-            </ul>
-            <p>📞 BCBS: 888-267-2955 | bcbsal.org</p>
-
-            <h3>🦷 Dental & 👁️ Vision — Guardian</h3>
-            <p>Dental and vision coverage through <strong>Guardian</strong> is available to all employees
-            (full-time and part-time) effective <strong>Day 1 of employment.</strong></p>
-            <ul>
-                <li>AAP covers <strong>100% of the employee-only premium</strong> for dental and vision.</li>
-                <li>Dependent coverage is available at the employee's expense.</li>
-            </ul>
-            <p>📞 Guardian: 888-482-7342 | guardiananytime.com</p>
-
-            <h3>💳 Health Savings Account (HSA) — HealthEquity</h3>
-            <p>Employees enrolled in the <strong>High Deductible Health Plan (HDHP)</strong> medical option
-            are eligible for an HSA through <strong>HealthEquity.</strong> AAP contributes to your HSA annually.</p>
-            <p>📞 HealthEquity: 866-274-9887 | healthequity.com</p>
-
-            <h3>📞 Teladoc — Free Telehealth (Day 1)</h3>
-            <p>All employees have access to <strong>Teladoc telehealth services beginning Day 1</strong> —
-            no waiting period. General medical visits, mental health visits, and more are
-            <strong>completely free</strong> through Teladoc.</p>
-            <p>Register at Teladoc.com or call 800-835-2362.</p>
-        </div>
-        """)
-
-    with tab3:
-        render_html("""
-        <div class="content-section">
-            <h3>💰 401(k) Retirement Plan</h3>
-            <p>Full-time employees are eligible to enroll in the AAP 401(k) plan after
-            <strong>1 year of service.</strong> AAP matches a percentage of employee contributions.
-            Contact HR for current match details.</p>
-
-            <h3>🛡️ Life Insurance & Disability — Guardian</h3>
-            <p>Basic life insurance and short-term disability coverage are available to full-time employees
-            through Guardian. Contact HR or CBIZ Benefits for coverage amounts and enrollment details.</p>
-            <p>📞 Guardian: 888-482-7342 | guardiananytime.com</p>
-        </div>
-        """)
-
-    with tab4:
-        render_html("""
-        <div class="content-section">
-            <h3>🌟 Employee Assistance Program (EAP) — LifeMatters</h3>
-            <p>All employees and their household members have access to the <strong>LifeMatters EAP</strong>
-            beginning <strong>Day 1.</strong> Services include confidential counseling, financial advice,
-            legal guidance, and more — completely free.</p>
-            <p>📞 LifeMatters: 800-634-6433 | mylifematters.com</p>
-
-            <h3>📚 LinkedIn Learning (Day 1)</h3>
-            <p>All employees have access to LinkedIn Learning beginning Day 1 — over
-            <strong>16,000 courses</strong> in business, technology, and personal development,
-            available on any device at your own pace.</p>
-            <p>Check your email for an activation link. If you didn't receive one, contact HR.</p>
-        </div>
-        """)
-
-    with tab5:
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Benefit</th><th>Full-Time</th><th>Part-Time</th></tr>
-            <tr><td>Medical (BCBS)</td><td>✅ After 60 days</td><td>❌</td></tr>
-            <tr><td>Dental & Vision (Guardian)</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>HSA (HealthEquity)</td><td>✅ With HDHP plan</td><td>❌</td></tr>
-            <tr><td>Teladoc</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>EAP (LifeMatters)</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>LinkedIn Learning</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>Vacation</td><td>✅ After 60 days</td><td>❌</td></tr>
-            <tr><td>Sick Leave (3 days)</td><td>✅ After 60 days</td><td>✅ After 60 days</td></tr>
-            <tr><td>Personal Days (2)</td><td>✅ After 60 days</td><td>❌</td></tr>
-            <tr><td>Paid Holidays (6)</td><td>✅</td><td>Proportional</td></tr>
-            <tr><td>Bereavement (3 days)</td><td>✅</td><td>✅</td></tr>
-            <tr><td>401(k)</td><td>✅ After 1 year</td><td>❌</td></tr>
-            <tr><td>Life & Disability (Guardian)</td><td>✅</td><td>❌</td></tr>
-        </table>
-        """)
-
     st.markdown("### ✅ Module 4 Checklist")
     checklist_items = {
-        "medical_elig": "I understand when medical insurance becomes effective (1st of the month after 60 days).",
-        "company_pays": "I know AAP pays 100% of my employee-only medical, dental, and vision premiums.",
-        "dental_vision_day1": "I know dental and vision coverage begins on Day 1.",
-        "dependents": "I understand that everyone in my household is eligible for coverage on my effective date.",
-        "vacation": "I understand how vacation accrual works and when it starts.",
-        "sick_personal": "I know I receive 3 sick days and 2 personal days per year (after 60 days, full-time).",
-        "fmla": "I understand the basic eligibility requirements for FMLA leave.",
-        "teladoc": "I know Teladoc is available to me on Day 1 and is completely free.",
-        "eap": "I know the EAP (LifeMatters) is available to me and my household beginning Day 1.",
-        "linkedin": "I understand I have access to LinkedIn Learning from Day 1.",
+        "vacation_points": "I understand pre-approved vacation is excluded from attendance points.",
+        "attendance_reporting": "I know how to report absences and request time off properly.",
+        "ltsl_rules": "I understand when Long-Term Sick Leave applies.",
+        "fmla_requirements": "I know the baseline requirements for FMLA eligibility.",
+        "life_event_deadline": "I know life-event benefits updates must be reported within 30 days.",
     }
 
-    mk = "wh_benefits"
+    mk = "wh_timeoff"
     if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
         st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
 
@@ -3222,37 +2906,95 @@ def show_wh_module_benefits():
     st.markdown("### 📝 Module 4 Quiz")
     if st.session_state.quiz_results.get(mk) is not None:
         score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/5.")
+        st.success(f"✅ Quiz completed! You scored {score}/4.")
     else:
-        with st.form("quiz_wh_benefits"):
-            q1 = st.radio("1. When does medical insurance become effective for full-time employees?",
-                ["Day 1 of employment",
-                 "The 1st of the month following 60 days of employment",
-                 "After 90 days of employment",
-                 "After 1 year of employment"], key="wb_q1", index=None)
-            q2 = st.radio("2. What percentage of the employee-only medical premium does AAP cover?",
-                ["50%", "75%", "100%", "80%"], key="wb_q2", index=None)
-            q3 = st.radio("3. Which of the following is available to ALL employees starting on Day 1?",
-                ["Medical insurance",
-                 "Vacation accrual",
-                 "Teladoc and LinkedIn Learning",
-                 "401(k) enrollment"], key="wb_q3", index=None)
-            q4 = st.radio("4. How many paid sick days do full-time and part-time employees receive per year (after 60 days)?",
-                ["1 day", "3 days", "5 days", "7 days"], key="wb_q4", index=None)
-            q5 = st.radio("5. How long must you work at AAP before becoming eligible for FMLA leave?",
-                ["60 days", "6 months",
-                 "12 months and at least 1,250 hours worked",
-                 "2 years"], key="wb_q5", index=None)
+        with st.form("quiz_wh_timeoff"):
+            q1 = st.radio("1. Pre-approved vacation days are excluded from attendance points.", ["True", "False"], key="wto_q1", index=None)
+            q2 = st.radio("2. Long-Term Sick Leave requires:", ["At least 1 day", "At least 3 consecutive physician-mandated days", "At least 5 consecutive days", "Any verbal notice"], key="wto_q2", index=None)
+            q3 = st.radio("3. FMLA eligibility is generally:", ["6 months of service", "12 months and 1,250 hours worked", "Immediately at hire", "Manager-only approval"], key="wto_q3", index=None)
+            q4 = st.radio("4. Life-event benefit changes should be reported within:", ["7 days", "14 days", "30 days", "90 days"], key="wto_q4", index=None)
             submitted = st.form_submit_button("Submit Quiz")
             if submitted:
                 score = sum([
-                    q1 == "The 1st of the month following 60 days of employment",
+                    q1 == "True",
+                    q2 == "At least 3 consecutive physician-mandated days",
+                    q3 == "12 months and 1,250 hours worked",
+                    q4 == "30 days",
+                ])
+                finalize_quiz_submission(mk, score, 4)
+                st.rerun()
+
+
+# ─────────────────────────────────────────────
+#  WAREHOUSE MODULE 5 — BENEFITS (WAREHOUSE)
+# ─────────────────────────────────────────────
+def show_wh_module_benefits():
+    render_html("""
+    <div class="content-section">
+        <h2>💼 Module 5: Benefits — Warehouse Edition</h2>
+        <p>This module focuses on the benefit programs available to warehouse team members, including health, retirement, and support resources.</p>
+
+        <h3>🏥 Core Benefits</h3>
+        <ul>
+            <li>Medical, dental, and vision benefits activate on the 1st of the month after 60 days (for eligible employees).</li>
+            <li>401(k) includes a 100% match on the first 3% of employee contribution.</li>
+            <li>Teladoc and LinkedIn Learning are available from day one.</li>
+        </ul>
+
+        <h3>🤝 Support Programs</h3>
+        <ul>
+            <li>LifeMatters EAP is available 24/7 for confidential personal support.</li>
+            <li>BenefitHub provides employee discounts and perks.</li>
+            <li>HR can help with plan questions and enrollment timing.</li>
+        </ul>
+    </div>
+    """)
+
+    st.markdown("### ✅ Module 5 Checklist")
+    checklist_items = {
+        "effective_date": "I understand when eligible health benefits begin.",
+        "retirement_match": "I understand the 401(k) matching structure.",
+        "day1_resources": "I know Teladoc and LinkedIn Learning are available day one.",
+        "eap_support": "I know how to access the EAP for confidential support.",
+        "benefits_help": "I know who to contact for benefits help and enrollment questions.",
+    }
+
+    mk = "wh_benefits"
+    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
+        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
+
+    changed = False
+    for key, label in checklist_items.items():
+        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
+        if val != st.session_state.checklist_items[mk].get(key, False):
+            st.session_state.checklist_items[mk][key] = val
+            changed = True
+    if changed:
+        update_progress(mk)
+
+    st.markdown("### 📝 Module 5 Quiz")
+    if st.session_state.quiz_results.get(mk) is not None:
+        score = st.session_state.quiz_results[mk]
+        st.success(f"✅ Quiz completed! You scored {score}/4.")
+    else:
+        with st.form("quiz_wh_benefits"):
+            q1 = st.radio("1. When do eligible medical benefits become effective?",
+                ["Day 1", "After 30 days", "The 1st of the month following 60 days", "After 1 year"], key="wb_q1", index=None)
+            q2 = st.radio("2. What is AAP's 401(k) match for the first 3% contributed?",
+                ["50%", "75%", "100%", "No match"], key="wb_q2", index=None)
+            q3 = st.radio("3. Which resources are available on day one?",
+                ["Only payroll", "Teladoc and LinkedIn Learning", "Medical plan enrollment", "401(k) loan options"], key="wb_q3", index=None)
+            q4 = st.radio("4. Which resource provides confidential wellbeing support?",
+                ["BenefitHub", "LifeMatters EAP", "Payroll portal", "OSHA"], key="wb_q4", index=None)
+            submitted = st.form_submit_button("Submit Quiz")
+            if submitted:
+                score = sum([
+                    q1 == "The 1st of the month following 60 days",
                     q2 == "100%",
                     q3 == "Teladoc and LinkedIn Learning",
-                    q4 == "3 days",
-                    q5 == "12 months and at least 1,250 hours worked",
+                    q4 == "LifeMatters EAP",
                 ])
-                finalize_quiz_submission(mk, score, 5)
+                finalize_quiz_submission(mk, score, 4)
                 st.rerun()
 
 
@@ -3262,7 +3004,7 @@ def show_wh_module_benefits():
 def show_wh_module_firststeps():
     render_html("""
     <div class="content-section">
-        <h2>🚀 Module 5: Your First Steps — Warehouse Edition</h2>
+        <h2>🚀 Module 6: Your First Steps — Warehouse Edition</h2>
         <p>This module covers everything you need to get set up and hit the ground running on Day 1 and beyond
         in your warehouse role.</p>
 
@@ -3389,7 +3131,7 @@ def show_wh_module_firststeps():
         f"{contact_rows}</table>"
     )
 
-    st.markdown("### ✅ Module 5 Checklist")
+    st.markdown("### ✅ Module 6 Checklist")
     checklist_items = {
         "paperwork": "I understand which documents I need to sign during orientation.",
         "paylocity": "I know how to register for Paylocity (Company ID: 123959).",
@@ -3418,7 +3160,7 @@ def show_wh_module_firststeps():
     if changed:
         update_progress(mk)
 
-    st.markdown("### 📝 Module 5 Quiz")
+    st.markdown("### 📝 Module 6 Quiz")
     if st.session_state.quiz_results.get(mk) is not None:
         score = st.session_state.quiz_results[mk]
         st.success(f"✅ Quiz completed! You scored {score}/4.")
@@ -3454,9 +3196,10 @@ def show_wh_module_firststeps():
     total_pct = int(sum(st.session_state.progress.values()) / len(active_modules))
     if total_pct == 100:
         render_html("""
-        <div class="content-section" style="border-left:4px solid #22C55E;text-align:center;padding:36px;">
-            <h2 style="color:#22C55E;">🎉 Congratulations!</h2>
-            <p style="font-size:1.1rem;">You have completed all five AAP Warehouse orientation modules.
+
+        <div class="content-section" style="border-left:4px solid #2ecc71;text-align:center;padding:36px;">
+            <h2 style="color:#2ecc71;">🎉 Congratulations!</h2>
+            <p style="font-size:1.1rem;">You have completed all six AAP Warehouse orientation modules.
             Welcome to the team — we're glad you're here!</p>
         </div>
         """)
@@ -3474,6 +3217,7 @@ else:
         "welcome":    show_module_welcome,
         "conduct":    show_module_conduct,
         "policies":   show_module_policies,
+        "timeoff":    show_module_timeoff,
         "benefits":   show_module_benefits,
         "firststeps": show_module_firststeps,
     }
@@ -3481,6 +3225,7 @@ else:
         "wh_welcome":    show_wh_module_welcome,
         "wh_conduct":    show_wh_module_conduct,
         "wh_safety":     show_wh_module_safety,
+        "wh_timeoff":    show_wh_module_timeoff,
         "wh_benefits":   show_wh_module_benefits,
         "wh_firststeps": show_wh_module_firststeps,
     }

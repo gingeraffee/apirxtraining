@@ -63,29 +63,35 @@ st.markdown("""
         letter-spacing: 0.02em !important;
     }
 
-    /* ── Sidebar Radio Navigation ── */
-    [data-testid="stSidebar"] .stRadio > div { gap: 2px !important; }
+    /* ── Sidebar Radio Navigation (Elite Motion + Glow) ── */
+    [data-testid="stSidebar"] .stRadio > div { gap: 6px !important; }
     [data-testid="stSidebar"] .stRadio label {
-        color: rgba(255,255,255,0.88) !important;
-        border-radius: 8px !important;
-        padding: 6px 10px !important;
-        transition: background 0.15s ease !important;
-        font-size: 0.88rem !important;
+        color: rgba(231,240,252,0.92) !important;
+        border-radius: 10px !important;
+        padding: 9px 12px !important;
+        transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, text-shadow 0.2s ease !important;
+        font-size: 0.86rem !important;
         width: 100% !important;
+        border: 1px solid rgba(255,255,255,0.04) !important;
+        background: rgba(255,255,255,0.02) !important;
     }
     [data-testid="stSidebar"] .stRadio label:hover {
-        background: rgba(204,41,54,0.18) !important;
+        background: linear-gradient(90deg, rgba(204,41,54,0.18), rgba(30,58,138,0.20)) !important;
         color: #FFFFFF !important;
+        transform: translateX(3px) !important;
+        box-shadow: 0 10px 20px rgba(2,6,23,0.32), inset 0 0 0 1px rgba(255,255,255,0.08) !important;
+        text-shadow: 0 0 10px rgba(255,255,255,0.35) !important;
     }
     [data-testid="stSidebar"] .stRadio p,
     [data-testid="stSidebar"] .stRadio span {
-        color: rgba(255,255,255,0.88) !important;
+        color: rgba(231,240,252,0.92) !important;
     }
     /* Red dot for selected radio option */
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
     [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
-        background-color: #CC2936 !important;
+        background: linear-gradient(140deg, #CC2936 0%, #1E3A8A 100%) !important;
         border-color: #CC2936 !important;
+        box-shadow: 0 0 0 3px rgba(204,41,54,0.18) !important;
     }
 
     /* ── Typography ── */
@@ -114,72 +120,105 @@ st.markdown("""
     .module-card:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,0.11); }
     .module-card.complete { border-left-color: #1A9E5C; background: #F0FFF6; }
 
-    /* ── Post-login Premium Shell ── */
+    /* ── Post-login Elite Design System ── */
+    @keyframes ambientPulse {
+        0%, 100% { opacity: 0.55; transform: scale(1); }
+        50% { opacity: 0.9; transform: scale(1.08); }
+    }
     .post-auth-shell {
-        background: linear-gradient(150deg, #FFFFFF 0%, #F4F7FC 42%, #EEF3FA 100%);
-        border-radius: 22px;
-        border: 1px solid rgba(10,22,40,0.06);
+        background: radial-gradient(120% 180% at 0% 0%, rgba(30,58,138,0.10) 0%, transparent 40%),
+                    radial-gradient(120% 180% at 100% 0%, rgba(204,41,54,0.12) 0%, transparent 42%),
+                    linear-gradient(170deg, #F9FBFF 0%, #F1F5FB 48%, #E9F0F8 100%);
+        border-radius: 24px;
+        border: 1px solid rgba(10,22,40,0.07);
         padding: 24px;
-        box-shadow: 0 24px 50px rgba(10,22,40,0.08);
-        margin-bottom: 20px;
+        box-shadow: 0 30px 70px rgba(9,23,42,0.10);
+        margin-bottom: 22px;
     }
     .premium-hero {
-        background: linear-gradient(135deg, #071325 0%, #0C1B32 52%, #132A4A 100%);
-        border-radius: 18px;
-        padding: 28px 30px;
+        background: linear-gradient(130deg, #050D1E 0%, #0B1A31 52%, #142D4E 100%);
+        border-radius: 20px;
+        padding: 30px 32px;
         position: relative;
         overflow: hidden;
         border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 44px rgba(5,13,30,0.48);
+    }
+    .premium-hero::before {
+        content: "";
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        right: -110px;
+        top: -150px;
+        background: radial-gradient(circle, rgba(204,41,54,0.44) 0%, transparent 70%);
+        animation: ambientPulse 5s ease-in-out infinite;
     }
     .premium-hero::after {
         content: "";
         position: absolute;
-        width: 280px;
-        height: 280px;
-        right: -80px;
-        top: -120px;
-        background: radial-gradient(circle, rgba(204,41,54,0.34) 0%, transparent 70%);
+        width: 250px;
+        height: 250px;
+        left: -90px;
+        bottom: -130px;
+        background: radial-gradient(circle, rgba(59,130,246,0.32) 0%, transparent 72%);
+        animation: ambientPulse 6s ease-in-out infinite;
     }
     .premium-hero h1 { color: #F8FAFC !important; font-size: 2rem !important; margin: 0 0 8px 0 !important; }
-    .premium-hero p { color: #C5D4E7 !important; font-size: 0.98rem; margin: 0 !important; max-width: 760px; }
+    .premium-hero p { color: #D1DEEE !important; font-size: 0.96rem; margin: 0 !important; max-width: 760px; }
     .premium-kicker {
         display: inline-block;
-        font-size: 0.66rem;
+        font-size: 0.63rem;
         color: #FCA5A5;
-        letter-spacing: 0.2em;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
         font-weight: 700;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
     }
+    .premium-metric-grid { margin-top: 16px; }
     .premium-stat {
-        background: linear-gradient(160deg, #FFFFFF 0%, #F8FAFD 100%);
+        background: linear-gradient(155deg, rgba(255,255,255,0.95) 0%, rgba(248,251,255,0.86) 100%);
+        backdrop-filter: blur(6px);
         border: 1px solid #DFE8F3;
-        border-radius: 14px;
-        padding: 14px 16px;
-        box-shadow: 0 8px 18px rgba(10,22,40,0.05);
-    }
-    .premium-stat-label { font-size: 0.68rem; color: #5C6B81; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; }
-    .premium-stat-value { color: #09172A; font-size: 1.4rem; font-weight: 700; margin-top: 2px; }
-    .premium-stat-sub { color: #71839A; font-size: 0.76rem; margin-top: 3px; }
-    .module-card-premium {
-        background: linear-gradient(145deg, #FFFFFF 0%, #F6F9FD 100%);
         border-radius: 16px;
-        border: 1px solid #E2EAF5;
+        padding: 14px 16px;
+        box-shadow: 0 12px 26px rgba(9,23,42,0.07);
+        min-height: 102px;
+    }
+    .premium-stat-label { font-size: 0.66rem; color: #5C6B81; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
+    .premium-stat-value { color: #081426; font-size: 1.45rem; font-weight: 700; margin-top: 3px; }
+    .premium-stat-sub { color: #6B7D95; font-size: 0.74rem; margin-top: 5px; }
+
+    .module-card-premium {
+        background: linear-gradient(148deg, rgba(255,255,255,0.96) 0%, rgba(247,250,253,0.90) 100%);
+        border-radius: 18px;
+        border: 1px solid #DEE7F1;
         padding: 18px 18px 16px;
         margin-bottom: 14px;
-        box-shadow: 0 12px 28px rgba(10,22,40,0.07);
+        box-shadow: 0 16px 36px rgba(9,23,42,0.08);
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .module-card-premium:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 44px rgba(9,23,42,0.13);
+        border-color: rgba(30,58,138,0.35);
     }
     .module-topline { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
-    .module-name { color:#0A1628; font-weight:700; margin:0; font-size:1.01rem; }
-    .module-sub { color:#5E7088; margin:6px 0 14px 0; font-size:0.85rem; }
+    .module-name { color:#081426; font-weight:700; margin:0; font-size:1.01rem; }
+    .module-sub { color:#5E7088; margin:6px 0 12px 0; font-size:0.84rem; }
     .module-meter { height:8px; background:#E6EDF5; border-radius:999px; overflow:hidden; }
-    .module-meter > span { display:block; height:100%; background:linear-gradient(90deg, #CC2936 0%, #204F9D 100%); }
+    .module-meter > span {
+        display:block;
+        height:100%;
+        background:linear-gradient(92deg, #CC2936 0%, #1E3A8A 54%, #38BDF8 100%);
+        box-shadow: 0 0 14px rgba(30,58,138,0.42);
+    }
     .pill {
-        font-size: 0.66rem;
+        font-size: 0.64rem;
         border-radius: 99px;
-        padding: 4px 9px;
+        padding: 4px 10px;
         font-weight: 700;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.09em;
         text-transform: uppercase;
         display: inline-block;
     }
@@ -187,13 +226,25 @@ st.markdown("""
     .pill.live { background: #DBEAFE; color: #1E3A8A; }
     .pill.done { background: #DCFCE7; color: #166534; }
     .sidebar-mini {
-        background: rgba(255,255,255,0.04);
+        background: linear-gradient(140deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
         border: 1px solid rgba(255,255,255,0.08);
         border-radius: 10px;
         padding: 10px 12px;
         margin-top: 12px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     }
-
+    .elite-chip {
+        display: inline-block;
+        background: rgba(15,23,42,0.7);
+        border: 1px solid rgba(148,163,184,0.35);
+        color: #C9D6E7;
+        border-radius: 999px;
+        padding: 4px 9px;
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-right: 6px;
+    }
     /* ── Progress Bars ── */
     .stProgress > div > div { background-color: #CC2936 !important; }
 
@@ -221,20 +272,25 @@ st.markdown("""
         background: none !important;
         border: none !important;
         color: #CC2936 !important;
-        font-size: 0.82rem !important;
-        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
         padding: 0 4px !important;
         height: auto !important;
         min-height: 0 !important;
         box-shadow: none !important;
         text-decoration: underline !important;
         text-underline-offset: 3px !important;
+        letter-spacing: 0.06em !important;
+        text-transform: uppercase !important;
+        transition: color 0.2s ease, text-shadow 0.2s ease, transform 0.2s ease !important;
     }
     .stButton > button[kind="secondary"]:hover,
     [data-testid="stBaseButton-secondary"]:hover {
         background: none !important;
-        color: #A01E27 !important;
+        color: #1E3A8A !important;
+        text-shadow: 0 0 10px rgba(30,58,138,0.32) !important;
         box-shadow: none !important;
+        transform: translateX(2px) !important;
     }
 
     /* ── Badges ── */
@@ -414,11 +470,12 @@ st.markdown("""
 
     /* Content sections used heavily in onboarding */
     .content-section {
-        background: #FFFFFF;
-        border-radius: 12px;
+        background: linear-gradient(155deg, #FFFFFF 0%, #F8FBFF 100%);
+        border-radius: 14px;
         padding: 24px 28px;
         margin: 18px 0;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        box-shadow: 0 12px 26px rgba(9,23,42,0.08);
+        border: 1px solid #DFE8F3;
         border-top: 3px solid #CC2936;
     }
     .content-section h2 {
@@ -1114,13 +1171,7 @@ def show_home():
     is_warehouse = st.session_state.get("role_track") == "warehouse"
     active_modules = WAREHOUSE_MODULES if is_warehouse else MODULES
     track_label = "Warehouse" if is_warehouse else "General"
-    name_display = f", {st.session_state.username}" if st.session_state.username else ""
-
-    subtitle = (
-        "Complete your warehouse onboarding journey with live progress, structured learning, and readiness checks."
-        if is_warehouse
-        else "Complete your onboarding journey with live progress, structured learning, and readiness checks."
-    )
+    name_display = st.session_state.username.strip() if st.session_state.username else "Team Member"
 
     module_progress = [st.session_state.progress.get(m["key"], 0) for m in active_modules]
     completed = sum(1 for p in module_progress if p == 100)
@@ -1131,39 +1182,52 @@ def show_home():
 
     st.markdown(f"""
     <div class="premium-hero">
-        <span class="premium-kicker">Post-Authorization Workspace</span>
-        <h1>Welcome back{name_display}.</h1>
-        <p>{subtitle}</p>
+        <span class="premium-kicker">Elite Training Suite</span>
+        <h1>{track_label} Learning Command Center · {name_display}</h1>
+        <p>
+            A high-trust, premium orientation environment engineered for clarity, momentum, and measurable readiness.
+            Navigate your modules, monitor milestones, and complete every checkpoint with confidence.
+        </p>
+        <div style="margin-top:12px;">
+            <span class="elite-chip">Realtime Progress Sync</span>
+            <span class="elite-chip">Role-Calibrated Path</span>
+            <span class="elite-chip">Assessment Locked</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns(3)
-    with col1:
+    c1, c2, c3 = st.columns(3)
+    with c1:
         st.markdown(f"""
         <div class="premium-stat">
-            <div class="premium-stat-label">Modules complete</div>
+            <div class="premium-stat-label">Milestones Closed</div>
             <div class="premium-stat-value">{completed}/{len(active_modules)}</div>
-            <div class="premium-stat-sub">{track_label} track milestones closed</div>
+            <div class="premium-stat-sub">Completed training modules in your path</div>
         </div>
         """, unsafe_allow_html=True)
-    with col2:
+    with c2:
         st.markdown(f"""
         <div class="premium-stat">
-            <div class="premium-stat-label">Overall progress</div>
+            <div class="premium-stat-label">Program Completion</div>
             <div class="premium-stat-value">{total_pct}%</div>
-            <div class="premium-stat-sub">Live completion synchronization</div>
+            <div class="premium-stat-sub">Unified progress across lessons + checks</div>
         </div>
         """, unsafe_allow_html=True)
-    with col3:
+    with c3:
         st.markdown(f"""
         <div class="premium-stat">
-            <div class="premium-stat-label">Quizzes completed</div>
+            <div class="premium-stat-label">Assessments Submitted</div>
             <div class="premium-stat-value">{quizzes_done}/{len(active_modules)}</div>
-            <div class="premium-stat-sub">Knowledge checks submitted</div>
+            <div class="premium-stat-sub">Knowledge verifications completed</div>
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown("<div style='margin-top:18px; margin-bottom:8px; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:#657890; font-weight:700;'>Orientation Modules</div>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="margin:18px 0 10px 0; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div style="font-size:0.72rem; letter-spacing:0.13em; text-transform:uppercase; color:#5F738D; font-weight:700;">Training Modules</div>
+        <div style="font-size:0.75rem; color:#60748E;">Select a module to continue your premium onboarding workflow.</div>
+    </div>
+    """, unsafe_allow_html=True)
 
     for m in active_modules:
         pct = st.session_state.progress.get(m["key"], 0)
@@ -1172,21 +1236,23 @@ def show_home():
         elif pct > 0:
             pill_class, pill_text = "live", "In Progress"
         else:
-            pill_class, pill_text = "pending", "Pending"
+            pill_class, pill_text = "pending", "Queued"
 
         st.markdown(f"""
         <div class="module-card-premium">
             <div class="module-topline">
-                <p class="module-name">{m['icon']} Module {m['number']}: {m['title']}</p>
+                <p class="module-name">{m['icon']} · Module {m['number']} · {m['title']}</p>
                 <span class="pill {pill_class}">{pill_text}</span>
             </div>
             <p class="module-sub">{m['subtitle']}</p>
             <div class="module-meter"><span style="width:{pct}%"></span></div>
-            <div style="margin-top:8px; color:#5E7088; font-size:0.78rem;">Progress: <strong style="color:#0B1C33;">{pct}%</strong></div>
+            <div style="margin-top:8px; color:#5B6F88; font-size:0.76rem; display:flex; justify-content:space-between;">
+                <span>Execution progress</span><strong style="color:#081426;">{pct}%</strong>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-        if st.button(f"Open Module {m['number']}", key=f"open_{m['key']}", type="secondary"):
+        if st.button(f"Launch Module {m['number']}", key=f"open_{m['key']}", type="secondary"):
             st.session_state.selected_module = m["key"]
             st.rerun()
 

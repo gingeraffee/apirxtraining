@@ -186,8 +186,8 @@ render_html("""
         color: rgba(255,255,255,0.72) !important;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
-        background: rgba(255,255,255,0.10) !important;
-        border-color: rgba(255,255,255,0.20) !important;
+        background: transparent !important;
+        border-color: transparent !important;
         color: #FFFFFF !important;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) p,

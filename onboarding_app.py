@@ -201,9 +201,9 @@ render_html("""
     }
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
     [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
-        background: #FFFFFF !important;
-        border-color: #FFFFFF !important;
-        box-shadow: 0 0 0 3px rgba(255,255,255,0.15) !important;
+        background: transparent !important;
+        border-color: transparent !important;
+        box-shadow: none !important;
     }
 
     /* ── Module Cards ── */

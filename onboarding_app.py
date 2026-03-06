@@ -40,7 +40,7 @@ st.logo(_sidebar_logo, link="https://apirx.com")
 # ─────────────────────────────────────────────
 #  CUSTOM CSS
 # ─────────────────────────────────────────────
-render_html(“””
+render_html("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -77,7 +77,7 @@ render_html(“””
     }
 
     /* ── Base Reset ── */
-    html, body, [class*=”css”] {
+    html, body, [class*="css"] {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif !important;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -113,13 +113,13 @@ render_html(“””
     .page-subtitle { color: var(--apple-gray-500); font-size: 1.05rem; margin-bottom: 32px; font-weight: 400; line-height: 1.7; }
 
     /* ── Sidebar Container — Frosted Midnight Glass ── */
-    [data-testid=”stSidebar”] {
+    [data-testid="stSidebar"] {
         background: rgba(10,10,11,0.92) !important;
         backdrop-filter: blur(40px) saturate(180%);
         -webkit-backdrop-filter: blur(40px) saturate(180%);
         border-right: 1px solid rgba(255,255,255,0.06);
     }
-    [data-testid=”stSidebar”] .block-container {
+    [data-testid="stSidebar"] .block-container {
         padding-top: 1rem !important;
         padding-left: 1rem !important;
         padding-right: 1rem !important;
@@ -164,8 +164,8 @@ render_html(“””
     }
 
     /* ── Sidebar Radio Navigation — Subtle Glass Pills ── */
-    [data-testid=”stSidebar”] .stRadio > div { gap: 4px !important; }
-    [data-testid=”stSidebar”] .stRadio label {
+    [data-testid="stSidebar"] .stRadio > div { gap: 4px !important; }
+    [data-testid="stSidebar"] .stRadio label {
         color: rgba(255,255,255,0.72) !important;
         border-radius: var(--apple-radius-sm) !important;
         padding: 10px 14px !important;
@@ -176,31 +176,31 @@ render_html(“””
         border: 1px solid transparent !important;
         background: transparent !important;
     }
-    [data-testid=”stSidebar”] .stRadio label:hover {
+    [data-testid="stSidebar"] .stRadio label:hover {
         color: #FFFFFF !important;
         background: rgba(255,255,255,0.06) !important;
         transform: translateX(2px) !important;
     }
-    [data-testid=”stSidebar”] .stRadio p,
-    [data-testid=”stSidebar”] .stRadio span {
+    [data-testid="stSidebar"] .stRadio p,
+    [data-testid="stSidebar"] .stRadio span {
         color: rgba(255,255,255,0.72) !important;
     }
-    [data-testid=”stSidebar”] .stRadio label:has(input[type=”radio”]:checked) {
+    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
         background: rgba(177,18,38,0.15) !important;
         border-color: rgba(177,18,38,0.30) !important;
         color: #FFFFFF !important;
     }
-    [data-testid=”stSidebar”] .stRadio label:has(input[type=”radio”]:checked) p,
-    [data-testid=”stSidebar”] .stRadio label:has(input[type=”radio”]:checked) span {
+    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) p,
+    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) span {
         color: #FFFFFF !important;
         background: transparent !important;
     }
-    [data-testid=”stSidebar”] .stRadio [data-baseweb=”radio”] > div:first-child {
+    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] > div:first-child {
         background: rgba(255,255,255,0.08) !important;
         border-color: rgba(255,255,255,0.20) !important;
     }
-    [data-testid=”stSidebar”] .stRadio [data-baseweb=”radio”] [aria-checked=”true”] > div:first-child,
-    [data-testid=”stSidebar”] .stRadio input[type=”radio”]:checked + div > div:first-child {
+    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
+    [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
         background: var(--apple-crimson) !important;
         border-color: var(--apple-crimson) !important;
         box-shadow: 0 0 0 3px rgba(177,18,38,0.20) !important;
@@ -254,7 +254,7 @@ render_html(“””
         overflow: hidden;
     }
     .module-page-hero::after {
-        content: “”;
+        content: "";
         position: absolute;
         width: 400px;
         height: 400px;
@@ -301,7 +301,7 @@ render_html(“””
         box-shadow: var(--apple-shadow-deep);
     }
     .premium-hero::before {
-        content: “”;
+        content: "";
         position: absolute;
         width: 500px;
         height: 500px;
@@ -310,7 +310,7 @@ render_html(“””
         background: radial-gradient(circle, rgba(177,18,38,0.25) 0%, transparent 65%);
     }
     .premium-hero::after {
-        content: “”;
+        content: "";
         position: absolute;
         width: 400px;
         height: 400px;
@@ -446,9 +446,9 @@ render_html(“””
     .stProgress > div > div { background-color: var(--apple-crimson) !important; }
 
     /* ── Primary Buttons — Crimson Accent ── */
-    .stButton > button[kind=”primary”],
-    .stButton > button[kind=”primary”][data-testid],
-    [data-testid=”stBaseButton-primary”] {
+    .stButton > button[kind="primary"],
+    .stButton > button[kind="primary"][data-testid],
+    [data-testid="stBaseButton-primary"] {
         background: var(--apple-crimson) !important;
         color: white !important;
         border: none !important;
@@ -460,8 +460,8 @@ render_html(“””
         transition: var(--apple-transition) !important;
         box-shadow: 0 4px 16px rgba(177,18,38,0.20) !important;
     }
-    .stButton > button[kind=”primary”]:hover,
-    [data-testid=”stBaseButton-primary”]:hover {
+    .stButton > button[kind="primary"]:hover,
+    [data-testid="stBaseButton-primary"]:hover {
         transform: translateY(-2px) !important;
         box-shadow: 0 8px 24px rgba(177,18,38,0.30) !important;
         filter: brightness(1.08) !important;
@@ -472,8 +472,8 @@ render_html(“””
     }
 
     /* ── Secondary Buttons — Quiet Glass ── */
-    .stButton > button[kind=”secondary”],
-    [data-testid=”stBaseButton-secondary”] {
+    .stButton > button[kind="secondary"],
+    [data-testid="stBaseButton-secondary"] {
         background: var(--apple-glass-bg) !important;
         backdrop-filter: var(--apple-glass-blur) !important;
         border: 1px solid var(--apple-gray-300) !important;
@@ -486,8 +486,8 @@ render_html(“””
         border-radius: var(--apple-radius-sm) !important;
         transition: var(--apple-transition) !important;
     }
-    .stButton > button[kind=”secondary”]:hover,
-    [data-testid=”stBaseButton-secondary”]:hover {
+    .stButton > button[kind="secondary"]:hover,
+    [data-testid="stBaseButton-secondary"]:hover {
         border-color: var(--apple-crimson) !important;
         box-shadow: var(--apple-shadow-hover) !important;
         transform: translateY(-2px) !important;
@@ -575,40 +575,40 @@ render_html(“””
 
     /* ── Mobile + Dark Mode Compatibility ── */
     @media (max-width: 768px) and (prefers-color-scheme: dark) {
-      div[data-testid=”stAppViewContainer”],
+      div[data-testid="stAppViewContainer"],
       section.main,
       .stApp {
         background: var(--apple-ink) !important;
         color: var(--apple-gray-100) !important;
       }
-      div[data-testid=”stMarkdownContainer”],
-      div[data-testid=”stMarkdownContainer”] p,
-      div[data-testid=”stMarkdownContainer”] li,
-      div[data-testid=”stMarkdownContainer”] span,
-      div[data-testid=”stMarkdownContainer”] div {
+      div[data-testid="stMarkdownContainer"],
+      div[data-testid="stMarkdownContainer"] p,
+      div[data-testid="stMarkdownContainer"] li,
+      div[data-testid="stMarkdownContainer"] span,
+      div[data-testid="stMarkdownContainer"] div {
         color: var(--apple-gray-100) !important;
       }
       .page-title, .page-subtitle { color: var(--apple-gray-100) !important; }
       .resource-card, .module-card, .welcome-banner + div,
-      div[style*=”background:white”], div[style*=”background: white”] {
+      div[style*="background:white"], div[style*="background: white"] {
         background: rgba(20,20,22,0.90) !important;
         border-color: rgba(255,255,255,0.08) !important;
       }
-      div[style*=”color:#0A1628”], div[style*=”color: #0A1628”],
-      span[style*=”color:#0A1628”], span[style*=”color: #0A1628”] { color: var(--apple-gray-100) !important; }
-      div[style*=”color:#5A6E8A”], div[style*=”color: #5A6E8A”],
-      span[style*=”color:#5A6E8A”], span[style*=”color: #5A6E8A”] { color: var(--apple-gray-300) !important; }
-      div[data-testid=”stTextInput”] input {
+      div[style*="color:#0A1628"], div[style*="color: #0A1628"],
+      span[style*="color:#0A1628"], span[style*="color: #0A1628"] { color: var(--apple-gray-100) !important; }
+      div[style*="color:#5A6E8A"], div[style*="color: #5A6E8A"],
+      span[style*="color:#5A6E8A"], span[style*="color: #5A6E8A"] { color: var(--apple-gray-300) !important; }
+      div[data-testid="stTextInput"] input {
         background: rgba(20,20,22,0.90) !important;
         color: var(--apple-gray-100) !important;
         border-color: rgba(255,255,255,0.12) !important;
       }
-      div[data-testid=”stTextInput”] input::placeholder { color: rgba(255,255,255,0.40) !important; }
+      div[data-testid="stTextInput"] input::placeholder { color: rgba(255,255,255,0.40) !important; }
       table, td, th { color: var(--apple-gray-200) !important; border-color: rgba(255,255,255,0.08) !important; }
     }
 
     /* ── Sidebar Buttons ── */
-    [data-testid=”stSidebar”] .stButton > button {
+    [data-testid="stSidebar"] .stButton > button {
         width: 100% !important;
         border-radius: var(--apple-radius-sm) !important;
         border: 1px solid rgba(255,255,255,0.10) !important;
@@ -620,12 +620,12 @@ render_html(“””
         letter-spacing: -0.01em !important;
         transition: var(--apple-transition) !important;
     }
-    [data-testid=”stSidebar”] .stButton > button:hover {
+    [data-testid="stSidebar"] .stButton > button:hover {
         transform: translateY(-2px) !important;
         background: rgba(255,255,255,0.10) !important;
     }
-    [data-testid=”stSidebar”] .stButton > button[kind=”primary”],
-    [data-testid=”stSidebar”] [data-testid=”stBaseButton-primary”] {
+    [data-testid="stSidebar"] .stButton > button[kind="primary"],
+    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
         background: rgba(177,18,38,0.25) !important;
         border-color: rgba(177,18,38,0.35) !important;
         color: #FFFFFF !important;
@@ -729,7 +729,7 @@ render_html(“””
         overflow: hidden;
     }
     .lp-info-card::before {
-        content: “”;
+        content: "";
         position: absolute;
         top: -100px; right: -80px;
         width: 320px; height: 320px;
@@ -737,7 +737,7 @@ render_html(“””
         pointer-events: none;
     }
     .lp-info-card::after {
-        content: “”;
+        content: "";
         position: absolute;
         bottom: -120px; left: -80px;
         width: 300px; height: 300px;
@@ -811,7 +811,7 @@ render_html(“””
     }
 
     /* ── Form Submit Button ── */
-    div[data-testid=”stFormSubmitButton”] button {
+    div[data-testid="stFormSubmitButton"] button {
         background: var(--apple-crimson) !important;
         color: #FFFFFF !important;
         border: none !important;
@@ -823,20 +823,20 @@ render_html(“””
         box-shadow: 0 4px 16px rgba(177,18,38,0.20) !important;
         transition: var(--apple-transition) !important;
     }
-    div[data-testid=”stFormSubmitButton”] button:hover {
+    div[data-testid="stFormSubmitButton"] button:hover {
         transform: translateY(-2px) !important;
         box-shadow: 0 8px 24px rgba(177,18,38,0.30) !important;
         filter: brightness(1.08) !important;
     }
 
     /* ── Streamlit Tabs — Apple Style ── */
-    .stTabs [data-baseweb=”tab-list”] {
+    .stTabs [data-baseweb="tab-list"] {
         gap: 0;
         background: var(--apple-gray-200);
         border-radius: var(--apple-radius-sm);
         padding: 4px;
     }
-    .stTabs [data-baseweb=”tab”] {
+    .stTabs [data-baseweb="tab"] {
         border-radius: var(--apple-radius-xs) !important;
         font-weight: 600 !important;
         font-size: 0.82rem !important;
@@ -844,14 +844,14 @@ render_html(“””
         padding: 8px 16px !important;
         transition: var(--apple-transition) !important;
     }
-    .stTabs [data-baseweb=”tab”]:hover { color: var(--apple-ink) !important; }
-    .stTabs [aria-selected=”true”] {
+    .stTabs [data-baseweb="tab"]:hover { color: var(--apple-ink) !important; }
+    .stTabs [aria-selected="true"] {
         background: var(--apple-white) !important;
         color: var(--apple-ink) !important;
         box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
     }
-    .stTabs [data-baseweb=”tab-highlight”] { display: none !important; }
-    .stTabs [data-baseweb=”tab-border”] { display: none !important; }
+    .stTabs [data-baseweb="tab-highlight"] { display: none !important; }
+    .stTabs [data-baseweb="tab-border"] { display: none !important; }
 
     /* ── Streamlit Checkboxes ── */
     .stCheckbox label { font-size: 0.88rem !important; color: var(--apple-gray-600) !important; }
@@ -870,7 +870,7 @@ render_html(“””
     }
 
 </style>
-“””)
+""")
 
 # ─────────────────────────────────────────────
 #  GOOGLE SHEETS INTEGRATION

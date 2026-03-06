@@ -16,7 +16,7 @@ st.set_page_config(
 # ─── Google Sheets Auth ───
 def validate_login(access_code, employee_num, full_name):
     """Validate credentials against Google Sheet."""
-=======
+
 # Native Streamlit logo — appears in the top-left corner of the sidebar
 st.logo(_sidebar_logo, link="https://apirx.com")
 
@@ -1714,7 +1714,11 @@ def render_checklist(module_key, items):
 def module_welcome():
     st.markdown(f"""
     <div class="section-header">
-        <h2>🏢 Welcome to AAP</h2>
+
+        <h2>Welcome to AAP</h2>
+
+        <h2>Welcome to AAP</h2>
+
         <p>Company History, Mission, Vision & Guiding Principles</p>
     </div>
     """, unsafe_allow_html=True)
@@ -1722,6 +1726,10 @@ def module_welcome():
     st.markdown("## Who We Are")
     st.markdown("""
     American Associated Pharmacies (AAP) is a national cooperative of more than **2,000 independent pharmacies**. 
+
+    AAP was formed in 2009 when two major pharmacy cooperatives, **United Drugs** of Phoenix, Arizona and 
+    **Associated Pharmacies, Inc. (API)** of Scottsboro, Alabama, joined forces to create one of America's largest 
+
     AAP was formed in 2009 when two major pharmacy cooperatives, **United Drugs** of Phoenix, Arizona and 
     **Associated Pharmacies, Inc. (API)** of Scottsboro, Alabama, joined forces to create one of America's largest 
     independent pharmacy organizations.

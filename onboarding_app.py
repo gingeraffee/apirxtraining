@@ -380,6 +380,123 @@ def section_header(title: str, subtitle: str | None = None, emoji: str | None = 
         st.caption(subtitle)
 
 
+def inject_ui_enhancements(sound_enabled: bool):
+    """Inject a modern visual skin + subtle interaction audio hooks."""
+    st.markdown(
+        """
+        <style>
+        :root {
+            --brand-start: #6d5efc;
+            --brand-end: #15c5ff;
+            --soft-border: rgba(109, 94, 252, 0.18);
+            --card-shadow: 0 12px 34px rgba(26, 43, 93, 0.08);
+        }
+        .stApp {
+            background:
+                radial-gradient(circle at top right, rgba(21,197,255,0.10), transparent 40%),
+                radial-gradient(circle at top left, rgba(109,94,252,0.08), transparent 35%),
+                #f8faff;
+        }
+        [data-testid="stMetric"] {
+            border: 1px solid var(--soft-border);
+            border-radius: 16px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.78);
+            backdrop-filter: blur(4px);
+            box-shadow: var(--card-shadow);
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+        [data-testid="stMetric"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 38px rgba(26, 43, 93, 0.12);
+        }
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            border: 1px solid var(--soft-border) !important;
+            border-radius: 18px !important;
+            background: rgba(255,255,255,0.86);
+            box-shadow: var(--card-shadow);
+            animation: fadeInUp 280ms ease;
+        }
+        [data-testid="stSidebar"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,250,255,0.92));
+            border-right: 1px solid rgba(109, 94, 252, 0.14);
+        }
+        .stButton > button, .stFormSubmitButton > button {
+            border-radius: 12px;
+            border: 1px solid transparent;
+            background: linear-gradient(90deg, var(--brand-start), var(--brand-end));
+            color: #fff;
+            font-weight: 600;
+            transition: transform 150ms ease, filter 150ms ease;
+        }
+        .stButton > button:hover, .stFormSubmitButton > button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.04);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    components.html(
+        f"""
+        <script>
+        (function() {{
+            const parentDoc = window.parent.document;
+            window.aapSoundEnabled = {str(sound_enabled).lower()};
+            if (parentDoc.body.dataset.aapEnhanceBound === "1") return;
+            parentDoc.body.dataset.aapEnhanceBound = "1";
+
+            let ctx;
+            const tone = (freq, dur, type = "sine", vol = 0.03) => {{
+                if (!window.aapSoundEnabled) return;
+                try {{
+                    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+                    const o = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    o.type = type;
+                    o.frequency.value = freq;
+                    g.gain.value = vol;
+                    o.connect(g);
+                    g.connect(ctx.destination);
+                    const t = ctx.currentTime;
+                    g.gain.setValueAtTime(vol, t);
+                    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                    o.start(t);
+                    o.stop(t + dur);
+                }} catch (e) {{}}
+            }};
+
+            const playNav = () => {{ tone(480, 0.09, "triangle", 0.03); setTimeout(() => tone(660, 0.10, "triangle", 0.022), 55); }};
+            const playCheck = () => {{ tone(740, 0.08, "sine", 0.026); }};
+            const playQuiz = () => {{ tone(520, 0.12, "triangle", 0.028); setTimeout(() => tone(660, 0.13, "triangle", 0.024), 90); setTimeout(() => tone(880, 0.16, "sine", 0.022), 180); }};
+
+            parentDoc.addEventListener("click", (event) => {{
+                const nav = event.target.closest('[data-testid="stSidebar"] [role="radiogroup"] label');
+                if (nav) playNav();
+
+                const btn = event.target.closest("button");
+                if (btn && /submit quiz/i.test((btn.innerText || "").trim())) playQuiz();
+            }}, true);
+
+            parentDoc.addEventListener("change", (event) => {{
+                const checkbox = event.target.closest('input[type="checkbox"]');
+                if (checkbox) playCheck();
+            }}, true);
+        }})();
+        </script>
+        """,
+        height=0,
+    )
+
+
 # ─────────────────────────────────────────────
 # LOGIN SCREEN
 # ─────────────────────────────────────────────
@@ -488,6 +605,8 @@ def render_sidebar():
     selected_nav = st.radio("Navigation", nav_options, index=current_idx, label_visibility="collapsed")
     new_key = module_keys[nav_options.index(selected_nav)]
     if new_key != st.session_state.selected_module:
+        destination = "Home" if new_key is None else next((m["title"] for m in active_modules if m["key"] == new_key), "Module")
+        st.toast(f"Navigating to {destination}", icon="🧭")
         st.session_state.selected_module = new_key
         st.rerun()
 
@@ -558,6 +677,9 @@ def checklist_block(mk: str, items: dict):
             st.session_state.checklist_items[mk][key] = val
             changed = True
     if changed:
+        checked_count = sum(1 for v in st.session_state.checklist_items[mk].values() if v)
+        total_items = len(st.session_state.checklist_items[mk])
+        st.toast(f"Checklist updated · {checked_count}/{total_items}", icon="✅")
         update_progress(mk)
 
 
@@ -579,6 +701,10 @@ def quiz_block(mk: str, questions: list[tuple[str, list[str], str]]):
                 if sel == answer:
                     score += 1
             st.session_state.quiz_results[mk] = (score, len(questions))
+            if score == len(questions):
+                st.toast("Perfect score! Outstanding work.", icon="🏆")
+            else:
+                st.toast(f"Quiz submitted · {score}/{len(questions)}", icon="🧠")
             update_progress(mk)
             st.rerun()
 
@@ -1060,6 +1186,8 @@ WAREHOUSE_MAP = {
 # ─────────────────────────────────────────────
 # Main app
 # ─────────────────────────────────────────────
+inject_ui_enhancements(st.session_state.get("sound_enabled", True))
+
 if not st.session_state.authenticated:
     show_login()
 else:

@@ -398,94 +398,110 @@ st.markdown("""
     .styled-table tr:nth-child(even) td { background: #F7FAFD; }
     .styled-table tr:last-child td { border-bottom: none; }
 
-    /* ── Premium Login Experience ── */
-    .login-hero {
-        background: radial-gradient(circle at 10% 0%, rgba(59,130,246,0.18), transparent 40%),
-                    radial-gradient(circle at 90% 20%, rgba(204,41,54,0.16), transparent 38%),
-                    linear-gradient(145deg, #F8FAFF 0%, #EEF3FF 52%, #F8FAFC 100%);
-        border: 1px solid rgba(148,163,184,0.30);
-        border-radius: 28px;
-        box-shadow: 0 26px 62px rgba(15,23,42,0.16);
-        padding: 28px;
+    /* ── Premium Login ── */
+    .lp-info-card {
+        background: linear-gradient(155deg, #060E1E 0%, #0A1628 45%, #112038 100%);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 22px;
+        padding: 40px 36px;
+        box-shadow: 0 28px 72px rgba(6,14,30,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+        min-height: 460px;
         position: relative;
         overflow: hidden;
     }
-    .login-hero::before {
+    .lp-info-card::before {
         content: "";
         position: absolute;
-        inset: 10px;
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,0.68);
+        top: -90px; right: -70px;
+        width: 280px; height: 280px;
+        background: radial-gradient(circle, rgba(204,41,54,0.22) 0%, transparent 70%);
         pointer-events: none;
     }
-    .login-grid {
-        display: grid;
-        grid-template-columns: 1.05fr 1fr;
-        gap: 18px;
+    .lp-info-card::after {
+        content: "";
+        position: absolute;
+        bottom: -110px; left: -60px;
+        width: 260px; height: 260px;
+        background: radial-gradient(circle, rgba(30,58,138,0.28) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .lp-kicker {
+        font-size: 0.66rem;
+        text-transform: uppercase;
+        letter-spacing: 0.24em;
+        color: #F87171;
+        font-weight: 800;
+        margin-bottom: 16px;
         position: relative;
         z-index: 1;
     }
-    .login-panel,
-    .login-form-shell {
-        background: linear-gradient(145deg, rgba(255,255,255,0.96), rgba(255,255,255,0.90));
-        border: 1px solid rgba(148,163,184,0.26);
-        border-radius: 18px;
-        padding: 20px;
-        box-shadow: 0 14px 30px rgba(15,23,42,0.09);
+    .lp-headline {
+        font-family: 'Playfair Display', serif !important;
+        font-size: 1.78rem !important;
+        font-weight: 700 !important;
+        color: #FFFFFF !important;
+        line-height: 1.27 !important;
+        margin: 0 0 18px 0 !important;
+        position: relative;
+        z-index: 1;
     }
-    .login-kicker {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        color: #CC2936;
-        font-weight: 700;
-        margin-bottom: 8px;
+    .lp-body {
+        color: #94A3B8;
+        font-size: 0.875rem;
+        line-height: 1.74;
+        margin: 0 0 26px 0;
+        position: relative;
+        z-index: 1;
     }
-    .login-features {
-        margin: 14px 0 0;
-        padding: 0;
+    .lp-features {
         list-style: none;
-        display: grid;
-        gap: 8px;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        z-index: 1;
     }
-    .login-features li {
-        background: #EEF2FF;
-        color: #1E293B;
-        font-size: 0.82rem;
-        border-radius: 10px;
-        padding: 8px 10px;
-        font-weight: 600;
+    .lp-features li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.085);
+        border-radius: 11px;
+        padding: 11px 15px;
+        color: #CBD5E1;
+        font-size: 0.83rem;
+        font-weight: 500;
     }
-    .login-form-title {
-        color: #0A1628;
-        font-size: 1rem;
-        font-weight: 700;
-        margin: 0 0 2px 0;
+    .lp-divider {
+        width: 36px;
+        height: 3px;
+        background: linear-gradient(90deg, #CC2936, #1E3A8A);
+        border-radius: 2px;
+        margin: 0 0 20px 0;
+        position: relative;
+        z-index: 1;
     }
-    .login-form-sub {
-        color: #475569;
-        font-size: 0.84rem;
-        margin: 0 0 12px 0;
-    }
-    @media (max-width: 900px) {
-        .login-grid { grid-template-columns: 1fr; }
-    }
-
-    /* Form submit button styling (login) */
+    /* Form submit button styling */
     div[data-testid="stFormSubmitButton"] button {
-        background: linear-gradient(135deg, #0A1628 0%, #1E3A8A 48%, #CC2936 100%) !important;
+        background: linear-gradient(135deg, #0A1628 0%, #1E3A8A 50%, #CC2936 100%) !important;
         color: #FFFFFF !important;
         border: none !important;
-        border-radius: 10px !important;
-        padding: 10px 20px !important;
+        border-radius: 11px !important;
+        padding: 11px 20px !important;
         font-weight: 700 !important;
-        letter-spacing: 0.04em !important;
+        letter-spacing: 0.06em !important;
         text-transform: uppercase !important;
-        box-shadow: 0 12px 24px rgba(30,58,138,0.24) !important;
+        font-size: 0.84rem !important;
+        box-shadow: 0 8px 22px rgba(30,58,138,0.3) !important;
+        transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
     }
     div[data-testid="stFormSubmitButton"] button:hover {
-        filter: brightness(1.08) !important;
-        transform: translateY(-1px) !important;
+        filter: brightness(1.1) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 14px 30px rgba(30,58,138,0.4) !important;
     }
 
 </style>
@@ -767,97 +783,158 @@ def update_progress(module_key):
 #  LOGIN SCREEN
 # ─────────────────────────────────────────────
 def show_login():
-    st.markdown("<div style='padding-top:28px'></div>", unsafe_allow_html=True)
+    # Inject login-specific CSS overrides (scoped to this page only)
+    st.markdown("""
+    <style>
+        /* Page background for login */
+        .stApp { background: #0B1220 !important; }
+        /* Style the form container as the white sign-in card */
+        [data-testid="stForm"] {
+            background: #FFFFFF;
+            border-radius: 22px;
+            padding: 32px 30px 28px !important;
+            box-shadow: 0 28px 72px rgba(6,14,30,0.38), 0 1px 3px rgba(6,14,30,0.1);
+            border: 1px solid rgba(148,163,184,0.15);
+        }
+        /* Input label styling */
+        [data-testid="stForm"] label p {
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            color: #475569 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.09em !important;
+        }
+        /* Input field styling */
+        [data-testid="stForm"] input {
+            border: 1.5px solid #E2E8F0 !important;
+            border-radius: 10px !important;
+            font-size: 0.9rem !important;
+            background: #F8FAFC !important;
+            color: #0F172A !important;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+        }
+        [data-testid="stForm"] input:focus {
+            border-color: #1E3A8A !important;
+            box-shadow: 0 0 0 3px rgba(30,58,138,0.12) !important;
+            background: #FFFFFF !important;
+        }
+        /* Radio label styling */
+        [data-testid="stForm"] .stRadio label {
+            color: #334155 !important;
+            font-size: 0.87rem !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<div style='padding-top:36px'></div>", unsafe_allow_html=True)
 
     _login_logo_src = _logo_img_src()
 
-    col_l, col_m, col_r = st.columns([0.8, 1.7, 0.8])
-    with col_m:
+    outer_l, outer_m, outer_r = st.columns([0.5, 2, 0.5])
+    with outer_m:
+        # Logo
         st.markdown(f"""
-        <div style="text-align:center; margin-bottom:20px;">
-            <img src="{_login_logo_src}"
-                 alt="AAP Logo"
-                 style="height:94px; max-width:290px; object-fit:contain; filter: drop-shadow(0 10px 20px rgba(15,23,42,0.2));">
+        <div style="text-align:center; margin-bottom:32px;">
+            <img src="{_login_logo_src}" alt="AAP / API Logo"
+                 style="height:88px; max-width:300px; object-fit:contain;
+                        filter: drop-shadow(0 6px 20px rgba(6,14,30,0.5)) brightness(1.05);">
         </div>
-        <div class="login-hero">
-            <div class="login-grid">
-                <div class="login-panel">
-                    <div class="login-kicker">Premium Onboarding Experience</div>
-                    <h2 style="margin:0; color:#0A1628; font-size:1.35rem;">Welcome to your orientation hub.</h2>
-                    <p style="margin:10px 0 0; color:#334155; line-height:1.65; font-size:0.92rem;">
-                        Start your first day with a secure, guided setup. Sign in to access your
-                        personalized onboarding modules and real-time completion tracking.
-                    </p>
-                    <ul class="login-features">
-                        <li>🔒 Secure employee credential check</li>
-                        <li>🧭 Role-based learning path assignment</li>
-                        <li>📈 Live progress sync and verification</li>
-                    </ul>
-                </div>
-                <div class="login-form-shell">
-                    <p class="login-form-title">Employee Sign In</p>
-                    <p class="login-form-sub">Use the details provided by HR to continue.</p>
         """, unsafe_allow_html=True)
 
-        with st.form("login_form", clear_on_submit=False):
-            access_code = st.text_input(
-                "Access Code",
-                placeholder="Enter the code HR gave you",
-                type="password",
-            )
-            employee_id = st.text_input(
-                "Employee ID",
-                placeholder="e.g. 10042",
-            )
-            full_name = st.text_input(
-                "Full Name",
-                placeholder="As it appears in your HR paperwork",
-            )
-            st.markdown("<div style='margin-top:12px;margin-bottom:4px;color:#374151;font-size:0.9rem;font-weight:500;'>Department Track</div>", unsafe_allow_html=True)
-            role_track = st.radio(
-                "Department Track",
-                options=["General / Administrative", "Warehouse"],
-                label_visibility="collapsed",
-            )
-            submitted = st.form_submit_button("Sign In  →", use_container_width=True)
+        # Two-panel layout: dark info card left, white form card right
+        panel_l, panel_r = st.columns([1.1, 1], gap="large")
 
-            if submitted:
-                if not access_code or not employee_id or not full_name:
-                    st.error("Please fill in all three fields to continue.")
-                else:
-                    with st.spinner("Verifying your credentials…"):
-                        ok, reason = verify_employee(access_code, employee_id, full_name)
-                    if ok:
-                        track = "warehouse" if role_track == "Warehouse" else "general"
-                        if track == "warehouse":
-                            prog_keys = {m["key"]: 0 for m in WAREHOUSE_MODULES}
-                            chk_keys  = {m["key"]: {} for m in WAREHOUSE_MODULES}
-                        else:
-                            prog_keys = {m["key"]: 0 for m in MODULES}
-                            chk_keys  = {m["key"]: {} for m in MODULES}
-                        st.session_state.authenticated   = True
-                        st.session_state.username        = full_name.strip()
-                        st.session_state.employee_id     = employee_id.strip()
-                        st.session_state.role_track      = track
-                        st.session_state.progress        = prog_keys
-                        st.session_state.checklist_items = chk_keys
-                        st.session_state.quiz_results    = {}
-                        st.session_state.sheet_loaded    = False
-                        st.rerun()
-                    else:
-                        st.error(f"❌ {reason}")
-
-        st.markdown("""
-                </div>
-            </div>
-            <div style="text-align:center; margin-top:16px; padding-top:14px; border-top:1px solid #D6E0EB;">
-                <p style="color:#64748B; font-size:0.82rem; margin:0; line-height:1.8;">
-                    Need help? Contact HR<br>
-                    <span style="color:#334155; font-weight:600;">Nicole Thornton</span>
-                    · nicole.thornton@apirx.com · 256-574-7528
+        with panel_l:
+            st.markdown("""
+            <div class="lp-info-card">
+                <div class="lp-kicker">Premium Onboarding Experience</div>
+                <h2 class="lp-headline">Welcome to your<br>orientation hub.</h2>
+                <div class="lp-divider"></div>
+                <p class="lp-body">
+                    Start your first day with a secure, guided setup. Sign in to access
+                    your personalized onboarding modules and real-time completion tracking.
                 </p>
+                <ul class="lp-features">
+                    <li><span>🔒</span> Secure employee credential check</li>
+                    <li><span>🧭</span> Role-based learning path assignment</li>
+                    <li><span>📈</span> Live progress sync and verification</li>
+                </ul>
             </div>
-        </div>
+            """, unsafe_allow_html=True)
+
+        with panel_r:
+            with st.form("login_form", clear_on_submit=False):
+                st.markdown("""
+                <p style="font-size:1.15rem; font-weight:700; color:#0A1628; margin:0 0 4px 0;">
+                    Employee Sign In
+                </p>
+                <p style="color:#64748B; font-size:0.83rem; margin:0 0 22px 0;">
+                    Use the details provided by HR to continue.
+                </p>
+                """, unsafe_allow_html=True)
+
+                access_code = st.text_input(
+                    "Access Code",
+                    placeholder="Enter the code HR gave you",
+                    type="password",
+                )
+                employee_id = st.text_input(
+                    "Employee ID",
+                    placeholder="e.g. 10042",
+                )
+                full_name = st.text_input(
+                    "Full Name",
+                    placeholder="As it appears in your HR paperwork",
+                )
+                st.markdown(
+                    "<div style='margin:10px 0 4px; color:#475569; font-size:0.75rem;"
+                    "font-weight:700; text-transform:uppercase; letter-spacing:0.09em;'>"
+                    "Department Track</div>",
+                    unsafe_allow_html=True,
+                )
+                role_track = st.radio(
+                    "Department Track",
+                    options=["General / Administrative", "Warehouse"],
+                    label_visibility="collapsed",
+                )
+                st.markdown("<div style='margin-top:6px;'></div>", unsafe_allow_html=True)
+                submitted = st.form_submit_button("Sign In  →", use_container_width=True)
+
+                if submitted:
+                    if not access_code or not employee_id or not full_name:
+                        st.error("Please fill in all three fields to continue.")
+                    else:
+                        with st.spinner("Verifying your credentials…"):
+                            ok, reason = verify_employee(access_code, employee_id, full_name)
+                        if ok:
+                            track = "warehouse" if role_track == "Warehouse" else "general"
+                            if track == "warehouse":
+                                prog_keys = {m["key"]: 0 for m in WAREHOUSE_MODULES}
+                                chk_keys  = {m["key"]: {} for m in WAREHOUSE_MODULES}
+                            else:
+                                prog_keys = {m["key"]: 0 for m in MODULES}
+                                chk_keys  = {m["key"]: {} for m in MODULES}
+                            st.session_state.authenticated   = True
+                            st.session_state.username        = full_name.strip()
+                            st.session_state.employee_id     = employee_id.strip()
+                            st.session_state.role_track      = track
+                            st.session_state.progress        = prog_keys
+                            st.session_state.checklist_items = chk_keys
+                            st.session_state.quiz_results    = {}
+                            st.session_state.sheet_loaded    = False
+                            st.rerun()
+                        else:
+                            st.error(f"❌ {reason}")
+
+        # Footer
+        st.markdown("""
+        <div style="text-align:center; margin-top:28px; padding-top:18px;
+                    border-top:1px solid rgba(255,255,255,0.08);">
+            <p style="color:#475569; font-size:0.78rem; margin:0; line-height:2;">
+                Need help? Contact HR &nbsp;·&nbsp;
+                <strong style="color:#94A3B8;">Nicole Thornton</strong>
+                &nbsp;·&nbsp; nicole.thornton@apirx.com &nbsp;·&nbsp; 256-574-7528
+            </p>
         </div>
         """, unsafe_allow_html=True)
 

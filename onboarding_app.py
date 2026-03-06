@@ -1541,32 +1541,37 @@ def show_home():
     </div>
     """)
 
-    for m in active_modules:
-        pct = st.session_state.progress.get(m["key"], 0)
-        if pct == 100:
-            pill_class, pill_text = "done", "Complete"
-        elif pct > 0:
-            pill_class, pill_text = "live", "In Progress"
-        else:
-            pill_class, pill_text = "pending", "Queued"
+    for i in range(0, len(active_modules), 2):
+        row_modules = active_modules[i:i + 2]
+        col_left, col_right = st.columns(2, gap="large")
 
-        render_html(f"""
-        <div class="module-card-premium">
-            <div class="module-topline">
-                <p class="module-name">{m['icon']} · Module {m['number']} · {m['title']}</p>
-                <span class="pill {pill_class}">{pill_text}</span>
-            </div>
-            <p class="module-sub">{m['subtitle']}</p>
-            <div class="module-meter"><span style="width:{pct}%"></span></div>
-            <div style="margin-top:8px; color:#5B6F88; font-size:0.76rem; display:flex; justify-content:space-between;">
-                <span>Execution progress</span><strong style="color:#081426;">{pct}%</strong>
-            </div>
-        </div>
-        """)
+        for col, m in zip((col_left, col_right), row_modules):
+            with col:
+                pct = st.session_state.progress.get(m["key"], 0)
+                if pct == 100:
+                    pill_class, pill_text = "done", "Complete"
+                elif pct > 0:
+                    pill_class, pill_text = "live", "In Progress"
+                else:
+                    pill_class, pill_text = "pending", "Queued"
 
-        if st.button(f"Launch Module {m['number']}", key=f"open_{m['key']}", type="secondary"):
-            st.session_state.selected_module = m["key"]
-            st.rerun()
+                render_html(f"""
+                <div class="module-card-premium">
+                    <div class="module-topline">
+                        <p class="module-name">{m['icon']} · Module {m['number']} · {m['title']}</p>
+                        <span class="pill {pill_class}">{pill_text}</span>
+                    </div>
+                    <p class="module-sub">{m['subtitle']}</p>
+                    <div class="module-meter"><span style="width:{pct}%"></span></div>
+                    <div style="margin-top:8px; color:#5B6F88; font-size:0.76rem; display:flex; justify-content:space-between;">
+                        <span>Execution progress</span><strong style="color:#081426;">{pct}%</strong>
+                    </div>
+                </div>
+                """)
+
+                if st.button(f"Launch Module {m['number']}", key=f"open_{m['key']}", type="secondary", use_container_width=True):
+                    st.session_state.selected_module = m["key"]
+                    st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
 

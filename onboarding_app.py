@@ -695,18 +695,13 @@ def show_login():
     st.markdown("<div style='padding-top:48px'></div>", unsafe_allow_html=True)
 
     # ── Logo + title ──
-    st.markdown("""
+    _login_logo_src = _logo_img_src()
+    st.markdown(f"""
     <div style="text-align:center; margin-bottom:36px;">
         <div style="margin-bottom:20px;">
-            <img src="https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
+            <img src="{_login_logo_src}"
                  alt="AAP Logo"
-                 style="height:70px; max-width:240px; object-fit:contain; filter: brightness(0) invert(0);"
-                 onerror="this.style.display='none'; document.getElementById('aap-logo-fallback').style.display='inline-block';">
-            <div id="aap-logo-fallback"
-                 style="display:none; background:#CC2936; border-radius:12px;
-                        padding:10px 20px; display:none; margin:0 auto;">
-                <span style="color:#fff; font-size:1.4rem; font-weight:700; letter-spacing:0.05em;">AAP</span>
-            </div>
+                 style="height:70px; max-width:240px; object-fit:contain; filter: brightness(0) invert(0);">
         </div>
         <h1 style="font-size:1.9rem; font-weight:700; color:#1A1A2E;
                    margin:0 0 6px 0; letter-spacing:-0.02em;">

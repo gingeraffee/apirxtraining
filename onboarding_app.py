@@ -41,57 +41,102 @@ st.markdown("""
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     .stApp { background-color: #EEF2F7; }
 
-    /* ── Sidebar Container ── */
+    /* ── Sidebar Container (Cinematic Glass / Apple-inspired) ── */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0A1628 0%, #12213A 50%, #1B3A5C 100%);
-        border-right: 2px solid #CC2936;
-        box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+        background:
+            radial-gradient(130% 100% at 18% -10%, rgba(255,255,255,0.18) 0%, transparent 48%),
+            radial-gradient(120% 100% at 110% 0%, rgba(125,211,252,0.18) 0%, transparent 46%),
+            linear-gradient(180deg, #0A0F1C 0%, #111827 48%, #0D1525 100%);
+        border-right: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 10px 0 34px rgba(2,8,23,0.48);
     }
 
-    /* ── Sidebar Header — bright white card so logo stands out ── */
-    .sidebar-header {
-        background: #FFFFFF;
-        border-radius: 12px;
-        padding: 16px 14px 14px 14px;
-        margin-bottom: 18px;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    [data-testid="stSidebar"] .block-container {
+        padding-top: 0.9rem !important;
+        padding-left: 0.9rem !important;
+        padding-right: 0.9rem !important;
     }
-    .sidebar-header * { color: #0A1628 !important; }
+
+    .sidebar-header {
+        background: linear-gradient(160deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.09) 100%);
+        border-radius: 16px;
+        padding: 16px 14px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 14px 26px rgba(2,8,23,0.36);
+        backdrop-filter: blur(10px);
+    }
+    .sidebar-header * { color: #EAF2FF !important; }
     .sidebar-header .sidebar-username {
-        color: #CC2936 !important;
+        color: #D6E7FF !important;
         font-weight: 600 !important;
         letter-spacing: 0.02em !important;
     }
 
-    /* ── Sidebar Radio Navigation (Elite Motion + Glow) ── */
-    [data-testid="stSidebar"] .stRadio > div { gap: 6px !important; }
+
+    .progress-container {
+        width: 100%;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(226,232,240,0.22);
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.14);
+        box-shadow: inset 0 1px 2px rgba(2,8,23,0.4);
+    }
+    .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #E2E8F0 0%, #BFDBFE 48%, #7DD3FC 100%);
+        box-shadow: 0 0 12px rgba(125,211,252,0.5);
+        transition: width 0.25s ease;
+    }
+    .sidebar-section-label {
+        font-size: 0.62rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: rgba(199,214,234,0.74);
+        margin: 8px 2px 8px;
+        font-weight: 700;
+    }
+
+    /* ── Sidebar Radio Navigation (Glassy Cinematic Buttons) ── */
+    [data-testid="stSidebar"] .stRadio > div { gap: 8px !important; }
     [data-testid="stSidebar"] .stRadio label {
-        color: rgba(231,240,252,0.92) !important;
-        border-radius: 10px !important;
-        padding: 9px 12px !important;
-        transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, text-shadow 0.2s ease !important;
-        font-size: 0.86rem !important;
+        color: rgba(230,240,255,0.94) !important;
+        border-radius: 14px !important;
+        padding: 10px 12px !important;
+        transition: background 0.25s ease, transform 0.22s ease, box-shadow 0.25s ease, text-shadow 0.2s ease !important;
+        font-size: 0.84rem !important;
         width: 100% !important;
-        border: 1px solid rgba(255,255,255,0.04) !important;
-        background: rgba(255,255,255,0.02) !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
+        background: linear-gradient(152deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 100%) !important;
+        backdrop-filter: blur(9px) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 10px 20px rgba(2,8,23,0.30) !important;
     }
     [data-testid="stSidebar"] .stRadio label:hover {
-        background: linear-gradient(90deg, rgba(204,41,54,0.18), rgba(30,58,138,0.20)) !important;
-        color: #FFFFFF !important;
-        transform: translateX(3px) !important;
-        box-shadow: 0 10px 20px rgba(2,6,23,0.32), inset 0 0 0 1px rgba(255,255,255,0.08) !important;
-        text-shadow: 0 0 10px rgba(255,255,255,0.35) !important;
+        color: #F8FBFF !important;
+        transform: translateX(3px) translateY(-1px) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 18px 26px rgba(2,8,23,0.42) !important;
+        text-shadow: 0 0 8px rgba(186,230,253,0.34) !important;
     }
     [data-testid="stSidebar"] .stRadio p,
     [data-testid="stSidebar"] .stRadio span {
-        color: rgba(231,240,252,0.92) !important;
+        color: rgba(230,240,255,0.94) !important;
     }
-    /* Red dot for selected radio option */
+    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
+        background: linear-gradient(145deg, rgba(191,219,254,0.30) 0%, rgba(147,197,253,0.16) 100%) !important;
+        border-color: rgba(191,219,254,0.46) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.32), 0 16px 30px rgba(2,8,23,0.45), 0 0 0 1px rgba(191,219,254,0.32) !important;
+    }
+    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] > div:first-child {
+        background: rgba(255,255,255,0.06) !important;
+        border-color: rgba(229,231,235,0.62) !important;
+    }
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
     [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
-        background: linear-gradient(140deg, #CC2936 0%, #1E3A8A 100%) !important;
-        border-color: #CC2936 !important;
-        box-shadow: 0 0 0 3px rgba(204,41,54,0.18) !important;
+        background: linear-gradient(145deg, #CFE4FF 0%, #93C5FD 100%) !important;
+        border-color: #93C5FD !important;
+        box-shadow: 0 0 0 3px rgba(147,197,253,0.22) !important;
     }
 
     /* ── Typography ── */
@@ -429,43 +474,30 @@ st.markdown("""
 
     /* ── Onboarding App Compatibility: map onboarding classes to Training App look ── */
 
-    /* Sidebar buttons — modern, minimal navigation look */
+    /* Sidebar action buttons */
     [data-testid="stSidebar"] .stButton > button {
         width: 100% !important;
-        background: rgba(255,255,255,0.04) !important;
-        border: 0 !important;
-        border-left: 2px solid transparent !important;
-        color: rgba(255,255,255,0.92) !important;
-        text-align: left !important;
-        padding: 9px 12px !important;
-        border-radius: 6px !important;
-        margin: 2px 0 !important;
-        font-size: 0.9rem !important;
-        font-weight: 500 !important;
-        box-shadow: none !important;
-        transition: background-color 0.18s ease, border-left-color 0.18s ease, color 0.18s ease !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(255,255,255,0.18) !important;
+        background: linear-gradient(150deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 100%) !important;
+        color: #EAF2FF !important;
+        text-align: center !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.05em !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 12px 20px rgba(2,8,23,0.28) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
     }
     [data-testid="stSidebar"] .stButton > button:hover {
-        background: rgba(255,255,255,0.10) !important;
-        border-left-color: #CC2936 !important;
-        color: #FFFFFF !important;
-        transform: none !important;
+        transform: translateY(-1px) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 16px 24px rgba(2,8,23,0.34) !important;
+        filter: brightness(1.05) !important;
     }
-
     [data-testid="stSidebar"] .stButton > button[kind="primary"],
     [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
-        background: linear-gradient(135deg, #CC2936 0%, #A01E27 100%) !important;
-        color: #FFFFFF !important;
-        border-radius: 8px !important;
-        border: none !important;
-        text-align: center !important;
-        font-weight: 600 !important;
-        margin: 6px 0 !important;
-    }
-    [data-testid="stSidebar"] .stButton > button[kind="primary"]:hover,
-    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"]:hover {
-        background: linear-gradient(135deg, #D93A46 0%, #B32630 100%) !important;
-        border-left-color: transparent !important;
+        background: linear-gradient(145deg, rgba(203,213,225,0.35) 0%, rgba(148,163,184,0.22) 100%) !important;
+        border-color: rgba(203,213,225,0.52) !important;
+        color: #F8FAFC !important;
     }
 
     /* Content sections used heavily in onboarding */
@@ -1096,13 +1128,11 @@ if st.session_state.authenticated:
         <div class="sidebar-header">
             <img src="{logo_src}"
                  style="max-height:56px; width:100%; object-fit:contain; margin-bottom:10px;" />
-            <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.13em;
-                        color:#5A7A9F; text-transform:uppercase; margin-bottom:6px;">
-                    Welcome to the Onboarding Portal!
+            <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.16em;
+                        color:#B8CAE3; text-transform:uppercase; margin-bottom:6px;">
+                    Learning Interface
             </div>
-            <div style="font-size:0.93rem; font-weight:600; color:#CC2936;">
-                👤 {st.session_state.username}
-            </div>
+            <div class="sidebar-username" style="font-size:0.93rem;">👤 {st.session_state.username}</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -1116,7 +1146,7 @@ if st.session_state.authenticated:
         """, unsafe_allow_html=True)
         st.markdown(pct_bar(total_pct), unsafe_allow_html=True)
 
-        st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
+        st.markdown("<div class='sidebar-section-label'>Navigation</div>", unsafe_allow_html=True)
 
         # ── Radio navigation ──
         nav_options = ["🏠  Home"] + [
@@ -1160,7 +1190,7 @@ if st.session_state.authenticated:
         </small>
         <div class="sidebar-mini">
             <div style="font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:#9CB3CF; font-weight:700; margin-bottom:4px;">Experience</div>
-            <div style="color:#EEF4FB; font-size:0.8rem; line-height:1.45;">Premium interface enabled with dynamic gradients and role-aware navigation.</div>
+            <div style="color:#EEF4FB; font-size:0.8rem; line-height:1.45;">Cinematic glass navigation inspired by premium hardware UI patterns.</div>
         </div>
         """, unsafe_allow_html=True)
 

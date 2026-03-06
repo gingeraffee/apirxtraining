@@ -858,6 +858,7 @@ def show_login():
                 </p>
             </div>
         </div>
+        </div>
         """, unsafe_allow_html=True)
 
 

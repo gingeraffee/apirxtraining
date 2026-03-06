@@ -1,3 +1,8 @@
 streamlit
 gspread
 google-auth
+streamlit-analytics2
+pandas
+python-docx
+reportlab
+streamlit-searchbox

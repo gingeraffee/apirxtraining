@@ -398,19 +398,94 @@ st.markdown("""
     .styled-table tr:nth-child(even) td { background: #F7FAFD; }
     .styled-table tr:last-child td { border-bottom: none; }
 
+    /* ── Premium Login Experience ── */
+    .login-hero {
+        background: radial-gradient(circle at 10% 0%, rgba(59,130,246,0.18), transparent 40%),
+                    radial-gradient(circle at 90% 20%, rgba(204,41,54,0.16), transparent 38%),
+                    linear-gradient(145deg, #F8FAFF 0%, #EEF3FF 52%, #F8FAFC 100%);
+        border: 1px solid rgba(148,163,184,0.30);
+        border-radius: 28px;
+        box-shadow: 0 26px 62px rgba(15,23,42,0.16);
+        padding: 28px;
+        position: relative;
+        overflow: hidden;
+    }
+    .login-hero::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.68);
+        pointer-events: none;
+    }
+    .login-grid {
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 18px;
+        position: relative;
+        z-index: 1;
+    }
+    .login-panel,
+    .login-form-shell {
+        background: linear-gradient(145deg, rgba(255,255,255,0.96), rgba(255,255,255,0.90));
+        border: 1px solid rgba(148,163,184,0.26);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: 0 14px 30px rgba(15,23,42,0.09);
+    }
+    .login-kicker {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #CC2936;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .login-features {
+        margin: 14px 0 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 8px;
+    }
+    .login-features li {
+        background: #EEF2FF;
+        color: #1E293B;
+        font-size: 0.82rem;
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-weight: 600;
+    }
+    .login-form-title {
+        color: #0A1628;
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0 0 2px 0;
+    }
+    .login-form-sub {
+        color: #475569;
+        font-size: 0.84rem;
+        margin: 0 0 12px 0;
+    }
+    @media (max-width: 900px) {
+        .login-grid { grid-template-columns: 1fr; }
+    }
+
     /* Form submit button styling (login) */
     div[data-testid="stFormSubmitButton"] button {
-        background-color: #0A1628 !important;
+        background: linear-gradient(135deg, #0A1628 0%, #1E3A8A 48%, #CC2936 100%) !important;
         color: #FFFFFF !important;
         border: none !important;
-        border-radius: 8px !important;
-        padding: 8px 20px !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.02em !important;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.12) !important;
+        border-radius: 10px !important;
+        padding: 10px 20px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.04em !important;
+        text-transform: uppercase !important;
+        box-shadow: 0 12px 24px rgba(30,58,138,0.24) !important;
     }
     div[data-testid="stFormSubmitButton"] button:hover {
-        background-color: #CC2936 !important;
+        filter: brightness(1.08) !important;
+        transform: translateY(-1px) !important;
     }
 
 </style>
@@ -692,42 +767,37 @@ def update_progress(module_key):
 #  LOGIN SCREEN
 # ─────────────────────────────────────────────
 def show_login():
-    st.markdown("<div style='padding-top:48px'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='padding-top:28px'></div>", unsafe_allow_html=True)
 
-    # ── Logo + title ──
     _login_logo_src = _logo_img_src()
-    st.markdown(f"""
-    <div style="text-align:center; margin-bottom:36px;">
-        <div style="margin-bottom:20px;">
+
+    col_l, col_m, col_r = st.columns([0.8, 1.7, 0.8])
+    with col_m:
+        st.markdown(f"""
+        <div style="text-align:center; margin-bottom:20px;">
             <img src="{_login_logo_src}"
                  alt="AAP Logo"
-                 style="height:70px; max-width:240px; object-fit:contain; filter: brightness(0) invert(0);">
+                 style="height:94px; max-width:290px; object-fit:contain; filter: drop-shadow(0 10px 20px rgba(15,23,42,0.2));">
         </div>
-        <h1 style="font-size:1.9rem; font-weight:700; color:#1A1A2E;
-                   margin:0 0 6px 0; letter-spacing:-0.02em;">
-            American Associated Pharmacies
-        </h1>
-        <p style="color:#64748B; font-size:1rem; margin:0;">
-            New Hire Orientation Portal
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    col_l, col_m, col_r = st.columns([1, 1.3, 1])
-    with col_m:
-        st.markdown("""
-        <div class="login-card">
-            <h2 style="font-size:1.15rem; font-weight:600; margin:0 0 6px 0; text-align:center;">
-                Welcome! Let's get you started.
-            </h2>
-            <p style="font-size:0.87rem; margin:0 0 4px 0; text-align:center; line-height:1.6;">
-                Your <strong>Access Code</strong> and <strong>Employee ID</strong>
-                were provided by HR during onboarding.
-            </p>
-        </div>
+        <div class="login-hero">
+            <div class="login-grid">
+                <div class="login-panel">
+                    <div class="login-kicker">Premium Onboarding Experience</div>
+                    <h2 style="margin:0; color:#0A1628; font-size:1.35rem;">Welcome to your orientation hub.</h2>
+                    <p style="margin:10px 0 0; color:#334155; line-height:1.65; font-size:0.92rem;">
+                        Start your first day with a secure, guided setup. Sign in to access your
+                        personalized onboarding modules and real-time completion tracking.
+                    </p>
+                    <ul class="login-features">
+                        <li>🔒 Secure employee credential check</li>
+                        <li>🧭 Role-based learning path assignment</li>
+                        <li>📈 Live progress sync and verification</li>
+                    </ul>
+                </div>
+                <div class="login-form-shell">
+                    <p class="login-form-title">Employee Sign In</p>
+                    <p class="login-form-sub">Use the details provided by HR to continue.</p>
         """, unsafe_allow_html=True)
-
-        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
         with st.form("login_form", clear_on_submit=False):
             access_code = st.text_input(
@@ -778,13 +848,15 @@ def show_login():
                         st.error(f"❌ {reason}")
 
         st.markdown("""
-        <div style="text-align:center; margin-top:20px; padding-top:16px;
-                    border-top:1px solid #E2E8F0;">
-            <p style="color:#94A3B8; font-size:0.82rem; margin:0; line-height:1.8;">
-                Need help? Contact HR<br>
-                <span style="color:#475569; font-weight:500;">Nicole Thornton</span>
-                · nicole.thornton@apirx.com · 256-574-7528
-            </p>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top:16px; padding-top:14px; border-top:1px solid #D6E0EB;">
+                <p style="color:#64748B; font-size:0.82rem; margin:0; line-height:1.8;">
+                    Need help? Contact HR<br>
+                    <span style="color:#334155; font-weight:600;">Nicole Thornton</span>
+                    · nicole.thornton@apirx.com · 256-574-7528
+                </p>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 

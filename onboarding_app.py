@@ -2,6 +2,7 @@ import streamlit as st
 import json
 import os
 import base64
+import gspread
 
 st.set_page_config(
     page_title="AAP Employee Onboarding Portal",
@@ -69,29 +70,68 @@ def is_module_complete(mk):
     checks = st.session_state.get(f"checklist_{mk}", {})
     return passed and sum(1 for v in checks.values() if v) >= CHECKLIST_COUNTS[mk]
 
-def validate_login(access_code, employee_num, full_name):
+def get_gsheet_client():
+    """Connect to Google Sheets using gcp_service_account secret."""
     try:
         import gspread
-        from google.oauth2.service_account import Credentials
-        scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-        creds_dict = json.loads(os.environ.get("GSHEET_CREDS", "{}"))
-        if not creds_dict:
-            st.error("Google Sheets credentials not configured.")
-            return False
-        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
-        client = gspread.authorize(creds)
-        sheet = client.open("AAP New Hire Orientation Progress").sheet1
-        for row in sheet.get_all_records():
-            if (str(row.get("Access Code", "")).strip().lower() == access_code.strip().lower()
-                and str(row.get("Employee #", "")).strip().lower() == employee_num.strip().lower()
-                and str(row.get("Full Name", "")).strip().lower() == full_name.strip().lower()):
-                st.session_state["emp_department"] = str(row.get("Department", ""))
-                st.session_state["emp_position"] = str(row.get("Position", ""))
-                st.session_state["emp_start_date"] = str(row.get("Start Date", ""))
-                return True
+        creds_dict = dict(st.secrets["gcp_service_account"])
+        scopes = [
+            "https://spreadsheets.google.com/feeds",
+            "https://www.googleapis.com/auth/drive",
+        ]
+        return gspread.service_account_from_dict(creds_dict, scopes=scopes)
+    except Exception:
+        return None
+
+def validate_login(access_code, employee_id, full_name):
+    """
+    Validates login using:
+    1. Access code checked against st.secrets["orientation_access_code"]
+    2. Employee ID + Full Name checked against 'Employee Roster' tab
+    """
+    # Step 1: Check access code
+    try:
+        correct_code = st.secrets["orientation_access_code"]
+    except Exception:
+        st.error("Access code not configured in Streamlit secrets.")
+        return False
+
+    if access_code.strip() != correct_code.strip():
+        st.error("Incorrect access code.")
+        return False
+
+    # Step 2: Validate Employee ID + Name against roster
+    client = get_gsheet_client()
+    if not client:
+        st.error("Unable to connect to Google Sheets. Check gcp_service_account secret.")
+        return False
+
+    try:
+        emp_sheet = client.open("AAP New Hire Orientation Progress").worksheet("Employee Roster")
+    except Exception:
+        st.error("Could not open 'Employee Roster' tab.")
+        return False
+
+    try:
+        records = emp_sheet.get_all_records()
+        for row in records:
+            row_id = str(row.get("Employee ID", "")).strip().lower()
+            row_name = str(row.get("Full Name", "")).strip().lower()
+            if row_id == employee_id.strip().lower():
+                if row_name == full_name.strip().lower():
+                    raw_track = str(row.get("Track", "")).strip().lower()
+                    st.session_state["emp_track"] = "warehouse" if raw_track == "warehouse" else "general"
+                    st.session_state["emp_department"] = str(row.get("Department", ""))
+                    st.session_state["emp_position"] = str(row.get("Position", ""))
+                    st.session_state["emp_start_date"] = str(row.get("Start Date", ""))
+                    return True
+                else:
+                    st.error("Employee ID found but name does not match our records.")
+                    return False
+        st.error("Employee ID not found.")
         return False
     except Exception as e:
-        st.error(f"Login error: {e}")
+        st.error(f"Verification error: {e}")
         return False
 
 def inject_css():
@@ -174,18 +214,18 @@ def show_login():
         html('<p style="text-align:center; font-size:1.2rem; font-weight:800; color:#FFFFFF; margin:0 0 4px;">Employee Sign In</p><p style="text-align:center; color:#86868B; font-size:0.86rem; margin:0 0 24px; line-height:1.7;">Use the credentials provided by HR to continue.</p>')
         with st.form("login_form"):
             access_code = st.text_input("Access Code", placeholder="Enter the code HR gave you", type="password")
-            employee_num = st.text_input("Employee #", placeholder="e.g. 10042")
+            employee_id = st.text_input("Employee ID", placeholder="e.g. 10042")
             full_name = st.text_input("Full Name", placeholder="As it appears in your HR paperwork")
             submitted = st.form_submit_button("Sign In", use_container_width=True)
             if submitted:
-                if not access_code or not employee_num or not full_name:
+                if not access_code or not employee_id or not full_name:
                     st.error("Please fill in all three fields to continue.")
                 else:
                     with st.spinner("Verifying credentials..."):
-                        if validate_login(access_code, employee_num, full_name):
+                        if validate_login(access_code, employee_id, full_name):
                             st.session_state["logged_in"] = True
                             st.session_state["emp_name"] = full_name.strip().title()
-                            st.session_state["emp_number"] = employee_num.strip()
+                            st.session_state["emp_number"] = employee_id.strip()
                             st.rerun()
                         else:
                             st.error("Invalid credentials. Please check your access code, employee number, and name.")

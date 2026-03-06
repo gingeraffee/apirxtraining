@@ -439,8 +439,7 @@ def show_login():
                         st.session_state.auth_error = reason
                         st.error(reason)
 
-        st.write("
-        ")
+        st.write("")
         st.caption("Need help? HR · Nicole Thornton · nicole.thornton@apirx.com · 256-574-7528")
 
 

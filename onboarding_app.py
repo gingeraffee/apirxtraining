@@ -186,8 +186,8 @@ render_html("""
         color: rgba(255,255,255,0.72) !important;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
-        background: rgba(177,18,38,0.15) !important;
-        border-color: rgba(177,18,38,0.30) !important;
+        background: rgba(255,255,255,0.10) !important;
+        border-color: rgba(255,255,255,0.20) !important;
         color: #FFFFFF !important;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) p,
@@ -201,9 +201,9 @@ render_html("""
     }
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
     [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
-        background: var(--apple-crimson) !important;
-        border-color: var(--apple-crimson) !important;
-        box-shadow: 0 0 0 3px rgba(177,18,38,0.20) !important;
+        background: #FFFFFF !important;
+        border-color: #FFFFFF !important;
+        box-shadow: 0 0 0 3px rgba(255,255,255,0.15) !important;
     }
 
     /* ── Module Cards ── */

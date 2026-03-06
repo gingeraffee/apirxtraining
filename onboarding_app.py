@@ -135,6 +135,7 @@ render_html("""
         width: 100% !important;
         border: 1px solid transparent !important;
         background: transparent !important;
+        animation: slideInRight 0.35s var(--transition-smooth) both;
     }
     [data-testid="stSidebar"] .stRadio label:hover {
         color: #FFFFFF !important;
@@ -146,9 +147,11 @@ render_html("""
         color: rgba(255,255,255,0.72) !important;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
-        background: rgba(224,90,58,0.12) !important;
-        border-color: rgba(224,90,58,0.3) !important;
+        background: transparent !important;
+        border-color: transparent !important;
         color: #FFFFFF !important;
+        text-shadow: 0 0 10px rgba(255,255,255,0.22), 0 0 20px rgba(224,90,58,0.25) !important;
+        animation: navTextGlow 2.8s ease-in-out infinite;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) p,
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) span {
@@ -161,9 +164,9 @@ render_html("""
     }
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
     [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
-        background: linear-gradient(145deg, var(--accent) 0%, #F97316 100%) !important;
-        border-color: var(--accent) !important;
-        box-shadow: 0 0 0 3px rgba(224,90,58,0.18) !important;
+        background: rgba(255,255,255,0.92) !important;
+        border-color: rgba(255,255,255,0.85) !important;
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.08) !important;
     }
 
     /* ── Typography ── */
@@ -211,6 +214,10 @@ render_html("""
     @keyframes slideInRight {
         from { opacity: 0; transform: translateX(-12px); }
         to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes navTextGlow {
+        0%, 100% { text-shadow: 0 0 8px rgba(255,255,255,0.2), 0 0 16px rgba(224,90,58,0.18); }
+        50% { text-shadow: 0 0 12px rgba(255,255,255,0.35), 0 0 24px rgba(224,90,58,0.28); }
     }
 
     /* ── Post-login Shell ── */
@@ -1137,8 +1144,10 @@ def update_progress(module_key):
     )
     st.session_state.progress[module_key] = pct
 
-    if previous_pct < 100 and pct == 100 and not st.session_state.get("pending_sound"):
-        trigger_sound("lesson_complete")
+    if previous_pct < 100 and pct == 100:
+        st.toast("Module complete! Great work.", icon="✅")
+        if not st.session_state.get("pending_sound"):
+            trigger_sound("lesson_complete")
 
     active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
     overall_pct = int(sum(st.session_state.progress.values()) / max(len(active_modules), 1))
@@ -1146,6 +1155,7 @@ def update_progress(module_key):
     last_bucket = st.session_state.get("last_milestone_bucket", 0)
     if milestone_bucket > last_bucket and milestone_bucket in (1, 2, 3, 4):
         st.session_state.last_milestone_bucket = milestone_bucket
+        st.toast(f"Onboarding progress reached {milestone_bucket * 25}%.", icon="🎯")
         if not st.session_state.get("pending_sound"):
             trigger_sound("milestone")
 
@@ -1460,6 +1470,8 @@ if st.session_state.authenticated:
         new_key = module_keys[nav_options.index(selected_nav)]
         if new_key != st.session_state.selected_module:
             st.session_state.selected_module = new_key
+            nav_label = "Home" if new_key is None else next((m["title"] for m in active_modules if m["key"] == new_key), "Module")
+            st.toast(f"Navigated to {nav_label}", icon="📍")
             st.rerun()
 
         st.markdown("---")

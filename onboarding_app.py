@@ -869,6 +869,96 @@ render_html("""
         box-shadow: 0 0 0 3px rgba(177,18,38,0.08) !important;
     }
 
+    /* ── Global Glass Surface Overrides ── */
+    div[data-testid="stVerticalBlock"] > div:has(> .content-section),
+    div[data-testid="stVerticalBlock"] > div:has(> .module-shell),
+    div[data-testid="stVerticalBlock"] > div:has(> .module-card-premium),
+    div[data-testid="stVerticalBlock"] > div:has(> .resource-card) {
+        margin-bottom: 8px;
+    }
+
+    .module-page-hero,
+    .premium-hero,
+    .welcome-banner {
+        background: rgba(10,10,11,0.9) !important;
+        backdrop-filter: blur(20px) saturate(135%);
+        -webkit-backdrop-filter: blur(20px) saturate(135%);
+        border: 1px solid rgba(255,255,255,0.14) !important;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.05) !important;
+    }
+
+    .module-shell,
+    .content-section,
+    .resource-card,
+    .module-card-premium,
+    .premium-stat,
+    .module-card,
+    [data-testid="stForm"] {
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255,255,255,0.18) !important;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.05) !important;
+    }
+
+    /* ── Login Hero Composition ── */
+    .login-hero-shell {
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.16);
+        border-radius: 32px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+        padding: 40px;
+        margin-top: 16px;
+    }
+
+    .login-hero-title {
+        margin: 0;
+        color: var(--apple-gray-100);
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+    }
+
+    .login-hero-subtitle {
+        margin-top: 12px;
+        color: var(--apple-gray-300);
+        line-height: 1.7;
+        font-size: 0.98rem;
+        font-weight: 300;
+    }
+
+    .login-feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .login-feature-tile {
+        border-radius: 14px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.12);
+        color: var(--apple-gray-300);
+        font-size: 0.82rem;
+        line-height: 1.7;
+        font-weight: 400;
+        padding: 12px 14px;
+        transition: var(--apple-transition);
+    }
+
+    .login-feature-tile:hover {
+        transform: translateY(-2px);
+        border-color: rgba(177,18,38,0.35);
+    }
+
+    @media (max-width: 900px) {
+        .login-hero-shell { padding: 24px; }
+        .login-feature-grid { grid-template-columns: 1fr; }
+    }
+
 </style>
 """)
 
@@ -1231,89 +1321,78 @@ def show_login():
 
     _login_logo_src = _logo_img_src()
 
-    outer_l, outer_m, outer_r = st.columns([0.5, 2, 0.5])
+    outer_l, outer_m, outer_r = st.columns([1, 2.4, 1])
     with outer_m:
-        # Logo
         render_html(f"""
-        <div style="text-align:center; margin-bottom:40px;">
-            <img src="{_login_logo_src}" alt="AAP / API Logo"
-                 style="height:80px; max-width:280px; object-fit:contain;
-                        filter: brightness(1.1);">
+        <div class="login-hero-shell">
+            <div style="text-align:center; margin-bottom:24px;">
+                <img src="{_login_logo_src}" alt="AAP / API Logo"
+                     style="height:80px; max-width:280px; object-fit:contain; filter:brightness(1.1);">
+            </div>
+            <div class="lp-kicker">New Hire Orientation</div>
+            <h1 class="login-hero-title">Private onboarding access for AAP team members.</h1>
+            <p class="login-hero-subtitle">
+                This secure portal verifies your identity and unlocks your personalized learning track.
+                Complete sign in to enter your orientation workspace.
+            </p>
+            <div class="login-feature-grid">
+                <div class="login-feature-tile">Secure employee credential verification</div>
+                <div class="login-feature-tile">Role-based learning path assignment</div>
+                <div class="login-feature-tile">Live progress sync and tracking</div>
+            </div>
         </div>
         """)
 
-        # Two-panel layout: dark info card left, white form card right
-        panel_l, panel_r = st.columns([1.1, 1], gap="large")
-
-        with panel_l:
+        with st.form("login_form", clear_on_submit=False):
             render_html("""
-            <div class="lp-info-card">
-                <div class="lp-kicker">New Hire Orientation</div>
-                <h2 class="lp-headline">Welcome to your<br>orientation hub.</h2>
-                <div class="lp-divider"></div>
-                <p class="lp-body">
-                    Begin your journey with a secure, guided onboarding experience.
-                    Sign in to access your personalized modules and track your progress in real time.
-                </p>
-                <ul class="lp-features">
-                    <li><span style="font-size:1rem;">&#9679;</span> Secure employee credential verification</li>
-                    <li><span style="font-size:1rem;">&#9679;</span> Role-based learning path assignment</li>
-                    <li><span style="font-size:1rem;">&#9679;</span> Live progress sync and tracking</li>
-                </ul>
-            </div>
+            <p style="font-size:1.2rem; font-weight:800; color:#0A0A0B; margin:0 0 4px 0; letter-spacing:-0.025em;">
+                Employee Sign In
+            </p>
+            <p style="color:#86868B; font-size:0.86rem; margin:0 0 24px 0; line-height:1.7; font-weight:300;">
+                Use the details provided by HR to continue.
+            </p>
             """)
 
-        with panel_r:
-            with st.form("login_form", clear_on_submit=False):
-                render_html("""
-                <p style="font-size:1.2rem; font-weight:800; color:#0A0A0B; margin:0 0 4px 0; letter-spacing:-0.025em;">
-                    Employee Sign In
-                </p>
-                <p style="color:#86868B; font-size:0.86rem; margin:0 0 24px 0; line-height:1.7;">
-                    Use the details provided by HR to continue.
-                </p>
-                """)
+            access_code = st.text_input(
+                "Access Code",
+                placeholder="Enter the code HR gave you",
+                type="password",
+            )
+            employee_id = st.text_input(
+                "Employee ID",
+                placeholder="e.g. 10042",
+            )
+            full_name = st.text_input(
+                "Full Name",
+                placeholder="As it appears in your HR paperwork",
+            )
+            render_html("<div style='margin-top:8px;'></div>")
+            submitted = st.form_submit_button("Sign In  →", use_container_width=True)
 
-                access_code = st.text_input(
-                    "Access Code",
-                    placeholder="Enter the code HR gave you",
-                    type="password",
-                )
-                employee_id = st.text_input(
-                    "Employee ID",
-                    placeholder="e.g. 10042",
-                )
-                full_name = st.text_input(
-                    "Full Name",
-                    placeholder="As it appears in your HR paperwork",
-                )
-                render_html("<div style='margin-top:6px;'></div>")
-                submitted = st.form_submit_button("Sign In  →", use_container_width=True)
-
-                if submitted:
-                    if not access_code or not employee_id or not full_name:
-                        st.error("Please fill in all three fields to continue.")
-                    else:
-                        with st.spinner("Verifying your credentials…"):
-                            ok, track, reason = verify_employee(access_code, employee_id, full_name)
-                        if ok:
-                            if track == "warehouse":
-                                prog_keys = {m["key"]: 0 for m in WAREHOUSE_MODULES}
-                                chk_keys  = {m["key"]: {} for m in WAREHOUSE_MODULES}
-                            else:
-                                prog_keys = {m["key"]: 0 for m in MODULES}
-                                chk_keys  = {m["key"]: {} for m in MODULES}
-                            st.session_state.authenticated   = True
-                            st.session_state.username        = full_name.strip()
-                            st.session_state.employee_id     = employee_id.strip()
-                            st.session_state.role_track      = track
-                            st.session_state.progress        = prog_keys
-                            st.session_state.checklist_items = chk_keys
-                            st.session_state.quiz_results    = {}
-                            st.session_state.sheet_loaded    = False
-                            st.rerun()
+            if submitted:
+                if not access_code or not employee_id or not full_name:
+                    st.error("Please fill in all three fields to continue.")
+                else:
+                    with st.spinner("Verifying your credentials…"):
+                        ok, track, reason = verify_employee(access_code, employee_id, full_name)
+                    if ok:
+                        if track == "warehouse":
+                            prog_keys = {m["key"]: 0 for m in WAREHOUSE_MODULES}
+                            chk_keys  = {m["key"]: {} for m in WAREHOUSE_MODULES}
                         else:
-                            st.error(f"❌ {reason}")
+                            prog_keys = {m["key"]: 0 for m in MODULES}
+                            chk_keys  = {m["key"]: {} for m in MODULES}
+                        st.session_state.authenticated   = True
+                        st.session_state.username        = full_name.strip()
+                        st.session_state.employee_id     = employee_id.strip()
+                        st.session_state.role_track      = track
+                        st.session_state.progress        = prog_keys
+                        st.session_state.checklist_items = chk_keys
+                        st.session_state.quiz_results    = {}
+                        st.session_state.sheet_loaded    = False
+                        st.rerun()
+                    else:
+                        st.error(f"❌ {reason}")
 
         # Footer
         render_html("""

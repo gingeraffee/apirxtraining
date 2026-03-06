@@ -1714,7 +1714,7 @@ def render_checklist(module_key, items):
 def module_welcome():
     st.markdown(f"""
     <div class="section-header">
-        <h2>🏢 Welcome to AAP</h2>
+        <h2>Welcome to AAP</h2>
         <p>Company History, Mission, Vision & Guiding Principles</p>
     </div>
     """, unsafe_allow_html=True)

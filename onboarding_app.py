@@ -137,9 +137,14 @@ st.markdown("""
         color: rgba(230,240,255,0.94) !important;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
-        background: linear-gradient(152deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 100%) !important;
-        border-color: rgba(147,197,253,0.58) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.26), 0 14px 26px rgba(2,8,23,0.40), 0 0 0 1px rgba(147,197,253,0.36), 0 0 20px rgba(96,165,250,0.42), 0 0 36px rgba(59,130,246,0.26) !important;
+        background: linear-gradient(152deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%) !important;
+        border-color: rgba(147,197,253,0.62) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 12px 22px rgba(2,8,23,0.40), 0 0 0 1px rgba(147,197,253,0.38), 0 0 16px rgba(125,211,252,0.44), 0 0 28px rgba(59,130,246,0.24) !important;
+    }
+    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) p,
+    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) span {
+        background: transparent !important;
+        text-shadow: 0 0 9px rgba(186,230,253,0.30) !important;
     }
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] > div:first-child {
         background: rgba(255,255,255,0.06) !important;

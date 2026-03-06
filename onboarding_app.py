@@ -1210,7 +1210,7 @@ def inject_css():
     """, unsafe_allow_html=True)
 
     inject_css()
-        render_html("<div style='padding-top:48px'></div>")
+    render_html("<div style='padding-top:48px'></div>")
 
 
 # ═══════════════════════════════════════════════

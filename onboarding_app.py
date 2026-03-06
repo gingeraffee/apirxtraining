@@ -39,7 +39,20 @@ st.markdown("""
 
     /* ── Base ── */
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-    .stApp { background-color: #EEF2F7; }
+    :root {
+        --premium-bg-ink: #050B18;
+        --premium-shell-radius: 24px;
+        --premium-card-radius: 18px;
+        --premium-border: 1px solid #DEE7F1;
+        --premium-shadow-soft: 0 14px 30px rgba(9,23,42,0.08);
+        --premium-shadow-hover: 0 24px 44px rgba(9,23,42,0.13);
+    }
+    .stApp {
+        background:
+            radial-gradient(130% 85% at 12% -8%, rgba(30,58,138,0.14) 0%, transparent 48%),
+            radial-gradient(120% 92% at 102% 0%, rgba(204,41,54,0.12) 0%, transparent 44%),
+            linear-gradient(180deg, #081224 0%, #0D1B34 16%, #EAF0F8 43%, #E8EEF7 100%);
+    }
 
     /* ── Sidebar Container (Cinematic Glass / Apple-inspired) ── */
     [data-testid="stSidebar"] {
@@ -124,9 +137,9 @@ st.markdown("""
         color: rgba(230,240,255,0.94) !important;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
-        background: linear-gradient(145deg, rgba(191,219,254,0.30) 0%, rgba(147,197,253,0.16) 100%) !important;
-        border-color: rgba(191,219,254,0.46) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.32), 0 16px 30px rgba(2,8,23,0.45), 0 0 0 1px rgba(191,219,254,0.32) !important;
+        background: linear-gradient(152deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 100%) !important;
+        border-color: rgba(147,197,253,0.58) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.26), 0 14px 26px rgba(2,8,23,0.40), 0 0 0 1px rgba(147,197,253,0.36), 0 0 20px rgba(96,165,250,0.42), 0 0 36px rgba(59,130,246,0.26) !important;
     }
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] > div:first-child {
         background: rgba(255,255,255,0.06) !important;
@@ -174,11 +187,62 @@ st.markdown("""
         background: radial-gradient(120% 180% at 0% 0%, rgba(30,58,138,0.10) 0%, transparent 40%),
                     radial-gradient(120% 180% at 100% 0%, rgba(204,41,54,0.12) 0%, transparent 42%),
                     linear-gradient(170deg, #F9FBFF 0%, #F1F5FB 48%, #E9F0F8 100%);
-        border-radius: 24px;
+        border-radius: var(--premium-shell-radius);
         border: 1px solid rgba(10,22,40,0.07);
         padding: 24px;
         box-shadow: 0 30px 70px rgba(9,23,42,0.10);
         margin-bottom: 22px;
+    }
+    .module-shell {
+        background: linear-gradient(165deg, rgba(255,255,255,0.97) 0%, rgba(244,248,253,0.94) 100%);
+        border-radius: var(--premium-shell-radius);
+        border: 1px solid rgba(10,22,40,0.09);
+        box-shadow: 0 28px 66px rgba(6,14,30,0.16);
+        padding: 24px;
+        margin-bottom: 18px;
+    }
+    .module-page-hero {
+        background: linear-gradient(130deg, #050D1E 0%, #0B1A31 54%, #163156 100%);
+        border-radius: 18px;
+        padding: 24px 26px;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 40px rgba(5,13,30,0.42);
+        margin-bottom: 16px;
+        position: relative;
+        overflow: hidden;
+    }
+    .module-page-hero::after {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        right: -120px;
+        top: -170px;
+        background: radial-gradient(circle, rgba(125,211,252,0.20) 0%, transparent 72%);
+    }
+    .module-page-title {
+        color: #F8FAFC;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.58rem;
+        margin: 3px 0 8px;
+        position: relative;
+        z-index: 1;
+    }
+    .module-page-sub {
+        color: #CCDAEF;
+        font-size: 0.9rem;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        max-width: 920px;
+    }
+    .module-meta-row {
+        margin-top: 11px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        position: relative;
+        z-index: 1;
     }
     .premium-hero {
         background: linear-gradient(130deg, #050D1E 0%, #0B1A31 52%, #142D4E 100%);
@@ -236,16 +300,16 @@ st.markdown("""
 
     .module-card-premium {
         background: linear-gradient(148deg, rgba(255,255,255,0.96) 0%, rgba(247,250,253,0.90) 100%);
-        border-radius: 18px;
-        border: 1px solid #DEE7F1;
+        border-radius: var(--premium-card-radius);
+        border: var(--premium-border);
         padding: 18px 18px 16px;
         margin-bottom: 14px;
-        box-shadow: 0 16px 36px rgba(9,23,42,0.08);
+        box-shadow: var(--premium-shadow-soft);
         transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     }
     .module-card-premium:hover {
         transform: translateY(-4px);
-        box-shadow: 0 24px 44px rgba(9,23,42,0.13);
+        box-shadow: var(--premium-shadow-hover);
         border-color: rgba(30,58,138,0.35);
     }
     .module-topline { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
@@ -297,45 +361,47 @@ st.markdown("""
     .stButton > button[kind="primary"],
     .stButton > button[kind="primary"][data-testid],
     [data-testid="stBaseButton-primary"] {
-        background-color: #0A1628 !important;
+        background: linear-gradient(135deg, #09152A 0%, #1E3A8A 54%, #CC2936 100%) !important;
         color: white !important;
-        border: none !important;
-        border-radius: 8px !important;
-        padding: 8px 20px !important;
-        font-weight: 500 !important;
-        letter-spacing: 0.02em !important;
-        transition: background 0.2s ease !important;
+        border: 1px solid rgba(30,58,138,0.34) !important;
+        border-radius: 12px !important;
+        padding: 8px 18px !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.03em !important;
+        transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+        box-shadow: 0 8px 20px rgba(30,58,138,0.24) !important;
     }
     .stButton > button[kind="primary"]:hover,
     [data-testid="stBaseButton-primary"]:hover {
-        background-color: #CC2936 !important;
+        filter: brightness(1.07) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 14px 26px rgba(30,58,138,0.34) !important;
+    }
+    .stButton > button:focus-visible {
+        outline: 2px solid rgba(30,58,138,0.42) !important;
+        outline-offset: 2px !important;
     }
 
-    /* ── Secondary Buttons — red underline link ── */
+    /* ── Secondary Buttons — premium quiet action ── */
     .stButton > button[kind="secondary"],
     [data-testid="stBaseButton-secondary"] {
-        background: none !important;
-        border: none !important;
-        color: #CC2936 !important;
-        font-size: 0.8rem !important;
+        background: linear-gradient(165deg, rgba(255,255,255,0.95) 0%, rgba(244,248,253,0.92) 100%) !important;
+        border: 1px solid rgba(30,58,138,0.24) !important;
+        color: #0A1628 !important;
+        font-size: 0.78rem !important;
         font-weight: 700 !important;
-        padding: 0 4px !important;
-        height: auto !important;
-        min-height: 0 !important;
-        box-shadow: none !important;
-        text-decoration: underline !important;
-        text-underline-offset: 3px !important;
-        letter-spacing: 0.06em !important;
+        padding: 0.36rem 0.8rem !important;
+        box-shadow: 0 6px 14px rgba(9,23,42,0.12) !important;
+        letter-spacing: 0.08em !important;
         text-transform: uppercase !important;
-        transition: color 0.2s ease, text-shadow 0.2s ease, transform 0.2s ease !important;
+        border-radius: 10px !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
     }
     .stButton > button[kind="secondary"]:hover,
     [data-testid="stBaseButton-secondary"]:hover {
-        background: none !important;
-        color: #1E3A8A !important;
-        text-shadow: 0 0 10px rgba(30,58,138,0.32) !important;
-        box-shadow: none !important;
-        transform: translateX(2px) !important;
+        border-color: rgba(30,58,138,0.46) !important;
+        box-shadow: 0 12px 22px rgba(9,23,42,0.16) !important;
+        transform: translateY(-1px) !important;
     }
 
     /* ── Badges ── */
@@ -372,18 +438,18 @@ st.markdown("""
 
     /* ── Resource Library ── */
     .resource-card {
-        background: white;
-        border-radius: 8px;
+        background: linear-gradient(155deg, #FFFFFF 0%, #F8FBFF 100%);
+        border-radius: 14px;
         padding: 13px 16px;
         margin-bottom: 7px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-        border-left: 3px solid transparent;
+        box-shadow: var(--premium-shadow-soft);
+        border: var(--premium-border);
         transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
     }
     .resource-card:hover {
-        border-left-color: #0A1628;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.10);
-        transform: translateX(3px);
+        border-color: rgba(30,58,138,0.34);
+        box-shadow: var(--premium-shadow-hover);
+        transform: translateY(-2px);
     }
     .resource-id {
         display: inline-block;
@@ -503,11 +569,11 @@ st.markdown("""
     /* Content sections used heavily in onboarding */
     .content-section {
         background: linear-gradient(155deg, #FFFFFF 0%, #F8FBFF 100%);
-        border-radius: 14px;
+        border-radius: var(--premium-card-radius);
         padding: 24px 28px;
         margin: 18px 0;
-        box-shadow: 0 12px 26px rgba(9,23,42,0.08);
-        border: 1px solid #DFE8F3;
+        box-shadow: var(--premium-shadow-soft);
+        border: var(--premium-border);
         border-top: 3px solid #CC2936;
     }
     .content-section h2 {
@@ -954,6 +1020,32 @@ def update_progress(module_key):
             st.session_state.username,
             module_key, pct, items, score,
         )
+
+def render_module_shell_start(module_key):
+    is_warehouse = st.session_state.get("role_track") == "warehouse"
+    active_modules = WAREHOUSE_MODULES if is_warehouse else MODULES
+    module = next((m for m in active_modules if m["key"] == module_key), None)
+    if not module:
+        return
+
+    pct = st.session_state.progress.get(module_key, 0)
+    status = "Complete" if pct == 100 else "In Progress" if pct > 0 else "Queued"
+    st.markdown('<div class="module-shell">', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="module-page-hero">
+        <span class="premium-kicker">Training Module</span>
+        <h1 class="module-page-title">{module['icon']} Module {module['number']}: {module['title']}</h1>
+        <p class="module-page-sub">{module['subtitle']}</p>
+        <div class="module-meta-row">
+            <span class="elite-chip">Completion · {pct}%</span>
+            <span class="elite-chip">Status · {status}</span>
+            <span class="elite-chip">Secure Learning Environment</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+def render_module_shell_end():
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  LOGIN SCREEN
@@ -3222,6 +3314,8 @@ else:
 
     selected = st.session_state.selected_module
     if selected and selected in module_map:
+        render_module_shell_start(selected)
         module_map[selected]()
+        render_module_shell_end()
     else:
         show_home()

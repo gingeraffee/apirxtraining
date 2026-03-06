@@ -39,58 +39,47 @@ st.markdown("""
 
     /* ── Base ── */
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-    .stApp { background-color: #0B1220; }
+    .stApp { background-color: #EEF2F7; }
 
     /* ── Sidebar Container ── */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #060E1E 0%, #0A1628 55%, #0F1E35 100%);
-        border-right: 1px solid rgba(255,255,255,0.07);
-        box-shadow: 4px 0 32px rgba(6,14,30,0.6);
+        background: linear-gradient(180deg, #0A1628 0%, #12213A 50%, #1B3A5C 100%);
+        border-right: 2px solid #CC2936;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.4);
     }
 
-    /* ── Sidebar Header — dark glass card ── */
+    /* ── Sidebar Header — bright white card so logo stands out ── */
     .sidebar-header {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.09);
-        border-radius: 14px;
+        background: #FFFFFF;
+        border-radius: 12px;
         padding: 16px 14px 14px 14px;
         margin-bottom: 18px;
-        box-shadow: 0 4px 16px rgba(6,14,30,0.3), inset 0 1px 0 rgba(255,255,255,0.07);
+        box-shadow: 0 3px 12px rgba(0,0,0,0.25);
     }
-    .sidebar-header .sidebar-label {
-        font-size: 0.6rem;
-        font-weight: 700;
-        letter-spacing: 0.18em;
-        color: #475569;
-        text-transform: uppercase;
-        margin-bottom: 6px;
-    }
+    .sidebar-header * { color: #0A1628 !important; }
     .sidebar-header .sidebar-username {
-        font-size: 0.93rem;
-        font-weight: 600;
-        color: #F87171 !important;
-        letter-spacing: 0.02em;
+        color: #CC2936 !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.02em !important;
     }
 
     /* ── Sidebar Radio Navigation ── */
     [data-testid="stSidebar"] .stRadio > div { gap: 2px !important; }
     [data-testid="stSidebar"] .stRadio label {
-        color: rgba(255,255,255,0.75) !important;
-        border-radius: 9px !important;
-        padding: 7px 11px !important;
-        transition: background 0.15s ease, color 0.15s ease !important;
-        font-size: 0.87rem !important;
+        color: rgba(255,255,255,0.88) !important;
+        border-radius: 8px !important;
+        padding: 6px 10px !important;
+        transition: background 0.15s ease !important;
+        font-size: 0.88rem !important;
         width: 100% !important;
-        border-left: 2px solid transparent !important;
     }
     [data-testid="stSidebar"] .stRadio label:hover {
-        background: rgba(255,255,255,0.07) !important;
-        border-left-color: #CC2936 !important;
+        background: rgba(204,41,54,0.18) !important;
         color: #FFFFFF !important;
     }
     [data-testid="stSidebar"] .stRadio p,
     [data-testid="stSidebar"] .stRadio span {
-        color: rgba(255,255,255,0.75) !important;
+        color: rgba(255,255,255,0.88) !important;
     }
     /* Red dot for selected radio option */
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
@@ -100,59 +89,33 @@ st.markdown("""
     }
 
     /* ── Typography ── */
-    h1, h2, h3 { font-family: 'Playfair Display', serif !important; color: #FFFFFF !important; }
-    p, li, span, div { color: #94A3B8; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif !important; color: #0A1628 !important; }
     .page-title {
         font-family: 'Playfair Display', serif;
         font-size: 2.2rem;
         font-weight: 700;
-        color: #FFFFFF;
-        border-bottom: 2px solid rgba(204,41,54,0.6);
+        color: #0A1628;
+        border-bottom: 3px solid #CC2936;
         padding-bottom: 12px;
         margin-bottom: 8px;
     }
-    .page-subtitle { color: #94A3B8; font-size: 1.05rem; margin-bottom: 28px; font-weight: 400; }
+    .page-subtitle { color: #5A6E8A; font-size: 1.05rem; margin-bottom: 28px; font-weight: 400; }
 
     /* ── Module Cards ── */
     .module-card {
-        background: linear-gradient(145deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 16px;
-        padding: 22px 26px;
-        margin-bottom: 14px;
-        border-left: 4px solid #CC2936;
-        box-shadow: 0 4px 20px rgba(6,14,30,0.3);
-        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        background: white;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 16px;
+        border-left: 5px solid #CC2936;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .module-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 32px rgba(6,14,30,0.45);
-        border-color: rgba(255,255,255,0.13);
-        border-left-color: #F87171;
-    }
-    .module-card h3 { color: #FFFFFF !important; font-size: 1rem !important; margin: 6px 0 6px !important; }
-    .module-card p { color: #94A3B8 !important; font-size: 0.88rem !important; margin: 0 !important; }
-    .module-card.complete {
-        border-left-color: #1A9E5C;
-        background: linear-gradient(145deg, rgba(26,158,92,0.09), rgba(26,158,92,0.03));
-        border-color: rgba(26,158,92,0.2);
-    }
+    .module-card:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,0.11); }
+    .module-card.complete { border-left-color: #1A9E5C; background: #F0FFF6; }
 
     /* ── Progress Bars ── */
     .stProgress > div > div { background-color: #CC2936 !important; }
-    .progress-container {
-        background: rgba(255,255,255,0.08);
-        border-radius: 4px;
-        height: 5px;
-        margin: 6px 0 3px;
-        overflow: hidden;
-    }
-    .progress-fill {
-        background: linear-gradient(90deg, #CC2936, #1E3A8A);
-        height: 100%;
-        border-radius: 4px;
-        transition: width 0.4s ease;
-    }
 
     /* ── Primary Buttons — deep navy, red on hover ── */
     .stButton > button[kind="primary"],
@@ -211,77 +174,40 @@ st.markdown("""
 
     /* ── Welcome Banner ── */
     .welcome-banner {
-        background: linear-gradient(155deg, #060E1E 0%, #0A1628 45%, #112038 100%);
-        border-radius: 22px;
-        padding: 38px 40px;
+        background: linear-gradient(135deg, #0A1628 0%, #1B3A5C 100%);
+        border-radius: 16px;
+        padding: 32px 36px;
         margin-bottom: 28px;
-        border: 1px solid rgba(255,255,255,0.07);
-        box-shadow: 0 20px 56px rgba(6,14,30,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
-        position: relative;
-        overflow: hidden;
+        border-left: 6px solid #CC2936;
     }
-    .welcome-banner::before {
-        content: "";
-        position: absolute;
-        top: -80px; right: -60px;
-        width: 260px; height: 260px;
-        background: radial-gradient(circle, rgba(204,41,54,0.2) 0%, transparent 70%);
-        pointer-events: none;
-    }
-    .welcome-banner::after {
-        content: "";
-        position: absolute;
-        bottom: -100px; left: -50px;
-        width: 240px; height: 240px;
-        background: radial-gradient(circle, rgba(30,58,138,0.25) 0%, transparent 70%);
-        pointer-events: none;
-    }
-    .welcome-banner h1 {
-        color: #FFFFFF !important;
-        font-family: 'Playfair Display', serif !important;
-        font-size: 2rem !important;
-        margin-bottom: 10px !important;
-        position: relative;
-        z-index: 1;
-    }
-    .welcome-banner p { color: #94A3B8 !important; font-size: 1rem !important; position: relative; z-index: 1; }
+    .welcome-banner h1 { color: white !important; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 8px; }
+    .welcome-banner p { color: #B0C4D8; font-size: 1.05rem; }
 
     /* ── Callout ── */
-    .callout {
-        background: rgba(204,41,54,0.1);
-        border-left: 4px solid #CC2936;
-        border-radius: 0 10px 10px 0;
-        padding: 14px 18px;
-        margin: 16px 0;
-        color: #FECACA;
-    }
+    .callout { background: #FEF2F3; border-left: 4px solid #CC2936; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; color: #6B0E16; }
 
     /* ── Dividers ── */
-    hr { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 24px 0; }
+    hr { border: none; border-top: 1px solid #D8E1EB; margin: 24px 0; }
 
     /* ── Resource Library ── */
     .resource-card {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.07);
-        border-radius: 10px;
+        background: white;
+        border-radius: 8px;
         padding: 13px 16px;
         margin-bottom: 7px;
-        box-shadow: 0 2px 8px rgba(6,14,30,0.2);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.06);
         border-left: 3px solid transparent;
-        transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease, background 0.15s ease;
-        color: #CBD5E1;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
     }
     .resource-card:hover {
-        border-left-color: #CC2936;
-        box-shadow: 0 6px 20px rgba(6,14,30,0.4);
+        border-left-color: #0A1628;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.10);
         transform: translateX(3px);
-        background: rgba(255,255,255,0.07);
     }
     .resource-id {
         display: inline-block;
-        background: rgba(30,58,138,0.6);
-        border: 1px solid rgba(30,58,138,0.8);
-        color: #93C5FD;
+        background: #0A1628;
+        color: white;
         font-size: 0.68rem;
         font-weight: 700;
         padding: 3px 8px;
@@ -293,37 +219,98 @@ st.markdown("""
         text-align: center;
         flex-shrink: 0;
     }
-    /* ── Metric Widgets ── */
-    [data-testid=”stMetric”] {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 14px;
-        padding: 16px 20px;
-        box-shadow: 0 4px 16px rgba(6,14,30,0.25);
+    /* ─────────────────────────────────────────────────────────────
+       Mobile + Dark Mode Compatibility Patch
+       (keeps desktop exactly the same)
+       ───────────────────────────────────────────────────────────── */
+    @media (max-width: 768px) and (prefers-color-scheme: dark) {
+
+      /* App background + default text */
+      div[data-testid="stAppViewContainer"],
+      section.main,
+      .stApp {
+        background: #0B1220 !important;
+        color: #F9FAFB !important;
+      }
+
+      /* Streamlit markdown text */
+      div[data-testid="stMarkdownContainer"],
+      div[data-testid="stMarkdownContainer"] p,
+      div[data-testid="stMarkdownContainer"] li,
+      div[data-testid="stMarkdownContainer"] span,
+      div[data-testid="stMarkdownContainer"] div {
+        color: #F9FAFB !important;
+      }
+
+      /* Your custom headings/subtitles (you use these a lot) */
+      .page-title,
+      .page-subtitle {
+        color: #F9FAFB !important;
+      }
+
+      /* Cards you set to white in light mode */
+      .resource-card,
+      .module-card,
+      .welcome-banner + div,
+      div[style*="background:white"],
+      div[style*="background: white"] {
+        background: #111827 !important;
+        border-color: rgba(255,255,255,0.10) !important;
+      }
+
+      /* Override your common “dark ink” inline colors */
+      div[style*="color:#0A1628"],
+      div[style*="color: #0A1628"],
+      span[style*="color:#0A1628"],
+      span[style*="color: #0A1628"] {
+        color: #F9FAFB !important;
+      }
+
+      /* Override your muted slate inline color */
+      div[style*="color:#5A6E8A"],
+      div[style*="color: #5A6E8A"],
+      span[style*="color:#5A6E8A"],
+      span[style*="color: #5A6E8A"] {
+        color: #CBD5E1 !important;
+      }
+
+      /* Inputs (you also set these explicitly on Downloads page) */
+      div[data-testid="stTextInput"] input {
+        background: #0F172A !important;
+        color: #F9FAFB !important;
+        border-color: rgba(255,255,255,0.18) !important;
+      }
+      div[data-testid="stTextInput"] input::placeholder {
+        color: rgba(255,255,255,0.55) !important;
+      }
+
+      /* Tables you render with dark headers + light bodies */
+      table, td, th {
+        color: #E5E7EB !important;
+        border-color: rgba(255,255,255,0.12) !important;
+      }
     }
-    [data-testid=”stMetricLabel”] p { color: #64748B !important; font-size: 0.75rem !important; font-weight: 700 !important; text-transform: uppercase !important; letter-spacing: 0.09em !important; }
-    [data-testid=”stMetricValue”] { color: #FFFFFF !important; font-size: 1.8rem !important; font-weight: 700 !important; }
 
     /* ── Onboarding App Compatibility: map onboarding classes to Training App look ── */
 
-    /* Sidebar buttons */
+    /* Sidebar buttons — modern, minimal navigation look */
     [data-testid="stSidebar"] .stButton > button {
         width: 100% !important;
-        background: transparent !important;
+        background: rgba(255,255,255,0.04) !important;
         border: 0 !important;
         border-left: 2px solid transparent !important;
-        color: rgba(255,255,255,0.65) !important;
+        color: rgba(255,255,255,0.92) !important;
         text-align: left !important;
         padding: 9px 12px !important;
-        border-radius: 8px !important;
+        border-radius: 6px !important;
         margin: 2px 0 !important;
-        font-size: 0.87rem !important;
+        font-size: 0.9rem !important;
         font-weight: 500 !important;
         box-shadow: none !important;
-        transition: background 0.15s ease, border-left-color 0.15s ease, color 0.15s ease !important;
+        transition: background-color 0.18s ease, border-left-color 0.18s ease, color 0.18s ease !important;
     }
     [data-testid="stSidebar"] .stButton > button:hover {
-        background: rgba(255,255,255,0.07) !important;
+        background: rgba(255,255,255,0.10) !important;
         border-left-color: #CC2936 !important;
         color: #FFFFFF !important;
         transform: none !important;
@@ -331,97 +318,84 @@ st.markdown("""
 
     [data-testid="stSidebar"] .stButton > button[kind="primary"],
     [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
-        background: linear-gradient(135deg, #CC2936 0%, #9B1D28 100%) !important;
+        background: linear-gradient(135deg, #CC2936 0%, #A01E27 100%) !important;
         color: #FFFFFF !important;
-        border-radius: 10px !important;
+        border-radius: 8px !important;
         border: none !important;
         text-align: center !important;
         font-weight: 600 !important;
         margin: 6px 0 !important;
-        box-shadow: 0 4px 14px rgba(204,41,54,0.3) !important;
     }
     [data-testid="stSidebar"] .stButton > button[kind="primary"]:hover,
     [data-testid="stSidebar"] [data-testid="stBaseButton-primary"]:hover {
         background: linear-gradient(135deg, #D93A46 0%, #B32630 100%) !important;
         border-left-color: transparent !important;
-        box-shadow: 0 6px 20px rgba(204,41,54,0.4) !important;
     }
 
     /* Content sections used heavily in onboarding */
     .content-section {
-        background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 18px;
-        padding: 26px 30px;
+        background: #FFFFFF;
+        border-radius: 12px;
+        padding: 24px 28px;
         margin: 18px 0;
-        box-shadow: 0 6px 24px rgba(6,14,30,0.3);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
         border-top: 3px solid #CC2936;
     }
     .content-section h2 {
-        font-family: 'Playfair Display', serif !important;
-        color: #FFFFFF !important;
-        font-size: 1.7rem !important;
-        font-weight: 700 !important;
-        margin: 0 0 14px 0 !important;
-        border-bottom: 1px solid rgba(255,255,255,0.1) !important;
-        padding-bottom: 10px !important;
+        font-family: 'Playfair Display', serif;
+        color: #0A1628 !important;
+        font-size: 1.7rem;
+        font-weight: 700;
+        margin: 0 0 14px 0;
+        border-bottom: 2px solid #D8E1EB;
+        padding-bottom: 10px;
     }
     .content-section h3 {
-        color: #F87171 !important;
+        color: #CC2936 !important;
         text-transform: uppercase;
-        letter-spacing: 0.07em;
-        font-size: 0.78rem !important;
-        font-weight: 700 !important;
-        margin: 18px 0 8px 0 !important;
+        letter-spacing: 0.06em;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin: 18px 0 8px 0;
     }
-    .content-section p, .content-section li { color: #CBD5E1 !important; line-height: 1.72; }
 
-    /* Info boxes */
+    /* Info boxes (onboarding) → training callout vibe */
     .info-box {
-        background: rgba(204,41,54,0.09);
+        background: #FFF5F5;
         border-left: 4px solid #CC2936;
         border-radius: 8px;
         padding: 14px 16px;
         margin: 16px 0;
-        color: #FECACA !important;
+        color: #0A1628 !important;
     }
-    .info-box.green {
-        background: rgba(26,158,92,0.09);
-        border-left-color: #1A9E5C;
-        color: #6EE7B7 !important;
-    }
-    .info-box.yellow {
-        background: rgba(217,119,6,0.1);
-        border-left-color: #D97706;
-        color: #FDE68A !important;
-    }
+    .info-box.green { background: #F0FFF6; border-left-color: #1A9E5C; }
+    .info-box.yellow { background: #FFF7ED; border-left-color: #D97706; }
 
-    /* Tables */
+    /* Tables (onboarding styled-table) aligned to training palette */
     .styled-table {
         width: 100%;
         border-collapse: collapse;
         font-size: 0.92rem;
         margin: 14px 0;
-        border-radius: 12px;
+        border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0 4px 16px rgba(6,14,30,0.3);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
     }
     .styled-table th {
-        background: rgba(255,255,255,0.07);
-        color: #CBD5E1;
+        background: #0A1628;
+        color: #FFFFFF;
         padding: 12px 14px;
         text-align: left;
         font-weight: 600;
-        letter-spacing: 0.03em;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
+        letter-spacing: 0.02em;
     }
     .styled-table td {
         padding: 11px 14px;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        color: #CBD5E1;
-        background: rgba(255,255,255,0.025);
+        border-bottom: 1px solid #E6EDF5;
+        color: #0A1628;
+        background: #FFFFFF;
     }
-    .styled-table tr:nth-child(even) td { background: rgba(255,255,255,0.045); }
+    .styled-table tr:nth-child(even) td { background: #F7FAFD; }
     .styled-table tr:last-child td { border-bottom: none; }
 
     /* ── Premium Login ── */
@@ -979,29 +953,33 @@ if st.session_state.authenticated:
                         st.session_state.quiz_results[mk] = data["quiz_score"]
             st.session_state.sheet_loaded = True
 
-        # ── Dark glass card: logo + username + progress ──
+        # ── White card: logo + label + username ──
         logo_src = _logo_img_src()
-        total_pct = int(sum(st.session_state.progress.values()) / max(len(active_modules), 1))
         st.markdown(f"""
         <div class="sidebar-header">
             <img src="{logo_src}"
-                 style="max-height:52px; width:100%; object-fit:contain; margin-bottom:12px;
-                        filter: brightness(1.1);" />
-            <div class="sidebar-label">Onboarding Portal</div>
-            <div class="sidebar-username">&#x2022; {st.session_state.username}</div>
-            <div style="margin-top:12px;">
-                <div style="font-size:0.6rem; font-weight:700; letter-spacing:0.12em;
-                            color:#475569; text-transform:uppercase; margin-bottom:4px;">
-                    Overall Progress &middot; {total_pct}%
-                </div>
-                <div class="progress-container">
-                    <div class="progress-fill" style="width:{total_pct}%"></div>
-                </div>
+                 style="max-height:56px; width:100%; object-fit:contain; margin-bottom:10px;" />
+            <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.13em;
+                        color:#5A7A9F; text-transform:uppercase; margin-bottom:6px;">
+                    Welcome to the Onboarding Portal!
+            </div>
+            <div style="font-size:0.93rem; font-weight:600; color:#CC2936;">
+                👤 {st.session_state.username}
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("<div style='margin-bottom:6px'></div>", unsafe_allow_html=True)
+        # ── Overall progress ──
+        total_pct = int(sum(st.session_state.progress.values()) / max(len(active_modules), 1))
+        st.markdown(f"""
+        <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.1em;
+                    color:#8BA3C7; text-transform:uppercase; margin: 6px 0 4px 0;">
+            Progress &middot; {total_pct}%
+        </div>
+        """, unsafe_allow_html=True)
+        st.markdown(pct_bar(total_pct), unsafe_allow_html=True)
+
+        st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
 
         # ── Radio navigation ──
         nav_options = ["🏠  Home"] + [
@@ -1036,21 +1014,13 @@ if st.session_state.authenticated:
 
         st.markdown("---")
         st.markdown("""
-        <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
-                    border-radius:10px; padding:12px 14px;">
-            <div style="font-size:0.6rem; font-weight:700; letter-spacing:0.14em;
-                        color:#475569; text-transform:uppercase; margin-bottom:8px;">
-                HR Contact
-            </div>
-            <div style="color:#CBD5E1; font-size:0.82rem; font-weight:600; margin-bottom:3px;">
-                Nicole Thornton
-            </div>
-            <div style="color:#64748B; font-size:0.78rem; margin-bottom:6px;">HR Administrator</div>
-            <div style="color:#64748B; font-size:0.77rem; line-height:1.9;">
-                📞 256-574-7528<br>
-                ✉ nicole.thornton@apirx.com
-            </div>
-        </div>
+        <small style='color:#8BA3C7'>
+        <b>HR Contact</b><br>
+        Nicole Thornton<br>
+        HR Administrator<br>
+        📞 256-574-7528<br>
+        ✉ Nicole.thornton@apirx.com
+        </small>
         """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
@@ -1059,13 +1029,12 @@ if st.session_state.authenticated:
 def show_home():
     is_warehouse = st.session_state.get("role_track") == "warehouse"
     active_modules = WAREHOUSE_MODULES if is_warehouse else MODULES
-    track_label = "Warehouse" if is_warehouse else "General / Administrative"
+    track_label = "Warehouse" if is_warehouse else "General"
     name_display = f", {st.session_state.username}" if st.session_state.username else ""
-    subtitle = "Complete all warehouse orientation modules below to finish your onboarding." if is_warehouse else "We're thrilled to have you on board. Complete all orientation modules below to finish your onboarding."
-
+    subtitle = "Complete all five warehouse orientation modules below to finish your onboarding." if is_warehouse else "We're thrilled to have you on board. Complete all five orientation modules below to finish your onboarding."
     st.markdown(f"""
     <div class="welcome-banner">
-        <h1>Welcome to AAP{name_display}!</h1>
+        <h1>Welcome to American Associated Pharmacies{name_display}! 🎉</h1>
         <p>{subtitle}</p>
     </div>
     """, unsafe_allow_html=True)
@@ -1073,28 +1042,21 @@ def show_home():
     # Summary metrics
     completed = sum(1 for p in st.session_state.progress.values() if p == 100)
     total_pct = int(sum(st.session_state.progress.values()) / len(active_modules))
-    quizzes_passed = sum(1 for v in st.session_state.quiz_results.values() if v is not None)
     col1, col2, col3 = st.columns(3)
     col1.metric("Modules Complete", f"{completed} / {len(active_modules)}")
     col2.metric("Overall Progress", f"{total_pct}%")
-    col3.metric("Quizzes Passed", f"{quizzes_passed} / {len(active_modules)}")
+    col3.metric("Quizzes Passed", f"{sum(1 for v in st.session_state.quiz_results.values() if v is not None)} / {len(active_modules)}")
 
     st.markdown("---")
-    st.markdown(f"""
-    <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.16em;
-                color:#F87171; text-transform:uppercase; margin-bottom:16px;">
-        {track_label} Track &nbsp;·&nbsp; {len(active_modules)} Modules
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(f"### 📚 Your {track_label} Orientation Modules")
 
     for m in active_modules:
         pct = st.session_state.progress.get(m["key"], 0)
         badge_class = "complete" if pct == 100 else ""
-        badge_text = "Complete" if pct == 100 else f"{pct}% Done"
-        badge_icon = "✓" if pct == 100 else "◐"
+        badge_text = "✅ Complete" if pct == 100 else f"⏳ {pct}% Done"
         st.markdown(f"""
-        <div class="module-card {badge_class}">
-            <span class="badge {badge_class}">{badge_icon} {badge_text}</span>
+        <div class="module-card">
+            <span class="badge {badge_class}">{badge_text}</span>
             <h3>{m['icon']} Module {m['number']}: {m['title']}</h3>
             <p>{m['subtitle']}</p>
         </div>

@@ -398,19 +398,75 @@ st.markdown("""
     .styled-table tr:nth-child(even) td { background: #F7FAFD; }
     .styled-table tr:last-child td { border-bottom: none; }
 
+    /* ── Premium Login Experience ── */
+    .login-shell {
+        position: relative;
+        border-radius: 26px;
+        padding: 32px 26px 24px;
+        background: radial-gradient(circle at 0% 0%, rgba(30,64,175,0.18), transparent 48%),
+                    radial-gradient(circle at 100% 0%, rgba(204,41,54,0.16), transparent 46%),
+                    linear-gradient(140deg, #F8FBFF 0%, #EEF2FF 46%, #F8FAFC 100%);
+        border: 1px solid rgba(148,163,184,0.28);
+        box-shadow: 0 24px 56px rgba(15,23,42,0.14);
+        overflow: hidden;
+    }
+    .login-shell::after {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border: 1px solid rgba(255,255,255,0.6);
+        border-radius: 20px;
+        pointer-events: none;
+    }
+    .login-card {
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.86));
+        border: 1px solid rgba(148,163,184,0.24);
+        border-radius: 18px;
+        padding: 20px 20px 16px;
+        box-shadow: 0 14px 28px rgba(15,23,42,0.08);
+        margin-bottom: 12px;
+    }
+    .login-kicker {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #CC2936;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .login-meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 12px;
+    }
+    .login-chip {
+        background: #E2E8F0;
+        color: #1E293B;
+        font-size: 0.72rem;
+        font-weight: 600;
+        border-radius: 999px;
+        padding: 4px 10px;
+    }
+
     /* Form submit button styling (login) */
     div[data-testid="stFormSubmitButton"] button {
-        background-color: #0A1628 !important;
+        background: linear-gradient(135deg, #0A1628 0%, #1E3A8A 48%, #CC2936 100%) !important;
         color: #FFFFFF !important;
         border: none !important;
-        border-radius: 8px !important;
-        padding: 8px 20px !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.02em !important;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.12) !important;
+        border-radius: 10px !important;
+        padding: 10px 20px !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.04em !important;
+        text-transform: uppercase !important;
+        box-shadow: 0 12px 24px rgba(30,58,138,0.24) !important;
     }
     div[data-testid="stFormSubmitButton"] button:hover {
-        background-color: #CC2936 !important;
+        filter: brightness(1.08) !important;
+        transform: translateY(-1px) !important;
     }
 
 </style>
@@ -701,7 +757,7 @@ def show_login():
         <div style="margin-bottom:20px;">
             <img src="{_login_logo_src}"
                  alt="AAP Logo"
-                 style="height:70px; max-width:240px; object-fit:contain; filter: brightness(0) invert(0);">
+                 style="height:84px; max-width:260px; object-fit:contain; filter: drop-shadow(0 8px 18px rgba(15,23,42,0.18));">
         </div>
         <h1 style="font-size:1.9rem; font-weight:700; color:#1A1A2E;
                    margin:0 0 6px 0; letter-spacing:-0.02em;">
@@ -713,21 +769,26 @@ def show_login():
     </div>
     """, unsafe_allow_html=True)
 
-    col_l, col_m, col_r = st.columns([1, 1.3, 1])
+    col_l, col_m, col_r = st.columns([1, 1.45, 1])
     with col_m:
         st.markdown("""
-        <div class="login-card">
-            <h2 style="font-size:1.15rem; font-weight:600; margin:0 0 6px 0; text-align:center;">
-                Welcome! Let's get you started.
-            </h2>
-            <p style="font-size:0.87rem; margin:0 0 4px 0; text-align:center; line-height:1.6;">
-                Your <strong>Access Code</strong> and <strong>Employee ID</strong>
-                were provided by HR during onboarding.
-            </p>
-        </div>
+        <div class="login-shell">
+            <div class="login-card">
+                <div class="login-kicker">Secure Access</div>
+                <h2 style="font-size:1.2rem; font-weight:700; margin:0 0 8px 0; text-align:center; color:#0A1628;">
+                    Welcome! Let's get you started.
+                </h2>
+                <p style="font-size:0.9rem; margin:0; text-align:center; line-height:1.65; color:#334155;">
+                    Enter your <strong>Access Code</strong>, <strong>Employee ID</strong>, and
+                    <strong>Full Name</strong> exactly as provided by HR.
+                </p>
+                <div class="login-meta">
+                    <span class="login-chip">Encrypted session</span>
+                    <span class="login-chip">Employee-only portal</span>
+                    <span class="login-chip">Live progress tracking</span>
+                </div>
+            </div>
         """, unsafe_allow_html=True)
-
-        st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
         with st.form("login_form", clear_on_submit=False):
             access_code = st.text_input(
@@ -779,12 +840,13 @@ def show_login():
 
         st.markdown("""
         <div style="text-align:center; margin-top:20px; padding-top:16px;
-                    border-top:1px solid #E2E8F0;">
-            <p style="color:#94A3B8; font-size:0.82rem; margin:0; line-height:1.8;">
+                    border-top:1px solid #D6E0EB;">
+            <p style="color:#64748B; font-size:0.82rem; margin:0; line-height:1.8;">
                 Need help? Contact HR<br>
-                <span style="color:#475569; font-weight:500;">Nicole Thornton</span>
+                <span style="color:#334155; font-weight:600;">Nicole Thornton</span>
                 · nicole.thornton@apirx.com · 256-574-7528
             </p>
+        </div>
         </div>
         """, unsafe_allow_html=True)
 

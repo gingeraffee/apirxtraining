@@ -146,8 +146,8 @@ render_html("""
         color: rgba(255,255,255,0.72) !important;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
-        background: transparent !important;
-        border-color: transparent !important;
+        background: rgba(224,90,58,0.12) !important;
+        border-color: rgba(224,90,58,0.3) !important;
         color: #FFFFFF !important;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) p,
@@ -161,9 +161,9 @@ render_html("""
     }
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
     [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
-        background: #F3F4F6 !important;
-        border-color: rgba(255,255,255,0.45) !important;
-        box-shadow: none !important;
+        background: linear-gradient(145deg, var(--accent) 0%, #F97316 100%) !important;
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px rgba(224,90,58,0.18) !important;
     }
 
     /* ── Typography ── */

@@ -41,51 +41,102 @@ st.markdown("""
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     .stApp { background-color: #EEF2F7; }
 
-    /* ── Sidebar Container ── */
+    /* ── Sidebar Container (Cinematic Glass / Apple-inspired) ── */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0A1628 0%, #12213A 50%, #1B3A5C 100%);
-        border-right: 2px solid #CC2936;
-        box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+        background:
+            radial-gradient(130% 100% at 18% -10%, rgba(255,255,255,0.18) 0%, transparent 48%),
+            radial-gradient(120% 100% at 110% 0%, rgba(125,211,252,0.18) 0%, transparent 46%),
+            linear-gradient(180deg, #0A0F1C 0%, #111827 48%, #0D1525 100%);
+        border-right: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 10px 0 34px rgba(2,8,23,0.48);
     }
 
-    /* ── Sidebar Header — bright white card so logo stands out ── */
-    .sidebar-header {
-        background: #FFFFFF;
-        border-radius: 12px;
-        padding: 16px 14px 14px 14px;
-        margin-bottom: 18px;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.25);
+    [data-testid="stSidebar"] .block-container {
+        padding-top: 0.9rem !important;
+        padding-left: 0.9rem !important;
+        padding-right: 0.9rem !important;
     }
-    .sidebar-header * { color: #0A1628 !important; }
+
+    .sidebar-header {
+        background: linear-gradient(160deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.09) 100%);
+        border-radius: 16px;
+        padding: 16px 14px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 14px 26px rgba(2,8,23,0.36);
+        backdrop-filter: blur(10px);
+    }
+    .sidebar-header * { color: #EAF2FF !important; }
     .sidebar-header .sidebar-username {
-        color: #CC2936 !important;
+        color: #D6E7FF !important;
         font-weight: 600 !important;
         letter-spacing: 0.02em !important;
     }
 
-    /* ── Sidebar Radio Navigation ── */
-    [data-testid="stSidebar"] .stRadio > div { gap: 2px !important; }
+
+    .progress-container {
+        width: 100%;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(226,232,240,0.22);
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.14);
+        box-shadow: inset 0 1px 2px rgba(2,8,23,0.4);
+    }
+    .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #E2E8F0 0%, #BFDBFE 48%, #7DD3FC 100%);
+        box-shadow: 0 0 12px rgba(125,211,252,0.5);
+        transition: width 0.25s ease;
+    }
+    .sidebar-section-label {
+        font-size: 0.62rem;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: rgba(199,214,234,0.74);
+        margin: 8px 2px 8px;
+        font-weight: 700;
+    }
+
+    /* ── Sidebar Radio Navigation (Glassy Cinematic Buttons) ── */
+    [data-testid="stSidebar"] .stRadio > div { gap: 8px !important; }
     [data-testid="stSidebar"] .stRadio label {
-        color: rgba(255,255,255,0.88) !important;
-        border-radius: 8px !important;
-        padding: 6px 10px !important;
-        transition: background 0.15s ease !important;
-        font-size: 0.88rem !important;
+        color: rgba(230,240,255,0.94) !important;
+        border-radius: 14px !important;
+        padding: 10px 12px !important;
+        transition: background 0.25s ease, transform 0.22s ease, box-shadow 0.25s ease, text-shadow 0.2s ease !important;
+        font-size: 0.84rem !important;
         width: 100% !important;
+        border: 1px solid rgba(255,255,255,0.14) !important;
+        background: linear-gradient(152deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 100%) !important;
+        backdrop-filter: blur(9px) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 10px 20px rgba(2,8,23,0.30) !important;
     }
     [data-testid="stSidebar"] .stRadio label:hover {
-        background: rgba(204,41,54,0.18) !important;
-        color: #FFFFFF !important;
+        color: #F8FBFF !important;
+        transform: translateX(3px) translateY(-1px) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 18px 26px rgba(2,8,23,0.42) !important;
+        text-shadow: 0 0 8px rgba(186,230,253,0.34) !important;
     }
     [data-testid="stSidebar"] .stRadio p,
     [data-testid="stSidebar"] .stRadio span {
-        color: rgba(255,255,255,0.88) !important;
+        color: rgba(230,240,255,0.94) !important;
     }
-    /* Red dot for selected radio option */
+    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
+        background: linear-gradient(145deg, rgba(191,219,254,0.30) 0%, rgba(147,197,253,0.16) 100%) !important;
+        border-color: rgba(191,219,254,0.46) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.32), 0 16px 30px rgba(2,8,23,0.45), 0 0 0 1px rgba(191,219,254,0.32) !important;
+    }
+    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] > div:first-child {
+        background: rgba(255,255,255,0.06) !important;
+        border-color: rgba(229,231,235,0.62) !important;
+    }
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
     [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
-        background-color: #CC2936 !important;
-        border-color: #CC2936 !important;
+        background: linear-gradient(145deg, #CFE4FF 0%, #93C5FD 100%) !important;
+        border-color: #93C5FD !important;
+        box-shadow: 0 0 0 3px rgba(147,197,253,0.22) !important;
     }
 
     /* ── Typography ── */
@@ -114,6 +165,131 @@ st.markdown("""
     .module-card:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,0.11); }
     .module-card.complete { border-left-color: #1A9E5C; background: #F0FFF6; }
 
+    /* ── Post-login Elite Design System ── */
+    @keyframes ambientPulse {
+        0%, 100% { opacity: 0.55; transform: scale(1); }
+        50% { opacity: 0.9; transform: scale(1.08); }
+    }
+    .post-auth-shell {
+        background: radial-gradient(120% 180% at 0% 0%, rgba(30,58,138,0.10) 0%, transparent 40%),
+                    radial-gradient(120% 180% at 100% 0%, rgba(204,41,54,0.12) 0%, transparent 42%),
+                    linear-gradient(170deg, #F9FBFF 0%, #F1F5FB 48%, #E9F0F8 100%);
+        border-radius: 24px;
+        border: 1px solid rgba(10,22,40,0.07);
+        padding: 24px;
+        box-shadow: 0 30px 70px rgba(9,23,42,0.10);
+        margin-bottom: 22px;
+    }
+    .premium-hero {
+        background: linear-gradient(130deg, #050D1E 0%, #0B1A31 52%, #142D4E 100%);
+        border-radius: 20px;
+        padding: 30px 32px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.08);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 44px rgba(5,13,30,0.48);
+    }
+    .premium-hero::before {
+        content: "";
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        right: -110px;
+        top: -150px;
+        background: radial-gradient(circle, rgba(204,41,54,0.44) 0%, transparent 70%);
+        animation: ambientPulse 5s ease-in-out infinite;
+    }
+    .premium-hero::after {
+        content: "";
+        position: absolute;
+        width: 250px;
+        height: 250px;
+        left: -90px;
+        bottom: -130px;
+        background: radial-gradient(circle, rgba(59,130,246,0.32) 0%, transparent 72%);
+        animation: ambientPulse 6s ease-in-out infinite;
+    }
+    .premium-hero h1 { color: #F8FAFC !important; font-size: 2rem !important; margin: 0 0 8px 0 !important; }
+    .premium-hero p { color: #D1DEEE !important; font-size: 0.96rem; margin: 0 !important; max-width: 760px; }
+    .premium-kicker {
+        display: inline-block;
+        font-size: 0.63rem;
+        color: #FCA5A5;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .premium-metric-grid { margin-top: 16px; }
+    .premium-stat {
+        background: linear-gradient(155deg, rgba(255,255,255,0.95) 0%, rgba(248,251,255,0.86) 100%);
+        backdrop-filter: blur(6px);
+        border: 1px solid #DFE8F3;
+        border-radius: 16px;
+        padding: 14px 16px;
+        box-shadow: 0 12px 26px rgba(9,23,42,0.07);
+        min-height: 102px;
+    }
+    .premium-stat-label { font-size: 0.66rem; color: #5C6B81; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
+    .premium-stat-value { color: #081426; font-size: 1.45rem; font-weight: 700; margin-top: 3px; }
+    .premium-stat-sub { color: #6B7D95; font-size: 0.74rem; margin-top: 5px; }
+
+    .module-card-premium {
+        background: linear-gradient(148deg, rgba(255,255,255,0.96) 0%, rgba(247,250,253,0.90) 100%);
+        border-radius: 18px;
+        border: 1px solid #DEE7F1;
+        padding: 18px 18px 16px;
+        margin-bottom: 14px;
+        box-shadow: 0 16px 36px rgba(9,23,42,0.08);
+        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .module-card-premium:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 24px 44px rgba(9,23,42,0.13);
+        border-color: rgba(30,58,138,0.35);
+    }
+    .module-topline { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+    .module-name { color:#081426; font-weight:700; margin:0; font-size:1.01rem; }
+    .module-sub { color:#5E7088; margin:6px 0 12px 0; font-size:0.84rem; }
+    .module-meter { height:8px; background:#E6EDF5; border-radius:999px; overflow:hidden; }
+    .module-meter > span {
+        display:block;
+        height:100%;
+        background:linear-gradient(92deg, #CC2936 0%, #1E3A8A 54%, #38BDF8 100%);
+        box-shadow: 0 0 14px rgba(30,58,138,0.42);
+    }
+    .pill {
+        font-size: 0.64rem;
+        border-radius: 99px;
+        padding: 4px 10px;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    .pill.pending { background: #FEE2E2; color: #7F1D1D; }
+    .pill.live { background: #DBEAFE; color: #1E3A8A; }
+    .pill.done { background: #DCFCE7; color: #166534; }
+    .sidebar-mini {
+        background: linear-gradient(140deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-top: 12px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .elite-chip {
+        display: inline-block;
+        background: rgba(15,23,42,0.7);
+        border: 1px solid rgba(148,163,184,0.35);
+        color: #C9D6E7;
+        border-radius: 999px;
+        padding: 4px 9px;
+        font-size: 0.62rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-right: 6px;
+    }
     /* ── Progress Bars ── */
     .stProgress > div > div { background-color: #CC2936 !important; }
 
@@ -141,20 +317,25 @@ st.markdown("""
         background: none !important;
         border: none !important;
         color: #CC2936 !important;
-        font-size: 0.82rem !important;
-        font-weight: 600 !important;
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
         padding: 0 4px !important;
         height: auto !important;
         min-height: 0 !important;
         box-shadow: none !important;
         text-decoration: underline !important;
         text-underline-offset: 3px !important;
+        letter-spacing: 0.06em !important;
+        text-transform: uppercase !important;
+        transition: color 0.2s ease, text-shadow 0.2s ease, transform 0.2s ease !important;
     }
     .stButton > button[kind="secondary"]:hover,
     [data-testid="stBaseButton-secondary"]:hover {
         background: none !important;
-        color: #A01E27 !important;
+        color: #1E3A8A !important;
+        text-shadow: 0 0 10px rgba(30,58,138,0.32) !important;
         box-shadow: none !important;
+        transform: translateX(2px) !important;
     }
 
     /* ── Badges ── */
@@ -293,52 +474,40 @@ st.markdown("""
 
     /* ── Onboarding App Compatibility: map onboarding classes to Training App look ── */
 
-    /* Sidebar buttons — modern, minimal navigation look */
+    /* Sidebar action buttons */
     [data-testid="stSidebar"] .stButton > button {
         width: 100% !important;
-        background: rgba(255,255,255,0.04) !important;
-        border: 0 !important;
-        border-left: 2px solid transparent !important;
-        color: rgba(255,255,255,0.92) !important;
-        text-align: left !important;
-        padding: 9px 12px !important;
-        border-radius: 6px !important;
-        margin: 2px 0 !important;
-        font-size: 0.9rem !important;
-        font-weight: 500 !important;
-        box-shadow: none !important;
-        transition: background-color 0.18s ease, border-left-color 0.18s ease, color 0.18s ease !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(255,255,255,0.18) !important;
+        background: linear-gradient(150deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 100%) !important;
+        color: #EAF2FF !important;
+        text-align: center !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.05em !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 12px 20px rgba(2,8,23,0.28) !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
     }
     [data-testid="stSidebar"] .stButton > button:hover {
-        background: rgba(255,255,255,0.10) !important;
-        border-left-color: #CC2936 !important;
-        color: #FFFFFF !important;
-        transform: none !important;
+        transform: translateY(-1px) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 16px 24px rgba(2,8,23,0.34) !important;
+        filter: brightness(1.05) !important;
     }
-
     [data-testid="stSidebar"] .stButton > button[kind="primary"],
     [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
-        background: linear-gradient(135deg, #CC2936 0%, #A01E27 100%) !important;
-        color: #FFFFFF !important;
-        border-radius: 8px !important;
-        border: none !important;
-        text-align: center !important;
-        font-weight: 600 !important;
-        margin: 6px 0 !important;
-    }
-    [data-testid="stSidebar"] .stButton > button[kind="primary"]:hover,
-    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"]:hover {
-        background: linear-gradient(135deg, #D93A46 0%, #B32630 100%) !important;
-        border-left-color: transparent !important;
+        background: linear-gradient(145deg, rgba(203,213,225,0.35) 0%, rgba(148,163,184,0.22) 100%) !important;
+        border-color: rgba(203,213,225,0.52) !important;
+        color: #F8FAFC !important;
     }
 
     /* Content sections used heavily in onboarding */
     .content-section {
-        background: #FFFFFF;
-        border-radius: 12px;
+        background: linear-gradient(155deg, #FFFFFF 0%, #F8FBFF 100%);
+        border-radius: 14px;
         padding: 24px 28px;
         margin: 18px 0;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        box-shadow: 0 12px 26px rgba(9,23,42,0.08);
+        border: 1px solid #DFE8F3;
         border-top: 3px solid #CC2936;
     }
     .content-section h2 {
@@ -959,13 +1128,11 @@ if st.session_state.authenticated:
         <div class="sidebar-header">
             <img src="{logo_src}"
                  style="max-height:56px; width:100%; object-fit:contain; margin-bottom:10px;" />
-            <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.13em;
-                        color:#5A7A9F; text-transform:uppercase; margin-bottom:6px;">
-                    Welcome to the Onboarding Portal!
+            <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.16em;
+                        color:#B8CAE3; text-transform:uppercase; margin-bottom:6px;">
+                    Learning Interface
             </div>
-            <div style="font-size:0.93rem; font-weight:600; color:#CC2936;">
-                👤 {st.session_state.username}
-            </div>
+            <div class="sidebar-username" style="font-size:0.93rem;">👤 {st.session_state.username}</div>
         </div>
         """, unsafe_allow_html=True)
 
@@ -979,7 +1146,7 @@ if st.session_state.authenticated:
         """, unsafe_allow_html=True)
         st.markdown(pct_bar(total_pct), unsafe_allow_html=True)
 
-        st.markdown("<div style='margin-bottom:8px'></div>", unsafe_allow_html=True)
+        st.markdown("<div class='sidebar-section-label'>Navigation</div>", unsafe_allow_html=True)
 
         # ── Radio navigation ──
         nav_options = ["🏠  Home"] + [
@@ -1021,6 +1188,10 @@ if st.session_state.authenticated:
         📞 256-574-7528<br>
         ✉ Nicole.thornton@apirx.com
         </small>
+        <div class="sidebar-mini">
+            <div style="font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:#9CB3CF; font-weight:700; margin-bottom:4px;">Experience</div>
+            <div style="color:#EEF4FB; font-size:0.8rem; line-height:1.45;">Cinematic glass navigation inspired by premium hardware UI patterns.</div>
+        </div>
         """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
@@ -1030,40 +1201,92 @@ def show_home():
     is_warehouse = st.session_state.get("role_track") == "warehouse"
     active_modules = WAREHOUSE_MODULES if is_warehouse else MODULES
     track_label = "Warehouse" if is_warehouse else "General"
-    name_display = f", {st.session_state.username}" if st.session_state.username else ""
-    subtitle = "Complete all five warehouse orientation modules below to finish your onboarding." if is_warehouse else "We're thrilled to have you on board. Complete all five orientation modules below to finish your onboarding."
+    name_display = st.session_state.username.strip() if st.session_state.username else "Team Member"
+
+    module_progress = [st.session_state.progress.get(m["key"], 0) for m in active_modules]
+    completed = sum(1 for p in module_progress if p == 100)
+    total_pct = int(sum(module_progress) / len(active_modules)) if active_modules else 0
+    quizzes_done = sum(1 for m in active_modules if st.session_state.quiz_results.get(m["key"]) is not None)
+
+    st.markdown('<div class="post-auth-shell">', unsafe_allow_html=True)
+
     st.markdown(f"""
-    <div class="welcome-banner">
-        <h1>Welcome to American Associated Pharmacies{name_display}! 🎉</h1>
-        <p>{subtitle}</p>
+    <div class="premium-hero">
+        <span class="premium-kicker">Elite Training Suite</span>
+        <h1>{track_label} Learning Command Center · {name_display}</h1>
+        <p>
+            A high-trust, premium orientation environment engineered for clarity, momentum, and measurable readiness.
+            Navigate your modules, monitor milestones, and complete every checkpoint with confidence.
+        </p>
+        <div style="margin-top:12px;">
+            <span class="elite-chip">Realtime Progress Sync</span>
+            <span class="elite-chip">Role-Calibrated Path</span>
+            <span class="elite-chip">Assessment Locked</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Summary metrics
-    completed = sum(1 for p in st.session_state.progress.values() if p == 100)
-    total_pct = int(sum(st.session_state.progress.values()) / len(active_modules))
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Modules Complete", f"{completed} / {len(active_modules)}")
-    col2.metric("Overall Progress", f"{total_pct}%")
-    col3.metric("Quizzes Passed", f"{sum(1 for v in st.session_state.quiz_results.values() if v is not None)} / {len(active_modules)}")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.markdown(f"""
+        <div class="premium-stat">
+            <div class="premium-stat-label">Milestones Closed</div>
+            <div class="premium-stat-value">{completed}/{len(active_modules)}</div>
+            <div class="premium-stat-sub">Completed training modules in your path</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with c2:
+        st.markdown(f"""
+        <div class="premium-stat">
+            <div class="premium-stat-label">Program Completion</div>
+            <div class="premium-stat-value">{total_pct}%</div>
+            <div class="premium-stat-sub">Unified progress across lessons + checks</div>
+        </div>
+        """, unsafe_allow_html=True)
+    with c3:
+        st.markdown(f"""
+        <div class="premium-stat">
+            <div class="premium-stat-label">Assessments Submitted</div>
+            <div class="premium-stat-value">{quizzes_done}/{len(active_modules)}</div>
+            <div class="premium-stat-sub">Knowledge verifications completed</div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown(f"### 📚 Your {track_label} Orientation Modules")
+    st.markdown("""
+    <div style="margin:18px 0 10px 0; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div style="font-size:0.72rem; letter-spacing:0.13em; text-transform:uppercase; color:#5F738D; font-weight:700;">Training Modules</div>
+        <div style="font-size:0.75rem; color:#60748E;">Select a module to continue your premium onboarding workflow.</div>
+    </div>
+    """, unsafe_allow_html=True)
 
     for m in active_modules:
         pct = st.session_state.progress.get(m["key"], 0)
-        badge_class = "complete" if pct == 100 else ""
-        badge_text = "✅ Complete" if pct == 100 else f"⏳ {pct}% Done"
+        if pct == 100:
+            pill_class, pill_text = "done", "Complete"
+        elif pct > 0:
+            pill_class, pill_text = "live", "In Progress"
+        else:
+            pill_class, pill_text = "pending", "Queued"
+
         st.markdown(f"""
-        <div class="module-card">
-            <span class="badge {badge_class}">{badge_text}</span>
-            <h3>{m['icon']} Module {m['number']}: {m['title']}</h3>
-            <p>{m['subtitle']}</p>
+        <div class="module-card-premium">
+            <div class="module-topline">
+                <p class="module-name">{m['icon']} · Module {m['number']} · {m['title']}</p>
+                <span class="pill {pill_class}">{pill_text}</span>
+            </div>
+            <p class="module-sub">{m['subtitle']}</p>
+            <div class="module-meter"><span style="width:{pct}%"></span></div>
+            <div style="margin-top:8px; color:#5B6F88; font-size:0.76rem; display:flex; justify-content:space-between;">
+                <span>Execution progress</span><strong style="color:#081426;">{pct}%</strong>
+            </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button(f"Open Module {m['number']}", key=f"open_{m['key']}", type="secondary"):
+
+        if st.button(f"Launch Module {m['number']}", key=f"open_{m['key']}", type="secondary"):
             st.session_state.selected_module = m["key"]
             st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
 #  MODULE 1 — WELCOME TO AAP

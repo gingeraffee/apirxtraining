@@ -40,663 +40,736 @@ st.logo(_sidebar_logo, link="https://apirx.com")
 # ─────────────────────────────────────────────
 #  CUSTOM CSS
 # ─────────────────────────────────────────────
-render_html("""
+render_html(“””
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-    /* ── Base ── */
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    /* ════════════════════════════════════════════════
+       MODERN APPLE — MIDNIGHT & CRIMSON DESIGN SYSTEM
+       Glassmorphism · 8pt Grid · Inter Typeface
+       ════════════════════════════════════════════════ */
+
+    /* ── Design Tokens ── */
     :root {
-        --premium-bg-ink: #050B18;
-        --premium-shell-radius: 24px;
-        --premium-card-radius: 18px;
-        --premium-border: 1px solid #DEE7F1;
-        --premium-shadow-soft: 0 14px 30px rgba(9,23,42,0.08);
-        --premium-shadow-hover: 0 24px 44px rgba(9,23,42,0.13);
+        --apple-ink: #0A0A0B;
+        --apple-surface: #F5F5F7;
+        --apple-crimson: #B11226;
+        --apple-crimson-soft: rgba(177,18,38,0.08);
+        --apple-crimson-glow: rgba(177,18,38,0.18);
+        --apple-gray-100: #F5F5F7;
+        --apple-gray-200: #E8E8ED;
+        --apple-gray-300: #D2D2D7;
+        --apple-gray-400: #86868B;
+        --apple-gray-500: #6E6E73;
+        --apple-gray-600: #424245;
+        --apple-white: #FFFFFF;
+        --apple-radius-lg: 24px;
+        --apple-radius-md: 16px;
+        --apple-radius-sm: 12px;
+        --apple-radius-xs: 8px;
+        --apple-glass-bg: rgba(255,255,255,0.72);
+        --apple-glass-border: 1px solid rgba(255,255,255,0.18);
+        --apple-glass-blur: blur(20px);
+        --apple-shadow-soft: 0 20px 50px rgba(0,0,0,0.05);
+        --apple-shadow-hover: 0 24px 56px rgba(0,0,0,0.09);
+        --apple-shadow-deep: 0 32px 64px rgba(0,0,0,0.12);
+        --apple-transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
+
+    /* ── Base Reset ── */
+    html, body, [class*=”css”] {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    body { line-height: 1.7; color: var(--apple-ink); }
+
     .stApp {
-        background:
-            radial-gradient(130% 85% at 12% -8%, rgba(30,58,138,0.14) 0%, transparent 48%),
-            radial-gradient(120% 92% at 102% 0%, rgba(204,41,54,0.12) 0%, transparent 44%),
-            linear-gradient(180deg, #081224 0%, #0D1B34 16%, #EAF0F8 43%, #E8EEF7 100%);
+        background: var(--apple-surface) !important;
     }
 
-    /* ── Sidebar Container (Cinematic Glass / Apple-inspired) ── */
-    [data-testid="stSidebar"] {
-        background:
-            radial-gradient(130% 100% at 18% -10%, rgba(255,255,255,0.18) 0%, transparent 48%),
-            radial-gradient(120% 100% at 110% 0%, rgba(125,211,252,0.18) 0%, transparent 46%),
-            linear-gradient(180deg, #0A0F1C 0%, #111827 48%, #0D1525 100%);
-        border-right: 1px solid rgba(255,255,255,0.08);
-        box-shadow: 10px 0 34px rgba(2,8,23,0.48);
+    /* ── Typography — Clear Hierarchy ── */
+    h1, h2, h3 {
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif !important;
+        color: var(--apple-ink) !important;
+        letter-spacing: -0.025em;
+        line-height: 1.2;
     }
+    h1 { font-weight: 700 !important; }
+    h2 { font-weight: 700 !important; }
+    h3 { font-weight: 600 !important; }
+    p, li, td, span { font-weight: 400; line-height: 1.7; }
 
-    [data-testid="stSidebar"] .block-container {
-        padding-top: 0.9rem !important;
-        padding-left: 0.9rem !important;
-        padding-right: 0.9rem !important;
+    .page-title {
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif;
+        font-size: 2.4rem;
+        font-weight: 800;
+        color: var(--apple-ink);
+        letter-spacing: -0.035em;
+        border-bottom: 2px solid var(--apple-gray-200);
+        padding-bottom: 16px;
+        margin-bottom: 8px;
+    }
+    .page-subtitle { color: var(--apple-gray-500); font-size: 1.05rem; margin-bottom: 32px; font-weight: 400; line-height: 1.7; }
+
+    /* ── Sidebar Container — Frosted Midnight Glass ── */
+    [data-testid=”stSidebar”] {
+        background: rgba(10,10,11,0.92) !important;
+        backdrop-filter: blur(40px) saturate(180%);
+        -webkit-backdrop-filter: blur(40px) saturate(180%);
+        border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    [data-testid=”stSidebar”] .block-container {
+        padding-top: 1rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
 
     .sidebar-header {
-        background: linear-gradient(160deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.09) 100%);
-        border-radius: 16px;
-        padding: 16px 14px;
-        margin-bottom: 16px;
-        border: 1px solid rgba(255,255,255,0.18);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 14px 26px rgba(2,8,23,0.36);
-        backdrop-filter: blur(10px);
+        background: rgba(255,255,255,0.06);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-md);
+        padding: 20px 16px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255,255,255,0.08);
     }
-    .sidebar-header * { color: #EAF2FF !important; }
+    .sidebar-header * { color: var(--apple-gray-100) !important; }
     .sidebar-header .sidebar-username {
-        color: #D6E7FF !important;
+        color: #FFFFFF !important;
         font-weight: 600 !important;
-        letter-spacing: 0.02em !important;
+        letter-spacing: -0.01em !important;
     }
-
 
     .progress-container {
         width: 100%;
-        height: 8px;
+        height: 6px;
         border-radius: 999px;
-        background: rgba(226,232,240,0.22);
+        background: rgba(255,255,255,0.08);
         overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.14);
-        box-shadow: inset 0 1px 2px rgba(2,8,23,0.4);
     }
     .progress-fill {
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, #E2E8F0 0%, #BFDBFE 48%, #7DD3FC 100%);
-        box-shadow: 0 0 12px rgba(125,211,252,0.5);
-        transition: width 0.25s ease;
+        background: var(--apple-crimson);
+        transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     .sidebar-section-label {
-        font-size: 0.62rem;
+        font-size: 0.65rem;
         text-transform: uppercase;
-        letter-spacing: 0.18em;
-        color: rgba(199,214,234,0.74);
-        margin: 8px 2px 8px;
-        font-weight: 700;
+        letter-spacing: 0.14em;
+        color: rgba(255,255,255,0.36);
+        margin: 12px 2px 8px;
+        font-weight: 600;
     }
 
-    /* ── Sidebar Radio Navigation (Glassy Cinematic Buttons) ── */
-    [data-testid="stSidebar"] .stRadio > div { gap: 8px !important; }
-    [data-testid="stSidebar"] .stRadio label {
-        color: rgba(230,240,255,0.94) !important;
-        border-radius: 14px !important;
-        padding: 10px 12px !important;
-        transition: background 0.25s ease, transform 0.22s ease, box-shadow 0.25s ease, text-shadow 0.2s ease !important;
+    /* ── Sidebar Radio Navigation — Subtle Glass Pills ── */
+    [data-testid=”stSidebar”] .stRadio > div { gap: 4px !important; }
+    [data-testid=”stSidebar”] .stRadio label {
+        color: rgba(255,255,255,0.72) !important;
+        border-radius: var(--apple-radius-sm) !important;
+        padding: 10px 14px !important;
+        transition: var(--apple-transition) !important;
         font-size: 0.84rem !important;
+        font-weight: 500 !important;
         width: 100% !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        background: linear-gradient(152deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 100%) !important;
-        backdrop-filter: blur(9px) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 10px 20px rgba(2,8,23,0.30) !important;
-    }
-    [data-testid="stSidebar"] .stRadio label:hover {
-        color: #F8FBFF !important;
-        transform: translateX(3px) translateY(-1px) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 18px 26px rgba(2,8,23,0.42) !important;
-        text-shadow: 0 0 8px rgba(186,230,253,0.34) !important;
-    }
-    [data-testid="stSidebar"] .stRadio p,
-    [data-testid="stSidebar"] .stRadio span {
-        color: rgba(230,240,255,0.94) !important;
-    }
-    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
-        background: linear-gradient(152deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%) !important;
-        border-color: rgba(147,197,253,0.62) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 12px 22px rgba(2,8,23,0.40), 0 0 0 1px rgba(147,197,253,0.38), 0 0 16px rgba(125,211,252,0.44), 0 0 28px rgba(59,130,246,0.24) !important;
-    }
-    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) p,
-    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) span {
+        border: 1px solid transparent !important;
         background: transparent !important;
-        text-shadow: 0 0 9px rgba(186,230,253,0.30) !important;
     }
-    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] > div:first-child {
+    [data-testid=”stSidebar”] .stRadio label:hover {
+        color: #FFFFFF !important;
         background: rgba(255,255,255,0.06) !important;
-        border-color: rgba(229,231,235,0.62) !important;
+        transform: translateX(2px) !important;
     }
-    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
-    [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
-        background: linear-gradient(145deg, #CFE4FF 0%, #93C5FD 100%) !important;
-        border-color: #93C5FD !important;
-        box-shadow: 0 0 0 3px rgba(147,197,253,0.22) !important;
+    [data-testid=”stSidebar”] .stRadio p,
+    [data-testid=”stSidebar”] .stRadio span {
+        color: rgba(255,255,255,0.72) !important;
     }
-
-    /* ── Typography ── */
-    h1, h2, h3 { font-family: 'Playfair Display', serif !important; color: #0A1628 !important; }
-    .page-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #0A1628;
-        border-bottom: 3px solid #CC2936;
-        padding-bottom: 12px;
-        margin-bottom: 8px;
+    [data-testid=”stSidebar”] .stRadio label:has(input[type=”radio”]:checked) {
+        background: rgba(177,18,38,0.15) !important;
+        border-color: rgba(177,18,38,0.30) !important;
+        color: #FFFFFF !important;
     }
-    .page-subtitle { color: #5A6E8A; font-size: 1.05rem; margin-bottom: 28px; font-weight: 400; }
+    [data-testid=”stSidebar”] .stRadio label:has(input[type=”radio”]:checked) p,
+    [data-testid=”stSidebar”] .stRadio label:has(input[type=”radio”]:checked) span {
+        color: #FFFFFF !important;
+        background: transparent !important;
+    }
+    [data-testid=”stSidebar”] .stRadio [data-baseweb=”radio”] > div:first-child {
+        background: rgba(255,255,255,0.08) !important;
+        border-color: rgba(255,255,255,0.20) !important;
+    }
+    [data-testid=”stSidebar”] .stRadio [data-baseweb=”radio”] [aria-checked=”true”] > div:first-child,
+    [data-testid=”stSidebar”] .stRadio input[type=”radio”]:checked + div > div:first-child {
+        background: var(--apple-crimson) !important;
+        border-color: var(--apple-crimson) !important;
+        box-shadow: 0 0 0 3px rgba(177,18,38,0.20) !important;
+    }
 
     /* ── Module Cards ── */
     .module-card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px 24px;
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-md);
+        padding: 24px;
         margin-bottom: 16px;
-        border-left: 5px solid #CC2936;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        border-left: 4px solid var(--apple-crimson);
+        border-top: none;
+        border-right: 1px solid rgba(255,255,255,0.18);
+        border-bottom: 1px solid rgba(255,255,255,0.18);
+        box-shadow: var(--apple-shadow-soft);
+        transition: var(--apple-transition);
     }
-    .module-card:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,0.11); }
-    .module-card.complete { border-left-color: #1A9E5C; background: #F0FFF6; }
+    .module-card:hover { transform: translateY(-2px); box-shadow: var(--apple-shadow-hover); }
+    .module-card.complete { border-left-color: #34C759; background: rgba(52,199,89,0.06); }
 
-    /* ── Post-login Elite Design System ── */
-    @keyframes ambientPulse {
-        0%, 100% { opacity: 0.55; transform: scale(1); }
-        50% { opacity: 0.9; transform: scale(1.08); }
-    }
+    /* ── Post-login Shell ── */
     .post-auth-shell {
-        background: radial-gradient(120% 180% at 0% 0%, rgba(30,58,138,0.10) 0%, transparent 40%),
-                    radial-gradient(120% 180% at 100% 0%, rgba(204,41,54,0.12) 0%, transparent 42%),
-                    linear-gradient(170deg, #F9FBFF 0%, #F1F5FB 48%, #E9F0F8 100%);
-        border-radius: var(--premium-shell-radius);
-        border: 1px solid rgba(10,22,40,0.07);
-        padding: 24px;
-        box-shadow: 0 30px 70px rgba(9,23,42,0.10);
-        margin-bottom: 22px;
+        background: transparent;
+        border-radius: var(--apple-radius-lg);
+        padding: 0;
+        margin-bottom: 24px;
     }
+
     .module-shell {
-        background: linear-gradient(165deg, rgba(255,255,255,0.97) 0%, rgba(244,248,253,0.94) 100%);
-        border-radius: var(--premium-shell-radius);
-        border: 1px solid rgba(10,22,40,0.09);
-        box-shadow: 0 28px 66px rgba(6,14,30,0.16);
-        padding: 24px;
-        margin-bottom: 18px;
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-lg);
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow: var(--apple-shadow-deep);
+        padding: 32px;
+        margin-bottom: 24px;
     }
+
     .module-page-hero {
-        background: linear-gradient(130deg, #050D1E 0%, #0B1A31 54%, #163156 100%);
-        border-radius: 18px;
-        padding: 24px 26px;
-        border: 1px solid rgba(255,255,255,0.08);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 40px rgba(5,13,30,0.42);
-        margin-bottom: 16px;
+        background: var(--apple-ink);
+        border-radius: var(--apple-radius-lg);
+        padding: 32px;
+        border: 1px solid rgba(255,255,255,0.06);
+        box-shadow: var(--apple-shadow-deep);
+        margin-bottom: 24px;
         position: relative;
         overflow: hidden;
     }
     .module-page-hero::after {
-        content: "";
+        content: “”;
         position: absolute;
-        width: 300px;
-        height: 300px;
-        right: -120px;
-        top: -170px;
-        background: radial-gradient(circle, rgba(125,211,252,0.20) 0%, transparent 72%);
+        width: 400px;
+        height: 400px;
+        right: -160px;
+        top: -200px;
+        background: radial-gradient(circle, var(--apple-crimson-glow) 0%, transparent 70%);
     }
     .module-page-title {
-        color: #F8FAFC;
-        font-family: 'Playfair Display', serif;
-        font-size: 1.58rem;
-        margin: 3px 0 8px;
+        color: var(--apple-gray-100) !important;
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif !important;
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        margin: 4px 0 8px;
         position: relative;
         z-index: 1;
     }
     .module-page-sub {
-        color: #CCDAEF;
-        font-size: 0.9rem;
+        color: var(--apple-gray-400);
+        font-size: 0.92rem;
+        line-height: 1.7;
         margin: 0;
         position: relative;
         z-index: 1;
         max-width: 920px;
     }
     .module-meta-row {
-        margin-top: 11px;
+        margin-top: 16px;
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
         position: relative;
         z-index: 1;
     }
+
+    /* ── Premium Hero (Home Dashboard) ── */
     .premium-hero {
-        background: linear-gradient(130deg, #050D1E 0%, #0B1A31 52%, #142D4E 100%);
-        border-radius: 20px;
-        padding: 30px 32px;
+        background: var(--apple-ink);
+        border-radius: var(--apple-radius-lg);
+        padding: 40px;
         position: relative;
         overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.08);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 44px rgba(5,13,30,0.48);
+        border: 1px solid rgba(255,255,255,0.06);
+        box-shadow: var(--apple-shadow-deep);
     }
     .premium-hero::before {
-        content: "";
+        content: “”;
         position: absolute;
-        width: 320px;
-        height: 320px;
-        right: -110px;
-        top: -150px;
-        background: radial-gradient(circle, rgba(204,41,54,0.44) 0%, transparent 70%);
-        animation: ambientPulse 5s ease-in-out infinite;
+        width: 500px;
+        height: 500px;
+        right: -180px;
+        top: -200px;
+        background: radial-gradient(circle, rgba(177,18,38,0.25) 0%, transparent 65%);
     }
     .premium-hero::after {
-        content: "";
+        content: “”;
         position: absolute;
-        width: 250px;
-        height: 250px;
-        left: -90px;
-        bottom: -130px;
-        background: radial-gradient(circle, rgba(59,130,246,0.32) 0%, transparent 72%);
-        animation: ambientPulse 6s ease-in-out infinite;
+        width: 400px;
+        height: 400px;
+        left: -150px;
+        bottom: -200px;
+        background: radial-gradient(circle, rgba(177,18,38,0.10) 0%, transparent 70%);
     }
-    .premium-hero h1 { color: #F8FAFC !important; font-size: 2rem !important; margin: 0 0 8px 0 !important; }
-    .premium-hero p { color: #D1DEEE !important; font-size: 0.96rem; margin: 0 !important; max-width: 760px; }
+    .premium-hero h1 {
+        color: var(--apple-gray-100) !important;
+        font-size: 2.2rem !important;
+        font-weight: 800 !important;
+        letter-spacing: -0.035em !important;
+        margin: 0 0 8px 0 !important;
+        position: relative;
+        z-index: 1;
+    }
+    .premium-hero p {
+        color: var(--apple-gray-400) !important;
+        font-size: 1rem;
+        line-height: 1.7;
+        margin: 0 !important;
+        max-width: 760px;
+        position: relative;
+        z-index: 1;
+    }
     .premium-kicker {
         display: inline-block;
-        font-size: 0.63rem;
-        color: #FCA5A5;
-        letter-spacing: 0.22em;
+        font-size: 0.68rem;
+        color: var(--apple-crimson);
+        letter-spacing: 0.18em;
         text-transform: uppercase;
         font-weight: 700;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
+        position: relative;
+        z-index: 1;
     }
-    .premium-metric-grid { margin-top: 16px; }
-    .premium-stat {
-        background: linear-gradient(155deg, rgba(255,255,255,0.95) 0%, rgba(248,251,255,0.86) 100%);
-        backdrop-filter: blur(6px);
-        border: 1px solid #DFE8F3;
-        border-radius: 16px;
-        padding: 14px 16px;
-        box-shadow: 0 12px 26px rgba(9,23,42,0.07);
-        min-height: 102px;
-    }
-    .premium-stat-label { font-size: 0.66rem; color: #5C6B81; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
-    .premium-stat-value { color: #081426; font-size: 1.45rem; font-weight: 700; margin-top: 3px; }
-    .premium-stat-sub { color: #6B7D95; font-size: 0.74rem; margin-top: 5px; }
 
+    /* ── Stat Cards ── */
+    .premium-stat {
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: var(--apple-radius-md);
+        padding: 20px;
+        box-shadow: var(--apple-shadow-soft);
+        min-height: 110px;
+        transition: var(--apple-transition);
+    }
+    .premium-stat:hover { transform: translateY(-2px); box-shadow: var(--apple-shadow-hover); }
+    .premium-stat-label {
+        font-size: 0.68rem;
+        color: var(--apple-gray-500);
+        letter-spacing: 0.10em;
+        text-transform: uppercase;
+        font-weight: 600;
+    }
+    .premium-stat-value {
+        color: var(--apple-ink);
+        font-size: 1.8rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin-top: 4px;
+    }
+    .premium-stat-sub { color: var(--apple-gray-400); font-size: 0.78rem; margin-top: 6px; line-height: 1.5; }
+
+    /* ── Module Cards (Home Grid) ── */
     .module-card-premium {
-        background: linear-gradient(148deg, rgba(255,255,255,0.96) 0%, rgba(247,250,253,0.90) 100%);
-        border-radius: var(--premium-card-radius);
-        border: var(--premium-border);
-        padding: 18px 18px 16px;
-        margin-bottom: 14px;
-        box-shadow: var(--premium-shadow-soft);
-        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-md);
+        border: 1px solid rgba(255,255,255,0.18);
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: var(--apple-shadow-soft);
+        transition: var(--apple-transition);
     }
     .module-card-premium:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--premium-shadow-hover);
-        border-color: rgba(30,58,138,0.35);
+        transform: translateY(-2px);
+        box-shadow: var(--apple-shadow-hover);
+        border-color: rgba(177,18,38,0.20);
     }
     .module-topline { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
-    .module-name { color:#081426; font-weight:700; margin:0; font-size:1.01rem; }
-    .module-sub { color:#5E7088; margin:6px 0 12px 0; font-size:0.84rem; }
-    .module-meter { height:8px; background:#E6EDF5; border-radius:999px; overflow:hidden; }
+    .module-name { color: var(--apple-ink); font-weight:700; margin:0; font-size:1.01rem; letter-spacing:-0.015em; }
+    .module-sub { color: var(--apple-gray-500); margin:8px 0 16px 0; font-size:0.86rem; line-height:1.7; }
+    .module-meter { height:6px; background: var(--apple-gray-200); border-radius:999px; overflow:hidden; }
     .module-meter > span {
         display:block;
         height:100%;
-        background:linear-gradient(92deg, #CC2936 0%, #1E3A8A 54%, #38BDF8 100%);
-        box-shadow: 0 0 14px rgba(30,58,138,0.42);
+        background: var(--apple-crimson);
+        border-radius:inherit;
+        transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
+
+    /* ── Pills / Chips ── */
     .pill {
         font-size: 0.64rem;
         border-radius: 99px;
-        padding: 4px 10px;
-        font-weight: 700;
-        letter-spacing: 0.09em;
+        padding: 4px 12px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
         display: inline-block;
     }
-    .pill.pending { background: #FEE2E2; color: #7F1D1D; }
-    .pill.live { background: #DBEAFE; color: #1E3A8A; }
-    .pill.done { background: #DCFCE7; color: #166534; }
-    .sidebar-mini {
-        background: linear-gradient(140deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 10px;
-        padding: 10px 12px;
-        margin-top: 12px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
-    }
+    .pill.pending { background: var(--apple-gray-200); color: var(--apple-gray-600); }
+    .pill.live { background: var(--apple-crimson-soft); color: var(--apple-crimson); }
+    .pill.done { background: rgba(52,199,89,0.10); color: #248A3D; }
+
     .elite-chip {
         display: inline-block;
-        background: rgba(15,23,42,0.7);
-        border: 1px solid rgba(148,163,184,0.35);
-        color: #C9D6E7;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.10);
+        color: var(--apple-gray-400);
         border-radius: 999px;
-        padding: 4px 9px;
-        font-size: 0.62rem;
-        letter-spacing: 0.08em;
+        padding: 5px 12px;
+        font-size: 0.64rem;
+        letter-spacing: 0.06em;
         text-transform: uppercase;
+        font-weight: 600;
         margin-right: 6px;
     }
-    /* ── Progress Bars ── */
-    .stProgress > div > div { background-color: #CC2936 !important; }
 
-    /* ── Primary Buttons — deep navy, red on hover ── */
-    .stButton > button[kind="primary"],
-    .stButton > button[kind="primary"][data-testid],
-    [data-testid="stBaseButton-primary"] {
-        background: linear-gradient(135deg, #09152A 0%, #1E3A8A 54%, #CC2936 100%) !important;
-        color: white !important;
-        border: 1px solid rgba(30,58,138,0.34) !important;
-        border-radius: 12px !important;
-        padding: 8px 18px !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.03em !important;
-        transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
-        box-shadow: 0 8px 20px rgba(30,58,138,0.24) !important;
+    .sidebar-mini {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--apple-radius-sm);
+        padding: 12px 14px;
+        margin-top: 16px;
     }
-    .stButton > button[kind="primary"]:hover,
-    [data-testid="stBaseButton-primary"]:hover {
-        filter: brightness(1.07) !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 14px 26px rgba(30,58,138,0.34) !important;
+
+    /* ── Progress Bars ── */
+    .stProgress > div > div { background-color: var(--apple-crimson) !important; }
+
+    /* ── Primary Buttons — Crimson Accent ── */
+    .stButton > button[kind=”primary”],
+    .stButton > button[kind=”primary”][data-testid],
+    [data-testid=”stBaseButton-primary”] {
+        background: var(--apple-crimson) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: var(--apple-radius-sm) !important;
+        padding: 10px 24px !important;
+        font-weight: 600 !important;
+        font-size: 0.88rem !important;
+        letter-spacing: -0.01em !important;
+        transition: var(--apple-transition) !important;
+        box-shadow: 0 4px 16px rgba(177,18,38,0.20) !important;
+    }
+    .stButton > button[kind=”primary”]:hover,
+    [data-testid=”stBaseButton-primary”]:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 24px rgba(177,18,38,0.30) !important;
+        filter: brightness(1.08) !important;
     }
     .stButton > button:focus-visible {
-        outline: 2px solid rgba(30,58,138,0.42) !important;
+        outline: 2px solid var(--apple-crimson) !important;
         outline-offset: 2px !important;
     }
 
-    /* ── Secondary Buttons — premium quiet action ── */
-    .stButton > button[kind="secondary"],
-    [data-testid="stBaseButton-secondary"] {
-        background: linear-gradient(165deg, rgba(255,255,255,0.95) 0%, rgba(244,248,253,0.92) 100%) !important;
-        border: 1px solid rgba(30,58,138,0.24) !important;
-        color: #0A1628 !important;
-        font-size: 0.78rem !important;
-        font-weight: 700 !important;
-        padding: 0.36rem 0.8rem !important;
-        box-shadow: 0 6px 14px rgba(9,23,42,0.12) !important;
-        letter-spacing: 0.08em !important;
-        text-transform: uppercase !important;
-        border-radius: 10px !important;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+    /* ── Secondary Buttons — Quiet Glass ── */
+    .stButton > button[kind=”secondary”],
+    [data-testid=”stBaseButton-secondary”] {
+        background: var(--apple-glass-bg) !important;
+        backdrop-filter: var(--apple-glass-blur) !important;
+        border: 1px solid var(--apple-gray-300) !important;
+        color: var(--apple-ink) !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        padding: 8px 20px !important;
+        box-shadow: var(--apple-shadow-soft) !important;
+        letter-spacing: -0.01em !important;
+        border-radius: var(--apple-radius-sm) !important;
+        transition: var(--apple-transition) !important;
     }
-    .stButton > button[kind="secondary"]:hover,
-    [data-testid="stBaseButton-secondary"]:hover {
-        border-color: rgba(30,58,138,0.46) !important;
-        box-shadow: 0 12px 22px rgba(9,23,42,0.16) !important;
-        transform: translateY(-1px) !important;
+    .stButton > button[kind=”secondary”]:hover,
+    [data-testid=”stBaseButton-secondary”]:hover {
+        border-color: var(--apple-crimson) !important;
+        box-shadow: var(--apple-shadow-hover) !important;
+        transform: translateY(-2px) !important;
+        color: var(--apple-crimson) !important;
     }
 
     /* ── Badges ── */
     .badge {
         display: inline-block;
-        background: #CC2936;
+        background: var(--apple-crimson);
         color: white;
-        font-size: 0.74rem;
+        font-size: 0.72rem;
         font-weight: 600;
         padding: 3px 10px;
-        border-radius: 20px;
+        border-radius: 99px;
         margin-left: 8px;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.04em;
     }
-    .badge.done { background: #1A9E5C; }
+    .badge.done { background: #34C759; }
 
     /* ── Welcome Banner ── */
     .welcome-banner {
-        background: linear-gradient(135deg, #0A1628 0%, #1B3A5C 100%);
-        border-radius: 16px;
-        padding: 32px 36px;
-        margin-bottom: 28px;
-        border-left: 6px solid #CC2936;
+        background: var(--apple-ink);
+        border-radius: var(--apple-radius-lg);
+        padding: 40px;
+        margin-bottom: 32px;
+        border-left: none;
     }
-    .welcome-banner h1 { color: white !important; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 8px; }
-    .welcome-banner p { color: #B0C4D8; font-size: 1.05rem; }
+    .welcome-banner h1 {
+        color: var(--apple-gray-100) !important;
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        margin-bottom: 8px;
+    }
+    .welcome-banner p { color: var(--apple-gray-400); font-size: 1.05rem; line-height: 1.7; }
 
     /* ── Callout ── */
-    .callout { background: #FEF2F3; border-left: 4px solid #CC2936; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; color: #6B0E16; }
+    .callout {
+        background: var(--apple-crimson-soft);
+        border-left: 3px solid var(--apple-crimson);
+        border-radius: 0 var(--apple-radius-xs) var(--apple-radius-xs) 0;
+        padding: 16px 20px;
+        margin: 16px 0;
+        color: #6B0E16;
+    }
 
     /* ── Dividers ── */
-    hr { border: none; border-top: 1px solid #D8E1EB; margin: 24px 0; }
+    hr { border: none; border-top: 1px solid var(--apple-gray-200); margin: 32px 0; }
 
     /* ── Resource Library ── */
     .resource-card {
-        background: linear-gradient(155deg, #FFFFFF 0%, #F8FBFF 100%);
-        border-radius: 14px;
-        padding: 13px 16px;
-        margin-bottom: 7px;
-        box-shadow: var(--premium-shadow-soft);
-        border: var(--premium-border);
-        transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-md);
+        padding: 16px 20px;
+        margin-bottom: 8px;
+        box-shadow: var(--apple-shadow-soft);
+        border: 1px solid rgba(255,255,255,0.18);
+        transition: var(--apple-transition);
     }
     .resource-card:hover {
-        border-color: rgba(30,58,138,0.34);
-        box-shadow: var(--premium-shadow-hover);
+        border-color: rgba(177,18,38,0.20);
+        box-shadow: var(--apple-shadow-hover);
         transform: translateY(-2px);
     }
     .resource-id {
         display: inline-block;
-        background: #0A1628;
+        background: var(--apple-ink);
         color: white;
         font-size: 0.68rem;
         font-weight: 700;
         padding: 3px 8px;
-        border-radius: 6px;
+        border-radius: var(--apple-radius-xs);
         white-space: nowrap;
         margin-top: 3px;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.02em;
         min-width: 54px;
         text-align: center;
         flex-shrink: 0;
     }
-    /* ─────────────────────────────────────────────────────────────
-       Mobile + Dark Mode Compatibility Patch
-       (keeps desktop exactly the same)
-       ───────────────────────────────────────────────────────────── */
-    @media (max-width: 768px) and (prefers-color-scheme: dark) {
 
-      /* App background + default text */
-      div[data-testid="stAppViewContainer"],
+    /* ── Mobile + Dark Mode Compatibility ── */
+    @media (max-width: 768px) and (prefers-color-scheme: dark) {
+      div[data-testid=”stAppViewContainer”],
       section.main,
       .stApp {
-        background: #0B1220 !important;
-        color: #F9FAFB !important;
+        background: var(--apple-ink) !important;
+        color: var(--apple-gray-100) !important;
       }
-
-      /* Streamlit markdown text */
-      div[data-testid="stMarkdownContainer"],
-      div[data-testid="stMarkdownContainer"] p,
-      div[data-testid="stMarkdownContainer"] li,
-      div[data-testid="stMarkdownContainer"] span,
-      div[data-testid="stMarkdownContainer"] div {
-        color: #F9FAFB !important;
+      div[data-testid=”stMarkdownContainer”],
+      div[data-testid=”stMarkdownContainer”] p,
+      div[data-testid=”stMarkdownContainer”] li,
+      div[data-testid=”stMarkdownContainer”] span,
+      div[data-testid=”stMarkdownContainer”] div {
+        color: var(--apple-gray-100) !important;
       }
-
-      /* Your custom headings/subtitles (you use these a lot) */
-      .page-title,
-      .page-subtitle {
-        color: #F9FAFB !important;
+      .page-title, .page-subtitle { color: var(--apple-gray-100) !important; }
+      .resource-card, .module-card, .welcome-banner + div,
+      div[style*=”background:white”], div[style*=”background: white”] {
+        background: rgba(20,20,22,0.90) !important;
+        border-color: rgba(255,255,255,0.08) !important;
       }
-
-      /* Cards you set to white in light mode */
-      .resource-card,
-      .module-card,
-      .welcome-banner + div,
-      div[style*="background:white"],
-      div[style*="background: white"] {
-        background: #111827 !important;
-        border-color: rgba(255,255,255,0.10) !important;
-      }
-
-      /* Override your common “dark ink” inline colors */
-      div[style*="color:#0A1628"],
-      div[style*="color: #0A1628"],
-      span[style*="color:#0A1628"],
-      span[style*="color: #0A1628"] {
-        color: #F9FAFB !important;
-      }
-
-      /* Override your muted slate inline color */
-      div[style*="color:#5A6E8A"],
-      div[style*="color: #5A6E8A"],
-      span[style*="color:#5A6E8A"],
-      span[style*="color: #5A6E8A"] {
-        color: #CBD5E1 !important;
-      }
-
-      /* Inputs (you also set these explicitly on Downloads page) */
-      div[data-testid="stTextInput"] input {
-        background: #0F172A !important;
-        color: #F9FAFB !important;
-        border-color: rgba(255,255,255,0.18) !important;
-      }
-      div[data-testid="stTextInput"] input::placeholder {
-        color: rgba(255,255,255,0.55) !important;
-      }
-
-      /* Tables you render with dark headers + light bodies */
-      table, td, th {
-        color: #E5E7EB !important;
+      div[style*=”color:#0A1628”], div[style*=”color: #0A1628”],
+      span[style*=”color:#0A1628”], span[style*=”color: #0A1628”] { color: var(--apple-gray-100) !important; }
+      div[style*=”color:#5A6E8A”], div[style*=”color: #5A6E8A”],
+      span[style*=”color:#5A6E8A”], span[style*=”color: #5A6E8A”] { color: var(--apple-gray-300) !important; }
+      div[data-testid=”stTextInput”] input {
+        background: rgba(20,20,22,0.90) !important;
+        color: var(--apple-gray-100) !important;
         border-color: rgba(255,255,255,0.12) !important;
       }
+      div[data-testid=”stTextInput”] input::placeholder { color: rgba(255,255,255,0.40) !important; }
+      table, td, th { color: var(--apple-gray-200) !important; border-color: rgba(255,255,255,0.08) !important; }
     }
 
-    /* ── Onboarding App Compatibility: map onboarding classes to Training App look ── */
-
-    /* Sidebar action buttons */
-    [data-testid="stSidebar"] .stButton > button {
+    /* ── Sidebar Buttons ── */
+    [data-testid=”stSidebar”] .stButton > button {
         width: 100% !important;
-        border-radius: 12px !important;
-        border: 1px solid rgba(255,255,255,0.18) !important;
-        background: linear-gradient(150deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 100%) !important;
-        color: #EAF2FF !important;
+        border-radius: var(--apple-radius-sm) !important;
+        border: 1px solid rgba(255,255,255,0.10) !important;
+        background: rgba(255,255,255,0.06) !important;
+        color: var(--apple-gray-100) !important;
         text-align: center !important;
-        font-size: 0.82rem !important;
+        font-size: 0.84rem !important;
         font-weight: 600 !important;
-        letter-spacing: 0.05em !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 12px 20px rgba(2,8,23,0.28) !important;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
+        letter-spacing: -0.01em !important;
+        transition: var(--apple-transition) !important;
     }
-    [data-testid="stSidebar"] .stButton > button:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 16px 24px rgba(2,8,23,0.34) !important;
-        filter: brightness(1.05) !important;
+    [data-testid=”stSidebar”] .stButton > button:hover {
+        transform: translateY(-2px) !important;
+        background: rgba(255,255,255,0.10) !important;
     }
-    [data-testid="stSidebar"] .stButton > button[kind="primary"],
-    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
-        background: linear-gradient(145deg, rgba(203,213,225,0.35) 0%, rgba(148,163,184,0.22) 100%) !important;
-        border-color: rgba(203,213,225,0.52) !important;
-        color: #F8FAFC !important;
+    [data-testid=”stSidebar”] .stButton > button[kind=”primary”],
+    [data-testid=”stSidebar”] [data-testid=”stBaseButton-primary”] {
+        background: rgba(177,18,38,0.25) !important;
+        border-color: rgba(177,18,38,0.35) !important;
+        color: #FFFFFF !important;
     }
 
-    /* Content sections used heavily in onboarding */
+    /* ── Content Sections — Glassmorphism Cards ── */
     .content-section {
-        background: linear-gradient(155deg, #FFFFFF 0%, #F8FBFF 100%);
-        border-radius: var(--premium-card-radius);
-        padding: 24px 28px;
-        margin: 18px 0;
-        box-shadow: var(--premium-shadow-soft);
-        border: var(--premium-border);
-        border-top: 3px solid #CC2936;
+        background: var(--apple-glass-bg);
+        backdrop-filter: var(--apple-glass-blur);
+        -webkit-backdrop-filter: var(--apple-glass-blur);
+        border-radius: var(--apple-radius-md);
+        padding: 32px;
+        margin: 24px 0;
+        box-shadow: var(--apple-shadow-soft);
+        border: 1px solid rgba(255,255,255,0.18);
+        border-top: none;
     }
     .content-section h2 {
-        font-family: 'Playfair Display', serif;
-        color: #0A1628 !important;
-        font-size: 1.7rem;
-        font-weight: 700;
-        margin: 0 0 14px 0;
-        border-bottom: 2px solid #D8E1EB;
-        padding-bottom: 10px;
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif;
+        color: var(--apple-ink) !important;
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin: 0 0 16px 0;
+        border-bottom: 1px solid var(--apple-gray-200);
+        padding-bottom: 12px;
     }
     .content-section h3 {
-        color: #CC2936 !important;
+        color: var(--apple-crimson) !important;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
-        font-size: 0.82rem;
+        letter-spacing: 0.08em;
+        font-size: 0.76rem;
         font-weight: 700;
-        margin: 18px 0 8px 0;
+        margin: 24px 0 8px 0;
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif !important;
+    }
+    .content-section p {
+        color: var(--apple-gray-600);
+        line-height: 1.7;
+    }
+    .content-section li {
+        color: var(--apple-gray-600);
+        line-height: 1.7;
     }
 
-    /* Info boxes (onboarding) → training callout vibe */
+    /* ── Info Boxes — Refined Callouts ── */
     .info-box {
-        background: #FFF5F5;
-        border-left: 4px solid #CC2936;
-        border-radius: 8px;
-        padding: 14px 16px;
-        margin: 16px 0;
-        color: #0A1628 !important;
+        background: var(--apple-crimson-soft);
+        border-left: 3px solid var(--apple-crimson);
+        border-radius: 0 var(--apple-radius-xs) var(--apple-radius-xs) 0;
+        padding: 16px 20px;
+        margin: 20px 0;
+        color: var(--apple-ink) !important;
+        font-size: 0.9rem;
+        line-height: 1.7;
     }
-    .info-box.green { background: #F0FFF6; border-left-color: #1A9E5C; }
-    .info-box.yellow { background: #FFF7ED; border-left-color: #D97706; }
+    .info-box.green { background: rgba(52,199,89,0.08); border-left-color: #34C759; }
+    .info-box.yellow { background: rgba(255,159,10,0.08); border-left-color: #FF9F0A; }
 
-    /* Tables (onboarding styled-table) aligned to training palette */
+    /* ── Tables — Clean Apple Style ── */
     .styled-table {
         width: 100%;
-        border-collapse: collapse;
-        font-size: 0.92rem;
-        margin: 14px 0;
-        border-radius: 10px;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 0.88rem;
+        margin: 16px 0;
+        border-radius: var(--apple-radius-sm);
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        box-shadow: var(--apple-shadow-soft);
+        border: 1px solid var(--apple-gray-200);
     }
     .styled-table th {
-        background: #0A1628;
-        color: #FFFFFF;
-        padding: 12px 14px;
+        background: var(--apple-ink);
+        color: var(--apple-gray-100);
+        padding: 12px 16px;
         text-align: left;
         font-weight: 600;
-        letter-spacing: 0.02em;
+        font-size: 0.78rem;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
     }
     .styled-table td {
-        padding: 11px 14px;
-        border-bottom: 1px solid #E6EDF5;
-        color: #0A1628;
-        background: #FFFFFF;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--apple-gray-200);
+        color: var(--apple-gray-600);
+        background: var(--apple-white);
+        line-height: 1.6;
     }
-    .styled-table tr:nth-child(even) td { background: #F7FAFD; }
+    .styled-table tr:nth-child(even) td { background: var(--apple-surface); }
     .styled-table tr:last-child td { border-bottom: none; }
 
-    /* ── Premium Login ── */
+    /* ── Premium Login — Hero Card ── */
     .lp-info-card {
-        background: linear-gradient(155deg, #060E1E 0%, #0A1628 45%, #112038 100%);
-        border: 1px solid rgba(255,255,255,0.07);
-        border-radius: 22px;
-        padding: 40px 36px;
-        box-shadow: 0 28px 72px rgba(6,14,30,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
+        background: var(--apple-ink);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--apple-radius-lg);
+        padding: 48px 40px;
+        box-shadow: var(--apple-shadow-deep);
         min-height: 460px;
         position: relative;
         overflow: hidden;
     }
     .lp-info-card::before {
-        content: "";
+        content: “”;
         position: absolute;
-        top: -90px; right: -70px;
-        width: 280px; height: 280px;
-        background: radial-gradient(circle, rgba(204,41,54,0.22) 0%, transparent 70%);
+        top: -100px; right: -80px;
+        width: 320px; height: 320px;
+        background: radial-gradient(circle, rgba(177,18,38,0.20) 0%, transparent 70%);
         pointer-events: none;
     }
     .lp-info-card::after {
-        content: "";
+        content: “”;
         position: absolute;
-        bottom: -110px; left: -60px;
-        width: 260px; height: 260px;
-        background: radial-gradient(circle, rgba(30,58,138,0.28) 0%, transparent 70%);
+        bottom: -120px; left: -80px;
+        width: 300px; height: 300px;
+        background: radial-gradient(circle, rgba(177,18,38,0.08) 0%, transparent 70%);
         pointer-events: none;
     }
     .lp-kicker {
-        font-size: 0.66rem;
+        font-size: 0.68rem;
         text-transform: uppercase;
-        letter-spacing: 0.24em;
-        color: #F87171;
-        font-weight: 800;
-        margin-bottom: 16px;
+        letter-spacing: 0.18em;
+        color: var(--apple-crimson);
+        font-weight: 700;
+        margin-bottom: 20px;
         position: relative;
         z-index: 1;
     }
     .lp-headline {
-        font-family: 'Playfair Display', serif !important;
-        font-size: 1.78rem !important;
-        font-weight: 700 !important;
+        font-family: 'Inter', -apple-system, 'SF Pro Display', sans-serif !important;
+        font-size: 1.9rem !important;
+        font-weight: 800 !important;
         color: #FFFFFF !important;
-        line-height: 1.27 !important;
-        margin: 0 0 18px 0 !important;
+        line-height: 1.2 !important;
+        letter-spacing: -0.035em !important;
+        margin: 0 0 20px 0 !important;
         position: relative;
         z-index: 1;
     }
     .lp-body {
-        color: #94A3B8;
-        font-size: 0.875rem;
-        line-height: 1.74;
-        margin: 0 0 26px 0;
+        color: var(--apple-gray-400);
+        font-size: 0.92rem;
+        line-height: 1.7;
+        margin: 0 0 32px 0;
         position: relative;
         z-index: 1;
     }
@@ -706,7 +779,7 @@ render_html("""
         margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
         position: relative;
         z-index: 1;
     }
@@ -714,45 +787,90 @@ render_html("""
         display: flex;
         align-items: center;
         gap: 12px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.085);
-        border-radius: 11px;
-        padding: 11px 15px;
-        color: #CBD5E1;
-        font-size: 0.83rem;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: var(--apple-radius-sm);
+        padding: 12px 16px;
+        color: var(--apple-gray-300);
+        font-size: 0.86rem;
         font-weight: 500;
+        transition: var(--apple-transition);
+    }
+    .lp-features li:hover {
+        background: rgba(255,255,255,0.06);
+        transform: translateX(4px);
     }
     .lp-divider {
-        width: 36px;
+        width: 40px;
         height: 3px;
-        background: linear-gradient(90deg, #CC2936, #1E3A8A);
+        background: var(--apple-crimson);
         border-radius: 2px;
-        margin: 0 0 20px 0;
+        margin: 0 0 24px 0;
         position: relative;
         z-index: 1;
     }
-    /* Form submit button styling */
-    div[data-testid="stFormSubmitButton"] button {
-        background: linear-gradient(135deg, #0A1628 0%, #1E3A8A 50%, #CC2936 100%) !important;
+
+    /* ── Form Submit Button ── */
+    div[data-testid=”stFormSubmitButton”] button {
+        background: var(--apple-crimson) !important;
         color: #FFFFFF !important;
         border: none !important;
-        border-radius: 11px !important;
-        padding: 11px 20px !important;
+        border-radius: var(--apple-radius-sm) !important;
+        padding: 12px 24px !important;
         font-weight: 700 !important;
-        letter-spacing: 0.06em !important;
-        text-transform: uppercase !important;
-        font-size: 0.84rem !important;
-        box-shadow: 0 8px 22px rgba(30,58,138,0.3) !important;
-        transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
+        letter-spacing: -0.01em !important;
+        font-size: 0.88rem !important;
+        box-shadow: 0 4px 16px rgba(177,18,38,0.20) !important;
+        transition: var(--apple-transition) !important;
     }
-    div[data-testid="stFormSubmitButton"] button:hover {
-        filter: brightness(1.1) !important;
+    div[data-testid=”stFormSubmitButton”] button:hover {
         transform: translateY(-2px) !important;
-        box-shadow: 0 14px 30px rgba(30,58,138,0.4) !important;
+        box-shadow: 0 8px 24px rgba(177,18,38,0.30) !important;
+        filter: brightness(1.08) !important;
+    }
+
+    /* ── Streamlit Tabs — Apple Style ── */
+    .stTabs [data-baseweb=”tab-list”] {
+        gap: 0;
+        background: var(--apple-gray-200);
+        border-radius: var(--apple-radius-sm);
+        padding: 4px;
+    }
+    .stTabs [data-baseweb=”tab”] {
+        border-radius: var(--apple-radius-xs) !important;
+        font-weight: 600 !important;
+        font-size: 0.82rem !important;
+        color: var(--apple-gray-500) !important;
+        padding: 8px 16px !important;
+        transition: var(--apple-transition) !important;
+    }
+    .stTabs [data-baseweb=”tab”]:hover { color: var(--apple-ink) !important; }
+    .stTabs [aria-selected=”true”] {
+        background: var(--apple-white) !important;
+        color: var(--apple-ink) !important;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important;
+    }
+    .stTabs [data-baseweb=”tab-highlight”] { display: none !important; }
+    .stTabs [data-baseweb=”tab-border”] { display: none !important; }
+
+    /* ── Streamlit Checkboxes ── */
+    .stCheckbox label { font-size: 0.88rem !important; color: var(--apple-gray-600) !important; }
+
+    /* ── Form Inputs ── */
+    .stTextInput input, .stSelectbox select {
+        border-radius: var(--apple-radius-sm) !important;
+        border: 1.5px solid var(--apple-gray-200) !important;
+        font-size: 0.92rem !important;
+        padding: 10px 14px !important;
+        transition: var(--apple-transition) !important;
+    }
+    .stTextInput input:focus, .stSelectbox select:focus {
+        border-color: var(--apple-crimson) !important;
+        box-shadow: 0 0 0 3px rgba(177,18,38,0.08) !important;
     }
 
 </style>
-""")
+“””)
 
 # ─────────────────────────────────────────────
 #  GOOGLE SHEETS INTEGRATION
@@ -1002,7 +1120,7 @@ def pct_bar(pct):
     <div class="progress-container">
         <div class="progress-fill" style="width:{pct}%"></div>
     </div>
-    <small style="color:#8BA3C7">{pct}% complete</small>
+    <small style="color:rgba(255,255,255,0.36); font-size:0.72rem;">{pct}% complete</small>
     """).strip()
 
 def info_box(text, color="default"):
@@ -1066,47 +1184,50 @@ def show_login():
     # Inject login-specific CSS overrides (scoped to this page only)
     render_html("""
     <style>
-        /* Page background for login */
-        .stApp { background: #0B1220 !important; }
-        /* Style the form container as the white sign-in card */
+        /* Page background for login — Midnight */
+        .stApp { background: #0A0A0B !important; }
+        /* Style the form container as a frosted glass sign-in card */
         [data-testid="stForm"] {
-            background: #FFFFFF;
-            border-radius: 22px;
-            padding: 32px 30px 28px !important;
-            box-shadow: 0 28px 72px rgba(6,14,30,0.38), 0 1px 3px rgba(6,14,30,0.1);
-            border: 1px solid rgba(148,163,184,0.15);
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px 36px 32px !important;
+            box-shadow: 0 32px 64px rgba(0,0,0,0.12);
+            border: 1px solid rgba(255,255,255,0.18);
         }
         /* Input label styling */
         [data-testid="stForm"] label p {
-            font-size: 0.75rem !important;
-            font-weight: 700 !important;
-            color: #475569 !important;
+            font-size: 0.72rem !important;
+            font-weight: 600 !important;
+            color: #86868B !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.09em !important;
+            letter-spacing: 0.10em !important;
         }
         /* Input field styling */
         [data-testid="stForm"] input {
-            border: 1.5px solid #E2E8F0 !important;
-            border-radius: 10px !important;
-            font-size: 0.9rem !important;
-            background: #F8FAFC !important;
-            color: #0F172A !important;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+            border: 1.5px solid #E8E8ED !important;
+            border-radius: 12px !important;
+            font-size: 0.92rem !important;
+            background: #F5F5F7 !important;
+            color: #0A0A0B !important;
+            padding: 10px 14px !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
         }
         [data-testid="stForm"] input:focus {
-            border-color: #1E3A8A !important;
-            box-shadow: 0 0 0 3px rgba(30,58,138,0.12) !important;
+            border-color: #B11226 !important;
+            box-shadow: 0 0 0 3px rgba(177,18,38,0.08) !important;
             background: #FFFFFF !important;
         }
         /* Radio label styling */
         [data-testid="stForm"] .stRadio label {
-            color: #334155 !important;
-            font-size: 0.87rem !important;
+            color: #424245 !important;
+            font-size: 0.88rem !important;
         }
     </style>
     """)
 
-    render_html("<div style='padding-top:36px'></div>")
+    render_html("<div style='padding-top:48px'></div>")
 
     _login_logo_src = _logo_img_src()
 
@@ -1114,10 +1235,10 @@ def show_login():
     with outer_m:
         # Logo
         render_html(f"""
-        <div style="text-align:center; margin-bottom:32px;">
+        <div style="text-align:center; margin-bottom:40px;">
             <img src="{_login_logo_src}" alt="AAP / API Logo"
-                 style="height:88px; max-width:300px; object-fit:contain;
-                        filter: drop-shadow(0 6px 20px rgba(6,14,30,0.5)) brightness(1.05);">
+                 style="height:80px; max-width:280px; object-fit:contain;
+                        filter: brightness(1.1);">
         </div>
         """)
 
@@ -1127,17 +1248,17 @@ def show_login():
         with panel_l:
             render_html("""
             <div class="lp-info-card">
-                <div class="lp-kicker">Premium Onboarding Experience</div>
+                <div class="lp-kicker">New Hire Orientation</div>
                 <h2 class="lp-headline">Welcome to your<br>orientation hub.</h2>
                 <div class="lp-divider"></div>
                 <p class="lp-body">
-                    Start your first day with a secure, guided setup. Sign in to access
-                    your personalized onboarding modules and real-time completion tracking.
+                    Begin your journey with a secure, guided onboarding experience.
+                    Sign in to access your personalized modules and track your progress in real time.
                 </p>
                 <ul class="lp-features">
-                    <li><span>🔒</span> Secure employee credential check</li>
-                    <li><span>🧭</span> Role-based learning path assignment</li>
-                    <li><span>📈</span> Live progress sync and verification</li>
+                    <li><span style="font-size:1rem;">&#9679;</span> Secure employee credential verification</li>
+                    <li><span style="font-size:1rem;">&#9679;</span> Role-based learning path assignment</li>
+                    <li><span style="font-size:1rem;">&#9679;</span> Live progress sync and tracking</li>
                 </ul>
             </div>
             """)
@@ -1145,10 +1266,10 @@ def show_login():
         with panel_r:
             with st.form("login_form", clear_on_submit=False):
                 render_html("""
-                <p style="font-size:1.15rem; font-weight:700; color:#0A1628; margin:0 0 4px 0;">
+                <p style="font-size:1.2rem; font-weight:800; color:#0A0A0B; margin:0 0 4px 0; letter-spacing:-0.025em;">
                     Employee Sign In
                 </p>
-                <p style="color:#64748B; font-size:0.83rem; margin:0 0 22px 0;">
+                <p style="color:#86868B; font-size:0.86rem; margin:0 0 24px 0; line-height:1.7;">
                     Use the details provided by HR to continue.
                 </p>
                 """)
@@ -1196,11 +1317,11 @@ def show_login():
 
         # Footer
         render_html("""
-        <div style="text-align:center; margin-top:28px; padding-top:18px;
-                    border-top:1px solid rgba(255,255,255,0.08);">
-            <p style="color:#475569; font-size:0.78rem; margin:0; line-height:2;">
+        <div style="text-align:center; margin-top:32px; padding-top:20px;
+                    border-top:1px solid rgba(255,255,255,0.06);">
+            <p style="color:#86868B; font-size:0.78rem; margin:0; line-height:2; letter-spacing:0.01em;">
                 Need help? Contact HR &nbsp;·&nbsp;
-                <strong style="color:#94A3B8;">Nicole Thornton</strong>
+                <strong style="color:#D2D2D7;">Nicole Thornton</strong>
                 &nbsp;·&nbsp; nicole.thornton@apirx.com &nbsp;·&nbsp; 256-574-7528
             </p>
         </div>
@@ -1231,20 +1352,20 @@ if st.session_state.authenticated:
         render_html(f"""
         <div class="sidebar-header">
             <img src="{logo_src}"
-                 style="max-height:56px; width:100%; object-fit:contain; margin-bottom:10px;" />
-            <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.16em;
-                        color:#B8CAE3; text-transform:uppercase; margin-bottom:6px;">
+                 style="max-height:48px; width:100%; object-fit:contain; margin-bottom:12px; opacity:0.9;" />
+            <div style="font-size:0.62rem; font-weight:600; letter-spacing:0.14em;
+                        color:rgba(255,255,255,0.36); text-transform:uppercase; margin-bottom:6px;">
                     Learning Interface
             </div>
-            <div class="sidebar-username" style="font-size:0.93rem;">👤 {st.session_state.username}</div>
+            <div class="sidebar-username" style="font-size:0.93rem;">{st.session_state.username}</div>
         </div>
         """)
 
         # ── Overall progress ──
         total_pct = int(sum(st.session_state.progress.values()) / max(len(active_modules), 1))
         render_html(f"""
-        <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.1em;
-                    color:#8BA3C7; text-transform:uppercase; margin: 6px 0 4px 0;">
+        <div style="font-size:0.66rem; font-weight:600; letter-spacing:0.10em;
+                    color:rgba(255,255,255,0.36); text-transform:uppercase; margin: 8px 0 4px 0;">
             Progress &middot; {total_pct}%
         </div>
         """)
@@ -1285,16 +1406,16 @@ if st.session_state.authenticated:
 
         st.markdown("---")
         render_html("""
-        <small style='color:#8BA3C7'>
-        <b>HR Contact</b><br>
+        <small style='color:rgba(255,255,255,0.40); line-height:1.7;'>
+        <b style="color:rgba(255,255,255,0.56);">HR Contact</b><br>
         Nicole Thornton<br>
         HR Administrator<br>
-        📞 256-574-7528<br>
-        ✉ Nicole.thornton@apirx.com
+        256-574-7528<br>
+        Nicole.thornton@apirx.com
         </small>
         <div class="sidebar-mini">
-            <div style="font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:#9CB3CF; font-weight:700; margin-bottom:4px;">Experience</div>
-            <div style="color:#EEF4FB; font-size:0.8rem; line-height:1.45;">Cinematic glass navigation inspired by premium hardware UI patterns.</div>
+            <div style="font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.28); font-weight:600; margin-bottom:4px;">Experience</div>
+            <div style="color:rgba(255,255,255,0.50); font-size:0.8rem; line-height:1.6;">Glassmorphism interface designed for clarity and focus.</div>
         </div>
         """)
 
@@ -1316,16 +1437,16 @@ def show_home():
 
     render_html(f"""
     <div class="premium-hero">
-        <span class="premium-kicker">Elite Training Suite</span>
-        <h1>{track_label} Learning Command Center · {name_display}</h1>
+        <span class="premium-kicker">Orientation</span>
+        <h1>{track_label} Learning Center &middot; {name_display}</h1>
         <p>
-            A high-trust, premium orientation environment engineered for clarity, momentum, and measurable readiness.
-            Navigate your modules, monitor milestones, and complete every checkpoint with confidence.
+            Your personalized orientation experience. Navigate modules, track milestones,
+            and complete every checkpoint with confidence.
         </p>
-        <div style="margin-top:12px;">
-            <span class="elite-chip">Realtime Progress Sync</span>
-            <span class="elite-chip">Role-Calibrated Path</span>
-            <span class="elite-chip">Assessment Locked</span>
+        <div style="margin-top:16px; position:relative; z-index:1;">
+            <span class="elite-chip">Progress Sync</span>
+            <span class="elite-chip">Role-Based Path</span>
+            <span class="elite-chip">Verified</span>
         </div>
     </div>
     """)
@@ -1357,9 +1478,9 @@ def show_home():
         """)
 
     render_html("""
-    <div style="margin:18px 0 10px 0; display:flex; justify-content:space-between; align-items:center; gap:10px;">
-        <div style="font-size:0.72rem; letter-spacing:0.13em; text-transform:uppercase; color:#5F738D; font-weight:700;">Training Modules</div>
-        <div style="font-size:0.75rem; color:#60748E;">Select a module to continue your premium onboarding workflow.</div>
+    <div style="margin:24px 0 12px 0; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div style="font-size:0.70rem; letter-spacing:0.10em; text-transform:uppercase; color:#86868B; font-weight:600;">Training Modules</div>
+        <div style="font-size:0.78rem; color:#86868B;">Select a module to continue.</div>
     </div>
     """)
 
@@ -1380,8 +1501,8 @@ def show_home():
             </div>
             <p class="module-sub">{m['subtitle']}</p>
             <div class="module-meter"><span style="width:{pct}%"></span></div>
-            <div style="margin-top:8px; color:#5B6F88; font-size:0.76rem; display:flex; justify-content:space-between;">
-                <span>Execution progress</span><strong style="color:#081426;">{pct}%</strong>
+            <div style="margin-top:10px; color:#86868B; font-size:0.78rem; display:flex; justify-content:space-between;">
+                <span>Progress</span><strong style="color:#0A0A0B;">{pct}%</strong>
             </div>
         </div>
         """)

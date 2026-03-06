@@ -137,9 +137,9 @@ st.markdown("""
         color: rgba(230,240,255,0.94) !important;
     }
     [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
-        background: linear-gradient(145deg, rgba(191,219,254,0.30) 0%, rgba(147,197,253,0.16) 100%) !important;
-        border-color: rgba(191,219,254,0.46) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.32), 0 16px 30px rgba(2,8,23,0.45), 0 0 0 1px rgba(191,219,254,0.32) !important;
+        background: linear-gradient(152deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.06) 100%) !important;
+        border-color: rgba(147,197,253,0.58) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.26), 0 14px 26px rgba(2,8,23,0.40), 0 0 0 1px rgba(147,197,253,0.36), 0 0 20px rgba(96,165,250,0.42), 0 0 36px rgba(59,130,246,0.26) !important;
     }
     [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] > div:first-child {
         background: rgba(255,255,255,0.06) !important;

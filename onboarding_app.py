@@ -626,6 +626,20 @@ def render_sidebar():
 # Home view
 # ─────────────────────────────────────────────
 
+def render_module_card(module: dict):
+    pct = st.session_state.progress.get(module["key"], 0)
+    status = "Complete ✓" if pct == 100 else ("In Progress" if pct > 0 else "Queued")
+
+    with st.container(border=True):
+        st.markdown(f"**{module['icon']} Module {module['number']}: {module['title']}**  ")
+        st.caption(module["subtitle"])
+        st.progress(pct)
+        st.write(status)
+        if st.button(f"Launch Module {module['number']}", key=f"open_{module['key']}", use_container_width=True):
+            st.session_state.selected_module = module["key"]
+            st.rerun()
+
+
 def show_home():
     is_wh = st.session_state.get("role_track") == "warehouse"
     active_modules = WAREHOUSE_MODULES if is_wh else MODULES
@@ -649,17 +663,11 @@ def show_home():
         st.metric("Quizzes Submitted", f"{quizzes_done}/{len(active_modules)}")
 
     st.markdown("### Training Modules — pick up where you left off")
-    for m in active_modules:
-        pct = st.session_state.progress.get(m["key"], 0)
-        status = "Complete ✓" if pct == 100 else ("In Progress" if pct > 0 else "Queued")
-        with st.container(border=True):
-            st.markdown(f"**{m['icon']} Module {m['number']}: {m['title']}**  ")
-            st.caption(m["subtitle"]) 
-            st.progress(pct)
-            st.write(status)
-            if st.button(f"Launch Module {m['number']}", key=f"open_{m['key']}"):
-                st.session_state.selected_module = m["key"]
-                st.rerun()
+    left_col, right_col = st.columns(2)
+    for idx, module in enumerate(active_modules):
+        target_col = left_col if idx % 2 == 0 else right_col
+        with target_col:
+            render_module_card(module)
 
 
 # ─────────────────────────────────────────────

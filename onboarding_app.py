@@ -1451,6 +1451,8 @@ def show_home():
     </div>
     """)
 
+    render_html('<div style="margin-top: 32px;"></div>')
+
     c1, c2, c3 = st.columns(3)
     with c1:
         render_html(f"""

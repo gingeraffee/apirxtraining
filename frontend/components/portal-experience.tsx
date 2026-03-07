@@ -360,49 +360,61 @@ function OverviewScreen({ experience, progress, nextSection }: OverviewProps) {
   const remainingMinutes = experience.sections
     .filter((section) => !progress.completed_sections.includes(section.slug))
     .reduce((runningTotal, section) => runningTotal + section.estimatedMinutes, 0);
-  const primaryContact = experience.contacts[0];
+  const currentSection = experience.sections.find((section) => section.slug === progress.current_section) ?? nextSection ?? null;
   const nextStepLabel = nextSection
     ? completedCount === 0
       ? `Start ${nextSection.title}`
       : `Continue ${nextSection.title}`
-    : "Review completed sections";
+    : "Review completed lessons";
+
+  const nicoleCard = [
+    "BEGIN:VCARD",
+    "VERSION:3.0",
+    "FN:Nicole Thornton",
+    "N:Thornton;Nicole;;;",
+    "TITLE:HR Manager",
+    "TEL;TYPE=WORK,VOICE:256-574-7528",
+    "EMAIL;TYPE=INTERNET:nicole.thornton330@gmail.com",
+    "END:VCARD",
+  ].join("\n");
+  const encodedVCard = encodeURIComponent(nicoleCard);
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=192x192&data=${encodedVCard}`;
+  const vCardDownloadUrl = `data:text/vcard;charset=utf-8,${encodedVCard}`;
 
   return (
     <div className="page-stack overview-page">
       <section className="page-hero overview-hero">
         <div className="overview-hero-copy">
-          <p className="section-label">Main onboarding path</p>
+          <p className="section-label">Welcome to your onboarding course</p>
           <h1>A guided onboarding flow built around what new employees need first.</h1>
-          <p className="lead">This is your core onboarding experience. It covers the essentials in a clear order so you can build confidence quickly.</p>
-          <p className="purpose-line">Move through one section at a time, acknowledge it, and continue forward.</p>
+          <p className="lead">This course is your day-one path through the essentials. It is structured, practical, and designed to build confidence fast.</p>
+          <p className="purpose-line">Move lesson by lesson, complete each acknowledgment, and keep momentum all the way through.</p>
           {nextSection && (
-            <Link className="primary-action" href={`/modules/${nextSection.slug}`}>
-              {nextStepLabel}
-            </Link>
+            <div className="overview-hero-actions">
+              <Link className="primary-action" href={`/modules/${nextSection.slug}`}>
+                {nextStepLabel}
+              </Link>
+              <span className="overview-hero-note">Next lesson: {nextSection.title}</span>
+            </div>
           )}
         </div>
 
         <aside className="summary-panel overview-summary-panel">
-          <p className="section-label">What this page is for</p>
-          <h3>Start here, then keep moving.</h3>
+          <p className="section-label">What this course does</p>
+          <h3>Start with essentials. Build confidence quickly.</h3>
           <ul className="plain-list compact-list">
-            <li>Follow the core sections in order.</li>
-            <li>Use the next section button to continue.</li>
-            <li>Reach out early if anything is unclear.</li>
+            <li>Lessons are ordered so you always know what comes next.</li>
+            <li>Each lesson explains what matters and how to apply it.</li>
+            <li>Progress is tracked automatically across the core path.</li>
           </ul>
-          {nextSection && (
-            <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
-              Continue now
-            </Link>
-          )}
         </aside>
       </section>
 
-      <section className="overview-support-row">
-        <article className="content-panel overview-support-card overview-support-progress">
-          <p className="section-label">Progress status</p>
-          <h3>{completedCount} of {totalCount} sections complete</h3>
-          <p>{remainingCount} section{remainingCount === 1 ? "" : "s"} left in the main path.</p>
+      <section className="overview-progress-board" aria-label="Core onboarding progress">
+        <article className="content-panel overview-progress-card primary-progress-card">
+          <p className="section-label">Core path progress</p>
+          <h3>{completedCount}/{totalCount} lessons complete</h3>
+          <p>{completionPercent}% complete across the core onboarding path.</p>
           <div className="rail-progress" aria-hidden="true">
             <div className="rail-progress-track">
               <span className="rail-progress-fill" style={{ width: `${completionPercent}%` }} />
@@ -410,33 +422,42 @@ function OverviewScreen({ experience, progress, nextSection }: OverviewProps) {
           </div>
         </article>
 
-        <article className="content-panel overview-support-card">
-          <p className="section-label">Estimated remaining time</p>
-          <h3>{remainingMinutes} minutes</h3>
-          <p>Based on section estimates in the core onboarding flow.</p>
+        <article className="content-panel overview-progress-card">
+          <p className="section-label">Current lesson</p>
+          <h3>{currentSection?.title ?? "Getting started"}</h3>
+          <p>{currentSection?.estimatedMinutes ?? 0} minute learning block.</p>
         </article>
 
-        <article className="content-panel overview-support-card">
-          <p className="section-label">Help and support</p>
-          <h3>{primaryContact?.name ?? "HR Team"}</h3>
-          <p>{primaryContact?.role ?? "HR support"}</p>
-          {primaryContact?.phone && <p className="glance-meta">{primaryContact.phone}</p>}
-          {primaryContact?.email && (
-            <a className="inline-action" href={`mailto:${primaryContact.email}`}>
-              Email support
-            </a>
+        <article className="content-panel overview-progress-card">
+          <p className="section-label">Next lesson</p>
+          <h3>{nextSection?.title ?? "Core path complete"}</h3>
+          {nextSection ? (
+            <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
+              Continue lesson
+            </Link>
+          ) : (
+            <p>All core lessons acknowledged.</p>
           )}
+        </article>
+
+        <article className="content-panel overview-progress-card">
+          <p className="section-label">Estimated remaining time</p>
+          <h3>{remainingMinutes} minutes</h3>
+          <p>{remainingCount} lesson{remainingCount === 1 ? "" : "s"} left in the core path.</p>
         </article>
       </section>
 
       <section className="content-panel overview-roadmap">
-        <p className="section-label">Next actions</p>
-        <h3>Complete each onboarding section one at a time</h3>
-        <p className="roadmap-intro">Use the next section first, then move down the list.</p>
-        <ol className="roadmap-list">
+        <p className="section-label">Course path preview</p>
+        <h3>Lesson roadmap</h3>
+        <p className="roadmap-intro">Each lesson includes what it covers, why it matters, guided learning content, practical scenarios, and a completion checkpoint.</p>
+        <ol className="roadmap-list overview-roadmap-list">
           {experience.sections.map((section, index) => {
             const complete = progress.completed_sections.includes(section.slug);
             const upNext = !complete && nextSection?.slug === section.slug;
+            const keyTakeaways = section.essentials.slice(0, 2).map((item) => item.title).join(" | ");
+            const scenarioPreview = section.escalation[0] ?? section.actions[0] ?? "Practical scenario walkthrough included.";
+
             return (
               <li key={section.slug} className={complete ? "roadmap-item done" : upNext ? "roadmap-item next" : "roadmap-item"}>
                 <div className="roadmap-index">{index + 1}</div>
@@ -446,15 +467,77 @@ function OverviewScreen({ experience, progress, nextSection }: OverviewProps) {
                     <span className={complete ? "status-chip done" : "status-chip"}>{complete ? "Done" : `${section.estimatedMinutes} min`}</span>
                   </div>
                   <span className={upNext ? "roadmap-status upcoming" : complete ? "roadmap-status complete" : "roadmap-status"}>{upNext ? "Up next" : complete ? "Completed" : "In queue"}</span>
-                  <p>{section.summary}</p>
+
+                  <details className="lesson-plan" open={upNext}>
+                    <summary>{upNext ? "Up next lesson plan" : "Preview lesson plan"}</summary>
+                    <div className="lesson-plan-grid">
+                      <article>
+                        <span>What this lesson covers</span>
+                        <p>{section.summary}</p>
+                      </article>
+                      <article>
+                        <span>Why it matters</span>
+                        <p>{section.purpose}</p>
+                      </article>
+                      <article>
+                        <span>Key takeaways</span>
+                        <p>{keyTakeaways || "Lesson essentials are included in this module."}</p>
+                      </article>
+                      <article>
+                        <span>Guided learning</span>
+                        <p>{section.policyAreas.length} policy area{section.policyAreas.length === 1 ? "" : "s"} and {section.actions.length} action step{section.actions.length === 1 ? "" : "s"}.</p>
+                      </article>
+                      <article>
+                        <span>Scenario focus</span>
+                        <p>{scenarioPreview}</p>
+                      </article>
+                      <article>
+                        <span>Completion checkpoint</span>
+                        <p>{section.acknowledgment.items.length} acknowledgment item{section.acknowledgment.items.length === 1 ? "" : "s"} before completion.</p>
+                      </article>
+                    </div>
+                  </details>
+
                   <Link className={upNext ? "primary-action compact-primary" : "inline-action"} href={`/modules/${section.slug}`}>
-                    {complete ? "Review section" : upNext ? "Continue section" : "Open section"}
+                    {complete ? "Review lesson" : upNext ? "Continue lesson" : "Open lesson"}
                   </Link>
                 </div>
               </li>
             );
           })}
         </ol>
+      </section>
+
+      <section className="overview-help-row">
+        <article className="content-panel overview-help-card">
+          <p className="section-label">Course reminders</p>
+          <h3>Keep momentum with one clear next step</h3>
+          <ul className="plain-list compact-list">
+            <li>Complete one lesson at a time.</li>
+            <li>Use the highlighted next lesson first.</li>
+            <li>Pause anytime and resume exactly where you left off.</li>
+          </ul>
+        </article>
+
+        <article className="content-panel overview-help-card support-card">
+          <p className="section-label">Need help?</p>
+          <h3>Nicole Thornton, HR Manager</h3>
+          <div className="virtual-card">
+            <div className="virtual-card-details">
+              <p>Phone: <a href="tel:2565747528">256-574-7528</a></p>
+              <p>Email: <a href="mailto:nicole.thornton330@gmail.com">nicole.thornton330@gmail.com</a></p>
+              <div className="virtual-card-actions">
+                <a className="inline-action" href="tel:2565747528">Call Nicole</a>
+                <a className="inline-action" href="mailto:nicole.thornton330@gmail.com">Email Nicole</a>
+                <a className="inline-action" href={vCardDownloadUrl} download="nicole-thornton.vcf">Save contact card</a>
+              </div>
+            </div>
+            <div className="virtual-card-qr">
+              <img alt="QR code for Nicole Thornton virtual business card" src={qrCodeUrl} width={156} height={156} loading="lazy" />
+              <span>Scan to save contact</span>
+            </div>
+          </div>
+        </article>
       </section>
     </div>
   );

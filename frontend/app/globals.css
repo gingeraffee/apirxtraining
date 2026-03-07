@@ -1442,40 +1442,60 @@ button {
   margin-top: 2px;
 }
 
-.overview-support-row {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+.overview-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
 }
 
-.overview-support-card {
-  padding: 14px 16px;
-  border-radius: 17px;
-  background: linear-gradient(180deg, rgba(252, 254, 255, 0.96), rgba(244, 250, 255, 0.9));
+.overview-hero-note {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.overview-progress-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.overview-progress-card {
+  padding: 13px 15px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(252, 254, 255, 0.97), rgba(245, 250, 255, 0.91));
   box-shadow: 0 10px 22px rgba(7, 16, 29, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.96);
 }
 
-.overview-support-card h3 {
+.overview-progress-card h3 {
   margin: 0;
   color: var(--text-strong);
-  font-size: 1.14rem;
-  line-height: 1.05;
+  font-size: 1.02rem;
+  line-height: 1.12;
 }
 
-.overview-support-card p {
+.overview-progress-card p {
   margin: 0;
 }
 
-.overview-support-card .inline-action {
+.overview-progress-card .inline-action {
   margin-top: 4px;
 }
 
-.overview-support-progress .rail-progress {
+.primary-progress-card {
+  border-color: rgba(79, 220, 255, 0.22);
+  background:
+    linear-gradient(180deg, rgba(252, 255, 255, 0.99), rgba(238, 248, 255, 0.92)),
+    radial-gradient(circle at top right, rgba(79, 220, 255, 0.16), transparent 32%);
+}
+
+.primary-progress-card .rail-progress {
   margin-top: 8px;
 }
 
 .overview-roadmap {
-  padding: 18px 20px;
+  padding: 20px 22px;
 }
 
 .overview-roadmap h3 {
@@ -1483,7 +1503,77 @@ button {
 }
 
 .overview-roadmap .roadmap-intro {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
+  max-width: 68ch;
+}
+
+.overview-roadmap-list .roadmap-item {
+  padding: 14px 0;
+}
+
+.lesson-plan {
+  margin-top: 8px;
+  border: 1px solid rgba(11, 31, 55, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.62);
+  padding: 10px 12px;
+}
+
+.lesson-plan summary {
+  position: relative;
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy);
+  padding-right: 20px;
+}
+
+.lesson-plan summary::-webkit-details-marker {
+  display: none;
+}
+
+.lesson-plan summary::after {
+  content: "+";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  transition: transform 180ms ease, color 180ms ease;
+}
+
+.lesson-plan[open] summary::after {
+  transform: translateY(-50%) rotate(45deg);
+  color: var(--cyan-strong);
+}
+
+.lesson-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.lesson-plan-grid article {
+  padding: 8px 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(11, 31, 55, 0.08);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.lesson-plan-grid span {
+  color: var(--text-muted);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.lesson-plan-grid p {
+  margin: 4px 0 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
 }
 
 .compact-primary {
@@ -1495,11 +1585,75 @@ button {
 
 .overview-roadmap .inline-action,
 .overview-roadmap .compact-primary {
-  margin-top: 6px;
+  margin-top: 7px;
 }
 
-.overview-roadmap .roadmap-item {
-  padding: 12px 0;
+.overview-help-row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 12px;
+}
+
+.overview-help-card {
+  padding: 16px 18px;
+}
+
+.overview-help-card h3 {
+  margin-bottom: 8px;
+}
+
+.virtual-card {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+.virtual-card-details {
+  display: grid;
+  gap: 7px;
+}
+
+.virtual-card-details p {
+  margin: 0;
+}
+
+.virtual-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.virtual-card-actions .inline-action {
+  margin-top: 0;
+}
+
+.virtual-card-qr {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  padding: 8px;
+  border-radius: 14px;
+  border: 1px solid rgba(11, 31, 55, 0.1);
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.virtual-card-qr img {
+  width: 156px;
+  height: 156px;
+  border-radius: 10px;
+  border: 1px solid rgba(11, 31, 55, 0.1);
+  background: #ffffff;
+  padding: 6px;
+}
+
+.virtual-card-qr span {
+  color: var(--text-muted);
+  font-size: 0.71rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .context-strip {
@@ -1736,7 +1890,11 @@ summary:focus-visible {
   .toolkit-secondary-grid,
   .toolkit-support-grid,
   .context-strip,
-  .overview-support-row {
+  .overview-progress-board,
+  .overview-help-row,
+  .lesson-plan-grid,
+  .virtual-card {
+
     grid-template-columns: 1fr;
   }
 
@@ -1823,7 +1981,7 @@ summary:focus-visible {
     font-size: 0.72rem;
   }
 
-  .overview-support-card .inline-action {
+  .virtual-card-actions .inline-action {
     width: 100%;
   }
 

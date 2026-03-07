@@ -1,0 +1,37 @@
+FMLA-01 — Family and Medical Leave Act (FMLA) – Request Intake and Confidential Handling
+System
+Internal Certification Forms
+Owner
+HR Manager
+When
+Immediately after the employee asks about FMLA
+Output
+Confidential FMLA Case File; certification issues/received; leave designation communication to employee only
+Key Points:
+Escalate immediately! If an employee asks about FMLA (or even hints at a need for medical leave,) notify the HR Manager right away.
+Confidentiality: FMLA information is confidential and cannot be shared with anyone, including supervisors
+Do not promise approval: Eligibility and designation must be confirmed by the HR Manager.
+AAP does not pay for FMLA time and employees are not required to exhaust all of their PTO before using unpaid FMLA time.
+FMLA may be taken in 1 hour increments.
+Eligibility & Entitlement
+Eligibility: Employee must have worked at least 366 days and 1,250 hours in the last 12 months.
+Entitlement: Employees receive 480 hours to use for a full 12-month period.
+Pay Status: FMLA is unpaid.
+PTO Requirements: Employees are not required to use their PTO before taking FMLA.
+Steps
+Step
+Action
+1
+Employee asks or hints about needing FMLA leave for themselves or a family member.
+2
+Immediately escalate to HR Manager. Do not discuss details or request medical information. You are able to provide general answers, such as the eligibility requirements and pay status.
+3
+HR Manager provides the employee with the required FMLA Certification and explains submission requirements and deadlines.
+4
+Employee completes the certification and the HR Manager processes the time in BambooHR.
+5
+If the employee misses more than 30 consecutive work days, they may be required to provide a doctor’s note, a new certification, or fit-for-duty paperwork from their doctor.
+Checks:
+FMLA inquiries escalated immediately to HR Manager; confidentiality maintained; eligibility verified (366 days + 1,250 hours); certification issued and returned; total usage tracked against 480-hour annual entitlement; 30+ consecutive work-day absences include status/RTW updates to HR Manager.
+Escalate to HR Manager if:
+Any employee asks about FMLA; any employee references a serious health condition, ongoing treatment, or need for extended leave; questions arise about eligibility, certification, leave designation, or confidentiality; or an absence approaches/exceeds 30 consecutive work days.

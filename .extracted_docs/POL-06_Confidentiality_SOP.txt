@@ -1,0 +1,43 @@
+POL-06 — Confidentiality & Data Privacy (Employee Information, Company Data, and Electronic Systems)
+System
+BambooHR (employee records), HR SharePoint/Network Drives (documents), Email/Computers (electronic communication)
+Owner
+HR Department
+When
+At all times; whenever handling employee information, business records, or company systems
+Output
+Confidential information protected; records accessed only by authorized users; compliant storage, sharing, and retention
+Before you start
+All employees sign a confidentiality and non-disclosure agreement upon hire; refusal is grounds for immediate termination.
+Personnel files are company property and access to information is restricted based on state and federal regulations.
+Employees may review their own personnel files only through HR, with reasonable notice, in AAP’s offices and in the presence of an appointed representative.
+Records related to health prepared by or under the supervision of a health care provider are subject to HIPAA standards.
+Computers, files, email, and software are company property intended for business use. Employees must not access files or stored communications without authorization; usage may be monitored.
+Certain complaints (e.g., harassment) will be treated as confidential to the extent possible, while still allowing the company to investigate and respond appropriately.
+Steps
+Step
+Action
+1
+Identify the information type before sharing or storing: employee records (personnel/payroll/benefits), medical information, candidate/background data, business records, or proprietary/confidential company information.
+2
+Apply “need-to-know” access: share confidential information only with individuals who require it to perform their job duties. If unsure, pause and consult HR.
+3
+Personnel file requests: If an employee asks to view their personnel file, route the request to HR. HR will schedule the review with reasonable advance notice, in AAP’s offices, with an appointed representative present.
+4
+Medical and leave-related information: Treat medical information as highly confidential. Do not request or distribute medical details. Route medical documentation and sensitive leave questions to HR.
+5
+Electronic systems use: Use company computers/email for business purposes. Do not use passwords or access files or stored communications without authorization. Assume electronic usage may be monitored.
+6
+Email and sharing controls: Verify recipient(s) before sending. Use only approved storage locations (BambooHR folders / HR SharePoint / designated drives). Do not forward confidential documents to personal email or store them on personal devices.
+7
+Printing and physical handling: Print confidential documents only when necessary. Keep documents secured when not in use. Do not leave files unattended in public/shared spaces. Collect documents immediately from printers/copiers. Shred sensitive documents as soon as possible.
+8
+Retention and disposal: Store records in the correct system/folder per HR practices. When disposal is approved, use secure shredding for paper and approved deletion methods for electronic files.
+9
+Complaints and investigations: Treat complaints as confidential to the extent possible. Do not discuss details with coworkers/supervisors unless directed by HR as part of an investigation or required business need.
+10
+Report concerns: Immediately notify HR if you suspect a privacy breach (misdirected email, lost documents, unauthorized access, inappropriate disclosure, or suspicious system activity).
+Checks
+Confidential information shared only on a need-to-know basis; personnel file access routed through HR; medical information handled under HIPAA standards; electronic systems accessed only with authorization; sensitive documents stored in approved HR systems; physical documents secured; privacy incidents reported promptly.
+Escalate to HR Manager immediately if
+You suspect a data breach or unauthorized disclosure; an employee requests personnel file access; medical/leave documentation is involved; a complaint involves harassment/discrimination/retaliation; legal/compliance questions arise; or you are unsure whether information can be shared.

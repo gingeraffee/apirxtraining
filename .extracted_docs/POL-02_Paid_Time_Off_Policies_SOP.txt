@@ -1,0 +1,85 @@
+All Employees — BambooHR
+PTO-01 — Paid Time Off (PTO) Policies (Vacation + Personal Leave + Holidays)
+System
+BambooHR (www.aap.bamboohr.com)
+Owner
+HR Department
+When
+Time is put in the day after it’s used
+Output
+Approved time off requests in BambooHR; PTO balances maintained; holiday schedule applied consistently
+Key Points for Employees:
+Confirm they meet eligibility requirements for the PTO type they are requesting (Vacation, Personal Long Term Sick Leave, or Floating Holiday).
+PTO is not allowed to be taken before it is accrued.
+For planned time off, requests are to be submitted no later than 5:00 pm the day before time off is needed so staffing can be arranged.
+For unexpected personal leave, notify your supervisor before your scheduled start time whenever possible (and on each additional day of absence).
+If requesting more than five (5) consecutive vacation days, written approval by the Company President is required.
+Steps
+Step
+Action
+1
+Employee reviews PTO balance and availability in BambooHR.
+2
+Employee submits a Time Off request in BambooHR, selecting the correct PTO type and entering dates and hours.
+3
+Supervisor reviews the request in BambooHR and approves or denies based on business needs and staffing.
+4
+For unexpected personal leave, employee notifies the supervisor as soon as possible; the request is entered/updated in BambooHR when confirmed.
+5
+If the employee is required to work a designated/observed holiday, the supervisor coordinates a Floating Holiday to be used within 90 days.
+6
+Employee updates or cancels the BambooHR request if plans change and notifies the supervisor as soon as possible.
+PTO accrual rates
+Vacation (Regular full-time employees)
+Length of employment
+Paid days/year
+Hours/year
+Accrual rate (hrs/week)
+60 days to 1st Anniversary
+3
+24
+0.46
+1st Anniversary to 2nd Anniversary
+5
+40
+0.77
+2nd Anniversary to 3rd Anniversary
+7
+56
+1.07
+3rd Anniversary to 5th Anniversary
+10
+80
+1.54
+5th Anniversary to 9th Anniversary
+15
+120
+2.31
+10th Anniversary to 19th Anniversary
+17
+136
+2.62
+20th Anniversary and beyond
+19
+152
+2.93
+Personal Leave (all-purpose PTO for vacation, illness/injury, and personal business)
+Regular full-time employees: 3 personal days (24 hours) upon initial eligibility; 4 personal days (32 hours) each year after 1 year of eligible service; 5 personal days (40 hours) each year after 5 years of eligible service.
+Part-time employees: 1 hour per 30 hours worked, up to 24 hours upon initial eligibility; 32 hours/year after 1 year of eligible service; 40 hours/year after 5 years of eligible service.
+Personal leave has a 60-day waiting period before it can be used; personal leave may be requested in one-hour increments.
+Unused personal leave is forfeited at the end of the benefit year unless state law requires carryover; unused personal leave is not paid out at termination.
+Holiday schedule
+New Year’s Day (January 1)
+Memorial Day (last Monday in May)
+Independence Day (July 4)
+Labor Day (first Monday in September)
+Thanksgiving (fourth Thursday in November)
+Day after Thanksgiving or Floating Holiday
+Christmas Eve (December 24) or Floating Holiday
+Christmas (December 25)
+Observed holidays: Holidays that fall on a Saturday are observed on Friday; holidays that fall on a Sunday are observed on Monday.
+If an employee is required to work on a designated/observed holiday, the employee receives a floating holiday to be used within 90 days after the holiday.
+Checks:
+Correct PTO type entered into Payclock; required approvals obtained for extended vacation; holiday observation and floating holiday rules applied consistently in each department.
+Escalate to HR Department if:
+Time off is disputed or unclear; a request conflicts with eligibility or accrual rules; PTO balances appear incorrect; an exception is needed due to operational staffing; or there are questions about holiday eligibility, observation, or floating holiday use.

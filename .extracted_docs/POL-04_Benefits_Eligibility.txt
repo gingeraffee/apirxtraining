@@ -1,0 +1,67 @@
+All Employees — Benefits (Eligibility & Enrollment)
+BEN-01 — Benefit Eligibility & Enrollment (Timing, Options, and Key Rules)
+System
+HR / Benefits Administration
+Owner
+HR Manager
+When
+At hire, during eligibility milestones, and during enrollment windows
+Output
+Correct benefits activated/enrolled; eligibility dates tracked
+Before you start
+Eligibility timing differs by benefit and by employee classification (full-time vs. part-time).
+Some benefits are free and available to all employees; others require enrollment when the employee becomes eligible.
+If an employee believes eligibility dates are incorrect, escalate to HR for review and correction.
+Benefit eligibility timeline (by milestone)
+Milestone
+Who is eligible
+Benefits / notes
+Day 1
+All employees
+LinkedIn Learning, Employee Assistance Program (EAP), AAP Perks (free).
+1st of the month after hire
+All employees
+Teladoc (free).
+60 days
+All employees / Full-Time employees
+All employees become eligible to use Personal Time Off. Full-Time employees also become eligible to use Vacation Time.
+1st of the month after 60 days
+Full-Time employees
+Medical, Dental, Vision, 401(k), and supplemental coverages become available for enrollment. These are deducted from their paycheck biweekly.
+1 year from hire date (and 1,000 hours worked; age 21+)
+Part-Time employees
+401(k) part-time eligibility begins only after BOTH 1 year of employment AND 1,000 hours worked are met. Employee must be at least 21 years old to enroll.
+4 years from hire date, then every 5 years after
+Full-Time employees
+Long Term Sick Leave eligibility: 80 hours at 4-year anniversary; then every 5 year. Bank limit: 180 hours. Use requires 3 consecutive days or more out and a doctor’s note.
+Every 5 years starting at 5th anniversary
+All employees
+Service Awards eligibility (service award issued every 5 years starting on the 5th anniversary).
+Benefit details (plan options and key information)
+Medical: two plans available — PPO or HDHP with HSA.
+Dental: two plans available — Base Plan or Buy Up Plan.
+Vision and Dental are through Guardian and do not issue insurance cards. Coverage information is available in the Guardian Anytime app.
+401(k) includes a company match: AAP matches 100% of the first 3% an employee contributes, and 50% of the next 2% of employee contribution (i.e., employee contributes 5% and AAP matches 4%).
+Steps
+Step
+Action
+1
+At hire, HR provides the employee with benefit availability guidance and access instructions for any Day 1 benefits.
+2
+HR confirms employee classification (Full-Time vs. Part-Time) and enters HR Tasks for Benefit Enrollment.
+3
+On the 1st of the month after hire, HR confirms Teladoc eligibility is active and provides access instructions if needed.
+4
+At 60 days, HR verifies the time off policies are correct. The employee can use Personal Time Off; for Full-Time employees, confirm Vacation Time availability.
+5
+On the 1st of the month after 60 days (Full-Time only), HR sends enrollment instructions and confirms enrollment window and required elections (Medical/Dental/Vision/401(k)/supplemental).
+6
+For Part-Time employees, HR monitors service time and hours worked; once BOTH 1 year of employment AND 1,000 hours worked are met (and employee is age 21+), HR provides 401(k) enrollment instructions.
+7
+For Full-Time employees approaching Long Term Sick Leave milestones (4 years; then every 5 years), HR confirms balance and communicates usage rules (3 consecutive days+ and doctor’s note).
+8
+HR tracks service anniversaries for Service Awards and coordinates award issuance every 5 years starting at the 5th anniversary.
+Checks
+Eligibility milestones calculated correctly from hire date; employee classification confirmed; free benefits activated appropriately; full-time enrollment offered at 1st of month after 60 days; part-time 401(k) eligibility verified (1 year + 1,000 hours + age 21+); Guardian Anytime guidance provided (no cards for dental/vision); 401(k) match communicated accurately; Long Term Sick Leave bank/usage rules applied; Service Awards tracked every 5 years starting at 5th anniversary.
+Escalate to HR Manager / Benefits Administrator if
+Employee disputes eligibility date; employee classification or hours worked are unclear; enrollment access issues occur; coverage options need clarification; Long Term Sick Leave usage is requested; or any exception to standard eligibility timing is requested.

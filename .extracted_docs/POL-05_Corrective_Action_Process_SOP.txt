@@ -1,0 +1,38 @@
+CA-01 — Corrective Action Process (Documentation, Delivery, and Filing)
+System
+BambooHR (Employee Files) and HR SharePoint (templates/archive)
+Owner
+Managers (initiate) + HR (guidance) + HR Administrative Assistant (scanning/uploading)
+When
+When performance or conduct concerns require formal documentation or progressive discipline
+Output
+Completed corrective action documentation delivered to employee; filed in BambooHR Corrective Action folder
+Before you start
+Corrective action may be issued for insubordination, carelessness, unsatisfactory productivity, poor attitude, violations of the employee handbook/code of conduct, loud/boisterous/inflammatory statements to coworkers, and other performance or conduct issues.
+Use the Employee Warning Template (available in BambooHR or the HR SharePoint).
+Managers are responsible for issuing corrective action and providing completed documents to HR for recordkeeping.
+HR provides guidance on approach (goals, LinkedIn Learning, PIP, etc.) as needed; each situation is handled case-by-case.
+Related process note (Attendance Point Warnings)
+Point Warnings are issued by HR and delivered by the employee’s direct supervisor.
+Point Coaching occurs at 5 points; verbal warning at 6 points; written warning at 7 points; termination at 8 points (termination is at supervisor discretion).
+Steps
+Step
+Action
+1
+Manager identifies the issue (performance or conduct) and documents facts: dates/times, specific behaviors, policy expectations, and impact.
+2
+Manager consults HR as needed for guidance on next steps (coaching goals, LinkedIn Learning course assignment, Performance Improvement Plan (PIP), or formal corrective action).
+3
+If formal corrective action is appropriate, manager completes the Employee Warning Template (BambooHR or HR SharePoint). Include: reason, expectations, corrective steps, follow-up timeline, and consequences.
+4
+Manager meets with the employee to deliver the corrective action. Employee acknowledgment/signature is obtained when applicable (signature acknowledges receipt, not necessarily agreement).
+5
+Manager provides the completed corrective action documentation to HR (including any supporting documents referenced).
+6
+HR Administrative Assistant scans the documentation (if paper) and uploads it to the employee’s Corrective Action folder in BambooHR. Verify the file is readable and labeled consistently (date + type + reason).
+7
+If the employee receives three (3) corrective actions for the same reason, HR and leadership review for next steps, which may include termination (per policy and circumstances).
+Checks
+Correct template used; reason stated clearly; expectations and timeline documented; consequences stated; employee received the document; manager provided completed paperwork to HR; HR Administrative Assistant scanned and uploaded to BambooHR Corrective Action folder; file name/date are correct and document is readable; repeat issues tracked (3 for same reason triggers review).
+Escalate to HR Manager if
+Situation involves harassment, discrimination, retaliation, threats/violence, safety risk, suspected policy violations requiring investigation, medical/disability accommodation concerns, employee requests leave related to a medical condition, or termination is being considered; or when three corrective actions for the same reason have occurred and next-step review is needed.

@@ -1,53 +1,65 @@
-# AAP Streamlit Onboarding Portal
+﻿# AAP/API Onboarding Platform
 
-Files included:
-- `app.py` — main Streamlit app
-- `requirements.txt` — Python dependencies
-- `AAP_API.PNG` — company logo used in the sidebar
+This repository is being rebuilt as a two-app onboarding platform:
 
-## Expected Streamlit secrets
+- `frontend/`: Next.js application for the employee experience
+- `backend/`: FastAPI application for content, progress tracking, and acknowledgments
 
-This app is designed to work with Streamlit secrets / environment-based deployment. It supports:
-- `access_code` (optional fallback static code)
-- `SPREADSHEET_ID` **or** `access_sheet_name`
-- `access_worksheet` (default: `Access`)
-- `progress_worksheet` (default: `Progress`)
-- `gcp_service_account` (recommended service account block)
+The prior `onboarding_app.py` Streamlit implementation remains in the repo only as a business-reference artifact while the new platform replaces it.
 
-### Example `secrets.toml`
-```toml
-access_code = "YOUR_PORTAL_CODE"
-SPREADSHEET_ID = "your_google_sheet_id"
-access_worksheet = "Access"
-progress_worksheet = "Progress"
+## Product shape
 
-[gcp_service_account]
-type = "service_account"
-project_id = "..."
-private_key_id = "..."
-private_key = "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-client_email = "..."
-client_id = "..."
-auth_uri = "https://accounts.google.com/o/oauth2/auth"
-token_uri = "https://oauth2.googleapis.com/token"
-auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
-client_x509_cert_url = "..."
-universe_domain = "googleapis.com"
+The rebuilt experience follows the structure defined in `AGENTS.md`:
+
+1. Welcome to AAP/API
+2. Working at AAP/API
+3. Attendance, Timekeeping, and PTO
+4. Benefits and Eligibility
+5. Conduct, Confidentiality, and Workplace Standards
+6. Leave and Support
+7. Final Review and Acknowledgments
+8. Separate role-specific toolkit: HR Administrative Assistant Toolkit
+
+## Frontend
+
+The frontend uses the Next.js App Router and a shared design system built with plain CSS.
+
+Suggested local setup:
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-## Access worksheet
-The access worksheet should contain at least:
-- access code column (optional if using static `access_code` secret)
-- employee number column
-- full name column
+The frontend expects the API at `http://127.0.0.1:8000/api/v1` by default. Override with `NEXT_PUBLIC_API_BASE_URL`.
 
-Recognized header examples:
-- `Access Code`
-- `Employee Number`
-- `Full Name`
+## Backend
 
-Extra columns like `Department`, `Location`, and `Title` will display in the sidebar when present.
+The backend exposes content, toolkit, progress, and acknowledgment endpoints.
 
-## Progress worksheet
-The app can also store training progress in a worksheet named `Progress` (or your configured value).  
-If the worksheet is missing, the app still works — progress just stays in the current session.
+Suggested local setup:
+
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+The API includes:
+
+- `GET /api/v1/health`
+- `GET /api/v1/content/experience`
+- `GET /api/v1/content/sections/{slug}`
+- `GET /api/v1/content/toolkits/{slug}`
+- `GET /api/v1/progress/{employee_id}`
+- `PUT /api/v1/progress/{employee_id}`
+- `POST /api/v1/progress/{employee_id}/acknowledgments`
+
+Progress is persisted locally in `backend/app/data/progress_store.json`.
+
+## Source content
+
+The source-of-truth documents remain in the repo root and `.extracted_docs/`. The API content is a product-UX rewrite of those materials, not a verbatim dump.

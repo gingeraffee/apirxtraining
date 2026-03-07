@@ -1357,6 +1357,151 @@ button {
   background: linear-gradient(90deg, rgba(79, 220, 255, 0.96), rgba(255, 95, 109, 0.9));
 }
 
+.overview-meta-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 12px;
+}
+
+.overview-meta-pill,
+.overview-meta-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(7, 16, 29, 0.4);
+  color: rgba(232, 243, 255, 0.76);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.overview-meta-link {
+  border-color: rgba(79, 220, 255, 0.24);
+  background: rgba(79, 220, 255, 0.16);
+  color: #eaf7ff;
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.overview-meta-link:hover {
+  border-color: rgba(79, 220, 255, 0.38);
+  background: rgba(79, 220, 255, 0.22);
+}
+
+.overview-page {
+  gap: 14px;
+}
+
+.overview-hero {
+  grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.65fr);
+  padding: 24px 26px;
+}
+
+.overview-hero-copy {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.overview-hero .lead,
+.overview-hero .purpose-line {
+  max-width: 58ch;
+}
+
+.overview-hero .primary-action {
+  margin-top: 4px;
+  width: fit-content;
+}
+
+.overview-summary-panel {
+  align-self: start;
+  padding: 12px 14px;
+  border-color: rgba(11, 31, 55, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 252, 255, 0.88));
+  box-shadow: 0 9px 20px rgba(8, 16, 29, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+}
+
+.overview-summary-panel h3 {
+  margin-bottom: 8px;
+  font-size: 1.03rem;
+}
+
+.overview-summary-panel .plain-list {
+  gap: 6px;
+  padding-left: 15px;
+}
+
+.overview-summary-panel .inline-action {
+  margin-top: 2px;
+}
+
+.overview-support-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.overview-support-card {
+  padding: 14px 16px;
+  border-radius: 17px;
+  background: linear-gradient(180deg, rgba(252, 254, 255, 0.96), rgba(244, 250, 255, 0.9));
+  box-shadow: 0 10px 22px rgba(7, 16, 29, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+}
+
+.overview-support-card h3 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: 1.14rem;
+  line-height: 1.05;
+}
+
+.overview-support-card p {
+  margin: 0;
+}
+
+.overview-support-card .inline-action {
+  margin-top: 4px;
+}
+
+.overview-support-progress .rail-progress {
+  margin-top: 8px;
+}
+
+.overview-roadmap {
+  padding: 18px 20px;
+}
+
+.overview-roadmap h3 {
+  margin-bottom: 6px;
+}
+
+.overview-roadmap .roadmap-intro {
+  margin: 0 0 10px;
+}
+
+.compact-primary {
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  letter-spacing: 0;
+}
+
+.overview-roadmap .inline-action,
+.overview-roadmap .compact-primary {
+  margin-top: 6px;
+}
+
+.overview-roadmap .roadmap-item {
+  padding: 12px 0;
+}
+
 .context-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1413,41 +1558,11 @@ button {
   font-size: 0.82rem;
 }
 
-.overview-glance-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.glance-card {
-  padding: 16px 18px;
-}
-
-.glance-primary-card {
-  border-color: rgba(79, 220, 255, 0.24);
-  background:
-    linear-gradient(180deg, rgba(250, 254, 255, 0.99), rgba(238, 248, 255, 0.94)),
-    radial-gradient(circle at top right, rgba(79, 220, 255, 0.16), transparent 32%);
-}
-
-.glance-card h3 {
-  color: var(--text-strong);
-  font-size: 1.28rem;
-  line-height: 1.02;
-  margin-bottom: 8px;
-}
-
 .glance-meta {
   margin-top: 2px;
   color: var(--text-muted);
   font-size: 0.84rem;
   font-weight: 600;
-}
-
-.roadmap-shell .roadmap-intro {
-  margin: 6px 0 12px;
-  color: var(--text-soft);
-  font-size: 0.94rem;
 }
 
 .roadmap-status {
@@ -1621,8 +1736,7 @@ summary:focus-visible {
   .toolkit-secondary-grid,
   .toolkit-support-grid,
   .context-strip,
-  .overview-glance-grid {
-
+  .overview-support-row {
     grid-template-columns: 1fr;
   }
 
@@ -1691,6 +1805,25 @@ summary:focus-visible {
   }
 
   .context-chip .inline-action {
+    width: 100%;
+  }
+
+  .overview-meta-strip {
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .overview-meta-pill,
+  .overview-meta-link {
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+  }
+
+  .overview-meta-link {
+    font-size: 0.72rem;
+  }
+
+  .overview-support-card .inline-action {
     width: 100%;
   }
 

@@ -289,27 +289,41 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
           </div>
         </header>
 
-        <section className="context-strip" aria-label="Current onboarding context">
-          <article className="context-chip">
-            <span>Now viewing</span>
-            <strong>{contextTitle}</strong>
-            <p>{contextType}</p>
-          </article>
-          {nextSection && (
-            <article className="context-chip emphasis">
-              <span>Next up</span>
-              <strong>{nextSection.title}</strong>
-              <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
-                Continue section
+        {kind === "overview" ? (
+          <section className="overview-meta-strip" aria-label="Onboarding overview context">
+            <span className="overview-meta-pill">Overview</span>
+            <span className="overview-meta-pill">Core onboarding path</span>
+            {nextSection ? (
+              <Link className="overview-meta-link" href={`/modules/${nextSection.slug}`}>
+                Next: {nextSection.title}
               </Link>
+            ) : (
+              <span className="overview-meta-pill">All core sections complete</span>
+            )}
+          </section>
+        ) : (
+          <section className="context-strip" aria-label="Current onboarding context">
+            <article className="context-chip">
+              <span>Now viewing</span>
+              <strong>{contextTitle}</strong>
+              <p>{contextType}</p>
             </article>
-          )}
-          <article className="context-chip">
-            <span>Completion</span>
-            <strong>{completionPercent}%</strong>
-            <p>{progress.completed_sections.length} of {sections.length} core sections complete</p>
-          </article>
-        </section>
+            {nextSection && (
+              <article className="context-chip emphasis">
+                <span>Next up</span>
+                <strong>{nextSection.title}</strong>
+                <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
+                  Continue section
+                </Link>
+              </article>
+            )}
+            <article className="context-chip">
+              <span>Completion</span>
+              <strong>{completionPercent}%</strong>
+              <p>{progress.completed_sections.length} of {sections.length} core sections complete</p>
+            </article>
+          </section>
+        )}
 
         {kind === "overview" && (
           <OverviewScreen experience={experience} progress={progress} nextSection={nextSection} />
@@ -341,128 +355,106 @@ type OverviewProps = {
 function OverviewScreen({ experience, progress, nextSection }: OverviewProps) {
   const completedCount = progress.completed_sections.length;
   const totalCount = experience.sections.length;
+  const completionPercent = totalCount ? Math.round((completedCount / totalCount) * 100) : 0;
   const remainingCount = Math.max(totalCount - completedCount, 0);
   const remainingMinutes = experience.sections
     .filter((section) => !progress.completed_sections.includes(section.slug))
     .reduce((runningTotal, section) => runningTotal + section.estimatedMinutes, 0);
   const primaryContact = experience.contacts[0];
+  const nextStepLabel = nextSection
+    ? completedCount === 0
+      ? `Start ${nextSection.title}`
+      : `Continue ${nextSection.title}`
+    : "Review completed sections";
 
   return (
-    <div className="page-stack">
-      <section className="page-hero">
-        <div>
-          <p className="section-label">Welcome to AAP/API</p>
-          <h1>{experience.organization.headline}</h1>
-          <p className="lead">{experience.organization.story}</p>
-          <p className="purpose-line">{experience.organization.mission}</p>
-        </div>
-        <div className="summary-panel">
-          <p className="section-label">What this page is for</p>
-          <h3>Get oriented, then move through the core flow one section at a time.</h3>
-          <ul className="plain-list compact-list">
-            <li>The main path is for all new employees.</li>
-            <li>The HR Administrative Assistant toolkit stays separate.</li>
-            <li>Use HR when a policy question becomes specific or sensitive.</li>
-          </ul>
+    <div className="page-stack overview-page">
+      <section className="page-hero overview-hero">
+        <div className="overview-hero-copy">
+          <p className="section-label">Main onboarding path</p>
+          <h1>A guided onboarding flow built around what new employees need first.</h1>
+          <p className="lead">This is your core onboarding experience. It covers the essentials in a clear order so you can build confidence quickly.</p>
+          <p className="purpose-line">Move through one section at a time, acknowledge it, and continue forward.</p>
           {nextSection && (
             <Link className="primary-action" href={`/modules/${nextSection.slug}`}>
-              Start {nextSection.title}
+              {nextStepLabel}
             </Link>
           )}
         </div>
-      </section>
 
-      <section className="overview-glance-grid">
-        <article className="content-panel glance-card glance-primary-card">
-          <p className="section-label">Core path status</p>
-          <h3>{completedCount} complete, {remainingCount} to go</h3>
-          <p>Stay in one section until you can acknowledge it with confidence.</p>
+        <aside className="summary-panel overview-summary-panel">
+          <p className="section-label">What this page is for</p>
+          <h3>Start here, then keep moving.</h3>
+          <ul className="plain-list compact-list">
+            <li>Follow the core sections in order.</li>
+            <li>Use the next section button to continue.</li>
+            <li>Reach out early if anything is unclear.</li>
+          </ul>
           {nextSection && (
             <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
-              Resume {nextSection.title}
+              Continue now
             </Link>
           )}
+        </aside>
+      </section>
+
+      <section className="overview-support-row">
+        <article className="content-panel overview-support-card overview-support-progress">
+          <p className="section-label">Progress status</p>
+          <h3>{completedCount} of {totalCount} sections complete</h3>
+          <p>{remainingCount} section{remainingCount === 1 ? "" : "s"} left in the main path.</p>
+          <div className="rail-progress" aria-hidden="true">
+            <div className="rail-progress-track">
+              <span className="rail-progress-fill" style={{ width: `${completionPercent}%` }} />
+            </div>
+          </div>
         </article>
-        <article className="content-panel glance-card">
+
+        <article className="content-panel overview-support-card">
           <p className="section-label">Estimated remaining time</p>
           <h3>{remainingMinutes} minutes</h3>
-          <p>Short focused sessions keep this path moving without overload.</p>
+          <p>Based on section estimates in the core onboarding flow.</p>
         </article>
-        <article className="content-panel glance-card">
-          <p className="section-label">Need help quickly</p>
+
+        <article className="content-panel overview-support-card">
+          <p className="section-label">Help and support</p>
           <h3>{primaryContact?.name ?? "HR Team"}</h3>
           <p>{primaryContact?.role ?? "HR support"}</p>
-          {primaryContact && <p className="glance-meta">{primaryContact.phone}</p>}
+          {primaryContact?.phone && <p className="glance-meta">{primaryContact.phone}</p>}
+          {primaryContact?.email && (
+            <a className="inline-action" href={`mailto:${primaryContact.email}`}>
+              Email support
+            </a>
+          )}
         </article>
       </section>
 
-      <section className="content-columns overview-columns">
-        <div className="content-panel roadmap-shell">
-          <p className="section-label">Core onboarding flow</p>
-          <h3>One focused section at a time</h3>
-          <p className="roadmap-intro">Clear order, obvious status, and one next action per module.</p>
-          <ol className="roadmap-list">
-            {experience.sections.map((section, index) => {
-              const complete = progress.completed_sections.includes(section.slug);
-              const upNext = !complete && nextSection?.slug === section.slug;
-              return (
-                <li key={section.slug} className={complete ? "roadmap-item done" : upNext ? "roadmap-item next" : "roadmap-item"}>
-                  <div className="roadmap-index">{index + 1}</div>
-                  <div className="roadmap-copy">
-                    <div className="roadmap-head">
-                      <strong>{section.title}</strong>
-                      <span className={complete ? "status-chip done" : "status-chip"}>{complete ? "Done" : `${section.estimatedMinutes} min`}</span>
-                    </div>
-                    <span className={upNext ? "roadmap-status upcoming" : complete ? "roadmap-status complete" : "roadmap-status"}>{upNext ? "Up next" : complete ? "Completed" : "In queue"}</span>
-                    <p>{section.summary}</p>
-                    <Link className="inline-action" href={`/modules/${section.slug}`}>
-                      {complete ? "Review section" : upNext ? "Continue section" : "Open section"}
-                    </Link>
+      <section className="content-panel overview-roadmap">
+        <p className="section-label">Next actions</p>
+        <h3>Complete each onboarding section one at a time</h3>
+        <p className="roadmap-intro">Use the next section first, then move down the list.</p>
+        <ol className="roadmap-list">
+          {experience.sections.map((section, index) => {
+            const complete = progress.completed_sections.includes(section.slug);
+            const upNext = !complete && nextSection?.slug === section.slug;
+            return (
+              <li key={section.slug} className={complete ? "roadmap-item done" : upNext ? "roadmap-item next" : "roadmap-item"}>
+                <div className="roadmap-index">{index + 1}</div>
+                <div className="roadmap-copy">
+                  <div className="roadmap-head">
+                    <strong>{section.title}</strong>
+                    <span className={complete ? "status-chip done" : "status-chip"}>{complete ? "Done" : `${section.estimatedMinutes} min`}</span>
                   </div>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-
-        <div className="stack-column">
-          <section className="content-panel">
-            <p className="section-label">Support contacts</p>
-            <h3>Use the right escalation path early</h3>
-            <div className="contact-list">
-              {experience.contacts.slice(0, 3).map((contact) => (
-                <article key={contact.email} className="contact-card">
-                  <strong>{contact.name}</strong>
-                  <span>{contact.role}</span>
-                  <span>{contact.phone}</span>
-                  <p>{contact.note}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-
-          <section className="content-panel subtle-panel">
-            <p className="section-label">Role-specific content</p>
-            <h3>Keep the HR toolkit in its own lane</h3>
-            <p>The HR Administrative Assistant toolkit is a separate operational reference. It should not crowd the core employee onboarding path.</p>
-            <Link className="inline-action" href="/toolkits/hr-administrative-assistant">
-              Open the HR toolkit
-            </Link>
-          </section>
-        </div>
-      </section>
-
-      <section className="content-panel">
-        <p className="section-label">Values and culture</p>
-        <h3>What should feel visible in the work</h3>
-        <div className="value-grid compact-values">
-          {experience.organization.values.map((value) => (
-            <article key={value.name} className="value-card">
-              <strong>{value.name}</strong>
-              <p>{value.body}</p>
-            </article>
-          ))}
-        </div>
+                  <span className={upNext ? "roadmap-status upcoming" : complete ? "roadmap-status complete" : "roadmap-status"}>{upNext ? "Up next" : complete ? "Completed" : "In queue"}</span>
+                  <p>{section.summary}</p>
+                  <Link className={upNext ? "primary-action compact-primary" : "inline-action"} href={`/modules/${section.slug}`}>
+                    {complete ? "Review section" : upNext ? "Continue section" : "Open section"}
+                  </Link>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
       </section>
     </div>
   );

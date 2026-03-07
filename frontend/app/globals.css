@@ -262,6 +262,31 @@ button {
   gap: 18px;
 }
 
+.section-band {
+  display: grid;
+  gap: 12px;
+}
+
+.section-band-head {
+  display: grid;
+  gap: 4px;
+  padding: 0 2px;
+}
+
+.section-band-head h2 {
+  margin: 0;
+  color: var(--text-inverse);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.section-band .section-label {
+  color: rgba(231, 242, 255, 0.7);
+}
+
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -434,8 +459,9 @@ button {
 .page-hero h1 {
   color: var(--text-strong);
   font-size: clamp(2.45rem, 4.8vw, 4rem);
-  line-height: 0.94;
+  line-height: 0.92;
   margin-bottom: 10px;
+  text-wrap: balance;
 }
 
 .page-hero .lead {
@@ -756,13 +782,20 @@ button {
   display: grid;
   grid-template-columns: 160px minmax(0, 1fr);
   gap: 12px;
-  padding: 10px 0;
+  padding: 10px 12px;
   border-top: 1px solid rgba(11, 31, 55, 0.08);
+  border-radius: 12px;
+  transition: background-color 180ms ease, transform 180ms ease;
 }
 
 .policy-row:first-child {
   border-top: 0;
-  padding-top: 0;
+  padding-top: 10px;
+}
+
+.policy-row:hover {
+  transform: translateX(2px);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .policy-row dt {
@@ -1017,7 +1050,17 @@ button {
 .hero-support-panel {
   align-self: start;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(255, 255, 255, 0.74);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.52), rgba(246, 250, 255, 0.26)),
+    radial-gradient(circle at top right, rgba(79, 220, 255, 0.14), transparent 34%);
+}
+
+.hero-support-panel:hover {
+  box-shadow:
+    0 20px 38px rgba(8, 16, 29, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .section-page > .content-panel,
@@ -1034,6 +1077,14 @@ button {
 .section-page .acknowledgment-panel,
 .toolkit-page .acknowledgment-panel {
   box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255, 255, 255, 0.76);
+}
+
+.takeaway-band {
+  gap: 10px;
+}
+
+.policy-band {
+  gap: 14px;
 }
 
 .takeaway-panel {
@@ -1060,6 +1111,10 @@ button {
   gap: 10px;
 }
 
+.takeaway-band .compact-takeaways {
+  padding-right: 4px;
+}
+
 .compact-takeaways .essential-card {
   padding: 11px 13px;
   border-radius: 15px;
@@ -1083,6 +1138,10 @@ button {
     inset 0 1px 0 rgba(255, 255, 255, 0.84);
 }
 
+.policy-band .policy-area-list {
+  gap: 14px;
+}
+
 .section-support-grid,
 .toolkit-secondary-grid,
 .toolkit-support-grid {
@@ -1091,7 +1150,7 @@ button {
 
 .section-support-grid {
   grid-template-columns: minmax(0, 1.02fr) minmax(280px, 0.98fr);
-  gap: 14px;
+  gap: 12px;
 }
 
 .quiet-content-panel,
@@ -1105,8 +1164,9 @@ button {
 .section-page .acknowledgment-panel,
 .toolkit-page .acknowledgment-panel {
   background:
-    linear-gradient(180deg, rgba(252, 254, 255, 0.97), rgba(239, 247, 255, 0.87)),
-    radial-gradient(circle at top right, rgba(79, 220, 255, 0.08), transparent 26%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(243, 249, 255, 0.44)),
+    radial-gradient(circle at top right, rgba(79, 220, 255, 0.12), transparent 26%);
+  border-color: rgba(255, 255, 255, 0.72);
 }
 
 .toolkit-shell {
@@ -1234,9 +1294,17 @@ button {
 .page-stack > .content-panel:hover {
   box-shadow:
     0 28px 62px rgba(8, 16, 29, 0.18),
-    0 0 0 1px rgba(79, 220, 255, 0.06),
+    0 0 0 1px rgba(79, 220, 255, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
     inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.section-band .essential-card:hover,
+.section-band .policy-area:hover {
+  box-shadow:
+    0 20px 40px rgba(7, 16, 29, 0.14),
+    0 0 0 1px rgba(79, 220, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
 
 @media (max-width: 1180px) {

@@ -422,9 +422,11 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
         </aside>
       </section>
 
-      <section className="content-panel takeaway-panel">
-        <p className="section-label">Core takeaways</p>
-        <h3>Read this first</h3>
+      <section className="section-band takeaway-band">
+        <div className="section-band-head">
+          <p className="section-label">Core takeaways</p>
+          <h2>Read this first</h2>
+        </div>
         <div className="essential-grid compact-takeaways">
           {section.essentials.map((item) => (
             <article key={item.title} className="essential-card">
@@ -435,9 +437,11 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
         </div>
       </section>
 
-      <section className="content-panel policy-panel">
-        <p className="section-label">Policy structure</p>
-        <h3>What the documents actually cover here</h3>
+      <section className="section-band policy-band">
+        <div className="section-band-head">
+          <p className="section-label">Policy structure</p>
+          <h2>What the documents actually cover here</h2>
+        </div>
         <div className="policy-area-list">
           {section.policyAreas.map((area) => (
             <article key={area.title} className="policy-area">

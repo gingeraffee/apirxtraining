@@ -177,8 +177,8 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   }
 
   return (
-    <div className={kind === "toolkit" ? "app-shell toolkit-shell" : "app-shell"}>
-      <aside className={kind === "toolkit" ? "side-rail toolkit-rail" : "side-rail"}>
+    <div className={kind === "toolkit" ? "app-shell toolkit-shell" : kind === "section" ? "app-shell section-shell" : "app-shell"}>
+      <aside className={kind === "toolkit" ? "side-rail toolkit-rail" : kind === "section" ? "side-rail section-rail" : "side-rail"}>
         {kind === "toolkit" ? (
           <ToolkitRail
             sections={sections}
@@ -186,6 +186,16 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
             completedSections={completedSections}
             progressCount={progress.completed_sections.length}
             totalCount={sections.length}
+            toolkitComplete={progress.toolkit_completed}
+          />
+        ) : kind === "section" ? (
+          <SectionRail
+            sections={sections}
+            slug={slug}
+            completedSections={completedSections}
+            progressCount={progress.completed_sections.length}
+            totalCount={sections.length}
+            nextSection={nextSection}
             toolkitComplete={progress.toolkit_completed}
           />
         ) : (
@@ -247,8 +257,8 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
         )}
       </aside>
 
-      <main className={kind === "toolkit" ? "main-stage toolkit-stage" : "main-stage"}>
-        <header className={kind === "toolkit" ? "topbar toolkit-topbar" : "topbar"}>
+      <main className={kind === "toolkit" ? "main-stage toolkit-stage" : kind === "section" ? "main-stage section-stage" : "main-stage"}>
+        <header className={kind === "toolkit" ? "topbar toolkit-topbar" : kind === "section" ? "topbar section-topbar" : "topbar"}>
           <div>
             <p className="section-label">
               {kind === "toolkit" ? "Role-specific reference" : kind === "section" ? "General onboarding section" : "General onboarding"}
@@ -396,26 +406,26 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
   const allChecked = selections.length === section.acknowledgment.items.length && selections.every(Boolean);
 
   return (
-    <div className="page-stack">
-      <section className="page-hero single-focus-hero">
-        <div>
+    <div className="page-stack section-page">
+      <section className="page-hero single-focus-hero section-hero">
+        <div className="section-hero-copy">
           <p className="section-label">{section.eyebrow}</p>
           <h1>{section.title}</h1>
           <p className="lead">{section.summary}</p>
           <p className="purpose-line">{section.purpose}</p>
         </div>
-        <div className="summary-panel">
-          <p className="section-label">This section focuses on</p>
+        <aside className="summary-panel hero-support-panel">
+          <p className="section-label">Focus areas</p>
           <div className="focus-list">
             {section.focuses.map((focus) => <span key={focus} className="focus-pill">{focus}</span>)}
           </div>
-        </div>
+        </aside>
       </section>
 
-      <section className="content-panel">
-        <p className="section-label">What should stay top of mind</p>
-        <h3>Core takeaways before the detail</h3>
-        <div className="essential-grid">
+      <section className="content-panel takeaway-panel">
+        <p className="section-label">Core takeaways</p>
+        <h3>Read this first</h3>
+        <div className="essential-grid compact-takeaways">
           {section.essentials.map((item) => (
             <article key={item.title} className="essential-card">
               <strong>{item.title}</strong>
@@ -425,7 +435,7 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
         </div>
       </section>
 
-      <section className="content-panel">
+      <section className="content-panel policy-panel">
         <p className="section-label">Policy structure</p>
         <h3>What the documents actually cover here</h3>
         <div className="policy-area-list">
@@ -445,15 +455,15 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
         </div>
       </section>
 
-      <section className="content-columns">
-        <div className="content-panel">
+      <section className="content-columns section-support-grid">
+        <div className="content-panel quiet-content-panel">
           <p className="section-label">What to do</p>
           <h3>Use this section in practice</h3>
           <ul className="plain-list">
             {section.actions.map((item) => <li key={item}>{item}</li>)}
           </ul>
         </div>
-        <div className="content-panel warning-panel">
+        <div className="content-panel warning-panel quiet-content-panel">
           <p className="section-label">Escalate when</p>
           <h3>Do not improvise these scenarios</h3>
           <ul className="plain-list">
@@ -478,6 +488,66 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
           {isAcknowledged ? "Section acknowledged" : isPending ? "Saving..." : "Mark section complete"}
         </button>
       </section>
+    </div>
+  );
+}
+
+type SectionRailProps = {
+  sections: Section[];
+  slug?: string;
+  completedSections: Set<string>;
+  progressCount: number;
+  totalCount: number;
+  nextSection: Section | null;
+  toolkitComplete: boolean;
+};
+
+function SectionRail({
+  sections,
+  slug,
+  completedSections,
+  progressCount,
+  totalCount,
+  nextSection,
+  toolkitComplete,
+}: SectionRailProps) {
+  return (
+    <div className="section-rail-inner">
+      <div className="section-rail-header">
+        <p className="section-label">AAP/API</p>
+        <h1>Onboarding</h1>
+        <p>{progressCount}/{totalCount} sections complete</p>
+        {nextSection && (
+          <Link className="section-rail-inline" href={`/modules/${nextSection.slug}`}>
+            Continue with {nextSection.title}
+          </Link>
+        )}
+      </div>
+
+      <nav className="section-rail-nav">
+        <Link className={slug ? "section-rail-link" : "section-rail-link active"} href="/">
+          <span>Overview</span>
+          <em>{progressCount === totalCount ? "Done" : "Start here"}</em>
+        </Link>
+        {sections.map((section, index) => (
+          <Link
+            key={section.slug}
+            className={slug === section.slug ? "section-rail-link active" : "section-rail-link"}
+            href={`/modules/${section.slug}`}
+          >
+            <span>{index + 1}. {section.title}</span>
+            <em>{completedSections.has(section.slug) ? "Done" : `${section.estimatedMinutes} min`}</em>
+          </Link>
+        ))}
+      </nav>
+
+      <div className="section-rail-footer">
+        <p className="section-label">Separate role-specific lane</p>
+        <Link className="section-rail-link" href="/toolkits/hr-administrative-assistant">
+          <span>HR Administrative Assistant Toolkit</span>
+          <em>{toolkitComplete ? "Reviewed" : "Separate"}</em>
+        </Link>
+      </div>
     </div>
   );
 }

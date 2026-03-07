@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --bg: #08111f;
   --bg-deep: #050b14;
   --surface: rgba(10, 23, 42, 0.82);
@@ -472,13 +472,260 @@ button {
   gap: 8px;
 }
 
+.section-shell {
+  grid-template-columns: 240px minmax(0, 1fr);
+}
+
+.section-rail {
+  padding: 18px 14px;
+  background: linear-gradient(180deg, rgba(5, 11, 20, 0.94), rgba(5, 11, 20, 0.84));
+}
+
+.section-rail-inner {
+  display: grid;
+  gap: 18px;
+}
+
+.section-rail-header,
+.section-rail-footer {
+  display: grid;
+  gap: 6px;
+  padding: 8px 10px 0;
+}
+
+.section-rail-header h1 {
+  margin: 2px 0;
+  font-family: "Aptos Display", "Segoe UI Variable Display", "Trebuchet MS", sans-serif;
+  font-size: 1.42rem;
+  letter-spacing: -0.04em;
+}
+
+.section-rail-header p:last-of-type,
+.section-rail-footer p:last-of-type {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.section-rail-inline {
+  margin-top: 2px;
+  color: #dbe8f4;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.section-rail-nav {
+  display: grid;
+  gap: 3px;
+}
+
+.section-rail-link {
+  display: grid;
+  gap: 4px;
+  padding: 9px 10px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.section-rail-link span {
+  color: #dce7f3;
+  font-size: 0.9rem;
+  line-height: 1.38;
+}
+
+.section-rail-link em {
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.section-rail-link:hover,
+.section-rail-link.active {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(95, 220, 248, 0.14);
+}
+
+.section-rail-footer {
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.section-stage {
+  padding: 24px 34px 48px;
+}
+
+.section-topbar {
+  margin-bottom: 8px;
+}
+
+.section-topbar h2 {
+  font-size: 1.8rem;
+}
+
+.section-page {
+  gap: 16px;
+}
+
+.section-page .section-label {
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+}
+
+.section-page .lead,
+.section-page .purpose-line,
+.section-page .content-panel p,
+.section-page .policy-row dd {
+  line-height: 1.58;
+}
+
+.section-hero {
+  grid-template-columns: minmax(0, 1.45fr) minmax(220px, 0.55fr);
+  gap: 14px;
+  padding: 20px 22px;
+  background:
+    linear-gradient(140deg, rgba(16, 36, 60, 0.9), rgba(8, 16, 29, 0.92)),
+    radial-gradient(circle at top right, rgba(95, 220, 248, 0.12), transparent 28%);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+}
+
+.section-hero h1 {
+  font-size: clamp(2.15rem, 4.1vw, 3.2rem);
+  margin-bottom: 10px;
+  max-width: 12ch;
+}
+
+.section-hero .lead {
+  margin: 0 0 8px;
+  max-width: 48rem;
+  font-size: 1rem;
+}
+
+.section-hero .purpose-line {
+  margin: 0;
+  max-width: 52rem;
+  font-size: 0.96rem;
+}
+
+.section-hero-copy {
+  display: grid;
+  align-content: start;
+}
+
+.hero-support-panel {
+  align-self: start;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+
+.hero-support-panel .focus-list {
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.hero-support-panel .focus-pill {
+  padding: 7px 10px;
+  font-size: 0.68rem;
+  background: rgba(95, 220, 248, 0.1);
+}
+
+.section-page > .content-panel,
+.section-page > .content-columns .content-panel {
+  padding: 18px 20px;
+}
+
+.takeaway-panel,
+.policy-panel,
+.quiet-content-panel,
+.section-page .acknowledgment-panel {
+  box-shadow: none;
+}
+
+.takeaway-panel {
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.takeaway-panel h3,
+.policy-panel h3,
+.quiet-content-panel h3,
+.section-page .acknowledgment-panel h3 {
+  font-size: 1.18rem;
+}
+
+.compact-takeaways {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.compact-takeaways .essential-card {
+  padding: 12px 14px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.compact-takeaways .essential-card p {
+  margin: 6px 0 0;
+  font-size: 0.93rem;
+}
+
+.policy-panel {
+  background: rgba(255, 255, 255, 0.018);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.policy-area-list {
+  gap: 12px;
+}
+
+.policy-area {
+  padding-top: 2px;
+}
+
+.policy-area h3 {
+  margin-bottom: 8px;
+  font-size: 1.03rem;
+}
+
+.section-page .policy-row {
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.section-support-grid {
+  grid-template-columns: minmax(0, 1.02fr) minmax(280px, 0.98fr);
+  gap: 14px;
+}
+
+.quiet-content-panel {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.section-page .acknowledgment-panel {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
 @media (max-width: 1180px) {
   .app-shell,
+  .section-shell,
   .page-hero,
   .content-columns,
   .compact-values,
   .essential-grid,
-  .playbook-columns {
+  .playbook-columns,
+  .compact-takeaways,
+  .section-support-grid {
     grid-template-columns: 1fr;
   }
 
@@ -503,6 +750,14 @@ button {
   .content-panel,
   .page-hero,
   .status-card {
+    padding: 18px;
+  }
+
+  .section-stage {
+    padding: 20px 18px 38px;
+  }
+
+  .section-hero {
     padding: 18px;
   }
 

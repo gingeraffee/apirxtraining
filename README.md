@@ -1,11 +1,9 @@
-﻿# AAP/API Onboarding Platform
+# AAP/API Onboarding Platform
 
-This repository is being rebuilt as a two-app onboarding platform:
+This repository is a two-app onboarding platform:
 
 - `frontend/`: Next.js application for the employee experience
 - `backend/`: FastAPI application for content, progress tracking, and acknowledgments
-
-The prior `onboarding_app.py` Streamlit implementation remains in the repo only as a business-reference artifact while the new platform replaces it.
 
 ## Product shape
 

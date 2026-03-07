@@ -1358,14 +1358,24 @@ button {
 }
 
 /* ============================================
-   OVERVIEW PAGE — Course landing page rebuild
+   OVERVIEW PAGE — Discord-inspired dark surface
    3-zone layout: Hero / Course Path / Support
    ============================================ */
+
+@keyframes ov-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(79, 220, 255, 0.4); }
+  50% { box-shadow: 0 0 18px 4px rgba(79, 220, 255, 0.18); }
+}
+
+@keyframes ov-glow-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 .ov-page {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 16px;
   padding: 0 0 48px;
 }
 
@@ -1377,9 +1387,10 @@ button {
   gap: 24px;
   padding: 36px 32px;
   background:
-    linear-gradient(135deg, var(--panel-strong) 60%, var(--panel-soft) 100%);
-  border-radius: 22px;
-  box-shadow: var(--shadow-soft);
+    linear-gradient(135deg, rgba(15, 25, 42, 0.88) 0%, rgba(10, 18, 32, 0.92) 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
   position: relative;
   overflow: hidden;
 }
@@ -1391,40 +1402,40 @@ button {
   right: -10%;
   width: 50%;
   height: 120%;
-  background: radial-gradient(circle, var(--glass-cyan) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(79, 220, 255, 0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .ov-hero-copy {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   position: relative;
   z-index: 1;
 }
 
 .ov-hero-copy h1 {
   font-family: var(--font-display);
-  font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
   font-weight: 780;
   line-height: 1.22;
   letter-spacing: -0.025em;
-  color: var(--text-strong);
+  color: #f0f6ff;
   margin: 0;
 }
 
 .ov-hero-lead {
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   line-height: 1.55;
-  color: var(--text-soft);
-  max-width: 54ch;
+  color: var(--text-inverse-soft);
+  max-width: 52ch;
   margin: 0;
 }
 
 .ov-hero-sub {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   line-height: 1.5;
-  color: var(--text-muted);
+  color: var(--text-inverse-muted);
   margin: 0;
 }
 
@@ -1436,10 +1447,20 @@ button {
   margin-top: 8px;
 }
 
+.ov-hero-actions .primary-action {
+  box-shadow: 0 0 20px rgba(79, 220, 255, 0.18);
+  transition: transform 160ms ease, box-shadow 200ms ease, background 160ms ease;
+}
+
+.ov-hero-actions .primary-action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 28px rgba(79, 220, 255, 0.3);
+}
+
 .ov-hero-progress {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--text-inverse-muted);
   letter-spacing: 0.01em;
 }
 
@@ -1447,10 +1468,10 @@ button {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 22px;
-  background: var(--panel-soft);
-  border-radius: 16px;
-  border: 1px solid var(--panel-line);
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
   position: relative;
   z-index: 1;
   align-self: start;
@@ -1458,9 +1479,9 @@ button {
 
 .ov-hero-expect h3 {
   font-family: var(--font-display);
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--text-inverse);
   margin: 0;
   line-height: 1.35;
 }
@@ -1471,13 +1492,13 @@ button {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .ov-expect-list li {
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   line-height: 1.5;
-  color: var(--text-soft);
+  color: var(--text-inverse-soft);
   padding-left: 16px;
   position: relative;
 }
@@ -1487,27 +1508,29 @@ button {
   position: absolute;
   left: 0;
   top: 8px;
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--cyan);
 }
 
 .done-action {
-  opacity: 0.8;
+  opacity: 0.7;
   cursor: default;
 }
 
 /* ---- Zone 2: Course Path ---- */
 
 .ov-path {
-  background: var(--panel-strong);
-  border-radius: 22px;
-  box-shadow: var(--shadow-soft);
-  padding: 32px;
+  background:
+    linear-gradient(180deg, rgba(13, 22, 38, 0.9) 0%, rgba(10, 17, 30, 0.94) 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.26);
+  padding: 28px 28px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .ov-path-header {
@@ -1519,9 +1542,9 @@ button {
 
 .ov-path-header h2 {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: 1.22rem;
   font-weight: 720;
-  color: var(--text-strong);
+  color: #f0f6ff;
   margin: 0;
   line-height: 1.3;
 }
@@ -1534,14 +1557,14 @@ button {
 }
 
 .ov-path-stats strong {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--text-inverse);
 }
 
 .ov-path-stats span {
-  font-size: 0.82rem;
-  color: var(--text-muted);
+  font-size: 0.8rem;
+  color: var(--text-inverse-muted);
 }
 
 .ov-path-progress {
@@ -1552,8 +1575,8 @@ button {
 
 .ov-progress-bar {
   flex: 1;
-  height: 6px;
-  background: var(--panel-muted);
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -1561,14 +1584,14 @@ button {
 .ov-progress-fill {
   display: block;
   height: 100%;
-  background: linear-gradient(90deg, var(--cyan-strong), var(--cyan));
+  background: linear-gradient(90deg, #43b581, #4fdcff);
   border-radius: 999px;
   transition: width 0.5s ease;
 }
 
 .ov-complete-note {
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  font-size: 0.82rem;
+  color: var(--text-inverse-muted);
   white-space: nowrap;
   margin: 0;
 }
@@ -1586,7 +1609,7 @@ button {
 .ov-step {
   display: grid;
   grid-template-columns: 40px 1fr;
-  gap: 0 16px;
+  gap: 0 14px;
   min-height: 0;
 }
 
@@ -1597,75 +1620,86 @@ button {
 }
 
 .ov-step-marker {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 700;
   flex-shrink: 0;
   font-family: var(--font-display);
-  transition: all 0.2s ease;
+  transition: all 0.22s ease;
 }
 
+/* Completed: green like Discord's online indicator */
 .ov-step.completed .ov-step-marker {
-  background: rgba(79, 220, 255, 0.15);
-  color: var(--cyan-strong);
-  border: 2px solid rgba(79, 220, 255, 0.3);
+  background: rgba(67, 181, 129, 0.16);
+  color: #43b581;
+  border: 2px solid rgba(67, 181, 129, 0.35);
 }
 
+/* Current: cyan with pulse */
 .ov-step.current .ov-step-marker {
   background: var(--cyan);
   color: var(--shell);
   border: 2px solid var(--cyan);
-  box-shadow: 0 0 16px rgba(79, 220, 255, 0.35);
+  animation: ov-pulse 2.4s ease-in-out infinite;
 }
 
 .ov-step.next .ov-step-marker {
-  background: var(--panel-soft);
-  color: var(--text);
-  border: 2px solid var(--panel-line-strong);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-inverse-soft);
+  border: 2px solid rgba(255, 255, 255, 0.12);
 }
 
 .ov-step.upcoming .ov-step-marker {
-  background: var(--panel-muted);
-  color: var(--text-muted);
-  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-inverse-muted);
+  border: 2px solid rgba(255, 255, 255, 0.06);
 }
 
 .ov-step-line {
   width: 2px;
   flex: 1;
-  min-height: 16px;
+  min-height: 14px;
   transition: background 0.2s ease;
 }
 
 .ov-step.completed .ov-step-line {
-  background: rgba(79, 220, 255, 0.2);
+  background: rgba(67, 181, 129, 0.25);
 }
 
 .ov-step.current .ov-step-line,
 .ov-step.next .ov-step-line {
-  background: var(--panel-line-strong);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .ov-step.upcoming .ov-step-line {
-  background: var(--panel-line);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .ov-step.last .ov-step-line {
   display: none;
 }
 
-/* Step body */
+/* Step body — hover interaction */
 
 .ov-step-body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding-bottom: 28px;
+  gap: 4px;
+  padding: 10px 14px 22px;
+  border-radius: 12px;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+  border: 1px solid transparent;
+}
+
+.ov-step:not(.completed) .ov-step-body:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+  transform: translateX(2px);
 }
 
 .ov-step.last .ov-step-body {
@@ -1682,70 +1716,61 @@ button {
 
 .ov-step-title {
   font-family: var(--font-display);
-  font-size: 1.08rem;
+  font-size: 1.02rem;
   font-weight: 680;
-  color: var(--text-strong);
+  color: #f0f6ff;
   line-height: 1.3;
+  transition: color 180ms ease;
 }
 
 .ov-step.completed .ov-step-title {
-  color: var(--text-soft);
+  color: var(--text-inverse-muted);
+}
+
+.ov-step:not(.completed) .ov-step-body:hover .ov-step-title {
+  color: var(--cyan);
 }
 
 .ov-step-meta {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  color: var(--text-muted);
+  color: var(--text-inverse-muted);
   white-space: nowrap;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .ov-step.current .ov-step-meta {
-  color: var(--cyan-strong);
+  color: var(--cyan);
 }
 
-.ov-step-why,
-.ov-step-covers,
-.ov-step-insight {
-  font-size: 0.88rem;
+.ov-step.completed .ov-step-meta {
+  color: #43b581;
+}
+
+.ov-step-why {
+  font-size: 0.84rem;
   line-height: 1.5;
-  color: var(--text-soft);
+  color: var(--text-inverse-soft);
   margin: 0;
 }
 
-.ov-step-why span,
-.ov-step-covers span,
-.ov-step-insight span {
-  font-weight: 620;
-  color: var(--text);
-}
-
-.ov-step.completed .ov-step-why,
-.ov-step.completed .ov-step-covers,
-.ov-step.completed .ov-step-insight {
-  color: var(--text-muted);
-}
-
-.ov-step.completed .ov-step-why span,
-.ov-step.completed .ov-step-covers span,
-.ov-step.completed .ov-step-insight span {
-  color: var(--text-soft);
+.ov-step.completed .ov-step-why {
+  color: rgba(145, 166, 191, 0.6);
 }
 
 .ov-step .primary-action,
 .ov-step .inline-action {
-  margin-top: 4px;
+  margin-top: 6px;
   align-self: flex-start;
 }
 
 /* Current lesson highlight */
 .ov-step.current .ov-step-body {
-  background: rgba(79, 220, 255, 0.04);
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 12px;
-  border: 1px solid rgba(79, 220, 255, 0.1);
+  background: rgba(79, 220, 255, 0.05);
+  border-color: rgba(79, 220, 255, 0.12);
+  padding: 14px;
+  margin-bottom: 8px;
 }
 
 .ov-step.current.last .ov-step-body {
@@ -1753,10 +1778,17 @@ button {
 }
 
 .compact-primary {
-  padding: 8px 12px;
-  border-radius: 12px;
+  padding: 8px 14px;
+  border-radius: 10px;
   font-size: 0.82rem;
   letter-spacing: 0;
+  box-shadow: 0 0 14px rgba(79, 220, 255, 0.12);
+  transition: transform 160ms ease, box-shadow 200ms ease;
+}
+
+.compact-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 22px rgba(79, 220, 255, 0.24);
 }
 
 /* ---- Zone 3: Support / Contact ---- */
@@ -1765,10 +1797,12 @@ button {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 24px;
-  background: var(--panel-strong);
-  border-radius: 22px;
-  box-shadow: var(--shadow-quiet);
-  padding: 28px 32px;
+  background:
+    linear-gradient(135deg, rgba(13, 22, 38, 0.88) 0%, rgba(10, 17, 30, 0.92) 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  padding: 24px 28px;
 }
 
 .ov-support-copy {
@@ -1779,23 +1813,23 @@ button {
 
 .ov-support-copy h3 {
   font-family: var(--font-display);
-  font-size: 1.12rem;
+  font-size: 1.08rem;
   font-weight: 700;
-  color: var(--text-strong);
+  color: #f0f6ff;
   margin: 0;
 }
 
 .ov-support-copy p {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1.5;
-  color: var(--text-soft);
+  color: var(--text-inverse-soft);
   margin: 0;
 }
 
 .ov-support-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .ov-support-identity {
@@ -1805,29 +1839,31 @@ button {
 }
 
 .ov-support-identity strong {
-  font-size: 1.02rem;
+  font-size: 1rem;
   font-weight: 680;
-  color: var(--text-strong);
+  color: var(--text-inverse);
 }
 
 .ov-support-identity span {
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  font-size: 0.82rem;
+  color: var(--text-inverse-muted);
 }
 
 .ov-support-details p {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   margin: 0;
   line-height: 1.6;
 }
 
 .ov-support-details a {
-  color: var(--cyan-strong);
+  color: var(--cyan);
   text-decoration: none;
+  transition: color 160ms ease;
 }
 
 .ov-support-details a:hover {
-  text-decoration: underline;
+  color: #80e8ff;
+  text-decoration: none;
 }
 
 .ov-support-actions {
@@ -1838,6 +1874,29 @@ button {
 
 .ov-support-future {
   /* Virtual business card / QR code area — reserved for future rollout */
+}
+
+/* ---- Overview dark-surface overrides ---- */
+
+.ov-page .section-label {
+  color: var(--text-inverse-muted);
+}
+
+.ov-page .inline-action {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-inverse);
+}
+
+.ov-page .inline-action:hover {
+  border-color: rgba(79, 220, 255, 0.28);
+  background: rgba(79, 220, 255, 0.08);
+  box-shadow: 0 0 14px rgba(79, 220, 255, 0.1);
+}
+
+.ov-path .inline-action {
+  color: var(--cyan);
+  font-weight: 650;
 }
 
 .context-strip {

@@ -18,8 +18,6 @@ export function LessonStep({ section, index, state, isLast }: LessonStepProps) {
     : state === "next" ? "Up next"
     : "Upcoming";
 
-  const keyInsight = section.essentials[0]?.title ?? section.focuses[0] ?? "";
-
   return (
     <li className={`ov-step ${state}${isLast ? " last" : ""}`}>
       <div className="ov-step-rail">
@@ -48,17 +46,7 @@ export function LessonStep({ section, index, state, isLast }: LessonStepProps) {
             {stateLabel} &middot; {section.estimatedMinutes} min
           </span>
         </div>
-        <p className="ov-step-why">
-          <span>Why it matters:</span> {section.purpose}
-        </p>
-        <p className="ov-step-covers">
-          <span>Covers:</span> {section.summary}
-        </p>
-        {keyInsight && (
-          <p className="ov-step-insight">
-            <span>Key insight:</span> {keyInsight}
-          </p>
-        )}
+        <p className="ov-step-why">{section.purpose}</p>
         {state !== "completed" && (
           <Link
             className={state === "current" || state === "next" ? "primary-action compact-primary" : "inline-action"}

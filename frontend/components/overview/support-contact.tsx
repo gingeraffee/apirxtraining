@@ -19,22 +19,35 @@ export function SupportContact({ contact }: SupportContactProps) {
   const firstName = contact.name.split(" ")[0];
   const phoneDigits = contact.phone.replace(/\D/g, "");
 
+  // Generate initials from contact name
+  const initials = contact.name
+    .split(" ")
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase() ?? "")
+    .join("");
+
   return (
     <section className="ov-support">
       <div className="ov-support-copy">
-        <p className="section-label">Need help?</p>
-        <h3>Your assigned support contact</h3>
+        <p className="section-label">Got a question?</p>
+        <h3>Your support contact is a real person.</h3>
         <p>
-          Reach out anytime a lesson feels unclear or a policy scenario
-          needs direct guidance.
+          If a lesson feels unclear or a policy scenario needs real context —
+          reach out. That's literally what {firstName} is here for.
         </p>
       </div>
 
       <div className="ov-support-card">
         <div className="ov-support-identity">
-          <strong>{contact.name}</strong>
-          <span>{contact.role}</span>
+          <div className="ov-support-avatar" aria-hidden="true">
+            {initials}
+          </div>
+          <div className="ov-support-identity-text">
+            <strong>{contact.name}</strong>
+            <span>{contact.role}</span>
+          </div>
         </div>
+
         <div className="ov-support-details">
           <p>
             <a href={`tel:${phoneDigits}`}>{contact.phone}</a>
@@ -43,6 +56,7 @@ export function SupportContact({ contact }: SupportContactProps) {
             <a href={`mailto:${contact.email}`}>{contact.email}</a>
           </p>
         </div>
+
         <div className="ov-support-actions">
           <a className="inline-action" href={`tel:${phoneDigits}`}>
             Call {firstName}
@@ -57,9 +71,6 @@ export function SupportContact({ contact }: SupportContactProps) {
           >
             Save contact
           </a>
-        </div>
-        <div className="ov-support-future" aria-hidden="true">
-          {/* Virtual business card / QR code area — prepared for future rollout */}
         </div>
       </div>
     </section>

@@ -21,7 +21,7 @@ export function OverviewScreen({ experience, progress, nextSection }: OverviewSc
       ? currentSection
       : nextSection;
 
-  const supportContact = experience.track.support_contact;
+  const supportContact = experience.track?.support_contact ?? null;
 
   return (
     <div className="ov-page">
@@ -36,7 +36,7 @@ export function OverviewScreen({ experience, progress, nextSection }: OverviewSc
         nextSection={nextSection}
         activeLesson={activeLesson}
       />
-      <SupportContact contact={supportContact} />
+      {supportContact && <SupportContact contact={supportContact} />}
     </div>
   );
 }

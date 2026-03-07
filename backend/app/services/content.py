@@ -444,6 +444,33 @@ SECTIONS = [
     },
 ]
 
+TRACKS: dict[str, dict[str, Any]] = {
+    "default": {
+        "id": "default",
+        "name": "General Onboarding",
+        "support_contact": {
+            "name": "Nicole Thornton",
+            "role": "HR Manager",
+            "phone": "256-574-7528",
+            "email": "nicole.thornton330@gmail.com",
+        },
+        "toolkit_slugs": [],
+        "section_overrides": {},
+    },
+    "hr-admin": {
+        "id": "hr-admin",
+        "name": "HR Administrative Assistant",
+        "support_contact": {
+            "name": "Nicole Thornton",
+            "role": "HR Manager",
+            "phone": "256-574-7528",
+            "email": "nicole.thornton330@gmail.com",
+        },
+        "toolkit_slugs": ["hr-administrative-assistant"],
+        "section_overrides": {},
+    },
+}
+
 TOOLKITS = [
     {
         "id": "hr-administrative-assistant-toolkit",
@@ -556,13 +583,15 @@ TOOLKITS = [
 ]
 
 
-def get_experience_content() -> dict[str, Any]:
+def get_experience_content(track_id: str = "default") -> dict[str, Any]:
+    track = TRACKS.get(track_id, TRACKS["default"])
     return {
         "organization": ORGANIZATION,
         "dashboardStats": DASHBOARD_STATS,
         "contacts": CONTACTS,
         "sections": SECTIONS,
         "toolkits": TOOLKITS,
+        "track": track,
     }
 
 

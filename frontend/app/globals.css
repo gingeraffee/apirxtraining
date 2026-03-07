@@ -519,3 +519,264 @@ button {
     font-size: 2.2rem;
   }
 }
+
+.toolkit-shell {
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+
+.toolkit-rail {
+  padding: 18px 12px;
+  background: linear-gradient(180deg, rgba(5, 11, 20, 0.92), rgba(5, 11, 20, 0.82));
+}
+
+.toolkit-rail-inner {
+  display: grid;
+  gap: 18px;
+}
+
+.toolkit-rail-header {
+  padding: 8px 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.toolkit-rail-header h1 {
+  margin: 4px 0 6px;
+  font-family: "Aptos Display", "Segoe UI Variable Display", "Trebuchet MS", sans-serif;
+  font-size: 1.45rem;
+  letter-spacing: -0.04em;
+}
+
+.toolkit-rail-header p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.toolkit-rail-nav {
+  display: grid;
+  gap: 4px;
+}
+
+.toolkit-rail-link {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.toolkit-rail-link span {
+  color: #d9e5f1;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.toolkit-rail-link em {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.toolkit-rail-link:hover,
+.toolkit-rail-link.active {
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(95, 220, 248, 0.16);
+}
+
+.toolkit-link-current {
+  background: rgba(95, 220, 248, 0.08);
+  border-color: rgba(95, 220, 248, 0.24);
+}
+
+.toolkit-stage {
+  padding: 30px 42px 54px;
+}
+
+.toolkit-topbar {
+  margin-bottom: 10px;
+}
+
+.toolkit-topbar h2 {
+  font-size: 1.75rem;
+}
+
+.toolkit-topbar .topbar-meta {
+  gap: 0;
+}
+
+.toolkit-page {
+  gap: 28px;
+}
+
+.toolkit-hero {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 20px 24px;
+  background:
+    linear-gradient(145deg, rgba(14, 31, 54, 0.9), rgba(7, 16, 29, 0.88)),
+    radial-gradient(circle at top right, rgba(95, 220, 248, 0.1), transparent 28%);
+  box-shadow: 0 18px 52px rgba(0, 0, 0, 0.24);
+}
+
+.toolkit-hero h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 10px;
+}
+
+.toolkit-hero .lead {
+  max-width: 54rem;
+  margin: 0 0 8px;
+}
+
+.toolkit-hero .purpose-line {
+  max-width: 58rem;
+  margin: 0;
+}
+
+.toolkit-hero-copy {
+  display: grid;
+  gap: 0;
+}
+
+.toolkit-callout {
+  margin-top: 16px;
+  max-width: 34rem;
+  padding: 14px 16px;
+  border-left: 2px solid rgba(95, 220, 248, 0.32);
+  border-radius: 0 14px 14px 0;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.toolkit-callout .plain-list {
+  margin-top: 8px;
+}
+
+.primary-panel {
+  border-color: rgba(95, 220, 248, 0.12);
+  background: linear-gradient(180deg, rgba(10, 23, 42, 0.82), rgba(8, 18, 34, 0.72));
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.2);
+}
+
+.systems-panel {
+  padding-top: 22px;
+}
+
+.system-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  gap: 18px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.system-row:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.quiet-panel {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+}
+
+.toolkit-secondary-grid {
+  grid-template-columns: minmax(0, 1.08fr) minmax(300px, 0.92fr);
+  align-items: start;
+}
+
+.quick-answer-item {
+  padding: 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.quick-answer-item:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.quick-answer-item summary {
+  cursor: pointer;
+  list-style: none;
+  color: #f2f7fc;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.quick-answer-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.quick-answer-item p {
+  margin: 10px 0 6px;
+}
+
+.quick-answer-item span {
+  display: block;
+}
+
+.soft-warning-panel {
+  background: linear-gradient(180deg, rgba(255, 91, 103, 0.08), rgba(255, 255, 255, 0.02));
+}
+
+.playbook {
+  margin-top: 10px;
+  padding: 14px 16px;
+  border-color: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: none;
+}
+
+.playbook[open] {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.playbook summary {
+  position: relative;
+  padding-right: 22px;
+}
+
+.playbook-columns {
+  margin-top: 10px;
+}
+
+.toolkit-support-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.86fr);
+  align-items: start;
+}
+
+.toolkit-support-grid .contact-card,
+.toolkit-support-grid .acknowledgment-panel {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+@media (max-width: 1180px) {
+  .toolkit-shell,
+  .toolkit-secondary-grid,
+  .toolkit-support-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolkit-rail {
+    position: relative;
+    height: auto;
+  }
+
+  .system-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 720px) {
+  .toolkit-stage {
+    padding: 20px 18px 40px;
+  }
+
+  .toolkit-hero {
+    padding: 18px;
+  }
+}

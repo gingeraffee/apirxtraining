@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
@@ -177,67 +177,82 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   }
 
   return (
-    <div className="app-shell">
-      <aside className="side-rail">
-        <div className="brand-block">
-          <p className="section-label">AAP/API</p>
-          <h1>Onboarding</h1>
-          <p>{experience.organization.tagline}</p>
-        </div>
+    <div className={kind === "toolkit" ? "app-shell toolkit-shell" : "app-shell"}>
+      <aside className={kind === "toolkit" ? "side-rail toolkit-rail" : "side-rail"}>
+        {kind === "toolkit" ? (
+          <ToolkitRail
+            sections={sections}
+            slug={slug}
+            completedSections={completedSections}
+            progressCount={progress.completed_sections.length}
+            totalCount={sections.length}
+            toolkitComplete={progress.toolkit_completed}
+          />
+        ) : (
+          <>
+            <div className="brand-block">
+              <p className="section-label">AAP/API</p>
+              <h1>Onboarding</h1>
+              <p>{experience.organization.tagline}</p>
+            </div>
 
-        <div className="rail-panel progress-panel">
-          <p className="section-label">Progress</p>
-          <strong>{completionPercent}% complete</strong>
-          <p>{progress.completed_sections.length} of {sections.length} general sections reviewed.</p>
-          {nextSection && (
-            <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
-              Continue with {nextSection.title}
-            </Link>
-          )}
-        </div>
+            <div className="rail-panel progress-panel">
+              <p className="section-label">Progress</p>
+              <strong>{completionPercent}% complete</strong>
+              <p>{progress.completed_sections.length} of {sections.length} general sections reviewed.</p>
+              {nextSection && (
+                <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
+                  Continue with {nextSection.title}
+                </Link>
+              )}
+            </div>
 
-        <div className="rail-panel">
-          <p className="section-label">General flow</p>
-          <nav className="nav-stack">
-            <Link className={kind === "overview" ? "nav-link active" : "nav-link"} href="/">
-              <span>Overview</span>
-            </Link>
-            {sections.map((section, index) => (
-              <Link
-                key={section.slug}
-                className={slug === section.slug ? "nav-link active" : "nav-link"}
-                href={`/modules/${section.slug}`}
-              >
+            <div className="rail-panel">
+              <p className="section-label">General flow</p>
+              <nav className="nav-stack">
+                <Link className={kind === "overview" ? "nav-link active" : "nav-link"} href="/">
+                  <span>Overview</span>
+                </Link>
+                {sections.map((section, index) => (
+                  <Link
+                    key={section.slug}
+                    className={slug === section.slug ? "nav-link active" : "nav-link"}
+                    href={`/modules/${section.slug}`}
+                  >
+                    <div>
+                      <strong>{index + 1}. {section.title}</strong>
+                      <p>{section.summary}</p>
+                    </div>
+                    <span className={completedSections.has(section.slug) ? "status-chip done" : "status-chip"}>
+                      {completedSections.has(section.slug) ? "Done" : `${section.estimatedMinutes} min`}
+                    </span>
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            <div className="rail-panel">
+              <p className="section-label">Separate role-specific lane</p>
+              <Link className="nav-link" href="/toolkits/hr-administrative-assistant">
                 <div>
-                  <strong>{index + 1}. {section.title}</strong>
-                  <p>{section.summary}</p>
+                  <strong>HR Administrative Assistant Toolkit</strong>
+                  <p>Operational reference only. Not part of the core new-hire path.</p>
                 </div>
-                <span className={completedSections.has(section.slug) ? "status-chip done" : "status-chip"}>
-                  {completedSections.has(section.slug) ? "Done" : `${section.estimatedMinutes} min`}
+                <span className={progress.toolkit_completed ? "status-chip done" : "status-chip"}>
+                  {progress.toolkit_completed ? "Reviewed" : "Separate"}
                 </span>
               </Link>
-            ))}
-          </nav>
-        </div>
-
-        <div className="rail-panel">
-          <p className="section-label">Separate role-specific lane</p>
-          <Link className={kind === "toolkit" ? "nav-link active" : "nav-link"} href="/toolkits/hr-administrative-assistant">
-            <div>
-              <strong>HR Administrative Assistant Toolkit</strong>
-              <p>Operational reference only. Not part of the core new-hire path.</p>
             </div>
-            <span className={progress.toolkit_completed ? "status-chip done" : "status-chip"}>
-              {progress.toolkit_completed ? "Reviewed" : "Separate"}
-            </span>
-          </Link>
-        </div>
+          </>
+        )}
       </aside>
 
-      <main className="main-stage">
-        <header className="topbar">
+      <main className={kind === "toolkit" ? "main-stage toolkit-stage" : "main-stage"}>
+        <header className={kind === "toolkit" ? "topbar toolkit-topbar" : "topbar"}>
           <div>
-            <p className="section-label">{kind === "toolkit" ? "Role-specific reference" : kind === "section" ? "General onboarding section" : "General onboarding"}</p>
+            <p className="section-label">
+              {kind === "toolkit" ? "Role-specific reference" : kind === "section" ? "General onboarding section" : "General onboarding"}
+            </p>
             <h2>{DISPLAY_NAME}</h2>
           </div>
           <div className="topbar-meta">
@@ -476,59 +491,67 @@ type ToolkitProps = {
 
 function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProps) {
   return (
-    <div className="page-stack">
-      <section className="page-hero single-focus-hero">
-        <div>
+    <div className="page-stack toolkit-page">
+      <section className="page-hero single-focus-hero toolkit-hero">
+        <div className="toolkit-hero-copy">
           <p className="section-label">{toolkit.eyebrow}</p>
           <h1>{toolkit.title}</h1>
           <p className="lead">{toolkit.summary}</p>
           <p className="purpose-line">{toolkit.purpose}</p>
-        </div>
-        <div className="summary-panel">
-          <p className="section-label">Use this when</p>
-          <ul className="plain-list compact-list">
-            {toolkit.whenToUse.map((item) => <li key={item}>{item}</li>)}
-          </ul>
+          <div className="toolkit-callout">
+            <p className="section-label">Use this when</p>
+            <ul className="plain-list compact-list">
+              {toolkit.whenToUse.map((item) => <li key={item}>{item}</li>)}
+            </ul>
+          </div>
         </div>
       </section>
 
-      <section className="content-columns">
-        <div className="content-panel">
-          <p className="section-label">Systems</p>
-          <h3>Where the HR admin work happens</h3>
-          <div className="system-list">
-            {toolkit.systems.map((system) => (
-              <article key={system.name} className="system-row">
-                <div>
-                  <strong>{system.name}</strong>
-                  <span>{system.link}</span>
-                </div>
-                <p>{system.use}</p>
-              </article>
-            ))}
-          </div>
+      <section className="content-panel primary-panel systems-panel">
+        <p className="section-label">Systems</p>
+        <h3>Where the HR admin work happens</h3>
+        <div className="system-list primary-system-list">
+          {toolkit.systems.map((system) => (
+            <article key={system.name} className="system-row">
+              <div>
+                <strong>{system.name}</strong>
+                <span>{system.link}</span>
+              </div>
+              <p>{system.use}</p>
+            </article>
+          ))}
         </div>
+      </section>
 
-        <div className="content-panel">
+      <section className="content-columns toolkit-secondary-grid">
+        <div className="content-panel quiet-panel">
           <p className="section-label">Quick answers</p>
           <h3>Useful approved responses</h3>
           <div className="quick-answer-list">
             {toolkit.quickAnswers.map((item) => (
-              <article key={item.question} className="quick-answer-card">
-                <strong>{item.question}</strong>
+              <details key={item.question} className="quick-answer-item">
+                <summary>{item.question}</summary>
                 <p>{item.answer}</p>
                 <span>{item.reference}</span>
-              </article>
+              </details>
             ))}
           </div>
         </div>
+
+        <div className="content-panel quiet-panel warning-panel soft-warning-panel">
+          <p className="section-label">Escalate immediately</p>
+          <h3>High-risk topics should leave the front desk fast</h3>
+          <ul className="plain-list">
+            {toolkit.escalateImmediately.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+        </div>
       </section>
 
-      <section className="content-panel">
+      <section className="content-panel quiet-panel">
         <p className="section-label">Playbooks</p>
         <h3>Use these patterns instead of improvising</h3>
         {toolkit.playbooks.map((playbook) => (
-          <details key={playbook.title} className="playbook" open>
+          <details key={playbook.title} className="playbook">
             <summary>{playbook.title}</summary>
             <p>{playbook.summary}</p>
             <div className="content-columns playbook-columns">
@@ -549,16 +572,8 @@ function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProp
         ))}
       </section>
 
-      <section className="content-columns">
-        <div className="content-panel warning-panel">
-          <p className="section-label">Escalate immediately</p>
-          <h3>High-risk topics should leave the front desk fast</h3>
-          <ul className="plain-list">
-            {toolkit.escalateImmediately.map((item) => <li key={item}>{item}</li>)}
-          </ul>
-        </div>
-
-        <div className="content-panel">
+      <section className="content-columns toolkit-support-grid">
+        <div className="content-panel quiet-panel">
           <p className="section-label">Contacts</p>
           <h3>People to pull in</h3>
           <div className="contact-list">
@@ -572,19 +587,60 @@ function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProp
             ))}
           </div>
         </div>
-      </section>
 
-      <section className="content-panel acknowledgment-panel">
-        <p className="section-label">Toolkit review</p>
-        <h3>{toolkit.acknowledgment.title}</h3>
-        <p>{toolkit.acknowledgment.statement}</p>
-        <ul className="plain-list compact-list">
-          {toolkit.acknowledgment.items.map((item) => <li key={item}>{item}</li>)}
-        </ul>
-        <button className="primary-action" disabled={complete || isPending} onClick={() => onComplete(toolkit)} type="button">
-          {complete ? "Toolkit marked complete" : isPending ? "Saving..." : "Mark toolkit reviewed"}
-        </button>
+        <div className="content-panel acknowledgment-panel quiet-panel">
+          <p className="section-label">Toolkit review</p>
+          <h3>{toolkit.acknowledgment.title}</h3>
+          <p>{toolkit.acknowledgment.statement}</p>
+          <ul className="plain-list compact-list">
+            {toolkit.acknowledgment.items.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+          <button className="primary-action" disabled={complete || isPending} onClick={() => onComplete(toolkit)} type="button">
+            {complete ? "Toolkit marked complete" : isPending ? "Saving..." : "Mark toolkit reviewed"}
+          </button>
+        </div>
       </section>
+    </div>
+  );
+}
+
+type ToolkitRailProps = {
+  sections: Section[];
+  slug?: string;
+  completedSections: Set<string>;
+  progressCount: number;
+  totalCount: number;
+  toolkitComplete: boolean;
+};
+
+function ToolkitRail({ sections, slug, completedSections, progressCount, totalCount, toolkitComplete }: ToolkitRailProps) {
+  return (
+    <div className="toolkit-rail-inner">
+      <div className="toolkit-rail-header">
+        <p className="section-label">AAP/API</p>
+        <h1>Toolkit</h1>
+        <p>{progressCount}/{totalCount} general sections done</p>
+      </div>
+
+      <nav className="toolkit-rail-nav">
+        <Link className="toolkit-rail-link" href="/">
+          <span>Overview</span>
+        </Link>
+        {sections.map((section, index) => (
+          <Link
+            key={section.slug}
+            className={slug === section.slug ? "toolkit-rail-link active" : "toolkit-rail-link"}
+            href={`/modules/${section.slug}`}
+          >
+            <span>{index + 1}. {section.title}</span>
+            {completedSections.has(section.slug) && <em>Done</em>}
+          </Link>
+        ))}
+        <Link className="toolkit-rail-link active toolkit-link-current" href="/toolkits/hr-administrative-assistant">
+          <span>HR Administrative Assistant Toolkit</span>
+          <em>{toolkitComplete ? "Reviewed" : "Current"}</em>
+        </Link>
+      </nav>
     </div>
   );
 }

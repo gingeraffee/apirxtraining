@@ -1,3 +1,17 @@
 {
-  "employees": {}
+  "employees": {
+    "demo-employee": {
+      "display_name": "New Hire Demo",
+      "current_section": "hr-administrative-assistant",
+      "completed_sections": [
+        "welcome-to-aap-api"
+      ],
+      "acknowledged_sections": [
+        "welcome-to-aap-api"
+      ],
+      "toolkit_completed": false,
+      "started_at": "2026-03-07T05:24:49.713479+00:00",
+      "updated_at": "2026-03-07T05:29:03.889643+00:00"
+    }
+  }
 }

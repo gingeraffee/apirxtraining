@@ -19,14 +19,12 @@ export type Section = {
   title: string;
   summary: string;
   estimatedMinutes: number;
-  punchline: string;
-  quickFacts: { label: string; value: string }[];
-  highlightCards: { title: string; body: string; tone: string }[];
-  timeline: { label: string; title: string; body: string }[];
-  takeaways: string[];
-  reminders: string[];
-  faq: { question: string; answer: string }[];
-  resources: { title: string; body: string }[];
+  purpose: string;
+  focuses: string[];
+  essentials: { title: string; body: string }[];
+  policyAreas: { title: string; items: { label: string; body: string }[] }[];
+  actions: string[];
+  escalation: string[];
   acknowledgment: {
     title: string;
     statement: string;
@@ -41,14 +39,18 @@ export type Toolkit = {
   title: string;
   summary: string;
   estimatedMinutes: number;
-  punchline: string;
-  hero: { title: string; body: string };
-  overviewCards: { title: string; body: string }[];
+  purpose: string;
+  whenToUse: string[];
   systems: { name: string; link: string; use: string }[];
-  playbooks: { title: string; body: string; steps: string[]; escalateWhen: string[] }[];
-  escalationContacts: { name: string; role: string; phone: string; email: string }[];
-  quickLinks: string[];
-  reminders: string[];
+  playbooks: { title: string; summary: string; doThis: string[]; escalateWhen: string[] }[];
+  quickAnswers: { question: string; answer: string; reference: string }[];
+  escalateImmediately: string[];
+  contacts: { name: string; role: string; phone: string; email: string }[];
+  acknowledgment: {
+    title: string;
+    statement: string;
+    items: string[];
+  };
 };
 
 export type ExperienceContent = {

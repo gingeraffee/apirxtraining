@@ -4,32 +4,31 @@ from typing import Any
 
 ORGANIZATION = {
     "name": "AAP/API",
-    "headline": "A modern onboarding flow for the teams behind independent pharmacy success.",
-    "tagline": "Confidence first. Clarity always. Momentum from day one.",
+    "headline": "A guided onboarding flow built around what new employees actually need to know first.",
+    "tagline": "Clear structure, real policy guidance, and less noise.",
     "mission": "AAP provides support and customized solutions for independent community pharmacies to enhance profitability, streamline operations, and improve the quality of patient care.",
     "vision": "Helping independent pharmacies thrive in a competitive healthcare market.",
-    "story": "American Associated Pharmacies is a national cooperative of more than 2,000 independent pharmacies. API operates as AAP's distribution arm, helping member pharmacies stay competitive with the tools, inventory access, and operational support they need.",
+    "story": "American Associated Pharmacies is a national cooperative of more than 2,000 independent pharmacies. API operates as AAP's distribution arm, helping member pharmacies stay competitive with inventory access, operational support, and practical tools.",
     "values": [
-        {"name": "Customer Focus", "body": "External service starts with strong internal teamwork. Customer service is not just a department here; it is an operating posture."},
-        {"name": "Integrity", "body": "Say what is true, do what is right, and keep trust intact even when the answer is inconvenient."},
-        {"name": "Respect", "body": "Treat people with dignity, communicate honestly, and work like every role matters because it does."},
-        {"name": "Excellence", "body": "Aim for quality, look for improvements, and keep standards high without making things harder than they need to be."},
-        {"name": "Ownership", "body": "Take responsibility early, escalate clearly, and fix what is in your lane instead of waiting for someone else to notice."},
+        {"name": "Customer Focus", "body": "Strong internal teamwork supports strong external service."},
+        {"name": "Integrity", "body": "Act honestly and consistently so trust stays intact."},
+        {"name": "Respect", "body": "Treat people with dignity and communicate directly."},
+        {"name": "Excellence", "body": "Aim for high quality and keep improving the work."},
+        {"name": "Ownership", "body": "Take responsibility early instead of waiting to be asked."},
     ],
 }
 
 DASHBOARD_STATS = [
-    {"label": "Core sections", "value": "7", "detail": "The main onboarding path for every new employee."},
-    {"label": "Role toolkit", "value": "1", "detail": "A separate reference lane for the HR Administrative Assistant role."},
-    {"label": "Intro period", "value": "60 days", "detail": "Initial introductory period for new and rehired employees."},
-    {"label": "Support lane", "value": "HR + Leads", "detail": "Use HR for policy, benefits, confidentiality, or leave-specific questions."},
+    {"label": "Core path", "value": "7 sections", "detail": "The universal onboarding flow for every new employee."},
+    {"label": "Intro period", "value": "60 days", "detail": "The first 60 calendar days are the introductory period."},
+    {"label": "Benefits timing", "value": "30-day window", "detail": "Most life-event changes must be reported to HR within 30 days."},
 ]
 
 CONTACTS = [
     {"name": "Brandy Hooper", "role": "VP of Human Resources", "email": "brandy.hooper@rxaap.com", "phone": "256-574-7526", "note": "Escalation point for unresolved HR concerns and harassment reporting."},
-    {"name": "Nicole Thornton", "role": "HR Administrator", "email": "nicole.thornton@apirx.com", "phone": "256-574-7528", "note": "Best first stop for onboarding, benefits coordination, and personnel questions."},
-    {"name": "CBIZ Benefits", "role": "Benefits Support", "email": "Melissa.street@cbiz.com", "phone": "844.200.CBIZ (2249)", "note": "Benefits-plan support after HR has routed the request."},
-    {"name": "LifeMatters", "role": "Employee Assistance Program", "email": "www.empathia.com", "phone": "800-634-6433", "note": "Confidential employee assistance resource."},
+    {"name": "Nicole Thornton", "role": "HR Administrator", "email": "nicole.thornton@apirx.com", "phone": "256-574-7528", "note": "Primary onboarding, benefits, and employee-record support contact."},
+    {"name": "CBIZ Benefits", "role": "Benefits Support", "email": "Melissa.street@cbiz.com", "phone": "844.200.CBIZ (2249)", "note": "Benefits support after HR has routed the request."},
+    {"name": "LifeMatters", "role": "Employee Assistance Program", "email": "www.empathia.com", "phone": "800-634-6433", "note": "Confidential employee assistance resource available from day one."},
 ]
 
 SECTIONS = [
@@ -38,358 +37,408 @@ SECTIONS = [
         "slug": "welcome-to-aap-api",
         "eyebrow": "Start Here",
         "title": "Welcome to AAP/API",
-        "summary": "Get the company story, the reason the role matters, and the values that shape how work gets done.",
-        "estimatedMinutes": 10,
-        "punchline": "This is the part where the big picture snaps into focus.",
-        "quickFacts": [
-            {"label": "Who we serve", "value": "2,000+ independent pharmacies"},
-            {"label": "What API does", "value": "Warehouse and distribution support"},
-            {"label": "Why this matters", "value": "Profitability, operations, and patient care"},
+        "summary": "Start with the company story, the reason the organization exists, and what day-one onboarding is meant to set up.",
+        "estimatedMinutes": 9,
+        "purpose": "Understand who AAP/API serves, why the business exists, and how the first stretch of onboarding should help you build confidence quickly.",
+        "focuses": ["Company story", "Mission and values", "First 60 days"],
+        "essentials": [
+            {"title": "Who AAP/API is", "body": "AAP is a national cooperative supporting more than 2,000 independent pharmacies, and API operates as the warehouse and distribution arm that helps those pharmacies stay competitive."},
+            {"title": "What the company is aiming for", "body": "The mission is to support independent community pharmacies with solutions that improve profitability, streamline operations, and improve patient care."},
+            {"title": "How culture is supposed to work", "body": "Customer focus, integrity, respect, excellence, and ownership are meant to show up in daily behavior, not just in orientation copy."},
         ],
-        "highlightCards": [
-            {"title": "Why the company exists", "body": "AAP was formed to help independent pharmacies stay strong in a competitive healthcare market. The work behind the scenes supports better local care in the communities pharmacies serve.", "tone": "cyan"},
-            {"title": "What success feels like", "body": "New hires should leave week one with context, reliable support contacts, and a clear sense of how their role connects to customers and teammates.", "tone": "navy"},
-            {"title": "How the culture works", "body": "Values are meant to show up in decisions, conversations, escalations, and service habits. They are operational, not decorative.", "tone": "red"},
+        "policyAreas": [
+            {
+                "title": "Company context",
+                "items": [
+                    {"label": "Who we serve", "body": "Independent community pharmacies across the country rely on AAP/API for programs, operational support, and distribution."},
+                    {"label": "Why your role matters", "body": "Even roles that are not customer-facing affect service quality, team reliability, and pharmacy support outcomes."},
+                ],
+            },
+            {
+                "title": "What the handbook is for",
+                "items": [
+                    {"label": "Scope", "body": "The handbook applies to employees in the service of both American Associated Pharmacies and Associated Pharmacies, Inc."},
+                    {"label": "How to use it", "body": "Use it as the baseline guide for policies, benefits, and working conditions, then go to HR when a specific situation needs interpretation."},
+                    {"label": "Policy changes", "body": "The company may revise handbook policies through official notices over time."},
+                ],
+            },
+            {
+                "title": "What this first phase should do",
+                "items": [
+                    {"label": "Orientation goal", "body": "The first part of onboarding should help you understand the business, your support map, and the standards you are responsible for following."},
+                    {"label": "Introductory period", "body": "New and rehired employees work on an introductory basis for the first 60 calendar days after hire."},
+                ],
+            },
         ],
-        "timeline": [
-            {"label": "Day 1", "title": "Meet the company and support map", "body": "Learn the AAP/API story, your key contacts, and the basics of where to go when a question becomes policy-specific."},
-            {"label": "Week 1", "title": "Build role confidence", "body": "Connect your job to the customer impact, finish the core onboarding path, and get comfortable escalating instead of guessing."},
-            {"label": "Day 60", "title": "Cross the introductory milestone", "body": "The handbook's introductory period runs for the first 60 calendar days and is used to evaluate fit, habits, and performance."},
+        "actions": [
+            "Connect your role to the customer and team impact it supports.",
+            "Use the section sequence to build context before diving into detailed policy questions.",
+            "Keep HR in the loop when a handbook question turns specific or sensitive.",
         ],
-        "takeaways": [
-            "AAP and API exist to help independent pharmacies perform better, operate smarter, and serve patients well.",
-            "Mission, vision, and values should be visible in daily choices and not treated like poster copy.",
-            "The company expects employees to ask early, escalate clearly, and stay aligned with policy instead of improvising.",
-        ],
-        "reminders": [
-            "The handbook applies to employees of both AAP and API.",
-            "Questions not answered in the handbook should be routed to HR.",
-            "The handbook may be revised over time through official notices.",
-        ],
-        "faq": [
-            {"question": "Does the handbook create a contract of employment?", "answer": "No. The handbook explains expectations, benefits, and policies, but it does not create an employment contract."},
-            {"question": "Who should I contact when I am unsure which policy applies?", "answer": "Start with your supervisor for day-to-day context, and use HR for benefits, confidentiality, personnel-file access, leave, or sensitive conduct issues."},
-        ],
-        "resources": [
-            {"title": "Mission", "body": "Support independent community pharmacies with customized solutions that improve profitability, operations, and patient care."},
-            {"title": "Vision", "body": "Help independent pharmacies thrive in a competitive healthcare market."},
+        "escalation": [
+            "Use HR when the handbook does not fully answer a policy question.",
+            "Use your supervisor for role-specific expectations and first-line context.",
+            "Escalate sensitive employee-specific questions instead of guessing.",
         ],
         "acknowledgment": {
             "title": "Orientation checkpoint",
-            "statement": "I understand AAP/API's mission, vision, core values, and why my role contributes to a broader customer outcome.",
+            "statement": "I understand what AAP/API does, what the company is trying to accomplish, and where to go when a question becomes policy-specific.",
             "items": [
-                "I can explain what AAP/API does in plain language.",
-                "I know the five company values and how they show up in daily work.",
-                "I know HR is the right escalation path when a policy question turns sensitive or specific.",
+                "I can explain AAP/API in plain language.",
+                "I know the five company values.",
+                "I know HR is the right path for policy interpretation and sensitive issues.",
             ],
         },
     },
     {
         "id": "working-at-aap-api",
         "slug": "working-at-aap-api",
-        "eyebrow": "How Work Runs",
+        "eyebrow": "Employment Basics",
         "title": "Working at AAP/API",
-        "summary": "Understand employment status, employee records, equal opportunity expectations, and the practical rules behind day-to-day employment.",
-        "estimatedMinutes": 12,
-        "punchline": "The operating model is simple: know your status, keep records current, and escalate cleanly.",
-        "quickFacts": [
-            {"label": "Full-time threshold", "value": "30+ hours per week"},
-            {"label": "Intro period", "value": "60 calendar days"},
-            {"label": "Personnel file access", "value": "Through HR only"},
+        "summary": "Cover the employment framework, employee records, equal-opportunity expectations, and the rules that shape day-to-day employment.",
+        "estimatedMinutes": 11,
+        "purpose": "Understand how employment status works, what the company expects around fairness and conduct, and how employee information is handled.",
+        "focuses": ["Employment framework", "Employee records", "Fair workplace rules"],
+        "essentials": [
+            {"title": "Employment is at-will", "body": "The handbook explains that either the employee or the company may end the employment relationship at any time, subject to applicable law."},
+            {"title": "Employment decisions are merit-based", "body": "AAP states that hiring and employment decisions are based on merit, qualifications, and abilities without unlawful discrimination."},
+            {"title": "Records matter", "body": "Personnel files are company property, and employees should keep their contact and dependent information current through HR."},
         ],
-        "highlightCards": [
-            {"title": "Employment is at-will", "body": "Employees and the company may end the employment relationship at any time, subject to applicable law.", "tone": "navy"},
-            {"title": "Employment decisions are merit-based", "body": "AAP states that hiring and employment decisions are based on merit, qualifications, and abilities, without unlawful discrimination.", "tone": "cyan"},
-            {"title": "Keep your records current", "body": "Changes to address, phone number, dependents, emergency contacts, or other personnel information should be reported promptly.", "tone": "red"},
+        "policyAreas": [
+            {
+                "title": "Employment categories and status",
+                "items": [
+                    {"label": "Exempt and nonexempt", "body": "Employees are designated as exempt or nonexempt for wage-and-hour purposes."},
+                    {"label": "Regular full-time", "body": "Regular full-time employees are generally scheduled at 30 or more hours per week and are the group that typically qualifies for the core benefits package."},
+                    {"label": "Part-time, temporary, introductory", "body": "Part-time, temporary, and introductory categories carry different expectations and benefit eligibility rules."},
+                ],
+            },
+            {
+                "title": "Records and employee data",
+                "items": [
+                    {"label": "Personnel files", "body": "Employees may review their own personnel file only through HR, with reasonable notice, at company offices and with an appointed representative present."},
+                    {"label": "Data changes", "body": "Address, phone number, emergency contacts, dependents, and similar personnel details should be updated promptly through HR."},
+                    {"label": "Introductory period", "body": "The initial introductory period lasts 60 calendar days and may be extended when significant absences affect evaluation."},
+                ],
+            },
+            {
+                "title": "Workplace standards tied to employment",
+                "items": [
+                    {"label": "Business ethics", "body": "Employees are expected to comply with law and avoid dishonest, illegal, or unethical conduct."},
+                    {"label": "Outside employment", "body": "Outside work cannot interfere with AAP/API performance or create an adverse conflict of interest."},
+                    {"label": "Internal growth", "body": "AAP may post job openings internally to support movement and development when appropriate."},
+                ],
+            },
         ],
-        "timeline": [
-            {"label": "Classification", "title": "Know your employment category", "body": "Employees are classified as exempt or nonexempt and also fall into categories such as regular full-time, part-time, introductory, or temporary."},
-            {"label": "Records", "title": "Keep people data accurate", "body": "Notify HR when contact details, dependents, or emergency information change. Personnel files are company property with restricted access."},
-            {"label": "Growth", "title": "Use internal mobility channels", "body": "AAP may post job openings internally to support development and advancement according to experience and fit."},
+        "actions": [
+            "Confirm your employment classification and ask if it is unclear.",
+            "Keep your records current with HR.",
+            "Raise work concerns through the supervisor or HR route instead of letting them drift.",
         ],
-        "takeaways": [
-            "Regular full-time status generally begins at 30 or more scheduled hours per week and is tied to benefit eligibility.",
-            "The introductory period is used to evaluate performance, work habits, and overall fit.",
-            "Employees may review their own personnel file only through HR, with reasonable notice, at company offices.",
-        ],
-        "reminders": [
-            "Equal employment opportunity concerns can be raised without fear of reprisal.",
-            "Outside employment cannot interfere with AAP/API job responsibilities.",
-            "All employees sign a confidentiality and non-disclosure agreement upon hire.",
-        ],
-        "faq": [
-            {"question": "What if my employment status changes because my hours increase?", "answer": "The handbook states that part-time employees who reach a six-month rolling average of 30 scheduled hours or more per week may be reclassified as regular full-time employees."},
-            {"question": "Can I review my own personnel file whenever I want?", "answer": "Requests go through HR, require reasonable notice, and are reviewed in the office with an appointed representative present."},
-        ],
-        "resources": [
-            {"title": "Problem resolution", "body": "Concerns should typically start with the immediate supervisor, then move up through HR or senior leadership if the issue remains unresolved or is inappropriate for the first-line path."},
-            {"title": "Business ethics", "body": "Employees are expected to comply with applicable laws and avoid illegal, dishonest, or unethical conduct."},
+        "escalation": [
+            "Report discrimination or retaliation concerns promptly.",
+            "Use HR for personnel-file access and employee-data corrections.",
+            "Ask HR if outside employment or a conflict issue needs review.",
         ],
         "acknowledgment": {
             "title": "Employment basics checkpoint",
-            "statement": "I understand the employment framework, where my records live, and when HR is required for personnel or equity-related questions.",
+            "statement": "I understand the employment framework, how employee records are handled, and when HR must be involved.",
             "items": [
-                "I know the difference between employment classification and benefit eligibility.",
-                "I know how to request a personnel-file review.",
-                "I know to report personal data changes promptly to HR.",
+                "I know the introductory period is 60 calendar days.",
+                "I know how personnel-file access works.",
+                "I know to route employment-data changes through HR.",
             ],
         },
     },
     {
         "id": "attendance-timekeeping-and-pto",
         "slug": "attendance-timekeeping-and-pto",
-        "eyebrow": "Show Up Sharp",
+        "eyebrow": "Attendance and Time",
         "title": "Attendance, Timekeeping, and PTO",
-        "summary": "Learn how attendance points work, how time off is requested, what PTO rules matter most, and where the line is between planning ahead and creating chaos.",
+        "summary": "Bring attendance rules, timekeeping expectations, overtime, PTO, and holiday handling into one cleaner section.",
         "estimatedMinutes": 14,
-        "punchline": "Reliable attendance is a team sport with actual math behind it.",
-        "quickFacts": [
-            {"label": "Request timing", "value": "By 5:00 PM the day before planned time off"},
-            {"label": "No-call/no-report", "value": "1.5 attendance points"},
-            {"label": "Perfect attendance bonus", "value": "$75 after 3 consecutive months"},
+        "purpose": "Know how work time is recorded, how attendance points work, and how to request time away without creating avoidable issues.",
+        "focuses": ["Timekeeping accuracy", "Attendance points", "PTO and holiday rules"],
+        "essentials": [
+            {"title": "Timekeeping has to be accurate", "body": "Hours worked should be recorded accurately, overtime must be approved in advance, and paid time off does not count as hours worked for overtime calculations."},
+            {"title": "PTO follows eligibility and accrual rules", "body": "Vacation and personal leave cannot be taken before they are accrued, and planned requests should be submitted in BambooHR with enough time for staffing decisions."},
+            {"title": "Attendance is measured", "body": "AAP uses a no-fault attendance point program for nonexempt employees, with corrective action beginning at five points within a consecutive 12-month period."},
         ],
-        "highlightCards": [
-            {"title": "Attendance is tracked on a no-fault point system", "body": "For nonexempt employees, tardies, early leaves, and absences are assigned point values. Certain approved leave types are excluded.", "tone": "red"},
-            {"title": "Time off cannot be used before it is accrued", "body": "Vacation and personal leave follow eligibility and accrual rules. Planned time off should be submitted in BambooHR with enough notice for staffing.", "tone": "cyan"},
-            {"title": "Overtime requires approval", "body": "Overtime must be approved before it is worked. Paid time off does not count as hours worked for overtime calculations.", "tone": "navy"},
+        "policyAreas": [
+            {
+                "title": "Timekeeping, schedules, and overtime",
+                "items": [
+                    {"label": "Timekeeping", "body": "Record time accurately and follow department scheduling expectations."},
+                    {"label": "Rest periods", "body": "The policy playbook states that full-time nonexempt employees receive two paid 15-minute rest periods each workday."},
+                    {"label": "Overtime", "body": "Overtime must be approved before it is worked and is based on actual hours worked, not paid leave."},
+                ],
+            },
+            {
+                "title": "PTO and holidays",
+                "items": [
+                    {"label": "Vacation", "body": "Regular full-time employees become eligible for vacation after 60 days of full-time service, and vacation accrues weekly based on length of service."},
+                    {"label": "Personal leave", "body": "Personal leave has a 60-day waiting period, may be used in one-hour increments, and generally does not roll over or pay out at termination unless required by law."},
+                    {"label": "Holiday rules", "body": "If you are required to work a designated or observed holiday, the department coordinates a floating holiday to be used within 90 days."},
+                ],
+            },
+            {
+                "title": "Attendance points and absence handling",
+                "items": [
+                    {"label": "Point values", "body": "Tardy under five minutes is a grace period, less than half-shift tardy or early leave is 0.5 points, half-shift or more is 1 point, and a no-report absence is 1.5 points."},
+                    {"label": "Corrective steps", "body": "Five points trigger coaching, six a verbal warning, seven a written warning, and eight may result in termination."},
+                    {"label": "Call-in expectations", "body": "For unexpected personal leave, notify your supervisor before your scheduled start time whenever possible and on each additional day of absence."},
+                ],
+            },
         ],
-        "timeline": [
-            {"label": "Daily", "title": "Be ready to work at start time", "body": "Tardiness is being away from your work area and not ready to work at the start of the day or after breaks."},
-            {"label": "Before time off", "title": "Submit requests in the right channel", "body": "Employees review balances, submit the correct time-off type in BambooHR, and notify supervisors when plans change."},
-            {"label": "As points increase", "title": "Corrective steps start at five points", "body": "Five points trigger coaching, six a verbal warning, seven a written warning, and eight may lead to termination within a consecutive 12-month period."},
+        "actions": [
+            "Record hours worked accurately and ask before working overtime.",
+            "Submit planned PTO no later than 5:00 PM the day before time off is needed.",
+            "Call in quickly for unexpected absences instead of waiting for the shift to start.",
         ],
-        "takeaways": [
-            "Tardy up to five minutes is a grace period. Less than half-shift tardy or early leave is 0.5 points, half-shift or more is 1 point, and a no-report absence is 1.5 points.",
-            "Consecutive illness absences may count as a single point when supported by the required doctor's documentation.",
-            "For planned time off, submit no later than 5:00 PM the day before. For unexpected personal leave, notify your supervisor before the scheduled start time whenever possible.",
-        ],
-        "reminders": [
-            "Vacation for regular full-time employees becomes available after 60 days and accrues weekly based on service.",
-            "Personal leave also has a 60-day waiting period and generally does not roll over or pay out at separation.",
-            "If you work a designated holiday, the department coordinates a floating holiday to be used within 90 days.",
-        ],
-        "faq": [
-            {"question": "What happens if I miss two consecutive days without reporting in?", "answer": "The handbook says the employee will be considered to have voluntarily quit without notice."},
-            {"question": "Can I take more than five consecutive vacation days?", "answer": "Yes, but written approval by the Company President is required."},
-            {"question": "Do vacation and other paid leave count toward overtime?", "answer": "No. Overtime is based on actual hours worked."},
-        ],
-        "resources": [
-            {"title": "Vacation accrual", "body": "Regular full-time employees start at 24 hours per year after 60 days, increasing with service through a 152-hour annual accrual tier at 20 years and beyond."},
-            {"title": "Holidays", "body": "Observed holidays that fall on Saturday move to Friday, and Sunday holidays move to Monday."},
+        "escalation": [
+            "Use HR when time-off balances or attendance points are disputed.",
+            "Escalate operational exceptions instead of making side agreements about PTO.",
+            "If the absence may actually be medical leave, move it to the leave-support path immediately.",
         ],
         "acknowledgment": {
             "title": "Attendance and PTO checkpoint",
-            "statement": "I understand attendance expectations, the point system, and the correct way to request or report time away from work.",
+            "statement": "I understand timekeeping expectations, how attendance points work, and how to request or report time away from work.",
             "items": [
-                "I know the difference between planned PTO requests and unexpected leave reporting.",
-                "I understand how attendance points accumulate and when corrective action begins.",
-                "I know overtime must be approved in advance and PTO does not count as hours worked for overtime.",
+                "I know overtime must be approved before it is worked.",
+                "I know PTO cannot be used before it is accrued.",
+                "I understand when attendance points begin to trigger corrective action.",
             ],
         },
     },
     {
         "id": "benefits-and-eligibility",
         "slug": "benefits-and-eligibility",
-        "eyebrow": "Use The Good Stuff",
+        "eyebrow": "Benefits",
         "title": "Benefits and Eligibility",
-        "summary": "Map the benefit timeline, understand what starts on day one versus after 60 days, and know which questions belong with HR or benefits support.",
+        "summary": "Lay out the real benefits timeline, the plan categories, and the windows where timing matters.",
         "estimatedMinutes": 13,
-        "punchline": "Benefits are part of the compensation package, not a side quest.",
-        "quickFacts": [
-            {"label": "Day 1 benefits", "value": "LinkedIn Learning, EAP, AAP Perks"},
-            {"label": "Full-time medical eligibility", "value": "1st of the month after 60 days"},
-            {"label": "401(k) match", "value": "100% of first 3%, 50% of next 2%"},
+        "purpose": "Understand when major benefits become available, what options exist, and when HR needs to step in to clarify timing or enrollment issues.",
+        "focuses": ["Eligibility timeline", "Coverage choices", "Benefits support"],
+        "essentials": [
+            {"title": "Benefits open in stages", "body": "Some resources are available on day one, while others depend on full-time status, service time, age, or hours worked."},
+            {"title": "Full-time employees get the main enrollment window", "body": "Medical, dental, vision, 401(k), and supplemental coverages become available to regular full-time employees on the first of the month after 60 days."},
+            {"title": "Timing matters", "body": "Eligibility disputes, access issues, and qualified life event changes should move quickly through HR instead of being handled informally."},
         ],
-        "highlightCards": [
-            {"title": "Eligibility depends on timing and classification", "body": "Some benefits are available to all employees quickly, while others depend on full-time status, service time, age, or hours worked.", "tone": "cyan"},
-            {"title": "Full-time employees get plan choice", "body": "Medical enrollment includes two medical plan options, PPO or HDHP with HSA, plus dental, vision, 401(k), and supplemental coverage after the standard waiting period.", "tone": "navy"},
-            {"title": "The HSA option changes the math", "body": "The HDHP includes a Health Savings Account with company contributions, tax advantages, and funds that stay with the employee.", "tone": "red"},
+        "policyAreas": [
+            {
+                "title": "Eligibility milestones",
+                "items": [
+                    {"label": "Day 1", "body": "All employees have access to LinkedIn Learning, the Employee Assistance Program, and AAP Perks."},
+                    {"label": "Early milestones", "body": "Teladoc becomes available on the first of the month after hire, and all employees become eligible to use personal time off after 60 days."},
+                    {"label": "Later milestones", "body": "Part-time 401(k) eligibility begins only after one year of service, 1,000 hours worked, and age 21 or older."},
+                ],
+            },
+            {
+                "title": "Medical, dental, vision, and retirement",
+                "items": [
+                    {"label": "Medical options", "body": "Regular full-time employees choose between a PPO plan and an HDHP with HSA when the medical enrollment window opens."},
+                    {"label": "Dental and vision", "body": "Dental and vision coverage are through Guardian, and coverage details are accessed through Guardian Anytime instead of physical cards."},
+                    {"label": "401(k)", "body": "AAP matches 100 percent of the first 3 percent an employee contributes and 50 percent of the next 2 percent."},
+                ],
+            },
+            {
+                "title": "Other support and important rules",
+                "items": [
+                    {"label": "HSA basics", "body": "The HDHP option includes an HSA, which carries tax advantages and stays with the employee."},
+                    {"label": "Life-event changes", "body": "Most qualified life event changes must be submitted to HR within 30 days."},
+                    {"label": "Long-term sick leave and service awards", "body": "Regular full-time employees reach long-term sick leave milestones at four years and then every five years after, and service awards begin at five years."},
+                ],
+            },
         ],
-        "timeline": [
-            {"label": "Day 1", "title": "Activate the immediate resources", "body": "All employees can access LinkedIn Learning, the Employee Assistance Program, and AAP Perks."},
-            {"label": "1st of month after hire", "title": "Teladoc turns on", "body": "Teladoc becomes active for all employees as a no-cost telehealth resource."},
-            {"label": "60 days and after", "title": "PTO and benefit windows open", "body": "All employees become eligible to use personal time off at 60 days, while full-time employees gain vacation access at 60 days and medical enrollment on the first of the month after 60 days."},
+        "actions": [
+            "Track your own eligibility dates instead of waiting for them to surprise you.",
+            "Use HR if your classification, hire date, or hours-worked information looks wrong.",
+            "Respond quickly when a qualified life event affects benefits enrollment.",
         ],
-        "takeaways": [
-            "Children may be covered through the end of the month they turn 26.",
-            "Part-time 401(k) eligibility requires one year of service, 1,000 hours worked, and age 21 or older.",
-            "Dental and vision are through Guardian and do not issue insurance cards; coverage details live in Guardian Anytime.",
-        ],
-        "reminders": [
-            "Benefit enrollment windows and qualified life event changes are time-sensitive.",
-            "Employees must notify HR within 30 days of most qualified life events for enrollment changes.",
-            "Questions about disputed eligibility dates, classification, or enrollment access should be escalated to HR.",
-        ],
-        "faq": [
-            {"question": "When does medical coverage begin for regular full-time employees?", "answer": "Coverage begins on the first day of the month following 60 days of employment."},
-            {"question": "What are the two medical-plan choices?", "answer": "Full-time employees may choose between a PPO plan and a high-deductible health plan paired with an HSA."},
-            {"question": "What does the company match in the 401(k)?", "answer": "AAP matches 100 percent of the first 3 percent contributed and 50 percent of the next 2 percent."},
-        ],
-        "resources": [
-            {"title": "Support contacts", "body": "HR remains the primary routing point. CBIZ and carrier partners help after eligibility or enrollment context is confirmed."},
-            {"title": "Long-term sick leave milestone", "body": "Regular full-time employees gain 80 hours at the four-year anniversary, then again every five years, with a 180-hour bank limit and doctor-note requirement."},
+        "escalation": [
+            "Escalate disputed eligibility dates or enrollment-access problems to HR.",
+            "Use HR when plan options or deduction timing need clarification.",
+            "Route long-term sick leave usage questions through HR instead of treating them like standard PTO.",
         ],
         "acknowledgment": {
             "title": "Benefits checkpoint",
-            "statement": "I understand the eligibility timeline for core benefits, the role of HR in enrollment questions, and the basics of the available plans.",
+            "statement": "I understand the benefits timeline, the main coverage options, and when HR is required for eligibility or enrollment questions.",
             "items": [
-                "I know which resources are available on day one versus later milestones.",
-                "I understand the waiting period for full-time medical enrollment.",
-                "I know to escalate disputed eligibility or access issues to HR instead of guessing.",
+                "I know which benefits begin on day one versus later milestones.",
+                "I understand when full-time medical enrollment becomes available.",
+                "I know qualified life event changes are time-sensitive.",
             ],
         },
     },
     {
         "id": "conduct-confidentiality-and-workplace-standards",
         "slug": "conduct-confidentiality-and-workplace-standards",
-        "eyebrow": "Standards That Matter",
+        "eyebrow": "Standards",
         "title": "Conduct, Confidentiality, and Workplace Standards",
-        "summary": "Cover business ethics, harassment protections, confidentiality rules, computer-use expectations, and the baseline behaviors that protect trust.",
-        "estimatedMinutes": 15,
-        "punchline": "Protect the people, protect the data, protect the trust.",
-        "quickFacts": [
-            {"label": "Confidentiality agreement", "value": "Signed upon hire"},
-            {"label": "Harassment reporting", "value": "Supervisor, HR, or VP of HR"},
-            {"label": "Data sharing rule", "value": "Need-to-know only"},
+        "summary": "Keep conduct, confidentiality, computer-use rules, and complaint handling in one focused section.",
+        "estimatedMinutes": 14,
+        "purpose": "Understand the standards that protect trust: ethical behavior, respectful conduct, controlled information sharing, and proper reporting.",
+        "focuses": ["Code of conduct", "Privacy and systems", "Reporting concerns"],
+        "essentials": [
+            {"title": "Ethics and respect are baseline expectations", "body": "Business ethics, respectful conduct, and non-retaliation are not optional standards or manager preferences."},
+            {"title": "Confidentiality is active work", "body": "Employee records, medical information, complaints, and proprietary information should be handled on a need-to-know basis only."},
+            {"title": "Company systems are business systems", "body": "Computers, email, files, and software are company property intended for business use and may be monitored."},
         ],
-        "highlightCards": [
-            {"title": "Harassment and retaliation are prohibited", "body": "AAP states that discrimination and unlawful harassment are not tolerated and that good-faith reporting is protected from retaliation.", "tone": "red"},
-            {"title": "Company systems are company property", "body": "Computers, email, stored communications, and software are business-use systems and may be monitored within company policy.", "tone": "navy"},
-            {"title": "Medical information is highly restricted", "body": "Medical and leave-related documentation should not be requested or distributed casually. Route it to HR immediately.", "tone": "cyan"},
+        "policyAreas": [
+            {
+                "title": "Conduct and respectful workplace rules",
+                "items": [
+                    {"label": "Business ethics", "body": "Employees are expected to comply with law and avoid illegal, dishonest, or unethical conduct."},
+                    {"label": "Harassment and retaliation", "body": "Unlawful harassment is prohibited, complaints should be investigated promptly, and good-faith reporting is protected from retaliation."},
+                    {"label": "Drug and alcohol rules", "body": "AAP expects a drug- and alcohol-free workplace and may conduct testing according to policy and law."},
+                ],
+            },
+            {
+                "title": "Confidentiality and records handling",
+                "items": [
+                    {"label": "Non-disclosure", "body": "Employees sign a confidentiality and non-disclosure agreement upon hire."},
+                    {"label": "Need-to-know sharing", "body": "Personnel, payroll, benefits, medical, complaint, and business records should be shared only with people who require the information to do their job."},
+                    {"label": "Approved storage only", "body": "Use approved company systems and locations. Do not forward confidential material to personal email or store it on personal devices."},
+                ],
+            },
+            {
+                "title": "Systems, appearance, and property",
+                "items": [
+                    {"label": "Computer and email usage", "body": "Company devices, files, and stored communications are company property and may be monitored under policy."},
+                    {"label": "Personal appearance", "body": "Dress expectations vary by department, but employees are expected to present a neat, clean, work-appropriate appearance."},
+                    {"label": "Return of property", "body": "Employees must return company property, materials, and written information immediately when requested or upon separation."},
+                ],
+            },
         ],
-        "timeline": [
-            {"label": "Before sharing", "title": "Identify the information type", "body": "Determine whether the information is employee, payroll, medical, candidate, business, or proprietary data before you store or send it."},
-            {"label": "When in doubt", "title": "Pause and consult HR", "body": "The confidentiality SOP explicitly says to stop and ask HR when it is unclear whether information can be shared."},
-            {"label": "If something goes wrong", "title": "Report privacy incidents immediately", "body": "Misdirected emails, lost paperwork, unauthorized access, and suspicious system activity should be reported right away."},
+        "actions": [
+            "Verify recipients before sending employee or company information.",
+            "Keep complaints and sensitive information out of casual conversation.",
+            "Report concerns quickly instead of trying to contain them informally.",
         ],
-        "takeaways": [
-            "Personnel files are company property with restricted access, and employee review requests go through HR.",
-            "Complaints involving harassment, discrimination, retaliation, or investigations are treated as confidential to the extent possible.",
-            "Employees are responsible for returning company property and complying with workplace conduct, safety, and appearance expectations.",
-        ],
-        "reminders": [
-            "Do not forward confidential material to personal email or store it on personal devices.",
-            "Collect printed confidential documents immediately and use secure disposal methods.",
-            "Route complaints, threats, retaliation concerns, or legal/compliance questions to HR without delay.",
-        ],
-        "faq": [
-            {"question": "Can the company monitor email and computer use?", "answer": "Yes. Company computers, files, and email are company property intended for business use and may be monitored."},
-            {"question": "What should I do if an employee asks to see their personnel file?", "answer": "Route the request to HR. The review must be scheduled with reasonable notice at company offices with an appointed representative present."},
-            {"question": "What if I receive medical details that were sent to me accidentally?", "answer": "Do not redistribute them. Notify HR immediately and let HR direct the next step."},
-        ],
-        "resources": [
-            {"title": "Problem resolution path", "body": "Concerns can move from supervisor to HR to senior leadership, with the Chief Executive Officer serving as the final internal resolution step if needed."},
-            {"title": "Return of property", "body": "Employees must return company property immediately upon request or separation, and the company may recover costs where allowed by law."},
+        "escalation": [
+            "Escalate harassment, discrimination, retaliation, or violence concerns immediately.",
+            "Escalate suspected data breaches, unauthorized access, or misdirected confidential information.",
+            "Route medical information and complaint investigations through HR.",
         ],
         "acknowledgment": {
             "title": "Standards checkpoint",
-            "statement": "I understand conduct expectations, confidentiality rules, and the requirement to route sensitive personnel or medical matters through HR.",
+            "statement": "I understand conduct expectations, confidentiality rules, and the requirement to route sensitive employee matters through HR.",
             "items": [
-                "I know harassment, retaliation, and discrimination concerns should be reported promptly.",
+                "I know harassment and retaliation concerns should be reported promptly.",
                 "I understand the need-to-know standard for confidential information.",
-                "I know company devices, email, and files are business systems governed by company policy.",
+                "I know company devices and systems are governed by company policy.",
             ],
         },
     },
     {
         "id": "leave-and-support",
         "slug": "leave-and-support",
-        "eyebrow": "Support Without Guesswork",
+        "eyebrow": "Leave and Support",
         "title": "Leave and Support",
-        "summary": "Cover FMLA intake, confidential handling, support resources, and the difference between giving a general answer and promising something you cannot authorize.",
-        "estimatedMinutes": 11,
-        "punchline": "Some questions should be answered. Some should be escalated in under a minute.",
-        "quickFacts": [
-            {"label": "FMLA eligibility baseline", "value": "366 days and 1,250 hours"},
-            {"label": "Annual FMLA entitlement", "value": "480 hours"},
-            {"label": "FMLA pay status", "value": "Unpaid"},
+        "summary": "Focus the leave section on medical-leave handling, other protected time away, and the support routes that matter in practice.",
+        "estimatedMinutes": 12,
+        "purpose": "Know when leave questions can be answered generally, when they must be escalated, and what support resources exist for employees beyond PTO.",
+        "focuses": ["FMLA and medical leave", "Other leave types", "Support routes"],
+        "essentials": [
+            {"title": "FMLA is immediate-escalation territory", "body": "If an employee asks about FMLA or hints at needing medical leave, the SOP says to notify HR right away and avoid requesting medical details."},
+            {"title": "Not all time away is PTO", "body": "Bereavement, jury duty, witness duty, workers' compensation, accommodation requests, and longer medical absences follow different rules and should not be handled casually."},
+            {"title": "Support includes escalation and assistance", "body": "Employees have access to the EAP and to a formal problem-resolution path when work-related issues need help beyond a routine question."},
         ],
-        "highlightCards": [
-            {"title": "FMLA requests go to HR immediately", "body": "If an employee asks about FMLA or hints at needing medical leave, the SOP says to escalate to the HR Manager right away.", "tone": "red"},
-            {"title": "You can explain the basics but not promise approval", "body": "Employees can receive general information on eligibility and pay status, but approval and designation are handled by HR.", "tone": "cyan"},
-            {"title": "Support is broader than leave", "body": "Employees also have access to the Employee Assistance Program and the formal problem-resolution path when work-related issues need help.", "tone": "navy"},
+        "policyAreas": [
+            {
+                "title": "FMLA and medical leave handling",
+                "items": [
+                    {"label": "Eligibility baseline", "body": "The SOP states FMLA eligibility at 366 days of work and 1,250 hours in the last 12 months, with an annual entitlement of 480 hours."},
+                    {"label": "What not to do", "body": "Do not promise approval and do not request medical details outside the approved HR process."},
+                    {"label": "Key rules", "body": "FMLA is unpaid, employees are not required to exhaust PTO before using unpaid FMLA time, and approved use may be tracked in one-hour increments."},
+                ],
+            },
+            {
+                "title": "Other leave and support categories",
+                "items": [
+                    {"label": "Other protected absences", "body": "Bereavement, jury duty, witness duty, and approved personal leaves have separate rules from standard PTO."},
+                    {"label": "Accommodation and injury", "body": "Disability accommodation requests, work-related injuries, and workers' compensation questions should move to HR immediately."},
+                    {"label": "EAP", "body": "LifeMatters is available as a confidential support resource from day one."},
+                ],
+            },
+            {
+                "title": "How support and escalation should work",
+                "items": [
+                    {"label": "Problem resolution", "body": "Concerns generally start with the immediate supervisor when appropriate, then move to HR or higher leadership if unresolved or inappropriate for that first step."},
+                    {"label": "Safe escalation language", "body": "Use a general policy answer, then say the issue needs to be handled correctly and consistently through HR because it is specific to the employee's situation."},
+                    {"label": "Extended absences", "body": "Longer absences or 30-plus consecutive workday absences may require additional documentation or return-to-work follow-up through HR."},
+                ],
+            },
         ],
-        "timeline": [
-            {"label": "At the first mention", "title": "Escalate and protect confidentiality", "body": "Do not request medical details. Notify HR immediately and keep the conversation limited to approved general guidance."},
-            {"label": "During review", "title": "HR manages certification", "body": "HR provides the required certification forms, handles follow-up, and manages tracking in BambooHR."},
-            {"label": "During extended absence", "title": "Watch the 30-workday threshold", "body": "Longer absences may require updated documentation, return-to-work paperwork, or renewed certification."},
+        "actions": [
+            "Move medical and leave-certification questions to HR immediately.",
+            "Use the EAP when personal or work strain calls for confidential support.",
+            "Escalate early when a leave question becomes employee-specific.",
         ],
-        "takeaways": [
-            "Employees are not required to exhaust PTO before taking unpaid FMLA time.",
-            "FMLA may be taken in one-hour increments when approved and tracked correctly.",
-            "The EAP offers confidential support for life and work challenges, and it is available from day one.",
-        ],
-        "reminders": [
-            "Questions involving disability accommodation, medical restrictions, workers' compensation, or leave certification should go to HR.",
-            "Serious health conditions, ongoing treatment, or extended leave requests require immediate escalation.",
-            "No employee should be penalized for raising work-related concerns in a reasonable and businesslike manner.",
-        ],
-        "faq": [
-            {"question": "Do employees have to use PTO before FMLA?", "answer": "No. The SOP says employees are not required to exhaust PTO before using unpaid FMLA time."},
-            {"question": "Can I tell someone they are approved for FMLA if they seem to qualify?", "answer": "No. Only HR confirms eligibility and designation."},
-            {"question": "What if a concern is not medical but still feels unresolved?", "answer": "Use the problem-resolution process: start with the supervisor when appropriate, then escalate through HR or senior leadership if needed."},
-        ],
-        "resources": [
-            {"title": "EAP", "body": "LifeMatters provides confidential support and can be reached at 800-634-6433."},
-            {"title": "Safe escalation language", "body": "Here is the policy in general. Because your situation is specific, I want to make sure it is handled correctly and consistently, so I am connecting you with HR."},
+        "escalation": [
+            "Escalate any FMLA request or hint of serious health-related leave right away.",
+            "Escalate disability accommodation requests and workers' compensation issues.",
+            "Escalate extended absences that need certification or return-to-work guidance.",
         ],
         "acknowledgment": {
             "title": "Leave and support checkpoint",
-            "statement": "I understand the basics of leave support, the confidentiality requirements around medical matters, and when immediate HR escalation is mandatory.",
+            "statement": "I understand the basics of leave handling, the confidentiality rules around medical matters, and when immediate HR escalation is required.",
             "items": [
-                "I know the basic FMLA eligibility and entitlement rules.",
-                "I understand that FMLA approval cannot be promised outside HR.",
-                "I know where to route sensitive leave, accommodation, or workers' compensation questions.",
+                "I know not to promise FMLA approval.",
+                "I know medical details should stay inside the HR process.",
+                "I know where to route accommodation, injury, and extended-leave questions.",
             ],
         },
     },
     {
         "id": "final-review-and-acknowledgments",
         "slug": "final-review-and-acknowledgments",
-        "eyebrow": "Wrap It Cleanly",
+        "eyebrow": "Final Review",
         "title": "Final Review and Acknowledgments",
-        "summary": "Finish the onboarding path with a clean review of the commitments that matter most and the acknowledgment language the handbook expects employees to understand.",
-        "estimatedMinutes": 9,
-        "punchline": "The end should feel crisp, not vague.",
-        "quickFacts": [
-            {"label": "Handbook status", "value": "Policy guide, not a contract"},
-            {"label": "Revision authority", "value": "Official company notices"},
-            {"label": "Best next move", "value": "Ask when something is unclear"},
+        "summary": "Close the general onboarding path with the core handbook commitments and the practical next steps that should remain after onboarding ends.",
+        "estimatedMinutes": 8,
+        "purpose": "Confirm the major commitments from the handbook, make the acknowledgment language clear, and turn the portal into an ongoing reference rather than a one-time checklist.",
+        "focuses": ["Core commitments", "Acknowledgment language", "What happens next"],
+        "essentials": [
+            {"title": "The handbook is a guide, not a contract", "body": "The handbook explains policies, benefits, and expectations, but it does not create a contract of employment."},
+            {"title": "At-will and policy updates remain important", "body": "Employment remains at-will, and handbook revisions may be communicated through official notices."},
+            {"title": "Completion should leave you with a support map", "body": "The goal is not memorization. It is knowing what the standards are and where to go when a real question shows up."},
         ],
-        "highlightCards": [
-            {"title": "Read the handbook like an operating guide", "body": "The handbook lays out responsibilities, benefits, working conditions, and policy expectations that employees are expected to understand and follow.", "tone": "navy"},
-            {"title": "Policy updates may happen", "body": "The company may revise policies over time through official notices, with the at-will employment principle remaining unchanged unless required by law.", "tone": "cyan"},
-            {"title": "Questions are part of compliance", "body": "A clean escalation to HR is better than a confident wrong answer. That is a feature, not a flaw.", "tone": "red"},
+        "policyAreas": [
+            {
+                "title": "What employees are acknowledging",
+                "items": [
+                    {"label": "Responsibility to review", "body": "Employees are expected to read the handbook, follow the policies in it, and ask HR when a question is not answered clearly there."},
+                    {"label": "At-will employment", "body": "The employment relationship does not have a specified length and may end at any time, subject to applicable law."},
+                    {"label": "Policy revisions", "body": "Revisions may supersede existing handbook language through official notice."},
+                ],
+            },
+            {
+                "title": "Practical next-step reminders",
+                "items": [
+                    {"label": "Use the portal as reference", "body": "Return to the relevant section when you need a clean policy refresher instead of relying on memory or hallway answers."},
+                    {"label": "Property and exit basics", "body": "Company property must be returned upon request or separation, and the handbook requests notice for resignation even though it is voluntary."},
+                    {"label": "Role-specific content stays separate", "body": "The HR Administrative Assistant toolkit is intentionally separate from the main flow so the general path stays relevant to all employees."},
+                ],
+            },
         ],
-        "timeline": [
-            {"label": "Review", "title": "Confirm the essentials", "body": "Revisit values, conduct standards, attendance basics, benefits timing, and the leave-support rules that require immediate escalation."},
-            {"label": "Acknowledge", "title": "Confirm understanding", "body": "Employees should understand that the handbook contains important information and that questions not answered there should go to HR."},
-            {"label": "Move forward", "title": "Use the platform as a reference", "body": "The onboarding experience is designed to stay useful after week one, especially for policy refreshers and support routing."},
+        "actions": [
+            "Finish any remaining acknowledgments and return to any section that still feels unclear.",
+            "Keep HR as the path for interpretation, exceptions, and sensitive employee matters.",
+            "Use the role-specific toolkit only if it is relevant to your job responsibilities.",
         ],
-        "takeaways": [
-            "The handbook is not a legal contract and does not guarantee employment for a definite term.",
-            "Either the employee or the company may end the employment relationship at will, subject to applicable law.",
-            "Employees are responsible for reading and complying with policy updates communicated through official channels.",
-        ],
-        "reminders": [
-            "Use HR when a question involves interpretation, an exception, or sensitive personal details.",
-            "Role-specific content such as the HR Administrative Assistant toolkit lives in a separate lane from the universal onboarding path.",
-            "Completion is not just clicking through. It means knowing what to do next when a real scenario shows up.",
-        ],
-        "faq": [
-            {"question": "What if a policy changes after I finish onboarding?", "answer": "Official notices may revise or supersede current policy language, and employees are expected to follow the updated guidance."},
-            {"question": "Where should I go when a real-world situation does not fit a clean example?", "answer": "Use HR or the appropriate supervisor and escalate sooner rather than later."},
-        ],
-        "resources": [
-            {"title": "Acknowledgment mindset", "body": "The goal is not to memorize everything. It is to know the standards, the support map, and the moments when escalation is required."}
+        "escalation": [
+            "Escalate unresolved questions instead of treating completion as full policy mastery.",
+            "Use HR whenever a real scenario goes beyond general handbook guidance.",
+            "Treat sensitive benefits, leave, confidentiality, and conduct questions as escalation items.",
         ],
         "acknowledgment": {
             "title": "Final acknowledgment",
-            "statement": "I understand that the handbook contains important policy information, that employment is at-will, and that I should use HR when a situation requires interpretation or sensitive handling.",
+            "statement": "I understand that the handbook contains important policy information, that employment is at-will, and that I should use HR when a situation needs interpretation or sensitive handling.",
             "items": [
-                "I know the handbook is a guide to policies and benefits, not a contract.",
-                "I understand that policy revisions may be communicated through official notices.",
-                "I know my next step when a policy question involves benefits, leave, confidentiality, or conduct concerns.",
+                "I know the handbook is not a contract of employment.",
+                "I understand policy revisions may be communicated through official notices.",
+                "I know where to go when a real employee situation needs more than a general answer.",
             ],
         },
     },
@@ -399,107 +448,110 @@ TOOLKITS = [
     {
         "id": "hr-administrative-assistant-toolkit",
         "slug": "hr-administrative-assistant",
-        "eyebrow": "Role-Specific Lane",
+        "eyebrow": "Role-Specific Toolkit",
         "title": "HR Administrative Assistant Toolkit",
-        "summary": "A separate operational reference for the HR Administrative Assistant role, built from the quick-reference guide and policy playbook.",
+        "summary": "Keep HR Administrative Assistant guidance in its own lane so the general onboarding path stays clean for all employees.",
         "estimatedMinutes": 16,
-        "punchline": "Fast routing, careful wording, zero freestyle policy interpretation.",
-        "hero": {
-            "title": "Front-desk confidence for policy-heavy moments",
-            "body": "Use this toolkit to route common questions, stay within approved guidance, and escalate quickly when a situation moves from routine to sensitive.",
-        },
-        "overviewCards": [
-            {"title": "Golden rule", "body": "Stay factual, stay consistent, and reference the handbook or SOP. If the situation involves a dispute, medical issue, harassment concern, or exception request, route it to HR."},
-            {"title": "Primary systems", "body": "BambooHR for employee records and PTO workflows, PayClock for timecards, Employvio for background and drug screens, Paylocity for payroll reference, and Proton Pass for credential sharing."},
-            {"title": "Best skill to build", "body": "Knowing when to stop answering and start escalating is more valuable than sounding certain."},
+        "purpose": "This toolkit is for day-to-day routing, systems awareness, and approved answer patterns. It is not part of the universal new-hire path.",
+        "whenToUse": [
+            "Use this when the role includes front-desk or HR support responsibilities.",
+            "Use it for policy routing, system lookup, and approved answer scripts.",
+            "Leave it separate from the general employee onboarding flow.",
         ],
         "systems": [
-            {"name": "BambooHR", "link": "www.aap.bamboohr.com", "use": "Employee profiles, onboarding tasks, PTO/benefits, job postings"},
+            {"name": "BambooHR", "link": "www.aap.bamboohr.com", "use": "Employee profiles, onboarding tasks, PTO and benefits, job postings"},
             {"name": "PayClock", "link": "www.portal.payclock.com", "use": "Timeclock polling, timecard review, PTO entry"},
             {"name": "Employvio", "link": "www.clients.employvio.com", "use": "Background and drug-screen invites"},
-            {"name": "Paylocity", "link": "www.access.paylocity.com", "use": "Payroll reference unless additional responsibilities are assigned"},
+            {"name": "Paylocity", "link": "www.access.paylocity.com", "use": "Payroll reference unless broader payroll duties are assigned"},
             {"name": "Proton Pass", "link": "app.proton.me/pass", "use": "Password-sharing vault for HR systems"},
-            {"name": "HR Drive", "link": "S:\\Human Resources", "use": "Digital filing and document storage"},
+            {"name": "HR Drive", "link": "S:\\Human Resources", "use": "Digital filing and approved document storage"},
         ],
         "playbooks": [
             {
-                "title": "Quick routing for employee questions",
-                "body": "Use the approved-answer scripts when the question is general. Shift to escalation if the issue becomes employee-specific, disputed, or sensitive.",
-                "steps": [
-                    "Identify whether the question is general policy, a personal dispute, or a sensitive case.",
-                    "Answer general questions with the plain-language script tied to the handbook section.",
-                    "Use the safe escalation line when the scenario becomes medical, disciplinary, or exception-based.",
+                "title": "Employee question routing",
+                "summary": "Answer only the general policy question. Once it becomes employee-specific, move it to HR.",
+                "doThis": [
+                    "Identify whether the question is a general handbook question or a personal case.",
+                    "Use the handbook section or SOP to give a plain-language general answer.",
+                    "Use the safe escalation line when the issue becomes disputed, medical, or exception-based.",
                 ],
                 "escalateWhen": [
-                    "Harassment, discrimination, or retaliation concerns",
-                    "Disability accommodation or leave-certification questions",
-                    "Threats, violence, drug-testing, or safety incidents",
-                    "Attendance point disputes or any discipline-related scenario",
+                    "Harassment, discrimination, retaliation, or discipline concerns",
+                    "Medical restrictions, certification, or accommodation questions",
+                    "Threats, violence, drug testing, or safety incidents",
                 ],
             },
             {
                 "title": "Attendance and PTO triage",
-                "body": "Stay consistent on attendance math, PTO timing, and who owns approval. Do not create side agreements.",
-                "steps": [
-                    "Confirm the employee's question relates to attendance, PTO balance, or time-entry workflow.",
-                    "Reference the no-fault attendance structure and the PTO request timing rules.",
-                    "Route disputed balances, operational exceptions, or policy conflicts to HR.",
+                "summary": "Stay factual on points, timing, and approval paths. Do not invent exceptions.",
+                "doThis": [
+                    "Confirm whether the employee needs a general attendance or PTO answer, a time-entry fix, or an actual exception request.",
+                    "Use the no-fault attendance structure and PTO timing rules as written.",
+                    "Move balance disputes or point disputes to HR.",
                 ],
                 "escalateWhen": [
-                    "Time-off balances appear incorrect",
-                    "A manager requests an exception outside policy",
-                    "A point assessment is disputed",
-                    "A longer leave request may actually be FMLA-related",
+                    "Attendance point disputes",
+                    "Time-off balances that appear incorrect",
+                    "Longer absences that may actually be medical leave",
                 ],
             },
             {
                 "title": "Benefits eligibility triage",
-                "body": "Use milestone-based answers and avoid improv answers about coverage dates or special cases.",
-                "steps": [
-                    "Confirm whether the employee is full-time or part-time and what milestone they are asking about.",
-                    "Use the benefits timeline: day-one resources, first-of-month Teladoc, 60-day PTO, first-of-month-after-60-days full-time enrollment, and part-time 401(k) rules.",
-                    "Escalate disputed dates, enrollment-access problems, or plan-specific interpretation questions.",
+                "summary": "Use milestone-based answers, not memory or assumptions.",
+                "doThis": [
+                    "Confirm full-time versus part-time status and the milestone being asked about.",
+                    "Use the documented timing for day-one resources, 60-day PTO, and full-time enrollment windows.",
+                    "Send disputed dates or enrollment-access issues to HR.",
                 ],
                 "escalateWhen": [
-                    "Eligibility date is disputed",
-                    "Employee classification or hours-worked data is unclear",
-                    "Coverage options need interpretation",
-                    "Long-term sick leave or nonstandard enrollment timing is requested",
+                    "Eligibility dates are disputed",
+                    "Classification or hours-worked records are unclear",
+                    "Coverage interpretation requires HR review",
                 ],
             },
             {
-                "title": "Confidential handling and records discipline",
-                "body": "Treat employee data, medical information, complaints, and investigation material with a need-to-know standard every time.",
-                "steps": [
-                    "Identify the information type before sharing or storing it.",
-                    "Keep medical information and complaints tightly controlled and routed through HR.",
-                    "Use approved systems and avoid personal-device or personal-email storage.",
+                "title": "Confidential handling",
+                "summary": "Protect employee information, complaints, and medical material with a strict need-to-know approach.",
+                "doThis": [
+                    "Identify the type of information before sharing or storing it.",
+                    "Use approved systems and keep medical and complaint material inside the HR process.",
+                    "Pause and ask HR if it is unclear whether the information can be shared.",
                 ],
                 "escalateWhen": [
                     "A data breach or unauthorized disclosure is suspected",
                     "Medical or leave documentation is involved",
-                    "A complaint includes harassment, discrimination, or retaliation",
-                    "It is unclear whether information can be shared",
+                    "A complaint involves harassment, discrimination, or retaliation",
                 ],
             },
         ],
-        "escalationContacts": [
-            {"name": "Nicole Thornton", "role": "HR Manager contact path in daily workflow", "phone": "256-574-7528 ext 252", "email": "nicole.thornton@apirx.com"},
-            {"name": "Brandy Hooper", "role": "VP of HR escalation path", "phone": "256-574-7526 ext 226", "email": "brandy.hooper@rxaap.com"},
+        "quickAnswers": [
+            {"question": "How do rest breaks work?", "answer": "Full-time nonexempt employees receive two paid 15-minute rest periods each workday.", "reference": "Policy Playbook, Section 505"},
+            {"question": "What if someone works a holiday?", "answer": "When staffing requires an employee to work a designated or observed holiday, the department coordinates a floating holiday to be used within 90 days.", "reference": "PTO SOP and handbook holiday guidance"},
+            {"question": "How do attendance points work?", "answer": "Use the no-fault attendance matrix: grace period up to five minutes, 0.5 points for less than half-shift tardy or early leave, 1 point for half shift or more, and 1.5 points for a no-report absence.", "reference": "Handbook Section 704"},
+            {"question": "What is the safest confidentiality rule?", "answer": "If the information is employee-specific, medical, complaint-related, or unclear, keep it on a need-to-know basis and move it through HR.", "reference": "Confidentiality SOP"},
+        ],
+        "escalateImmediately": [
+            "Harassment, discrimination, retaliation, threats, violence, or discipline issues",
+            "FMLA, accommodation, medical restrictions, or leave-certification questions",
+            "Attendance point disputes or operational exception requests",
+            "Privacy breaches, unauthorized disclosures, or uncertain sharing decisions",
+        ],
+        "contacts": [
+            {"name": "Nicole Thornton", "role": "HR Administrator", "phone": "256-574-7528 ext 252", "email": "nicole.thornton@apirx.com"},
+            {"name": "Brandy Hooper", "role": "VP of Human Resources", "phone": "256-574-7526 ext 226", "email": "brandy.hooper@rxaap.com"},
             {"name": "Trevor Bowen", "role": "IT (Scottsboro)", "phone": "256-574-6819 ext 214", "email": "trevor.bowen@apirx.com"},
             {"name": "Phil Horton", "role": "IT (Memphis)", "phone": "901-800-4605 ext 405", "email": "phil.horton@apirx.com"},
             {"name": "Austin Wilson", "role": "IT (AAP)", "phone": "256-218-5527 ext 527", "email": "austin.wilson@rxaap.com"},
         ],
-        "quickLinks": [
-            "Scottsboro API: 211 Lonnie E Crawford Blvd, Scottsboro, AL 35769",
-            "Memphis API: 5375 Mineral Wells Road, Memphis, TN 38125",
-            "AAP: 201 Lonnie E Crawford Blvd, Scottsboro, AL 35769",
-        ],
-        "reminders": [
-            "Do not give legal, medical, or disciplinary opinions from the front desk.",
-            "When the question is specific to an employee's circumstances, use the safe escalation script.",
-            "A clean handoff is better than an overconfident wrong answer.",
-        ],
+        "acknowledgment": {
+            "title": "Toolkit review",
+            "statement": "I understand that the HR Administrative Assistant toolkit is a separate operational reference, and that employee-specific or sensitive questions should move to HR quickly.",
+            "items": [
+                "I know this toolkit is separate from the general employee onboarding flow.",
+                "I know when to stop answering and start escalating.",
+                "I know which systems and contacts are relevant to the role.",
+            ],
+        },
     }
 ]
 

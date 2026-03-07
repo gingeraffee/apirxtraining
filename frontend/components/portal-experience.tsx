@@ -69,6 +69,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   const completionPercent = sections.length
     ? Math.round(((progress?.completed_sections.length ?? 0) / sections.length) * 100)
     : 0;
+  const nextSection = sections.find((section) => !completedSections.has(section.slug)) ?? sections[0] ?? null;
 
   useEffect(() => {
     if (!activeSection) {
@@ -167,7 +168,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
     return (
       <div className="status-screen">
         <div className="status-card">
-          <p className="eyebrow">API Required</p>
+          <p className="section-label">API Required</p>
           <h1>Frontend is ready. Backend needs to be running.</h1>
           <p>{error}</p>
         </div>
@@ -179,16 +180,27 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
     <div className="app-shell">
       <aside className="side-rail">
         <div className="brand-block">
-          <p className="eyebrow">AAP/API</p>
-          <h1>Onboarding Platform</h1>
+          <p className="section-label">AAP/API</p>
+          <h1>Onboarding</h1>
           <p>{experience.organization.tagline}</p>
         </div>
 
+        <div className="rail-panel progress-panel">
+          <p className="section-label">Progress</p>
+          <strong>{completionPercent}% complete</strong>
+          <p>{progress.completed_sections.length} of {sections.length} general sections reviewed.</p>
+          {nextSection && (
+            <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
+              Continue with {nextSection.title}
+            </Link>
+          )}
+        </div>
+
         <div className="rail-panel">
-          <p className="rail-label">Core flow</p>
+          <p className="section-label">General flow</p>
           <nav className="nav-stack">
             <Link className={kind === "overview" ? "nav-link active" : "nav-link"} href="/">
-              Overview
+              <span>Overview</span>
             </Link>
             {sections.map((section, index) => (
               <Link
@@ -196,8 +208,11 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
                 className={slug === section.slug ? "nav-link active" : "nav-link"}
                 href={`/modules/${section.slug}`}
               >
-                <span>{index + 1}. {section.title}</span>
-                <span className={completedSections.has(section.slug) ? "chip done" : "chip"}>
+                <div>
+                  <strong>{index + 1}. {section.title}</strong>
+                  <p>{section.summary}</p>
+                </div>
+                <span className={completedSections.has(section.slug) ? "status-chip done" : "status-chip"}>
                   {completedSections.has(section.slug) ? "Done" : `${section.estimatedMinutes} min`}
                 </span>
               </Link>
@@ -205,41 +220,35 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
           </nav>
         </div>
 
-        <div className="rail-panel accent-panel">
-          <p className="rail-label">Role-specific lane</p>
+        <div className="rail-panel">
+          <p className="section-label">Separate role-specific lane</p>
           <Link className={kind === "toolkit" ? "nav-link active" : "nav-link"} href="/toolkits/hr-administrative-assistant">
-            <span>HR Administrative Assistant Toolkit</span>
-            <span className={progress.toolkit_completed ? "chip done" : "chip"}>
-              {progress.toolkit_completed ? "Complete" : "Optional"}
+            <div>
+              <strong>HR Administrative Assistant Toolkit</strong>
+              <p>Operational reference only. Not part of the core new-hire path.</p>
+            </div>
+            <span className={progress.toolkit_completed ? "status-chip done" : "status-chip"}>
+              {progress.toolkit_completed ? "Reviewed" : "Separate"}
             </span>
           </Link>
-        </div>
-
-        <div className="rail-panel compact">
-          <p className="rail-label">Need backup?</p>
-          {experience.contacts.slice(0, 2).map((contact) => (
-            <div key={contact.email} className="contact-mini">
-              <strong>{contact.name}</strong>
-              <span>{contact.role}</span>
-              <span>{contact.phone}</span>
-            </div>
-          ))}
         </div>
       </aside>
 
       <main className="main-stage">
         <header className="topbar">
           <div>
-            <p className="eyebrow">New hire lane</p>
+            <p className="section-label">{kind === "toolkit" ? "Role-specific reference" : kind === "section" ? "General onboarding section" : "General onboarding"}</p>
             <h2>{DISPLAY_NAME}</h2>
           </div>
-          <div className="progress-pill">
-            <span>{completionPercent}% complete</span>
-            <strong>{progress.completed_sections.length}/{sections.length} sections</strong>
+          <div className="topbar-meta">
+            <span>{progress.updated_at ? "Progress saved" : "Progress ready"}</span>
+            <strong>{progress.completed_sections.length}/{sections.length}</strong>
           </div>
         </header>
 
-        {kind === "overview" && <OverviewScreen experience={experience} progress={progress} completionPercent={completionPercent} />}
+        {kind === "overview" && (
+          <OverviewScreen experience={experience} progress={progress} nextSection={nextSection} />
+        )}
         {kind === "section" && activeSection && (
           <SectionScreen
             section={activeSection}
@@ -261,89 +270,99 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
 type OverviewProps = {
   experience: ExperienceContent;
   progress: ProgressRecord;
-  completionPercent: number;
+  nextSection: Section | null;
 };
 
-function OverviewScreen({ experience, progress, completionPercent }: OverviewProps) {
+function OverviewScreen({ experience, progress, nextSection }: OverviewProps) {
   return (
     <div className="page-stack">
-      <section className="hero-panel">
+      <section className="page-hero">
         <div>
-          <p className="eyebrow">Welcome to AAP/API</p>
+          <p className="section-label">Welcome to AAP/API</p>
           <h1>{experience.organization.headline}</h1>
-          <p className="hero-copy">{experience.organization.story}</p>
+          <p className="lead">{experience.organization.story}</p>
+          <p className="purpose-line">{experience.organization.mission}</p>
         </div>
-        <div className="hero-metrics">
-          <div className="metric-card primary">
-            <span>Current momentum</span>
-            <strong>{completionPercent}%</strong>
-            <p>{progress.completed_sections.length} of {experience.sections.length} core sections complete.</p>
-          </div>
-          <div className="metric-card secondary">
-            <span>Next move</span>
-            <strong>{progress.current_section ?? experience.sections[0]?.slug}</strong>
-            <p>Use the rail to jump into any section, then acknowledge it when the essentials are clear.</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="stats-grid">
-        {experience.dashboardStats.map((stat) => (
-          <article key={stat.label} className="glass-card stat-card">
-            <span>{stat.label}</span>
-            <strong>{stat.value}</strong>
-            <p>{stat.detail}</p>
-          </article>
-        ))}
-      </section>
-
-      <section className="content-grid two-up">
-        <div className="glass-card">
-          <p className="eyebrow">Values in motion</p>
-          <h3>What the culture rewards</h3>
-          <div className="value-list">
-            {experience.organization.values.map((value) => (
-              <article key={value.name} className="mini-card">
-                <strong>{value.name}</strong>
-                <p>{value.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-        <div className="glass-card">
-          <p className="eyebrow">Support map</p>
-          <h3>Real people, clear escalation</h3>
-          <div className="contact-list">
-            {experience.contacts.map((contact) => (
-              <article key={contact.email} className="contact-card">
-                <strong>{contact.name}</strong>
-                <span>{contact.role}</span>
-                <span>{contact.phone}</span>
-                <p>{contact.note}</p>
-              </article>
-            ))}
-          </div>
+        <div className="summary-panel">
+          <p className="section-label">What this page is for</p>
+          <h3>Get oriented, then move through the core flow one section at a time.</h3>
+          <ul className="plain-list compact-list">
+            <li>The main path is for all new employees.</li>
+            <li>The HR Administrative Assistant toolkit stays separate.</li>
+            <li>Use HR when a policy question becomes specific or sensitive.</li>
+          </ul>
+          {nextSection && (
+            <Link className="primary-action" href={`/modules/${nextSection.slug}`}>
+              Start {nextSection.title}
+            </Link>
+          )}
         </div>
       </section>
 
-      <section className="section-card-grid">
-        {experience.sections.map((section, index) => {
-          const complete = progress.completed_sections.includes(section.slug);
-          return (
-            <article key={section.slug} className="section-card">
-              <div className="section-card-head">
-                <span className="sequence">{index + 1}</span>
-                <span className={complete ? "chip done" : "chip"}>{complete ? "Done" : `${section.estimatedMinutes} min`}</span>
-              </div>
-              <h3>{section.title}</h3>
-              <p>{section.summary}</p>
-              <p className="punchline">{section.punchline}</p>
-              <Link className="action-link" href={`/modules/${section.slug}`}>
-                Open section
-              </Link>
+      <section className="content-columns overview-columns">
+        <div className="content-panel">
+          <p className="section-label">Core onboarding flow</p>
+          <h3>One focused section at a time</h3>
+          <ol className="roadmap-list">
+            {experience.sections.map((section, index) => {
+              const complete = progress.completed_sections.includes(section.slug);
+              return (
+                <li key={section.slug} className="roadmap-item">
+                  <div className="roadmap-index">{index + 1}</div>
+                  <div className="roadmap-copy">
+                    <div className="roadmap-head">
+                      <strong>{section.title}</strong>
+                      <span className={complete ? "status-chip done" : "status-chip"}>{complete ? "Done" : `${section.estimatedMinutes} min`}</span>
+                    </div>
+                    <p>{section.summary}</p>
+                    <Link className="inline-action" href={`/modules/${section.slug}`}>
+                      Open section
+                    </Link>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+
+        <div className="stack-column">
+          <section className="content-panel">
+            <p className="section-label">Support contacts</p>
+            <h3>Use the right escalation path early</h3>
+            <div className="contact-list">
+              {experience.contacts.slice(0, 3).map((contact) => (
+                <article key={contact.email} className="contact-card">
+                  <strong>{contact.name}</strong>
+                  <span>{contact.role}</span>
+                  <span>{contact.phone}</span>
+                  <p>{contact.note}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="content-panel subtle-panel">
+            <p className="section-label">Role-specific content</p>
+            <h3>Keep the HR toolkit in its own lane</h3>
+            <p>The HR Administrative Assistant toolkit is a separate operational reference. It should not crowd the core employee onboarding path.</p>
+            <Link className="inline-action" href="/toolkits/hr-administrative-assistant">
+              Open the HR toolkit
+            </Link>
+          </section>
+        </div>
+      </section>
+
+      <section className="content-panel">
+        <p className="section-label">Values and culture</p>
+        <h3>What should feel visible in the work</h3>
+        <div className="value-grid compact-values">
+          {experience.organization.values.map((value) => (
+            <article key={value.name} className="value-card">
+              <strong>{value.name}</strong>
+              <p>{value.body}</p>
             </article>
-          );
-        })}
+          ))}
+        </div>
       </section>
     </div>
   );
@@ -363,89 +382,76 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
 
   return (
     <div className="page-stack">
-      <section className="hero-panel section-hero">
+      <section className="page-hero single-focus-hero">
         <div>
-          <p className="eyebrow">{section.eyebrow}</p>
+          <p className="section-label">{section.eyebrow}</p>
           <h1>{section.title}</h1>
-          <p className="hero-copy">{section.summary}</p>
-          <p className="punchline">{section.punchline}</p>
+          <p className="lead">{section.summary}</p>
+          <p className="purpose-line">{section.purpose}</p>
         </div>
-        <div className="fact-stack">
-          {section.quickFacts.map((fact) => (
-            <article key={fact.label} className="fact-card">
-              <span>{fact.label}</span>
-              <strong>{fact.value}</strong>
+        <div className="summary-panel">
+          <p className="section-label">This section focuses on</p>
+          <div className="focus-list">
+            {section.focuses.map((focus) => <span key={focus} className="focus-pill">{focus}</span>)}
+          </div>
+        </div>
+      </section>
+
+      <section className="content-panel">
+        <p className="section-label">What should stay top of mind</p>
+        <h3>Core takeaways before the detail</h3>
+        <div className="essential-grid">
+          {section.essentials.map((item) => (
+            <article key={item.title} className="essential-card">
+              <strong>{item.title}</strong>
+              <p>{item.body}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="card-grid">
-        {section.highlightCards.map((card) => (
-          <article key={card.title} className={`glass-card tone-${card.tone}`}>
-            <h3>{card.title}</h3>
-            <p>{card.body}</p>
-          </article>
-        ))}
-      </section>
-
-      <section className="content-grid two-up">
-        <div className="glass-card">
-          <p className="eyebrow">Flow</p>
-          <h3>What to know in order</h3>
-          <div className="timeline-list">
-            {section.timeline.map((item) => (
-              <article key={item.title} className="timeline-card">
-                <span>{item.label}</span>
-                <strong>{item.title}</strong>
-                <p>{item.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-        <div className="glass-card">
-          <p className="eyebrow">Keep this close</p>
-          <h3>Takeaways and reminders</h3>
-          <ul className="bullet-list">
-            {section.takeaways.map((item) => <li key={item}>{item}</li>)}
-          </ul>
-          <div className="divider" />
-          <ul className="bullet-list subtle">
-            {section.reminders.map((item) => <li key={item}>{item}</li>)}
-          </ul>
-        </div>
-      </section>
-
-      <section className="content-grid two-up">
-        <div className="glass-card">
-          <p className="eyebrow">Resources</p>
-          <h3>Fast-reference notes</h3>
-          <div className="resource-list">
-            {section.resources.map((resource) => (
-              <article key={resource.title} className="mini-card">
-                <strong>{resource.title}</strong>
-                <p>{resource.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-        <div className="glass-card">
-          <p className="eyebrow">FAQ</p>
-          <h3>Answers worth keeping handy</h3>
-          {section.faq.map((item) => (
-            <details key={item.question} className="faq-item">
-              <summary>{item.question}</summary>
-              <p>{item.answer}</p>
-            </details>
+      <section className="content-panel">
+        <p className="section-label">Policy structure</p>
+        <h3>What the documents actually cover here</h3>
+        <div className="policy-area-list">
+          {section.policyAreas.map((area) => (
+            <article key={area.title} className="policy-area">
+              <h3>{area.title}</h3>
+              <dl className="policy-list">
+                {area.items.map((item) => (
+                  <div key={item.label} className="policy-row">
+                    <dt>{item.label}</dt>
+                    <dd>{item.body}</dd>
+                  </div>
+                ))}
+              </dl>
+            </article>
           ))}
         </div>
       </section>
 
-      <section className="glass-card acknowledgement-panel">
-        <p className="eyebrow">Acknowledge</p>
+      <section className="content-columns">
+        <div className="content-panel">
+          <p className="section-label">What to do</p>
+          <h3>Use this section in practice</h3>
+          <ul className="plain-list">
+            {section.actions.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+        </div>
+        <div className="content-panel warning-panel">
+          <p className="section-label">Escalate when</p>
+          <h3>Do not improvise these scenarios</h3>
+          <ul className="plain-list">
+            {section.escalation.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+        </div>
+      </section>
+
+      <section className="content-panel acknowledgment-panel">
+        <p className="section-label">Acknowledge this section</p>
         <h3>{section.acknowledgment.title}</h3>
         <p>{section.acknowledgment.statement}</p>
-        <div className="checklist-grid">
+        <div className="checklist-list">
           {section.acknowledgment.items.map((item, index) => (
             <button key={item} className={selections[index] ? "check-item active" : "check-item"} onClick={() => onToggle(section.slug, index)} type="button">
               <span>{selections[index] ? "Checked" : "Mark"}</span>
@@ -471,53 +477,92 @@ type ToolkitProps = {
 function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProps) {
   return (
     <div className="page-stack">
-      <section className="hero-panel section-hero">
+      <section className="page-hero single-focus-hero">
         <div>
-          <p className="eyebrow">{toolkit.eyebrow}</p>
+          <p className="section-label">{toolkit.eyebrow}</p>
           <h1>{toolkit.title}</h1>
-          <p className="hero-copy">{toolkit.summary}</p>
-          <p className="punchline">{toolkit.punchline}</p>
+          <p className="lead">{toolkit.summary}</p>
+          <p className="purpose-line">{toolkit.purpose}</p>
         </div>
-        <div className="fact-stack">
-          <article className="fact-card">
-            <span>Reference depth</span>
-            <strong>{toolkit.estimatedMinutes} min</strong>
-          </article>
-          <article className="fact-card">
-            <span>Purpose</span>
-            <strong>Fast routing</strong>
-          </article>
+        <div className="summary-panel">
+          <p className="section-label">Use this when</p>
+          <ul className="plain-list compact-list">
+            {toolkit.whenToUse.map((item) => <li key={item}>{item}</li>)}
+          </ul>
         </div>
       </section>
 
-      <section className="card-grid">
-        {toolkit.overviewCards.map((card, index) => (
-          <article key={card.title} className={`glass-card tone-${index === 0 ? "red" : index === 1 ? "cyan" : "navy"}`}>
-            <h3>{card.title}</h3>
-            <p>{card.body}</p>
-          </article>
-        ))}
-      </section>
-
-      <section className="content-grid two-up">
-        <div className="glass-card">
-          <p className="eyebrow">Systems</p>
-          <h3>Where the work happens</h3>
-          <div className="resource-list">
+      <section className="content-columns">
+        <div className="content-panel">
+          <p className="section-label">Systems</p>
+          <h3>Where the HR admin work happens</h3>
+          <div className="system-list">
             {toolkit.systems.map((system) => (
-              <article key={system.name} className="mini-card">
-                <strong>{system.name}</strong>
-                <span>{system.link}</span>
+              <article key={system.name} className="system-row">
+                <div>
+                  <strong>{system.name}</strong>
+                  <span>{system.link}</span>
+                </div>
                 <p>{system.use}</p>
               </article>
             ))}
           </div>
         </div>
-        <div className="glass-card">
-          <p className="eyebrow">Escalation contacts</p>
-          <h3>Who to call when it turns specific</h3>
+
+        <div className="content-panel">
+          <p className="section-label">Quick answers</p>
+          <h3>Useful approved responses</h3>
+          <div className="quick-answer-list">
+            {toolkit.quickAnswers.map((item) => (
+              <article key={item.question} className="quick-answer-card">
+                <strong>{item.question}</strong>
+                <p>{item.answer}</p>
+                <span>{item.reference}</span>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="content-panel">
+        <p className="section-label">Playbooks</p>
+        <h3>Use these patterns instead of improvising</h3>
+        {toolkit.playbooks.map((playbook) => (
+          <details key={playbook.title} className="playbook" open>
+            <summary>{playbook.title}</summary>
+            <p>{playbook.summary}</p>
+            <div className="content-columns playbook-columns">
+              <div>
+                <h4>Do this</h4>
+                <ul className="plain-list compact-list">
+                  {playbook.doThis.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+              <div>
+                <h4>Escalate when</h4>
+                <ul className="plain-list compact-list">
+                  {playbook.escalateWhen.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+            </div>
+          </details>
+        ))}
+      </section>
+
+      <section className="content-columns">
+        <div className="content-panel warning-panel">
+          <p className="section-label">Escalate immediately</p>
+          <h3>High-risk topics should leave the front desk fast</h3>
+          <ul className="plain-list">
+            {toolkit.escalateImmediately.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+        </div>
+
+        <div className="content-panel">
+          <p className="section-label">Contacts</p>
+          <h3>People to pull in</h3>
           <div className="contact-list">
-            {toolkit.escalationContacts.map((contact) => (
+            {toolkit.contacts.map((contact) => (
               <article key={contact.email} className="contact-card">
                 <strong>{contact.name}</strong>
                 <span>{contact.role}</span>
@@ -529,29 +574,12 @@ function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProp
         </div>
       </section>
 
-      <section className="glass-card">
-        <p className="eyebrow">Playbooks</p>
-        <h3>Approved response patterns</h3>
-        {toolkit.playbooks.map((playbook) => (
-          <details key={playbook.title} className="faq-item" open>
-            <summary>{playbook.title}</summary>
-            <p>{playbook.body}</p>
-            <ul className="bullet-list">
-              {playbook.steps.map((step) => <li key={step}>{step}</li>)}
-            </ul>
-            <div className="divider" />
-            <ul className="bullet-list subtle">
-              {playbook.escalateWhen.map((item) => <li key={item}>{item}</li>)}
-            </ul>
-          </details>
-        ))}
-      </section>
-
-      <section className="glass-card acknowledgement-panel">
-        <p className="eyebrow">Toolkit finish</p>
-        <h3>Keep this lane separate and operational</h3>
-        <ul className="bullet-list">
-          {toolkit.reminders.map((item) => <li key={item}>{item}</li>)}
+      <section className="content-panel acknowledgment-panel">
+        <p className="section-label">Toolkit review</p>
+        <h3>{toolkit.acknowledgment.title}</h3>
+        <p>{toolkit.acknowledgment.statement}</p>
+        <ul className="plain-list compact-list">
+          {toolkit.acknowledgment.items.map((item) => <li key={item}>{item}</li>)}
         </ul>
         <button className="primary-action" disabled={complete || isPending} onClick={() => onComplete(toolkit)} type="button">
           {complete ? "Toolkit marked complete" : isPending ? "Saving..." : "Mark toolkit reviewed"}
@@ -560,5 +588,3 @@ function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProp
     </div>
   );
 }
-
-

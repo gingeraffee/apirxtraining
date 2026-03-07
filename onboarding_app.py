@@ -1,881 +1,261 @@
-import streamlit as st
-import json
+
+# -*- coding: utf-8 -*-
+"""
+AAP / API — New Hire Orientation (Streamlit)
+Refactored: safer auth messages, throttled Google Sheets I/O, clearer progress calc,
+optional mock mode, centralized constants, friendlier copy and less corporate tone.
+
+File: onboarding_app_clean.py
+"""
+
 import os
+import json
 import base64
-import gspread
+import logging
 from datetime import datetime
 from textwrap import dedent
 
+import streamlit as st
+import streamlit.components.v1 as components
 
-
-def render_html(content: str):
-    """Render HTML/Markdown blocks reliably by removing Python indentation."""
-    st.markdown(dedent(content).strip(), unsafe_allow_html=True)
+try:
+    import gspread
+except Exception:  # pragma: no cover
+    gspread = None  # Allows mock mode without gspread installed
 
 # ─────────────────────────────────────────────
-#  PAGE CONFIG
+# Logging
 # ─────────────────────────────────────────────
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("aap_onboarding")
+
+# ─────────────────────────────────────────────
+# Constants & feature flags
+# ─────────────────────────────────────────────
+APP_TITLE = "AAP New Hire Orientation"
+APP_EMOJI = "🎓"
+
 COMPANY_LOGO_URL = "https://rxaap.com/wp-content/uploads/2021/03/AAP_Logo_White.png"
 API_LOGO_PATH = "assets/api_logo.png"
-_sidebar_logo = API_LOGO_PATH if os.path.exists(API_LOGO_PATH) else COMPANY_LOGO_URL
+PAYLOCITY_COMPANY_ID = "123959"
 
-def _logo_img_src():
+# Feature flags
+USE_MOCK_SHEETS = os.getenv("MOCK_SHEETS", "0") == "1"
+SHOW_PLACEHOLDERS = os.getenv("SHOW_PLACEHOLDERS", "0") == "1"
+PASSING_FRACTION = 0.75  # quiz must reach >= 75% to award the 30% quiz credit
+
+# Contacts (used in multiple modules)
+CONTACTS = [
+    ("Brandy Hooper", "VP of Human Resources", "brandy.hooper@rxaap.com", "256-574-7526"),
+    ("Nicole Thornton", "HR Administrator (API)", "nicole.thornton@apirx.com", "256-574-7528"),
+    ("CBIZ Benefits", "Benefits Broker", "844.200.CBIZ (2249)", ""),
+    ("Teladoc", "Free Telehealth", "800-835-2362 / Teladoc.com", ""),
+    ("LifeMatters EAP", "Employee Assistance", "800-634-6433 / mylifematters.com", ""),
+    ("BCBS of Alabama", "Medical Insurance", "888-267-2955 / bcbsal.org", ""),
+    ("Guardian", "Dental, Vision, Life, Disability", "888-482-7342 / guardiananytime.com", ""), 
+    ("HealthEquity", "HSA Accounts", "866-274-9887 / healthequity.com", ""),
+]
+
+# ─────────────────────────────────────────────
+# Utility helpers
+# ─────────────────────────────────────────────
+def _logo_img_src() -> str:
     """Return an img src usable inside raw HTML: base64 for local file, URL otherwise."""
     if os.path.exists(API_LOGO_PATH):
         with open(API_LOGO_PATH, "rb") as f:
             b64 = base64.b64encode(f.read()).decode()
-        return f"data:image/png;base64,{b64}"
+            return f"data:image/png;base64,{b64}"
     return COMPANY_LOGO_URL
 
+
+def pct_bar(pct: int) -> str:
+    pct = max(0, min(100, int(pct)))
+    return dedent(f"""
+    <div style="height:10px;background:#F0F2F6;border-radius:999px;overflow:hidden;">
+      <div style="width:{pct}%;height:10px;background:linear-gradient(90deg,#84fab0,#8fd3f4);"></div>
+    </div>
+    <div style="font-size:12px;color:#6c757d;margin-top:6px;">{pct}% complete</div>
+    """).strip()
+
+
+# ─────────────────────────────────────────────
+# Streamlit page config
+# ─────────────────────────────────────────────
 st.set_page_config(
-    page_title="AAP New Hire Orientation",
-    page_icon="🎓",
+    page_title=APP_TITLE,
+    page_icon=APP_EMOJI,
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# Native Streamlit logo — appears in the top-left corner of the sidebar
-st.logo(_sidebar_logo, link="https://apirx.com")
+# Native Streamlit logo in sidebar
+st.logo(API_LOGO_PATH if os.path.exists(API_LOGO_PATH) else COMPANY_LOGO_URL, link="https://apirx.com")
 
 # ─────────────────────────────────────────────
-#  CUSTOM CSS
+# Google Sheets integration (with mock mode)
 # ─────────────────────────────────────────────
-render_html("""
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 
-    /* ── Base ── */
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-    :root {
-        --premium-bg-ink: #050B18;
-        --premium-shell-radius: 24px;
-        --premium-card-radius: 18px;
-        --premium-border: 1px solid #DEE7F1;
-        --premium-shadow-soft: 0 14px 30px rgba(9,23,42,0.08);
-        --premium-shadow-hover: 0 24px 44px rgba(9,23,42,0.13);
-    }
-    .stApp {
-        background:
-            radial-gradient(130% 85% at 12% -8%, rgba(30,58,138,0.14) 0%, transparent 48%),
-            radial-gradient(120% 92% at 102% 0%, rgba(204,41,54,0.12) 0%, transparent 44%),
-            linear-gradient(180deg, #081224 0%, #0D1B34 16%, #EAF0F8 43%, #E8EEF7 100%);
-    }
-
-    /* ── Sidebar Container (Cinematic Glass / Apple-inspired) ── */
-    [data-testid="stSidebar"] {
-        background:
-            radial-gradient(130% 100% at 18% -10%, rgba(255,255,255,0.18) 0%, transparent 48%),
-            radial-gradient(120% 100% at 110% 0%, rgba(125,211,252,0.18) 0%, transparent 46%),
-            linear-gradient(180deg, #0A0F1C 0%, #111827 48%, #0D1525 100%);
-        border-right: 1px solid rgba(255,255,255,0.08);
-        box-shadow: 10px 0 34px rgba(2,8,23,0.48);
-    }
-
-    [data-testid="stSidebar"] .block-container {
-        padding-top: 0.9rem !important;
-        padding-left: 0.9rem !important;
-        padding-right: 0.9rem !important;
-    }
-
-    .sidebar-header {
-        background: linear-gradient(160deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.09) 100%);
-        border-radius: 16px;
-        padding: 16px 14px;
-        margin-bottom: 16px;
-        border: 1px solid rgba(255,255,255,0.18);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 14px 26px rgba(2,8,23,0.36);
-        backdrop-filter: blur(10px);
-    }
-    .sidebar-header * { color: #EAF2FF !important; }
-    .sidebar-header .sidebar-username {
-        color: #D6E7FF !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.02em !important;
-    }
+# Mock storage (for local dev/testing)
+_mock_progress_rows = []  # list of dicts representing sheet rows
 
 
-    .progress-container {
-        width: 100%;
-        height: 8px;
-        border-radius: 999px;
-        background: rgba(226,232,240,0.22);
-        overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.14);
-        box-shadow: inset 0 1px 2px rgba(2,8,23,0.4);
-    }
-    .progress-fill {
-        height: 100%;
-        border-radius: inherit;
-        background: linear-gradient(90deg, #E2E8F0 0%, #BFDBFE 48%, #7DD3FC 100%);
-        box-shadow: 0 0 12px rgba(125,211,252,0.5);
-        transition: width 0.25s ease;
-    }
-    .sidebar-section-label {
-        font-size: 0.62rem;
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        color: rgba(199,214,234,0.74);
-        margin: 8px 2px 8px;
-        font-weight: 700;
-    }
-
-    /* ── Sidebar Radio Navigation (Glassy Cinematic Buttons) ── */
-    [data-testid="stSidebar"] .stRadio > div { gap: 8px !important; }
-    [data-testid="stSidebar"] .stRadio label {
-        color: rgba(230,240,255,0.94) !important;
-        border-radius: 14px !important;
-        padding: 10px 12px !important;
-        transition: background 0.25s ease, transform 0.22s ease, box-shadow 0.25s ease, text-shadow 0.2s ease !important;
-        font-size: 0.84rem !important;
-        width: 100% !important;
-        border: 1px solid rgba(255,255,255,0.14) !important;
-        background: linear-gradient(152deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 100%) !important;
-        backdrop-filter: blur(9px) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 10px 20px rgba(2,8,23,0.30) !important;
-    }
-    [data-testid="stSidebar"] .stRadio label:hover {
-        color: #F8FBFF !important;
-        transform: translateX(3px) translateY(-1px) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 18px 26px rgba(2,8,23,0.42) !important;
-        text-shadow: 0 0 8px rgba(186,230,253,0.34) !important;
-    }
-    [data-testid="stSidebar"] .stRadio p,
-    [data-testid="stSidebar"] .stRadio span {
-        color: rgba(230,240,255,0.94) !important;
-    }
-    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) {
-        background: linear-gradient(152deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 100%) !important;
-        border-color: rgba(147,197,253,0.62) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 12px 22px rgba(2,8,23,0.40), 0 0 0 1px rgba(147,197,253,0.38), 0 0 16px rgba(125,211,252,0.44), 0 0 28px rgba(59,130,246,0.24) !important;
-    }
-    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) p,
-    [data-testid="stSidebar"] .stRadio label:has(input[type="radio"]:checked) span {
-        background: transparent !important;
-        text-shadow: 0 0 9px rgba(186,230,253,0.30) !important;
-    }
-    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] > div:first-child {
-        background: rgba(255,255,255,0.06) !important;
-        border-color: rgba(229,231,235,0.62) !important;
-    }
-    [data-testid="stSidebar"] .stRadio [data-baseweb="radio"] [aria-checked="true"] > div:first-child,
-    [data-testid="stSidebar"] .stRadio input[type="radio"]:checked + div > div:first-child {
-        background: linear-gradient(145deg, #CFE4FF 0%, #93C5FD 100%) !important;
-        border-color: #93C5FD !important;
-        box-shadow: 0 0 0 3px rgba(147,197,253,0.22) !important;
-    }
-
-    /* ── Typography ── */
-    h1, h2, h3 { font-family: 'Playfair Display', serif !important; color: #0A1628 !important; }
-    .page-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #0A1628;
-        border-bottom: 3px solid #CC2936;
-        padding-bottom: 12px;
-        margin-bottom: 8px;
-    }
-    .page-subtitle { color: #5A6E8A; font-size: 1.05rem; margin-bottom: 28px; font-weight: 400; }
-
-    /* ── Module Cards ── */
-    .module-card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px 24px;
-        margin-bottom: 16px;
-        border-left: 5px solid #CC2936;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .module-card:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,0.11); }
-    .module-card.complete { border-left-color: #1A9E5C; background: #F0FFF6; }
-
-    /* ── Post-login Elite Design System ── */
-    @keyframes ambientPulse {
-        0%, 100% { opacity: 0.55; transform: scale(1); }
-        50% { opacity: 0.9; transform: scale(1.08); }
-    }
-    .post-auth-shell {
-        background: radial-gradient(120% 180% at 0% 0%, rgba(30,58,138,0.10) 0%, transparent 40%),
-                    radial-gradient(120% 180% at 100% 0%, rgba(204,41,54,0.12) 0%, transparent 42%),
-                    linear-gradient(170deg, #F9FBFF 0%, #F1F5FB 48%, #E9F0F8 100%);
-        border-radius: var(--premium-shell-radius);
-        border: 1px solid rgba(10,22,40,0.07);
-        padding: 24px;
-        box-shadow: 0 30px 70px rgba(9,23,42,0.10);
-        margin-bottom: 22px;
-    }
-    .module-shell {
-        background: linear-gradient(165deg, rgba(255,255,255,0.97) 0%, rgba(244,248,253,0.94) 100%);
-        border-radius: var(--premium-shell-radius);
-        border: 1px solid rgba(10,22,40,0.09);
-        box-shadow: 0 28px 66px rgba(6,14,30,0.16);
-        padding: 24px;
-        margin-bottom: 18px;
-    }
-    .module-page-hero {
-        background: linear-gradient(130deg, #050D1E 0%, #0B1A31 54%, #163156 100%);
-        border-radius: 18px;
-        padding: 24px 26px;
-        border: 1px solid rgba(255,255,255,0.08);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 40px rgba(5,13,30,0.42);
-        margin-bottom: 16px;
-        position: relative;
-        overflow: hidden;
-    }
-    .module-page-hero::after {
-        content: "";
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        right: -120px;
-        top: -170px;
-        background: radial-gradient(circle, rgba(125,211,252,0.20) 0%, transparent 72%);
-    }
-    .module-page-title {
-        color: #F8FAFC;
-        font-family: 'Playfair Display', serif;
-        font-size: 1.58rem;
-        margin: 3px 0 8px;
-        position: relative;
-        z-index: 1;
-    }
-    .module-page-sub {
-        color: #CCDAEF;
-        font-size: 0.9rem;
-        margin: 0;
-        position: relative;
-        z-index: 1;
-        max-width: 920px;
-    }
-    .module-meta-row {
-        margin-top: 11px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        position: relative;
-        z-index: 1;
-    }
-    .premium-hero {
-        background: linear-gradient(130deg, #050D1E 0%, #0B1A31 52%, #142D4E 100%);
-        border-radius: 20px;
-        padding: 30px 32px;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid rgba(255,255,255,0.08);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 44px rgba(5,13,30,0.48);
-    }
-    .premium-hero::before {
-        content: "";
-        position: absolute;
-        width: 320px;
-        height: 320px;
-        right: -110px;
-        top: -150px;
-        background: radial-gradient(circle, rgba(204,41,54,0.44) 0%, transparent 70%);
-        animation: ambientPulse 5s ease-in-out infinite;
-    }
-    .premium-hero::after {
-        content: "";
-        position: absolute;
-        width: 250px;
-        height: 250px;
-        left: -90px;
-        bottom: -130px;
-        background: radial-gradient(circle, rgba(59,130,246,0.32) 0%, transparent 72%);
-        animation: ambientPulse 6s ease-in-out infinite;
-    }
-    .premium-hero h1 { color: #F8FAFC !important; font-size: 2rem !important; margin: 0 0 8px 0 !important; }
-    .premium-hero p { color: #D1DEEE !important; font-size: 0.96rem; margin: 0 !important; max-width: 760px; }
-    .premium-kicker {
-        display: inline-block;
-        font-size: 0.63rem;
-        color: #FCA5A5;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-    .premium-metric-grid { margin-top: 16px; }
-    .premium-stat {
-        background: linear-gradient(155deg, rgba(255,255,255,0.95) 0%, rgba(248,251,255,0.86) 100%);
-        backdrop-filter: blur(6px);
-        border: 1px solid #DFE8F3;
-        border-radius: 16px;
-        padding: 14px 16px;
-        box-shadow: 0 12px 26px rgba(9,23,42,0.07);
-        min-height: 102px;
-    }
-    .premium-stat-label { font-size: 0.66rem; color: #5C6B81; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; }
-    .premium-stat-value { color: #081426; font-size: 1.45rem; font-weight: 700; margin-top: 3px; }
-    .premium-stat-sub { color: #6B7D95; font-size: 0.74rem; margin-top: 5px; }
-
-    .module-card-premium {
-        background: linear-gradient(148deg, rgba(255,255,255,0.96) 0%, rgba(247,250,253,0.90) 100%);
-        border-radius: var(--premium-card-radius);
-        border: var(--premium-border);
-        padding: 18px 18px 16px;
-        margin-bottom: 14px;
-        box-shadow: var(--premium-shadow-soft);
-        transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
-    }
-    .module-card-premium:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--premium-shadow-hover);
-        border-color: rgba(30,58,138,0.35);
-    }
-    .module-topline { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
-    .module-name { color:#081426; font-weight:700; margin:0; font-size:1.01rem; }
-    .module-sub { color:#5E7088; margin:6px 0 12px 0; font-size:0.84rem; }
-    .module-meter { height:8px; background:#E6EDF5; border-radius:999px; overflow:hidden; }
-    .module-meter > span {
-        display:block;
-        height:100%;
-        background:linear-gradient(92deg, #CC2936 0%, #1E3A8A 54%, #38BDF8 100%);
-        box-shadow: 0 0 14px rgba(30,58,138,0.42);
-    }
-    .pill {
-        font-size: 0.64rem;
-        border-radius: 99px;
-        padding: 4px 10px;
-        font-weight: 700;
-        letter-spacing: 0.09em;
-        text-transform: uppercase;
-        display: inline-block;
-    }
-    .pill.pending { background: #FEE2E2; color: #7F1D1D; }
-    .pill.live { background: #DBEAFE; color: #1E3A8A; }
-    .pill.done { background: #DCFCE7; color: #166534; }
-    .sidebar-mini {
-        background: linear-gradient(140deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 10px;
-        padding: 10px 12px;
-        margin-top: 12px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
-    }
-    .elite-chip {
-        display: inline-block;
-        background: rgba(15,23,42,0.7);
-        border: 1px solid rgba(148,163,184,0.35);
-        color: #C9D6E7;
-        border-radius: 999px;
-        padding: 4px 9px;
-        font-size: 0.62rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        margin-right: 6px;
-    }
-    /* ── Progress Bars ── */
-    .stProgress > div > div { background-color: #CC2936 !important; }
-
-    /* ── Primary Buttons — deep navy, red on hover ── */
-    .stButton > button[kind="primary"],
-    .stButton > button[kind="primary"][data-testid],
-    [data-testid="stBaseButton-primary"] {
-        background: linear-gradient(135deg, #09152A 0%, #1E3A8A 54%, #CC2936 100%) !important;
-        color: white !important;
-        border: 1px solid rgba(30,58,138,0.34) !important;
-        border-radius: 12px !important;
-        padding: 8px 18px !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.03em !important;
-        transition: filter 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
-        box-shadow: 0 8px 20px rgba(30,58,138,0.24) !important;
-    }
-    .stButton > button[kind="primary"]:hover,
-    [data-testid="stBaseButton-primary"]:hover {
-        filter: brightness(1.07) !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 14px 26px rgba(30,58,138,0.34) !important;
-    }
-    .stButton > button:focus-visible {
-        outline: 2px solid rgba(30,58,138,0.42) !important;
-        outline-offset: 2px !important;
-    }
-
-    /* ── Secondary Buttons — premium quiet action ── */
-    .stButton > button[kind="secondary"],
-    [data-testid="stBaseButton-secondary"] {
-        background: linear-gradient(165deg, rgba(255,255,255,0.95) 0%, rgba(244,248,253,0.92) 100%) !important;
-        border: 1px solid rgba(30,58,138,0.24) !important;
-        color: #0A1628 !important;
-        font-size: 0.78rem !important;
-        font-weight: 700 !important;
-        padding: 0.36rem 0.8rem !important;
-        box-shadow: 0 6px 14px rgba(9,23,42,0.12) !important;
-        letter-spacing: 0.08em !important;
-        text-transform: uppercase !important;
-        border-radius: 10px !important;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
-    }
-    .stButton > button[kind="secondary"]:hover,
-    [data-testid="stBaseButton-secondary"]:hover {
-        border-color: rgba(30,58,138,0.46) !important;
-        box-shadow: 0 12px 22px rgba(9,23,42,0.16) !important;
-        transform: translateY(-1px) !important;
-    }
-
-    /* ── Badges ── */
-    .badge {
-        display: inline-block;
-        background: #CC2936;
-        color: white;
-        font-size: 0.74rem;
-        font-weight: 600;
-        padding: 3px 10px;
-        border-radius: 20px;
-        margin-left: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-    .badge.done { background: #1A9E5C; }
-
-    /* ── Welcome Banner ── */
-    .welcome-banner {
-        background: linear-gradient(135deg, #0A1628 0%, #1B3A5C 100%);
-        border-radius: 16px;
-        padding: 32px 36px;
-        margin-bottom: 28px;
-        border-left: 6px solid #CC2936;
-    }
-    .welcome-banner h1 { color: white !important; font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 8px; }
-    .welcome-banner p { color: #B0C4D8; font-size: 1.05rem; }
-
-    /* ── Callout ── */
-    .callout { background: #FEF2F3; border-left: 4px solid #CC2936; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; color: #6B0E16; }
-
-    /* ── Dividers ── */
-    hr { border: none; border-top: 1px solid #D8E1EB; margin: 24px 0; }
-
-    /* ── Resource Library ── */
-    .resource-card {
-        background: linear-gradient(155deg, #FFFFFF 0%, #F8FBFF 100%);
-        border-radius: 14px;
-        padding: 13px 16px;
-        margin-bottom: 7px;
-        box-shadow: var(--premium-shadow-soft);
-        border: var(--premium-border);
-        transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
-    }
-    .resource-card:hover {
-        border-color: rgba(30,58,138,0.34);
-        box-shadow: var(--premium-shadow-hover);
-        transform: translateY(-2px);
-    }
-    .resource-id {
-        display: inline-block;
-        background: #0A1628;
-        color: white;
-        font-size: 0.68rem;
-        font-weight: 700;
-        padding: 3px 8px;
-        border-radius: 6px;
-        white-space: nowrap;
-        margin-top: 3px;
-        letter-spacing: 0.03em;
-        min-width: 54px;
-        text-align: center;
-        flex-shrink: 0;
-    }
-    /* ─────────────────────────────────────────────────────────────
-       Mobile + Dark Mode Compatibility Patch
-       (keeps desktop exactly the same)
-       ───────────────────────────────────────────────────────────── */
-    @media (max-width: 768px) and (prefers-color-scheme: dark) {
-
-      /* App background + default text */
-      div[data-testid="stAppViewContainer"],
-      section.main,
-      .stApp {
-        background: #0B1220 !important;
-        color: #F9FAFB !important;
-      }
-
-      /* Streamlit markdown text */
-      div[data-testid="stMarkdownContainer"],
-      div[data-testid="stMarkdownContainer"] p,
-      div[data-testid="stMarkdownContainer"] li,
-      div[data-testid="stMarkdownContainer"] span,
-      div[data-testid="stMarkdownContainer"] div {
-        color: #F9FAFB !important;
-      }
-
-      /* Your custom headings/subtitles (you use these a lot) */
-      .page-title,
-      .page-subtitle {
-        color: #F9FAFB !important;
-      }
-
-      /* Cards you set to white in light mode */
-      .resource-card,
-      .module-card,
-      .welcome-banner + div,
-      div[style*="background:white"],
-      div[style*="background: white"] {
-        background: #111827 !important;
-        border-color: rgba(255,255,255,0.10) !important;
-      }
-
-      /* Override your common “dark ink” inline colors */
-      div[style*="color:#0A1628"],
-      div[style*="color: #0A1628"],
-      span[style*="color:#0A1628"],
-      span[style*="color: #0A1628"] {
-        color: #F9FAFB !important;
-      }
-
-      /* Override your muted slate inline color */
-      div[style*="color:#5A6E8A"],
-      div[style*="color: #5A6E8A"],
-      span[style*="color:#5A6E8A"],
-      span[style*="color: #5A6E8A"] {
-        color: #CBD5E1 !important;
-      }
-
-      /* Inputs (you also set these explicitly on Downloads page) */
-      div[data-testid="stTextInput"] input {
-        background: #0F172A !important;
-        color: #F9FAFB !important;
-        border-color: rgba(255,255,255,0.18) !important;
-      }
-      div[data-testid="stTextInput"] input::placeholder {
-        color: rgba(255,255,255,0.55) !important;
-      }
-
-      /* Tables you render with dark headers + light bodies */
-      table, td, th {
-        color: #E5E7EB !important;
-        border-color: rgba(255,255,255,0.12) !important;
-      }
-    }
-
-    /* ── Onboarding App Compatibility: map onboarding classes to Training App look ── */
-
-    /* Sidebar action buttons */
-    [data-testid="stSidebar"] .stButton > button {
-        width: 100% !important;
-        border-radius: 12px !important;
-        border: 1px solid rgba(255,255,255,0.18) !important;
-        background: linear-gradient(150deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.05) 100%) !important;
-        color: #EAF2FF !important;
-        text-align: center !important;
-        font-size: 0.82rem !important;
-        font-weight: 600 !important;
-        letter-spacing: 0.05em !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 12px 20px rgba(2,8,23,0.28) !important;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease !important;
-    }
-    [data-testid="stSidebar"] .stButton > button:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.24), 0 16px 24px rgba(2,8,23,0.34) !important;
-        filter: brightness(1.05) !important;
-    }
-    [data-testid="stSidebar"] .stButton > button[kind="primary"],
-    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
-        background: linear-gradient(145deg, rgba(203,213,225,0.35) 0%, rgba(148,163,184,0.22) 100%) !important;
-        border-color: rgba(203,213,225,0.52) !important;
-        color: #F8FAFC !important;
-    }
-
-    /* Content sections used heavily in onboarding */
-    .content-section {
-        background: linear-gradient(155deg, #FFFFFF 0%, #F8FBFF 100%);
-        border-radius: var(--premium-card-radius);
-        padding: 24px 28px;
-        margin: 18px 0;
-        box-shadow: var(--premium-shadow-soft);
-        border: var(--premium-border);
-        border-top: 3px solid #CC2936;
-    }
-    .content-section h2 {
-        font-family: 'Playfair Display', serif;
-        color: #0A1628 !important;
-        font-size: 1.7rem;
-        font-weight: 700;
-        margin: 0 0 14px 0;
-        border-bottom: 2px solid #D8E1EB;
-        padding-bottom: 10px;
-    }
-    .content-section h3 {
-        color: #CC2936 !important;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-        font-size: 0.82rem;
-        font-weight: 700;
-        margin: 18px 0 8px 0;
-    }
-
-    /* Info boxes (onboarding) → training callout vibe */
-    .info-box {
-        background: #FFF5F5;
-        border-left: 4px solid #CC2936;
-        border-radius: 8px;
-        padding: 14px 16px;
-        margin: 16px 0;
-        color: #0A1628 !important;
-    }
-    .info-box.green { background: #F0FFF6; border-left-color: #1A9E5C; }
-    .info-box.yellow { background: #FFF7ED; border-left-color: #D97706; }
-
-    /* Tables (onboarding styled-table) aligned to training palette */
-    .styled-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-size: 0.92rem;
-        margin: 14px 0;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-    }
-    .styled-table th {
-        background: #0A1628;
-        color: #FFFFFF;
-        padding: 12px 14px;
-        text-align: left;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-    }
-    .styled-table td {
-        padding: 11px 14px;
-        border-bottom: 1px solid #E6EDF5;
-        color: #0A1628;
-        background: #FFFFFF;
-    }
-    .styled-table tr:nth-child(even) td { background: #F7FAFD; }
-    .styled-table tr:last-child td { border-bottom: none; }
-
-    /* ── Premium Login ── */
-    .lp-info-card {
-        background: linear-gradient(155deg, #060E1E 0%, #0A1628 45%, #112038 100%);
-        border: 1px solid rgba(255,255,255,0.07);
-        border-radius: 22px;
-        padding: 40px 36px;
-        box-shadow: 0 28px 72px rgba(6,14,30,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
-        min-height: 460px;
-        position: relative;
-        overflow: hidden;
-    }
-    .lp-info-card::before {
-        content: "";
-        position: absolute;
-        top: -90px; right: -70px;
-        width: 280px; height: 280px;
-        background: radial-gradient(circle, rgba(204,41,54,0.22) 0%, transparent 70%);
-        pointer-events: none;
-    }
-    .lp-info-card::after {
-        content: "";
-        position: absolute;
-        bottom: -110px; left: -60px;
-        width: 260px; height: 260px;
-        background: radial-gradient(circle, rgba(30,58,138,0.28) 0%, transparent 70%);
-        pointer-events: none;
-    }
-    .lp-kicker {
-        font-size: 0.66rem;
-        text-transform: uppercase;
-        letter-spacing: 0.24em;
-        color: #F87171;
-        font-weight: 800;
-        margin-bottom: 16px;
-        position: relative;
-        z-index: 1;
-    }
-    .lp-headline {
-        font-family: 'Playfair Display', serif !important;
-        font-size: 1.78rem !important;
-        font-weight: 700 !important;
-        color: #FFFFFF !important;
-        line-height: 1.27 !important;
-        margin: 0 0 18px 0 !important;
-        position: relative;
-        z-index: 1;
-    }
-    .lp-body {
-        color: #94A3B8;
-        font-size: 0.875rem;
-        line-height: 1.74;
-        margin: 0 0 26px 0;
-        position: relative;
-        z-index: 1;
-    }
-    .lp-features {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        position: relative;
-        z-index: 1;
-    }
-    .lp-features li {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.085);
-        border-radius: 11px;
-        padding: 11px 15px;
-        color: #CBD5E1;
-        font-size: 0.83rem;
-        font-weight: 500;
-    }
-    .lp-divider {
-        width: 36px;
-        height: 3px;
-        background: linear-gradient(90deg, #CC2936, #1E3A8A);
-        border-radius: 2px;
-        margin: 0 0 20px 0;
-        position: relative;
-        z-index: 1;
-    }
-    /* Form submit button styling */
-    div[data-testid="stFormSubmitButton"] button {
-        background: linear-gradient(135deg, #0A1628 0%, #1E3A8A 50%, #CC2936 100%) !important;
-        color: #FFFFFF !important;
-        border: none !important;
-        border-radius: 11px !important;
-        padding: 11px 20px !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.06em !important;
-        text-transform: uppercase !important;
-        font-size: 0.84rem !important;
-        box-shadow: 0 8px 22px rgba(30,58,138,0.3) !important;
-        transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
-    }
-    div[data-testid="stFormSubmitButton"] button:hover {
-        filter: brightness(1.1) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 14px 30px rgba(30,58,138,0.4) !important;
-    }
-
-</style>
-""")
-
-# ─────────────────────────────────────────────
-#  GOOGLE SHEETS INTEGRATION
-# ─────────────────────────────────────────────
 @st.cache_resource
 def get_gsheet_client():
+    if USE_MOCK_SHEETS:
+        return None  # not needed in mock mode
+    if gspread is None:
+        logger.warning("gspread not available; enable MOCK_SHEETS=1 for local testing.")
+        return None
     try:
-        creds_dict = dict(st.secrets["gcp_service_account"])
+        creds_dict = dict(st.secrets["gcp_service_account"])  # type: ignore[index]
         scopes = [
-            "https://spreadsheets.google.com/feeds",
+            "https://www.googleapis.com/auth/spreadsheets",
             "https://www.googleapis.com/auth/drive",
         ]
-        return gspread.service_account_from_dict(creds_dict, scopes=scopes)
-    except Exception:
+        return gspread.service_account_from_dict(creds_dict, scopes=scopes)  # type: ignore[attr-defined]
+    except Exception as e:  # pragma: no cover
+        logger.exception("Failed to init GSheet client: %s", e)
         return None
+
 
 def get_sheet(client):
-    """Progress tracking sheet (Sheet1)."""
+    if USE_MOCK_SHEETS:
+        class MockSheet:
+            def get_all_records(self):
+                return [
+                    {
+                        "Employee ID": r[0],
+                        "Employee Name": r[1],
+                        "Module Key": r[2],
+                        "Completion %": r[3],
+                        "Checklist Items": r[4],
+                        "Quiz Score": r[5],
+                        "Last Updated": r[6],
+                    } for r in _mock_progress_rows
+                ]
+
+            def update(self, _range, data):
+                # data is [[cols...]]
+                values = data[0]
+                emp_id, emp_name, module_key = values[0], values[1], values[2]
+                for i, r in enumerate(_mock_progress_rows):
+                    if r[0] == emp_id and r[2] == module_key:
+                        _mock_progress_rows[i] = values
+                        break
+
+            def append_row(self, data):
+                _mock_progress_rows.append(data)
+        return MockSheet()
+
     try:
-        return client.open("AAP New Hire Orientation Progress").sheet1
-    except Exception:
+        return client.open("AAP New Hire Orientation Progress").sheet1  # type: ignore[union-attr]
+    except Exception as e:  # pragma: no cover
+        logger.exception("Failed to open progress sheet: %s", e)
         return None
+
 
 def get_employee_sheet(client):
-    """Employee roster sheet — tab named 'Employee Roster'."""
+    if USE_MOCK_SHEETS:
+        class MockRoster:
+            def get_all_records(self):
+                # A tiny fake roster for local runs
+                return [
+                    {"Employee ID": "10001", "Full Name": "Sample User", "Track": "General"},
+                    {"Employee ID": "20001", "Full Name": "Warehouse User", "Track": "Warehouse"},
+                ]
+        return MockRoster()
     try:
-        return client.open("AAP New Hire Orientation Progress").worksheet("Employee Roster")
-    except Exception:
+        return client.open("AAP New Hire Orientation Progress").worksheet("Employee Roster")  # type: ignore[union-attr]
+    except Exception as e:  # pragma: no cover
+        logger.exception("Failed to open roster sheet: %s", e)
         return None
 
+
 # ─────────────────────────────────────────────
-#  AUTHENTICATION
-#
-#  Three-part check:
-#    1. Access Code  — shared company-wide password stored in Streamlit secrets.
-#                      Keeps random internet strangers out.
-#    2. Employee ID  — must exist in the Employee Roster sheet.
-#                      Ensures only real, active employees can log in.
-#    3. Full Name    — must match the name on file for that Employee ID.
-#                      Prevents Employee A from logging in as Employee B.
-#
-#  The Employee Roster sheet must have these columns:
-#    Employee ID | Full Name | Track
-#  where Track is "General" or "Warehouse" (case-insensitive).
+# Authentication
 # ─────────────────────────────────────────────
-def verify_employee(access_code, employee_id, full_name):
-    """
-    Returns (True, track_string, "") on success, where track_string is
-    "general" or "warehouse" as set in the Employee Roster sheet.
-    Returns (False, "", reason_string) on failure.
-    Fails closed — any sheet/network error denies access.
-    """
-    # ── Step 1: Check access code against Streamlit secret ──────────────────
+
+def verify_employee(access_code: str, employee_id: str, full_name: str) -> tuple[bool, str, str]:
+    """Three-part check; returns (ok, track, reason). Track is 'general' or 'warehouse'."""
     try:
-        correct_code = st.secrets["orientation_access_code"]
-    except Exception as e:
-        return False, "", f"Access code configuration error: {e}"
+        correct_code = st.secrets["orientation_access_code"]  # type: ignore[index]
+    except Exception:
+        return False, "", "Configuration error. Please contact HR."
 
     if access_code.strip() != correct_code.strip():
-        return False, "", f"Incorrect access code. (Entered {len(access_code.strip())} chars, expected {len(correct_code.strip())} chars)"
+        return False, "", "Incorrect credentials."
 
-    # ── Step 2 & 3: Validate Employee ID + Name against roster ──────────────
     client = get_gsheet_client()
-    if not client:
-        return False, "", "Unable to connect to Google Sheets. Check gcp_service_account secret and service account permissions."
-
-    emp_sheet = get_employee_sheet(client)
+    emp_sheet = get_employee_sheet(client) if not USE_MOCK_SHEETS else get_employee_sheet(None)
     if not emp_sheet:
-        return False, "", "Could not open 'Employee Roster' tab. Check that the tab exists in 'AAP New Hire Orientation Progress'."
+        return False, "", "Employee roster is unavailable right now. Please try again."
 
     try:
         records = emp_sheet.get_all_records()
         if not records:
-            return False, "", "Employee Roster sheet appears to be empty. Please check the sheet has data."
+            return False, "", "Employee roster is empty. Please contact HR."
 
-        col_names = list(records[0].keys()) if records else []
+        emp_id_norm = employee_id.strip().lower()
+        name_norm = full_name.strip().lower()
 
         for row in records:
-            row_id   = str(row.get("Employee ID", "")).strip().lower()
-            row_name = str(row.get("Full Name",   "")).strip().lower()
-            if row_id == employee_id.strip().lower():
-                if row_name == full_name.strip().lower():
-                    # Read the Track column; fall back to "general" if missing/blank
+            row_id = str(row.get("Employee ID", "")).strip().lower()
+            row_name = str(row.get("Full Name", "")).strip().lower()
+            if row_id == emp_id_norm:
+                if row_name == name_norm:
                     raw_track = str(row.get("Track", "")).strip().lower()
                     track = "warehouse" if raw_track == "warehouse" else "general"
                     return True, track, ""
                 else:
-                    return False, "", f"ID matched but name did not. Sheet has: '{row.get('Full Name', '')}' — you entered: '{full_name.strip()}'"
-        return False, "", f"Employee ID '{employee_id.strip()}' not found. Sheet has {len(records)} rows. Columns found: {col_names}"
-    except Exception as e:
-        return False, "", f"Verification error: {e}"
+                    return False, "", "Employee ID and name did not match our records."
+        return False, "", "Employee record not found. Please verify your ID or contact HR."
+    except Exception as e:  # pragma: no cover
+        logger.exception("Verification error: %s", e)
+        return False, "", "Verification error. Please try again."
 
 
-def save_progress(employee_id, employee_name, module_key, pct, checklist_items, quiz_score):
+# ─────────────────────────────────────────────
+# Progress storage (debounced & cached row index)
+# ─────────────────────────────────────────────
+if "row_index_cache" not in st.session_state:
+    st.session_state["row_index_cache"] = {}
+
+
+def save_progress(employee_id: str, employee_name: str, module_key: str, pct: int,
+                   checklist_items: dict, quiz_tuple: tuple | None):
     client = get_gsheet_client()
-    if not client:
-        return
-    sheet = get_sheet(client)
+    sheet = get_sheet(client) if not USE_MOCK_SHEETS else get_sheet(None)
     if not sheet:
         return
     try:
         now = datetime.now().strftime("%Y-%m-%d %H:%M")
         checklist_json = json.dumps(checklist_items)
-        records = sheet.get_all_records()
-        row_idx = None
-        for i, row in enumerate(records, start=2):
-            if row.get("Employee ID") == employee_id and row.get("Module Key") == module_key:
-                row_idx = i
-                break
-        # Store both ID and name so the sheet is human-readable for HR
+        quiz_score = None if not quiz_tuple else quiz_tuple[0]
         data = [employee_id, employee_name, module_key, pct, checklist_json, quiz_score, now]
+
+        cache_key = (employee_id, module_key)
+        row_idx = st.session_state["row_index_cache"].get(cache_key)
+
+        if row_idx is None:
+            records = sheet.get_all_records()
+            for i, row in enumerate(records, start=2):
+                if row.get("Employee ID") == employee_id and row.get("Module Key") == module_key:
+                    row_idx = i
+                    st.session_state["row_index_cache"][cache_key] = row_idx
+                    break
+
         if row_idx:
             sheet.update(f"A{row_idx}:G{row_idx}", [data])
         else:
             sheet.append_row(data)
-    except Exception:
-        pass
+    except Exception as e:  # pragma: no cover
+        logger.exception("Failed to save progress: %s", e)
 
-def load_progress(employee_id):
+
+
+def load_progress(employee_id: str) -> dict:
     client = get_gsheet_client()
-    if not client:
-        return {}
-    sheet = get_sheet(client)
+    sheet = get_sheet(client) if not USE_MOCK_SHEETS else get_sheet(None)
     if not sheet:
         return {}
     try:
@@ -884,2449 +264,946 @@ def load_progress(employee_id):
         for row in records:
             if str(row.get("Employee ID", "")).strip() == employee_id.strip():
                 mk = row.get("Module Key", "")
+                try:
+                    checklist = json.loads(row.get("Checklist Items", "{}"))
+                except Exception:
+                    checklist = {}
                 result[mk] = {
                     "pct": row.get("Completion %", 0),
-                    "checklist": json.loads(row.get("Checklist Items", "{}")),
-                    "quiz_score": row.get("Quiz Score", None),
+                    "checklist": checklist,
+                    "quiz": None if row.get("Quiz Score") is None else (int(row.get("Quiz Score")), None),
                 }
         return result
-    except Exception:
+    except Exception as e:  # pragma: no cover
+        logger.exception("Failed to load progress: %s", e)
         return {}
 
+
 # ─────────────────────────────────────────────
-#  MODULE DATA
+# Module definitions (metadata only; content rendered below)
 # ─────────────────────────────────────────────
 MODULES = [
-    {
-        "key": "welcome",
-        "number": 1,
-        "title": "Welcome to AAP",
-        "subtitle": "Our history, mission, vision & values",
-        "icon": "🏢",
-    },
-    {
-        "key": "conduct",
-        "number": 2,
-        "title": "Code of Conduct & Ethics",
-        "subtitle": "Expected behaviors, confidentiality & EEO",
-        "icon": "⚖️",
-    },
-    {
-        "key": "policies",
-        "number": 3,
-        "title": "Workplace Policies",
-        "subtitle": "Attendance, appearance, safety & more",
-        "icon": "📋",
-    },
-    {
-        "key": "benefits",
-        "number": 4,
-        "title": "Benefits & Time Off",
-        "subtitle": "Health, leave, 401k & employee perks",
-        "icon": "💼",
-    },
-    {
-        "key": "firststeps",
-        "number": 5,
-        "title": "Your First Steps",
-        "subtitle": "Systems, contacts & what to expect",
-        "icon": "🚀",
-    },
+    {"key": "welcome", "number": 1, "title": "Welcome to AAP", "subtitle": "Our history, mission, vision & values", "icon": "🏢"},
+    {"key": "conduct", "number": 2, "title": "Code of Conduct & Ethics", "subtitle": "Expected behaviors, confidentiality & EEO", "icon": "⚖️"},
+    {"key": "policies", "number": 3, "title": "Workplace Policies", "subtitle": "Attendance, appearance, safety & more", "icon": "📋"},
+    {"key": "timeoff", "number": 4, "title": "Time Off & Leave", "subtitle": "PTO, holidays, sick leave & attendance rules", "icon": "⏰"},
+    {"key": "benefits", "number": 5, "title": "Benefits", "subtitle": "Health, 401k, life insurance & perks", "icon": "💼"},
+    {"key": "firststeps", "number": 6, "title": "Your First Steps", "subtitle": "Systems, contacts & what to expect", "icon": "🚀"},
 ]
 
-# ─────────────────────────────────────────────
-#  SESSION STATE DEFAULTS
-# ─────────────────────────────────────────────
-# ─────────────────────────────────────────────
-#  WAREHOUSE MODULES
-# ─────────────────────────────────────────────
 WAREHOUSE_MODULES = [
-    {
-        "key": "wh_welcome",
-        "number": 1,
-        "title": "Welcome to AAP — Warehouse Edition",
-        "subtitle": "Our history, mission, values & your role in the warehouse",
-        "icon": "🏢",
-    },
-    {
-        "key": "wh_conduct",
-        "number": 2,
-        "title": "Code of Conduct & Ethics",
-        "subtitle": "Expected behaviors, confidentiality & EEO in a warehouse setting",
-        "icon": "⚖️",
-    },
-    {
-        "key": "wh_safety",
-        "number": 3,
-        "title": "Warehouse Policies & Safety",
-        "subtitle": "Attendance, PPE, safety rules & warehouse procedures",
-        "icon": "🦺",
-    },
-    {
-        "key": "wh_benefits",
-        "number": 4,
-        "title": "Benefits & Time Off",
-        "subtitle": "Health, leave, 401k & employee perks",
-        "icon": "💼",
-    },
-    {
-        "key": "wh_firststeps",
-        "number": 5,
-        "title": "Your First Steps — Warehouse",
-        "subtitle": "Systems, contacts, equipment & what to expect on Day 1",
-        "icon": "🚀",
-    },
+    {"key": "wh_welcome", "number": 1, "title": "Welcome to AAP — Warehouse", "subtitle": "Mission, values & your role", "icon": "🏢"},
+    {"key": "wh_conduct", "number": 2, "title": "Code of Conduct & Ethics", "subtitle": "Warehouse-specific expectations", "icon": "⚖️"},
+    {"key": "wh_safety", "number": 3, "title": "Warehouse Policies & Safety", "subtitle": "Attendance, PPE, safety rules", "icon": "🦺"},
+    {"key": "wh_timeoff", "number": 4, "title": "Time Off & Leave", "subtitle": "Requests, FMLA & life events", "icon": "⏰"},
+    {"key": "wh_benefits", "number": 5, "title": "Benefits — Warehouse", "subtitle": "Health, 401k & support programs", "icon": "💼"},
+    {"key": "wh_firststeps", "number": 6, "title": "Your First Steps — Warehouse", "subtitle": "Day 1, training & contacts", "icon": "🚀"},
 ]
 
-defaults = {
-    "authenticated": False,
-    "username": "",
-    "employee_id": "",
-    "role_track": "",          # "general" or "warehouse"
-    "selected_module": None,
-    "sheet_loaded": False,
-    "progress": {m["key"]: 0 for m in MODULES},
-    "quiz_results": {},
-    "checklist_items": {m["key"]: {} for m in MODULES},
-    "auth_error": "",
-}
-for k, v in defaults.items():
-    if k not in st.session_state:
-        st.session_state[k] = v
+# ─────────────────────────────────────────────
+# Session state defaults
+# ─────────────────────────────────────────────
+def _init_state():
+    defaults = {
+        "authenticated": False,
+        "username": "",
+        "employee_id": "",
+        "role_track": "",  # "general" or "warehouse"
+        "selected_module": None,
+        "sheet_loaded": False,
+        "progress": {},
+        "quiz_results": {},  # key -> (score, max)
+        "checklist_items": {},
+        "auth_error": "",
+        "sound_enabled": True,
+        "last_milestone_bucket": 0,
+    }
+    for k, v in defaults.items():
+        if k not in st.session_state:
+            st.session_state[k] = v
+
+
+_init_state()
+
 
 # ─────────────────────────────────────────────
-#  HELPER FUNCTIONS
+# Progress math
 # ─────────────────────────────────────────────
-def pct_bar(pct):
-    return dedent(f"""
-    <div class="progress-container">
-        <div class="progress-fill" style="width:{pct}%"></div>
-    </div>
-    <small style="color:#8BA3C7">{pct}% complete</small>
-    """).strip()
 
-def info_box(text, color="default"):
-    cls = "info-box " + ("green" if color == "green" else "yellow" if color == "yellow" else "")
-    return f'<div class="{cls}">{text}</div>'
-
-def calculate_module_pct(module_key, checklists, quiz_results):
+def calculate_module_pct(module_key: str, checklists: dict, quiz_results: dict) -> int:
     items = checklists.get(module_key, {})
     total = len(items)
     checked = sum(1 for v in items.values() if v)
     checklist_pct = (checked / total * 70) if total > 0 else 0
-    quiz_pct = 30 if quiz_results.get(module_key) is not None else 0
+
+    qt = quiz_results.get(module_key)  # (score, max)
+    quiz_pct = 0
+    if qt:
+        score, mx = qt
+        if mx and mx > 0 and (score / mx) >= PASSING_FRACTION:
+            quiz_pct = 30
     return int(checklist_pct + quiz_pct)
 
-def update_progress(module_key):
-    pct = calculate_module_pct(
-        module_key,
-        st.session_state.checklist_items,
-        st.session_state.quiz_results,
+
+def update_progress(module_key: str):
+    prev = st.session_state.progress.get(module_key, 0)
+    st.session_state.progress[module_key] = calculate_module_pct(
+        module_key, st.session_state.checklist_items, st.session_state.quiz_results
     )
-    st.session_state.progress[module_key] = pct
+
+    # Celebrate module completion
+    if prev < 100 and st.session_state.progress[module_key] == 100:
+        st.toast("Nice! Module completed.", icon="🎉")
+
+    # Persist
     if st.session_state.authenticated and st.session_state.employee_id:
         items = st.session_state.checklist_items.get(module_key, {})
-        score = st.session_state.quiz_results.get(module_key)
+        quiz_tuple = st.session_state.quiz_results.get(module_key)
         save_progress(
             st.session_state.employee_id,
             st.session_state.username,
-            module_key, pct, items, score,
+            module_key,
+            st.session_state.progress[module_key],
+            items,
+            quiz_tuple,
         )
 
-def render_module_shell_start(module_key):
-    is_warehouse = st.session_state.get("role_track") == "warehouse"
-    active_modules = WAREHOUSE_MODULES if is_warehouse else MODULES
-    module = next((m for m in active_modules if m["key"] == module_key), None)
-    if not module:
-        return
-
-    pct = st.session_state.progress.get(module_key, 0)
-    status = "Complete" if pct == 100 else "In Progress" if pct > 0 else "Queued"
-    st.markdown('<div class="module-shell">', unsafe_allow_html=True)
-    render_html(f"""
-    <div class="module-page-hero">
-        <span class="premium-kicker">Training Module</span>
-        <h1 class="module-page-title">{module['icon']} Module {module['number']}: {module['title']}</h1>
-        <p class="module-page-sub">{module['subtitle']}</p>
-        <div class="module-meta-row">
-            <span class="elite-chip">Completion · {pct}%</span>
-            <span class="elite-chip">Status · {status}</span>
-            <span class="elite-chip">Secure Learning Environment</span>
-        </div>
-    </div>
-    """)
-
-def render_module_shell_end():
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-#  LOGIN SCREEN
+# UI helpers
 # ─────────────────────────────────────────────
+
+def section_header(title: str, subtitle: str | None = None, emoji: str | None = None):
+    e = (emoji + " ") if emoji else ""
+    st.markdown(f"## {e}{title}")
+    if subtitle:
+        st.caption(subtitle)
+
+
+def inject_ui_enhancements(sound_enabled: bool):
+    """Inject a modern visual skin + subtle interaction audio hooks."""
+    st.markdown(
+        """
+        <style>
+        :root {
+            --brand-start: #6d5efc;
+            --brand-end: #15c5ff;
+            --soft-border: rgba(109, 94, 252, 0.18);
+            --card-shadow: 0 12px 34px rgba(26, 43, 93, 0.08);
+        }
+        .stApp {
+            background:
+                radial-gradient(circle at top right, rgba(21,197,255,0.10), transparent 40%),
+                radial-gradient(circle at top left, rgba(109,94,252,0.08), transparent 35%),
+                #f8faff;
+        }
+        [data-testid="stMetric"] {
+            border: 1px solid var(--soft-border);
+            border-radius: 16px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.78);
+            backdrop-filter: blur(4px);
+            box-shadow: var(--card-shadow);
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+        [data-testid="stMetric"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 38px rgba(26, 43, 93, 0.12);
+        }
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            border: 1px solid var(--soft-border) !important;
+            border-radius: 18px !important;
+            background: rgba(255,255,255,0.86);
+            box-shadow: var(--card-shadow);
+            animation: fadeInUp 280ms ease;
+        }
+        [data-testid="stSidebar"] {
+            background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,250,255,0.92));
+            border-right: 1px solid rgba(109, 94, 252, 0.14);
+        }
+        .stButton > button, .stFormSubmitButton > button {
+            border-radius: 12px;
+            border: 1px solid transparent;
+            background: linear-gradient(90deg, var(--brand-start), var(--brand-end));
+            color: #fff;
+            font-weight: 600;
+            transition: transform 150ms ease, filter 150ms ease;
+        }
+        .stButton > button:hover, .stFormSubmitButton > button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.04);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    components.html(
+        f"""
+        <script>
+        (function() {{
+            const parentDoc = window.parent.document;
+            window.aapSoundEnabled = {str(sound_enabled).lower()};
+            if (parentDoc.body.dataset.aapEnhanceBound === "1") return;
+            parentDoc.body.dataset.aapEnhanceBound = "1";
+
+            let ctx;
+            const tone = (freq, dur, type = "sine", vol = 0.03) => {{
+                if (!window.aapSoundEnabled) return;
+                try {{
+                    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+                    const o = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    o.type = type;
+                    o.frequency.value = freq;
+                    g.gain.value = vol;
+                    o.connect(g);
+                    g.connect(ctx.destination);
+                    const t = ctx.currentTime;
+                    g.gain.setValueAtTime(vol, t);
+                    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+                    o.start(t);
+                    o.stop(t + dur);
+                }} catch (e) {{}}
+            }};
+
+            const playNav = () => {{ tone(480, 0.09, "triangle", 0.03); setTimeout(() => tone(660, 0.10, "triangle", 0.022), 55); }};
+            const playCheck = () => {{ tone(740, 0.08, "sine", 0.026); }};
+            const playQuiz = () => {{ tone(520, 0.12, "triangle", 0.028); setTimeout(() => tone(660, 0.13, "triangle", 0.024), 90); setTimeout(() => tone(880, 0.16, "sine", 0.022), 180); }};
+
+            parentDoc.addEventListener("click", (event) => {{
+                const nav = event.target.closest('[data-testid="stSidebar"] [role="radiogroup"] label');
+                if (nav) playNav();
+
+                const btn = event.target.closest("button");
+                if (btn && /submit quiz/i.test((btn.innerText || "").trim())) playQuiz();
+            }}, true);
+
+            parentDoc.addEventListener("change", (event) => {{
+                const checkbox = event.target.closest('input[type="checkbox"]');
+                if (checkbox) playCheck();
+            }}, true);
+        }})();
+        </script>
+        """,
+        height=0,
+    )
+
+
+# ─────────────────────────────────────────────
+# LOGIN SCREEN
+# ─────────────────────────────────────────────
+
 def show_login():
-    # Inject login-specific CSS overrides (scoped to this page only)
-    render_html("""
-    <style>
-        /* Page background for login */
-        .stApp { background: #0B1220 !important; }
-        /* Style the form container as the white sign-in card */
-        [data-testid="stForm"] {
-            background: #FFFFFF;
-            border-radius: 22px;
-            padding: 32px 30px 28px !important;
-            box-shadow: 0 28px 72px rgba(6,14,30,0.38), 0 1px 3px rgba(6,14,30,0.1);
-            border: 1px solid rgba(148,163,184,0.15);
-        }
-        /* Input label styling */
-        [data-testid="stForm"] label p {
-            font-size: 0.75rem !important;
-            font-weight: 700 !important;
-            color: #475569 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.09em !important;
-        }
-        /* Input field styling */
-        [data-testid="stForm"] input {
-            border: 1.5px solid #E2E8F0 !important;
-            border-radius: 10px !important;
-            font-size: 0.9rem !important;
-            background: #F8FAFC !important;
-            color: #0F172A !important;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-        }
-        [data-testid="stForm"] input:focus {
-            border-color: #1E3A8A !important;
-            box-shadow: 0 0 0 3px rgba(30,58,138,0.12) !important;
-            background: #FFFFFF !important;
-        }
-        /* Radio label styling */
-        [data-testid="stForm"] .stRadio label {
-            color: #334155 !important;
-            font-size: 0.87rem !important;
-        }
-    </style>
-    """)
+    logo_src = _logo_img_src()
 
-    render_html("<div style='padding-top:36px'></div>")
-
-    _login_logo_src = _logo_img_src()
-
-    outer_l, outer_m, outer_r = st.columns([0.5, 2, 0.5])
-    with outer_m:
-        # Logo
-        render_html(f"""
-        <div style="text-align:center; margin-bottom:32px;">
-            <img src="{_login_logo_src}" alt="AAP / API Logo"
-                 style="height:88px; max-width:300px; object-fit:contain;
-                        filter: drop-shadow(0 6px 20px rgba(6,14,30,0.5)) brightness(1.05);">
-        </div>
-        """)
-
-        # Two-panel layout: dark info card left, white form card right
-        panel_l, panel_r = st.columns([1.1, 1], gap="large")
-
-        with panel_l:
-            render_html("""
-            <div class="lp-info-card">
-                <div class="lp-kicker">Premium Onboarding Experience</div>
-                <h2 class="lp-headline">Welcome to your<br>orientation hub.</h2>
-                <div class="lp-divider"></div>
-                <p class="lp-body">
-                    Start your first day with a secure, guided setup. Sign in to access
-                    your personalized onboarding modules and real-time completion tracking.
-                </p>
-                <ul class="lp-features">
-                    <li><span>🔒</span> Secure employee credential check</li>
-                    <li><span>🧭</span> Role-based learning path assignment</li>
-                    <li><span>📈</span> Live progress sync and verification</li>
-                </ul>
+    col_l, col_m, col_r = st.columns([0.5, 2, 0.5])
+    with col_m:
+        st.markdown(
+            f"""
+            <div style="text-align:center;">
+              <img src="{logo_src}" alt="AAP/API" style="height:48px;margin-bottom:10px;"/>
+              <div style="font-size:30px;font-weight:700;">Welcome to Your First Week ✨</div>
+              <div style="color:#6c757d;">Friendly, guided onboarding — made for humans, not handbooks.</div>
             </div>
-            """)
+            """,
+            unsafe_allow_html=True,
+        )
 
-        with panel_r:
-            with st.form("login_form", clear_on_submit=False):
-                render_html("""
-                <p style="font-size:1.15rem; font-weight:700; color:#0A1628; margin:0 0 4px 0;">
-                    Employee Sign In
-                </p>
-                <p style="color:#64748B; font-size:0.83rem; margin:0 0 22px 0;">
-                    Use the details provided by HR to continue.
-                </p>
-                """)
+        st.write("")
+        with st.form("login_form", clear_on_submit=False):
+            st.subheader("Employee sign in")
+            st.caption("Enter the info HR shared with you.")
+            access_code = st.text_input("Access Code", type="password")
+            employee_id = st.text_input("Employee ID", placeholder="e.g., 10042")
+            full_name = st.text_input("Full Name", placeholder="As it appears in your HR paperwork")
+            submitted = st.form_submit_button("Sign in →", use_container_width=True)
 
-                access_code = st.text_input(
-                    "Access Code",
-                    placeholder="Enter the code HR gave you",
-                    type="password",
-                )
-                employee_id = st.text_input(
-                    "Employee ID",
-                    placeholder="e.g. 10042",
-                )
-                full_name = st.text_input(
-                    "Full Name",
-                    placeholder="As it appears in your HR paperwork",
-                )
-                render_html("<div style='margin-top:6px;'></div>")
-                submitted = st.form_submit_button("Sign In  →", use_container_width=True)
+        if st.session_state.get("auth_error"):
+            st.error(st.session_state.auth_error)
+        else:
+            st.info("We keep this secure and private.")
 
-                if submitted:
-                    if not access_code or not employee_id or not full_name:
-                        st.error("Please fill in all three fields to continue.")
+        if submitted:
+            if not access_code or not employee_id or not full_name:
+                st.error("Please fill in all three fields to continue.")
+            else:
+                with st.spinner("Verifying your credentials…"):
+                    ok, track, reason = verify_employee(access_code, employee_id, full_name)
+                    if ok:
+                        # Initialize track-specific keys
+                        active = WAREHOUSE_MODULES if track == "warehouse" else MODULES
+                        st.session_state.authenticated = True
+                        st.session_state.username = full_name.strip()
+                        st.session_state.employee_id = employee_id.strip()
+                        st.session_state.role_track = track
+                        st.session_state.progress = {m["key"]: 0 for m in active}
+                        st.session_state.checklist_items = {m["key"]: {} for m in active}
+                        st.session_state.quiz_results = {}
+                        st.session_state.sheet_loaded = False
+                        st.session_state.auth_error = ""
+                        st.toast("Welcome aboard!", icon="✨")
+                        st.balloons()
+                        st.rerun()
                     else:
-                        with st.spinner("Verifying your credentials…"):
-                            ok, track, reason = verify_employee(access_code, employee_id, full_name)
-                        if ok:
-                            if track == "warehouse":
-                                prog_keys = {m["key"]: 0 for m in WAREHOUSE_MODULES}
-                                chk_keys  = {m["key"]: {} for m in WAREHOUSE_MODULES}
-                            else:
-                                prog_keys = {m["key"]: 0 for m in MODULES}
-                                chk_keys  = {m["key"]: {} for m in MODULES}
-                            st.session_state.authenticated   = True
-                            st.session_state.username        = full_name.strip()
-                            st.session_state.employee_id     = employee_id.strip()
-                            st.session_state.role_track      = track
-                            st.session_state.progress        = prog_keys
-                            st.session_state.checklist_items = chk_keys
-                            st.session_state.quiz_results    = {}
-                            st.session_state.sheet_loaded    = False
-                            st.rerun()
-                        else:
-                            st.error(f"❌ {reason}")
+                        st.session_state.auth_error = reason
+                        st.error(reason)
 
-        # Footer
-        render_html("""
-        <div style="text-align:center; margin-top:28px; padding-top:18px;
-                    border-top:1px solid rgba(255,255,255,0.08);">
-            <p style="color:#475569; font-size:0.78rem; margin:0; line-height:2;">
-                Need help? Contact HR &nbsp;·&nbsp;
-                <strong style="color:#94A3B8;">Nicole Thornton</strong>
-                &nbsp;·&nbsp; nicole.thornton@apirx.com &nbsp;·&nbsp; 256-574-7528
-            </p>
-        </div>
-        """)
+        st.write("")
+        st.caption("Need help? HR · Nicole Thornton · nicole.thornton@apirx.com · 256-574-7528")
 
 
 # ─────────────────────────────────────────────
-#  SIDEBAR  (only rendered when authenticated)
+# Sidebar (when authenticated)
 # ─────────────────────────────────────────────
-if st.session_state.authenticated:
-    # Pick the right module list for the active track
+
+def render_sidebar():
     active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
 
-    with st.sidebar:
-        # Load progress from sheet once per login session
-        if not st.session_state.sheet_loaded:
-            saved = load_progress(st.session_state.employee_id)
-            if saved:
-                for mk, data in saved.items():
-                    st.session_state.progress[mk] = data.get("pct", 0)
-                    st.session_state.checklist_items[mk] = data.get("checklist", {})
-                    if data.get("quiz_score") is not None:
-                        st.session_state.quiz_results[mk] = data["quiz_score"]
-            st.session_state.sheet_loaded = True
+    # Load progress from sheet once per login session
+    if not st.session_state.sheet_loaded:
+        saved = load_progress(st.session_state.employee_id)
+        if saved:
+            for mk, data in saved.items():
+                st.session_state.progress[mk] = data.get("pct", 0)
+                st.session_state.checklist_items[mk] = data.get("checklist", {})
+                if data.get("quiz"):
+                    st.session_state.quiz_results[mk] = data["quiz"]
+        st.session_state.sheet_loaded = True
 
-        # ── White card: logo + label + username ──
-        logo_src = _logo_img_src()
-        render_html(f"""
-        <div class="sidebar-header">
-            <img src="{logo_src}"
-                 style="max-height:56px; width:100%; object-fit:contain; margin-bottom:10px;" />
-            <div style="font-size:0.62rem; font-weight:700; letter-spacing:0.16em;
-                        color:#B8CAE3; text-transform:uppercase; margin-bottom:6px;">
-                    Learning Interface
-            </div>
-            <div class="sidebar-username" style="font-size:0.93rem;">👤 {st.session_state.username}</div>
+    # Header card
+    st.markdown(
+        f"""
+        <div style="padding:8px 0 2px 0;">
+          <div style="font-weight:700;font-size:16px;">Learning Interface</div>
+          <div style="color:#6c757d;">👤 {st.session_state.username}</div>
         </div>
-        """)
+        """,
+        unsafe_allow_html=True,
+    )
 
-        # ── Overall progress ──
-        total_pct = int(sum(st.session_state.progress.values()) / max(len(active_modules), 1))
-        render_html(f"""
-        <div style="font-size:0.68rem; font-weight:700; letter-spacing:0.1em;
-                    color:#8BA3C7; text-transform:uppercase; margin: 6px 0 4px 0;">
-            Progress &middot; {total_pct}%
-        </div>
-        """)
-        render_html(pct_bar(total_pct))
+    active_keys = [m["key"] for m in active_modules]
+    total_pct = int(sum(st.session_state.progress.get(k, 0) for k in active_keys) / max(len(active_keys), 1))
+    st.markdown(pct_bar(total_pct), unsafe_allow_html=True)
 
-        render_html("<div class='sidebar-section-label'>Navigation</div>")
+    st.markdown("### Navigation")
+    nav_options = ["🏠 Home"] + [f"{m['icon']} {m['number']}. {m['title']}" for m in active_modules]
+    module_keys = [None] + [m["key"] for m in active_modules]
 
-        # ── Radio navigation ──
-        nav_options = ["🏠  Home"] + [
-            f"{m['icon']}  {m['number']}. {m['title']}" for m in active_modules
-        ]
-        module_keys = [None] + [m["key"] for m in active_modules]
+    try:
+        current_idx = module_keys.index(st.session_state.selected_module)
+    except ValueError:
+        current_idx = 0
 
-        try:
-            current_idx = module_keys.index(st.session_state.selected_module)
-        except ValueError:
-            current_idx = 0
+    selected_nav = st.radio("Navigation", nav_options, index=current_idx, label_visibility="collapsed")
+    new_key = module_keys[nav_options.index(selected_nav)]
+    if new_key != st.session_state.selected_module:
+        destination = "Home" if new_key is None else next((m["title"] for m in active_modules if m["key"] == new_key), "Module")
+        st.toast(f"Navigating to {destination}", icon="🧭")
+        st.session_state.selected_module = new_key
+        st.rerun()
 
-        selected_nav = st.radio(
-            "Navigation",
-            nav_options,
-            index=current_idx,
-            label_visibility="collapsed",
-        )
+    st.markdown("---")
+    st.toggle("🔈 Interface sounds", key="sound_enabled")
 
-        new_key = module_keys[nav_options.index(selected_nav)]
-        if new_key != st.session_state.selected_module:
-            st.session_state.selected_module = new_key
-            st.rerun()
+    if st.button("🚪 Sign Out", use_container_width=True):
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
 
-        st.markdown("---")
+    st.markdown("---")
+    st.caption("Built with care — an onboarding experience designed for clarity and confidence.")
 
-        # ── Sign Out ──
-        if st.button("🚪 Sign Out", key="sign_out", type="primary", use_container_width=True):
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
-            st.rerun()
-
-        st.markdown("---")
-        render_html("""
-        <small style='color:#8BA3C7'>
-        <b>HR Contact</b><br>
-        Nicole Thornton<br>
-        HR Administrator<br>
-        📞 256-574-7528<br>
-        ✉ Nicole.thornton@apirx.com
-        </small>
-        <div class="sidebar-mini">
-            <div style="font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:#9CB3CF; font-weight:700; margin-bottom:4px;">Experience</div>
-            <div style="color:#EEF4FB; font-size:0.8rem; line-height:1.45;">Cinematic glass navigation inspired by premium hardware UI patterns.</div>
-        </div>
-        """)
 
 # ─────────────────────────────────────────────
-#  MAIN CONTENT — HOME
+# Home view
 # ─────────────────────────────────────────────
+
+def render_module_card(module: dict):
+    pct = st.session_state.progress.get(module["key"], 0)
+    status = "Complete ✓" if pct == 100 else ("In Progress" if pct > 0 else "Queued")
+
+    with st.container(border=True):
+        st.markdown(f"**{module['icon']} Module {module['number']}: {module['title']}**  ")
+        st.caption(module["subtitle"])
+        st.progress(pct)
+        st.write(status)
+        if st.button(f"Launch Module {module['number']}", key=f"open_{module['key']}", use_container_width=True):
+            st.session_state.selected_module = module["key"]
+            st.rerun()
+
+
 def show_home():
-    is_warehouse = st.session_state.get("role_track") == "warehouse"
-    active_modules = WAREHOUSE_MODULES if is_warehouse else MODULES
-    track_label = "Warehouse" if is_warehouse else "General"
-    name_display = st.session_state.username.strip() if st.session_state.username else "Team Member"
+    is_wh = st.session_state.get("role_track") == "warehouse"
+    active_modules = WAREHOUSE_MODULES if is_wh else MODULES
+    track_label = "Warehouse" if is_wh else "General"
+    name_display = st.session_state.username or "Team Member"
 
     module_progress = [st.session_state.progress.get(m["key"], 0) for m in active_modules]
     completed = sum(1 for p in module_progress if p == 100)
-    total_pct = int(sum(module_progress) / len(active_modules)) if active_modules else 0
-    quizzes_done = sum(1 for m in active_modules if st.session_state.quiz_results.get(m["key"]) is not None)
+    total_pct = int(sum(module_progress) / max(len(active_modules), 1))
+    quizzes_done = sum(1 for m in active_modules if st.session_state.quiz_results.get(m["key"]))
 
-    st.markdown('<div class="post-auth-shell">', unsafe_allow_html=True)
-
-    render_html(f"""
-    <div class="premium-hero">
-        <span class="premium-kicker">Elite Training Suite</span>
-        <h1>{track_label} Learning Command Center · {name_display}</h1>
-        <p>
-            A high-trust, premium orientation environment engineered for clarity, momentum, and measurable readiness.
-            Navigate your modules, monitor milestones, and complete every checkpoint with confidence.
-        </p>
-        <div style="margin-top:12px;">
-            <span class="elite-chip">Realtime Progress Sync</span>
-            <span class="elite-chip">Role-Calibrated Path</span>
-            <span class="elite-chip">Assessment Locked</span>
-        </div>
-    </div>
-    """)
+    st.markdown(f"## {track_label} Learning Dashboard · {name_display}")
+    st.caption("Everything you need to get started — all in one place.")
 
     c1, c2, c3 = st.columns(3)
     with c1:
-        render_html(f"""
-        <div class="premium-stat">
-            <div class="premium-stat-label">Milestones Closed</div>
-            <div class="premium-stat-value">{completed}/{len(active_modules)}</div>
-            <div class="premium-stat-sub">Completed training modules in your path</div>
-        </div>
-        """)
+        st.metric("Modules Done", f"{completed}/{len(active_modules)}")
     with c2:
-        render_html(f"""
-        <div class="premium-stat">
-            <div class="premium-stat-label">Program Completion</div>
-            <div class="premium-stat-value">{total_pct}%</div>
-            <div class="premium-stat-sub">Unified progress across lessons + checks</div>
-        </div>
-        """)
+        st.metric("Overall Progress", f"{total_pct}%")
     with c3:
-        render_html(f"""
-        <div class="premium-stat">
-            <div class="premium-stat-label">Assessments Submitted</div>
-            <div class="premium-stat-value">{quizzes_done}/{len(active_modules)}</div>
-            <div class="premium-stat-sub">Knowledge verifications completed</div>
-        </div>
-        """)
+        st.metric("Quizzes Submitted", f"{quizzes_done}/{len(active_modules)}")
 
-    render_html("""
-    <div style="margin:18px 0 10px 0; display:flex; justify-content:space-between; align-items:center; gap:10px;">
-        <div style="font-size:0.72rem; letter-spacing:0.13em; text-transform:uppercase; color:#5F738D; font-weight:700;">Training Modules</div>
-        <div style="font-size:0.75rem; color:#60748E;">Select a module to continue your premium onboarding workflow.</div>
-    </div>
-    """)
+    st.markdown("### Training Modules — pick up where you left off")
+    left_col, right_col = st.columns(2)
+    for idx, module in enumerate(active_modules):
+        target_col = left_col if idx % 2 == 0 else right_col
+        with target_col:
+            render_module_card(module)
 
-    for m in active_modules:
-        pct = st.session_state.progress.get(m["key"], 0)
-        if pct == 100:
-            pill_class, pill_text = "done", "Complete"
-        elif pct > 0:
-            pill_class, pill_text = "live", "In Progress"
-        else:
-            pill_class, pill_text = "pending", "Queued"
 
-        render_html(f"""
-        <div class="module-card-premium">
-            <div class="module-topline">
-                <p class="module-name">{m['icon']} · Module {m['number']} · {m['title']}</p>
-                <span class="pill {pill_class}">{pill_text}</span>
-            </div>
-            <p class="module-sub">{m['subtitle']}</p>
-            <div class="module-meter"><span style="width:{pct}%"></span></div>
-            <div style="margin-top:8px; color:#5B6F88; font-size:0.76rem; display:flex; justify-content:space-between;">
-                <span>Execution progress</span><strong style="color:#081426;">{pct}%</strong>
-            </div>
-        </div>
-        """)
+# ─────────────────────────────────────────────
+# Module content renderers (trimmed HTML; warm tone)
+# Each uses the same checklist/quiz patterns as original.
+# ─────────────────────────────────────────────
 
-        if st.button(f"Launch Module {m['number']}", key=f"open_{m['key']}", type="secondary"):
-            st.session_state.selected_module = m["key"]
+def checklist_block(mk: str, items: dict):
+    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
+        st.session_state.checklist_items[mk] = {k: False for k in items}
+    changed = False
+    for key, label in items.items():
+        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
+        if val != st.session_state.checklist_items[mk].get(key, False):
+            st.session_state.checklist_items[mk][key] = val
+            changed = True
+    if changed:
+        checked_count = sum(1 for v in st.session_state.checklist_items[mk].values() if v)
+        total_items = len(st.session_state.checklist_items[mk])
+        st.toast(f"Checklist updated · {checked_count}/{total_items}", icon="✅")
+        update_progress(mk)
+
+
+def quiz_block(mk: str, questions: list[tuple[str, list[str], str]]):
+    existing = st.session_state.quiz_results.get(mk)
+    if existing:
+        score, mx = existing
+        st.success(f"✅ Quiz submitted! You scored {score}/{mx}.")
+        return
+    with st.form(f"quiz_{mk}"):
+        selections = []
+        for i, (prompt, options, _answer) in enumerate(questions, start=1):
+            sel = st.radio(f"{i}. {prompt}", options, index=None, key=f"{mk}_q{i}")
+            selections.append(sel)
+        submitted = st.form_submit_button("Submit Quiz")
+        if submitted:
+            score = 0
+            for sel, (_, options, answer) in zip(selections, questions):
+                if sel == answer:
+                    score += 1
+            st.session_state.quiz_results[mk] = (score, len(questions))
+            if score == len(questions):
+                st.toast("Perfect score! Outstanding work.", icon="🏆")
+            else:
+                st.toast(f"Quiz submitted · {score}/{len(questions)}", icon="🧠")
+            update_progress(mk)
             st.rerun()
 
-    st.markdown('</div>', unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
-#  MODULE 1 — WELCOME TO AAP
-# ─────────────────────────────────────────────
+# --- General modules ---
+
 def show_module_welcome():
-    render_html("""
-    <div class="content-section">
-        <h2>🏢 Module 1: Welcome to AAP</h2>
+    section_header("Module 1: Welcome to AAP", "Our history, mission, vision & values", "🏢")
+    st.write(
+        """
+        On behalf of your colleagues — welcome! We believe each teammate contributes
+        directly to AAP's success, and we’re excited you’re here. This orientation gives
+        you the essentials without the corporate fluff.
 
-        <h3>A Message From Our CEO</h3>
-        <p>On behalf of your colleagues, I welcome you to AAP and wish you every success here. We believe that each
-        employee contributes directly to AAP's growth and success, and we hope you will take pride in being a member
-        of our team. This handbook was developed to describe some of the expectations of our employees and to outline
-        the policies, programs, and benefits available to eligible employees.</p>
-        <p>We hope that your experience here will be challenging, enjoyable, and rewarding.</p>
-        <p><strong>— Jon Copeland, R.Ph., Chief Executive Officer</strong></p>
+        **Who we are**  
+        AAP (American Associated Pharmacies) formed in **2009**, combining two major
+        cooperatives to support independent pharmacies nationwide. Today we operate API,
+        our independent warehouse and distributor, with two U.S. locations.
 
-        <h3>Who We Are</h3>
-        <p>American Associated Pharmacies (AAP) is a national cooperative of more than <strong>2,000 independent
-        pharmacies</strong>. AAP began in <strong>2009</strong>, when two major pharmacy cooperatives —
-        <strong>United Drugs</strong> of Phoenix, AZ, and <strong>Associated Pharmacies, Inc. (API)</strong>
-        of Scottsboro, AL — joined forces to form one of America's largest independent pharmacy organizations.</p>
-        <p>Today, AAP continues to operate API, its independent warehouse and distributor, with two warehouse locations
-        in the U.S. Along with its subsidiaries, AAP provides member-focused support and serves as a collaborative
-        professional advocate, bringing innovative and cost-saving programs to its member pharmacies, improving both
-        profitability and patient care.</p>
+        **Mission** — Support independent community pharmacies with solutions that
+        increase profitability, streamline operations, and improve patient care.
 
-        <h3>Our Mission</h3>
-        <p>AAP provides support and customized solutions for independent community pharmacies to enhance their
-        profitability, streamline their operations and improve the quality of patient care.</p>
+        **Vision** — Help independent pharmacies thrive in a competitive market.
 
-        <h3>Our Vision</h3>
-        <p>Helping independent pharmacies thrive in a competitive healthcare market.</p>
-
-        <h3>Our Values & Guiding Principles</h3>
-        <p>Our values guide every decision, discussion and behavior. It's not only <em>what</em> we do that matters,
-        but <em>how</em> we do it.</p>
-    </div>
-    """)
-
-    values = [
-        ("🎯", "Customer Focus", "Our primary focus is to meet customer requirements and strive to exceed customer expectations. Excellent service to the outside customer is dependent upon healthy internal customer service practices and teamwork. Customer Service is not just a department — it is an attitude."),
-        ("🤝", "Integrity", "We act with honesty and integrity without compromising the truth. We maintain consistency in what we say and what we do to build trust."),
-        ("💙", "Respect", "We treat others with the same dignity as we wish to be treated. We recognize the power of teamwork and appreciate the unique contributions that each member of a team can make. We encourage open and honest communication."),
-        ("⭐", "Excellence", "We strive for the highest quality in everything that we do. We seek and pursue opportunities for continuous improvement and innovation."),
-        ("🙋", "Ownership", "We seek responsibility and hold ourselves accountable for our actions. When things go wrong, we take responsibility."),
-    ]
-
-    for icon, value, desc in values:
-        render_html(f"""
-        <div class="content-section" style="padding:18px 24px;margin-bottom:10px;">
-            <h3 style="margin-top:0">{icon} {value}</h3>
-            <p style="margin:0">{desc}</p>
-        </div>
-        """)
-
-    # CHECKLIST
-    st.markdown("### ✅ Module 1 Checklist")
-    st.markdown("Check off each item as you review it.")
-
-    checklist_items = {
-        "ceo_welcome": "I have read the CEO welcome message.",
+        **Values** — Customer Focus · Integrity · Respect · Excellence · Ownership
+        """
+    )
+    st.markdown("### ✅ Checklist")
+    checklist_block("welcome", {
+        "ceo_welcome": "I read the welcome message.",
         "who_we_are": "I understand who AAP is and when it was founded.",
-        "mission": "I can explain AAP's mission statement.",
-        "vision": "I can explain AAP's vision statement.",
-        "values_5": "I can name all five of AAP's core values.",
-        "value_conduct": "I understand that values guide both what we do AND how we do it.",
-        "two_locations": "I know AAP operates two warehouse locations through its subsidiary, API.",
-    }
+        "mission": "I can explain AAP's mission.",
+        "vision": "I can explain AAP's vision.",
+        "values_5": "I can name all five core values.",
+        "values_conduct": "I understand values guide both what we do and how we do it.",
+        "two_locations": "I know API operates two warehouse locations.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("welcome", [
+        ("In what year was AAP formed?", ["2005", "2007", "2009", "2012"], "2009"),
+        ("Which city is home to API?", ["Phoenix, AZ", "Scottsboro, AL", "Huntsville, AL", "Nashville, TN"], "Scottsboro, AL"),
+        ("Which is NOT a core value?", ["Integrity", "Ownership", "Innovation", "Excellence"], "Innovation"),
+        ("Customer service is best described as:", [
+            "A department that handles complaints",
+            "An attitude shared by all employees",
+            "Management’s responsibility only",
+            "A program run by HR"],
+            "An attitude shared by all employees"
+        ),
+    ])
 
-    mk = "welcome"
-    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
-        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
 
-    changed = False
-    for key, label in checklist_items.items():
-        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
-        if val != st.session_state.checklist_items[mk].get(key, False):
-            st.session_state.checklist_items[mk][key] = val
-            changed = True
-    if changed:
-        update_progress(mk)
-
-    # QUIZ
-    st.markdown("### 📝 Module 1 Quiz")
-    if st.session_state.quiz_results.get(mk) is not None:
-        score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/4.")
-    else:
-        with st.form("quiz_welcome"):
-            q1 = st.radio("1. In what year was AAP formed?",
-                ["2005", "2007", "2009", "2012"], key="w_q1", index=None)
-            q2 = st.radio("2. Which city is home to AAP's subsidiary API?",
-                ["Phoenix, AZ", "Scottsboro, AL", "Huntsville, AL", "Nashville, TN"], key="w_q2", index=None)
-            q3 = st.radio("3. Which of the following is NOT one of AAP's five core values?",
-                ["Integrity", "Ownership", "Innovation", "Excellence"], key="w_q3", index=None)
-            q4 = st.radio("4. According to AAP's values, customer service is best described as:",
-                ["A department that handles complaints",
-                 "An attitude shared by all employees",
-                 "The responsibility of management only",
-                 "A program run by the VP of HR"], key="w_q4", index=None)
-            submitted = st.form_submit_button("Submit Quiz")
-            if submitted:
-                score = sum([
-                    q1 == "2009",
-                    q2 == "Scottsboro, AL",
-                    q3 == "Innovation",
-                    q4 == "An attitude shared by all employees",
-                ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
-                st.rerun()
-
-# ─────────────────────────────────────────────
-#  MODULE 2 — CODE OF CONDUCT
-# ─────────────────────────────────────────────
 def show_module_conduct():
-    render_html("""
-    <div class="content-section">
-        <h2>⚖️ Module 2: Code of Conduct & Ethics</h2>
+    section_header("Module 2: Code of Conduct & Ethics", "Do the right thing, every time", "⚖️")
+    st.write(
+        """
+        Trust is our backbone. We comply with laws and expect everyone to act with
+        integrity, professionalism, and respect. Report concerns promptly — no retaliation.
 
-        <h3>Our Commitment</h3>
-        <p>The success of AAP is dependent upon our customers' trust and we are dedicated to preserving that trust.
-        Employees owe a duty to AAP, its customers, and shareholders to act in a way that will merit the continued
-        trust and confidence of the public. AAP will comply with all applicable laws and regulations and expects its
-        directors, officers, and employees to conduct business in accordance with the letter, spirit, and intent of
-        all relevant laws — and to refrain from any illegal, dishonest, or unethical conduct.</p>
-        <p>Compliance with this policy of business ethics is the responsibility of <strong>every AAP employee.</strong></p>
+        **Unacceptable conduct (examples)** — Theft, falsifying records, harassment,
+        unsafe behavior, working under the influence, unauthorized equipment use, 
+        no‑call/no‑show, and disclosing confidential information.
 
-        <h3>As an AAP Employee, I Will…</h3>
-        <ul>
-            <li><strong>Work diligently</strong> to pursue the Company's objectives without disrupting others.</li>
-            <li><strong>Protect company assets</strong> — including information systems, intellectual property, equipment,
-            and cash — from theft, misuse, or misappropriation.</li>
-            <li><strong>Conduct myself with the highest level of professionalism, integrity, and ability,</strong>
-            treating coworkers, vendors, visitors, and members with respect, dignity, and courtesy.</li>
-            <li><strong>Use appropriate judgment</strong> in all communications (email, memos, notes) and avoid
-            inappropriate or derogatory comments about anyone I work with.</li>
-            <li><strong>Accept full responsibility</strong> for the work I perform and report any errors or omissions
-            to my supervisor immediately.</li>
-            <li><strong>Not misuse authority or company property</strong> entrusted to me.</li>
-            <li><strong>Build and share knowledge</strong> for the betterment of AAP and my coworkers.</li>
-            <li><strong>Protect the privacy and confidentiality</strong> of all information entrusted to me.</li>
-            <li><strong>Behave ethically</strong> and report any known or suspected illegal or unethical behavior
-            to my supervisor immediately.</li>
-            <li><strong>Avoid conflicts of interest</strong> and ensure my employer is aware of any real, perceived,
-            or potential conflict of interest.</li>
-        </ul>
-    </div>
-    """)
+        **EEO** — Employment decisions are based on merit, qualifications, and abilities.
+        """
+    )
+    st.markdown("### ✅ Checklist")
+    checklist_block("conduct", {
+        "code_reviewed": "I’ve read the Code of Conduct.",
+        "unacceptable": "I understand examples of unacceptable conduct.",
+        "eeo": "I understand AAP's EEO policy.",
+        "harassment": "I know how to report harassment (no retaliation).",
+        "confidentiality": "I understand confidentiality and will sign the NDA.",
+        "conflicts": "I will disclose any conflicts of interest.",
+        "reporting": "I will report known/suspected illegal or unethical behavior.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("conduct", [
+        ("AAP's employment decisions are based on:", ["Seniority", "Merit, qualifications, and abilities", "Education only", "Manager discretion"], "Merit, qualifications, and abilities"),
+        ("If you witness suspected unethical behavior, you should:", ["Ignore it", "Post on social", "Report to your supervisor immediately", "Wait to see if it repeats"], "Report to your supervisor immediately"),
+        ("Which is NOT sexual harassment?", ["Offensive jokes about appearance", "A professional performance evaluation", "Showing sexual images", "Implied promises tied to sexual conduct"], "A professional performance evaluation"),
+        ("Refusing to sign the NDA results in:", ["Warning", "HR meeting", "Immediate termination", "Probation"], "Immediate termination"),
+    ])
 
-    render_html("""
-    <div class="content-section">
-        <h3>⚠️ Unacceptable Conduct</h3>
-        <p>The following are examples of conduct that may result in disciplinary action, <strong>up to and including
-        termination of employment:</strong></p>
-        <ul>
-            <li>Theft or inappropriate removal or possession of property</li>
-            <li>Falsification of records, including timekeeping records</li>
-            <li>Working under the influence of alcohol or illegal drugs</li>
-            <li>Possession, distribution, sale, transfer, or use of alcohol or illegal drugs in the workplace</li>
-            <li>Fighting or threatening violence in the workplace</li>
-            <li>Boisterous or disruptive activity in the workplace</li>
-            <li>Negligence or improper conduct leading to damage of employer-owned or customer-owned property</li>
-            <li>Insubordination or other disrespectful conduct</li>
-            <li>Violation of safety or health rules</li>
-            <li>Sexual or other unlawful or unwelcomed harassment</li>
-            <li>Possession of dangerous or unauthorized materials (explosives, firearms) in the workplace</li>
-            <li>Excessive absenteeism or any absence without notice</li>
-            <li>Unauthorized use of telephones, mail system, or other employer-owned equipment</li>
-            <li>Unauthorized disclosure of business secrets or confidential information</li>
-            <li>Unsatisfactory performance or conduct</li>
-        </ul>
-    </div>
-    """)
 
-    render_html("""
-    <div class="content-section">
-        <h3>🛡️ Equal Employment Opportunity (EEO)</h3>
-        <p>Employment decisions at AAP are based on <strong>merit, qualifications, and abilities.</strong> AAP does
-        not discriminate in employment opportunities or practices on the basis of race, color, religion, sex, national
-        origin, age, disability, or any other characteristic protected by law.</p>
-        <p>Employees can raise concerns and make reports without fear of reprisal. Anyone found to be engaging in any
-        type of unlawful discrimination will be subject to disciplinary action, up to and including termination.</p>
-
-        <h3>🚫 Sexual & Other Unlawful Harassment</h3>
-        <p>AAP is committed to providing a work environment that is free of discrimination and unlawful harassment.
-        Sexual harassment can take many forms, including:</p>
-        <ul>
-            <li>Offensive comments or jokes</li>
-            <li>Sexual advances or unnecessary touching</li>
-            <li>Comments about a person's body</li>
-            <li>Showing sexually suggestive pictures or objects</li>
-            <li>Implied promises or threats tied to participation in sexual conduct</li>
-        </ul>
-        <p><strong>This conduct has no place at AAP and will not be tolerated.</strong></p>
-        <p>If you believe you have been harassed, you should:</p>
-        <ul>
-            <li>Tell the offender their conduct is offensive (if comfortable doing so).</li>
-            <li>Report it to your immediate supervisor or the HR department.</li>
-            <li>If the harasser is your supervisor, contact the <strong>VP of Human Resources</strong> directly.</li>
-        </ul>
-        <p>No one will be retaliated against for complaining in good faith about sexual harassment.</p>
-
-        <h3>🔒 Confidentiality</h3>
-        <p>All employees are required to sign a Confidentiality and Non-Disclosure Agreement upon hire. All written
-        and verbal communication regarding the Company's operations or your position must remain strictly confidential
-        unless otherwise permitted by your supervisor or by Company policy. <strong>Refusal to sign is grounds for
-        immediate termination.</strong></p>
-    </div>
-    """)
-
-    st.markdown("### ✅ Module 2 Checklist")
-    checklist_items = {
-        "code_reviewed": "I have read and understand the AAP Employee Code of Conduct.",
-        "unacceptable": "I understand examples of unacceptable workplace conduct.",
-        "eeo": "I understand AAP's Equal Employment Opportunity policy.",
-        "harassment": "I know how to report harassment and that retaliation is prohibited.",
-        "confidentiality": "I understand my confidentiality obligations and will sign the NDA.",
-        "conflicts": "I understand my obligation to disclose any real or potential conflicts of interest.",
-        "reporting": "I know to report known or suspected illegal/unethical behavior to my supervisor.",
-    }
-
-    mk = "conduct"
-    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
-        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
-
-    changed = False
-    for key, label in checklist_items.items():
-        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
-        if val != st.session_state.checklist_items[mk].get(key, False):
-            st.session_state.checklist_items[mk][key] = val
-            changed = True
-    if changed:
-        update_progress(mk)
-
-    st.markdown("### 📝 Module 2 Quiz")
-    if st.session_state.quiz_results.get(mk) is not None:
-        score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/4.")
-    else:
-        with st.form("quiz_conduct"):
-            q1 = st.radio("1. AAP's employment decisions are based on which of the following?",
-                ["Seniority and connections",
-                 "Merit, qualifications, and abilities",
-                 "Education level only",
-                 "Manager discretion"], key="c_q1", index=None)
-            q2 = st.radio("2. If you witness suspected illegal or unethical behavior, you should:",
-                ["Ignore it to avoid conflict",
-                 "Post about it on social media",
-                 "Report it to your supervisor immediately",
-                 "Wait to see if it happens again"], key="c_q2", index=None)
-            q3 = st.radio("3. Which of the following is NOT considered sexual harassment?",
-                ["Making offensive jokes about a coworker's appearance",
-                 "Giving a coworker a professional performance evaluation",
-                 "Showing sexually suggestive images to coworkers",
-                 "Making implied promises tied to sexual conduct"], key="c_q3", index=None)
-            q4 = st.radio("4. Refusing to sign the Confidentiality and Non-Disclosure Agreement results in:",
-                ["A written warning",
-                 "A meeting with HR",
-                 "Immediate termination",
-                 "A probationary period"], key="c_q4", index=None)
-            submitted = st.form_submit_button("Submit Quiz")
-            if submitted:
-                score = sum([
-                    q1 == "Merit, qualifications, and abilities",
-                    q2 == "Report it to your supervisor immediately",
-                    q3 == "Giving a coworker a professional performance evaluation",
-                    q4 == "Immediate termination",
-                ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
-                st.rerun()
-
-# ─────────────────────────────────────────────
-#  MODULE 3 — WORKPLACE POLICIES
-# ─────────────────────────────────────────────
 def show_module_policies():
-    render_html("""
-    <div class="content-section">
-        <h2>📋 Module 3: Workplace Policies</h2>
+    section_header("Module 3: Workplace Policies", "Attendance, appearance, safety & more", "📋")
+    st.write(
+        """
+        **Attendance (no‑fault points)**  
+        • Tardy ≤ 5 min: 0  
+        • Tardy/early leave (< 4 hrs): ½  
+        • 4+ hrs absence/tardy/early leave: 1  
+        • No call ≥ 15 min after start: 1½  
 
-        <h3>🕐 Attendance & Punctuality</h3>
-        <p>AAP uses a <strong>no-fault point system</strong> to manage attendance fairly and consistently for all
-        non-exempt employees. Absences are tracked regardless of the reason, with a few specific exclusions.</p>
+        **Corrective actions (12‑month window)**  
+        • 5 pts: Coaching  
+        • 6 pts: Verbal warning  
+        • 7 pts: Written warning  
+        • 8 pts: Termination  
 
-        <p><strong>Excluded from points (these do NOT count against you):</strong>
-        FMLA leave, pre-approved personal leaves, bereavement leave, jury/witness duty, pre-approved vacation days,
-        personal days, holidays, long-term sick leave, approved early leaves, short-term disability, and emergency
-        closing absences.</p>
+        **Perks for perfect attendance** — 1 point removed after **2 consecutive months**; **$75** bonus after **3 months**.
 
-        <p><strong>Point Values:</strong></p>
-    </div>
-    """)
+        **Other highlights** — Dress appropriately; Drug & alcohol‑free workplace; Report safety issues and injuries immediately; Company systems are for business use.
+        """
+    )
+    st.info("No‑call/no‑show for 2 consecutive days may be treated as a voluntary resignation.")
 
-    render_html("""
-    <table class="styled-table">
-        <tr><th>Reason</th><th>Points</th></tr>
-        <tr><td>Tardy up to 5 minutes (grace period)</td><td>0</td></tr>
-        <tr><td>Tardy or early leave (less than 4 hours)</td><td>½</td></tr>
-        <tr><td>Full shift absence, tardy or early leave (4+ hours)</td><td>1</td></tr>
-        <tr><td>Absence with no report or call 15+ minutes after start of workday</td><td>1½</td></tr>
-    </table>
-    """)
+    st.markdown("### ✅ Checklist")
+    checklist_block("policies", {
+        "point_system": "I understand the attendance point system.",
+        "corrective_levels": "I know corrective steps (5: coaching · 6: verbal · 7: written · 8: termination).",
+        "perfect_att": "I know point removal and $75 bonus rules.",
+        "no_call": "I understand 2-day no‑call/no‑show can be a resignation.",
+        "appearance": "I understand appearance standards.",
+        "drug_policy": "I understand the drug & alcohol policy.",
+        "safety": "I will report unsafe conditions or injuries immediately.",
+        "computer_policy": "I understand business‑use of computer/email systems.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("policies", [
+        ("Points for a full shift no‑call/no‑show?", ["½", "1", "1½", "2"], "1½"),
+        ("At how many points is employment terminated?", ["6", "7", "8", "10"], "8"),
+        ("Consecutive months for $75 bonus?", ["1", "2", "3", "6"], "3"),
+        ("Who owns the safety program?", ["CEO", "VP of HR", "Dept heads", "OSHA"], "VP of HR"),
+        ("Pre‑approved vacation days are excluded from points.", ["True", "False"], "True"),
+    ])
 
-    render_html("""
-    <table class="styled-table">
-        <tr><th>Points Accumulated (in 12 months)</th><th>Action</th></tr>
-        <tr><td>5 points</td><td>Coaching Session</td></tr>
-        <tr><td>6 points</td><td>Verbal Warning</td></tr>
-        <tr><td>7 points</td><td>Written Warning</td></tr>
-        <tr><td>8 points</td><td>Termination</td></tr>
-    </table>
-    """)
 
-    st.markdown(info_box("💡 <b>Perfect Attendance Rewards:</b> 1 point is removed after <b>2 consecutive months</b> of perfect attendance. Employees with <b>3 consecutive months</b> of perfect attendance receive a <b>$75 bonus</b> on their next paycheck."), unsafe_allow_html=True)
-    st.markdown(info_box("⚠️ <b>No Call / No Show:</b> 2 consecutive days without reporting in will be treated as a voluntary resignation.", "yellow"), unsafe_allow_html=True)
-    st.markdown(info_box("📋 <b>Doctor's Notes:</b> Required for illness greater than 1 day, up to a maximum of 3 consecutive days. The note must include dates of absence and the return-to-work date."), unsafe_allow_html=True)
+def show_module_timeoff():
+    section_header("Module 4: Time Off & Leave", "Plan ahead with confidence", "⏰")
+    st.write(
+        """
+        **Vacation & holidays** — Pre‑approved vacation days don’t add attendance points.  
+        **Sick leave** — Long‑Term Sick Leave requires **3+ consecutive physician‑mandated days**.  
+        **FMLA** — Generally requires **12 months** of service and **1,250** hours worked.  
+        **Life events** — Notify HR within **30 days** to update benefits.
+        """
+    )
+    st.markdown("### ✅ Checklist")
+    checklist_block("timeoff", {
+        "vacation_rules": "I understand pre‑approved vacation & points.",
+        "holiday_awareness": "I know holiday/time‑off expectations for my schedule.",
+        "sick_leave_trigger": "I know when Long‑Term Sick Leave applies.",
+        "fmla_baseline": "I know baseline FMLA eligibility.",
+        "life_event_window": "I know the 30‑day window for benefits changes.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("timeoff", [
+        ("Pre‑approved vacation days are excluded from points.", ["True", "False"], "True"),
+        ("LTSL requires:", ["1 day", "3+ consecutive physician‑mandated days", "5 days", "Any doctor note"], "3+ consecutive physician‑mandated days"),
+        ("FMLA eligibility requires:", ["60 days", "6 months", "12 months & 1,250 hours", "Manager approval"], "12 months & 1,250 hours"),
+        ("Report qualifying life events within:", ["7 days", "14 days", "30 days", "60 days"], "30 days"),
+    ])
 
-    render_html("""
-    <div class="content-section">
-        <h3>👔 Personal Appearance</h3>
-        <p>Dress requirements vary by department. Your supervisor will advise you on department-specific expectations.
-        The following standards apply to <strong>all employees at all times:</strong></p>
-        <ul>
-            <li>A neat, clean, and well-groomed appearance is required.</li>
-            <li>All clothing must be work-appropriate — nothing too revealing or inappropriate.</li>
-            <li>Avoid clothing with offensive or inappropriate stamps/logos.</li>
-            <li>Due to allergies and asthma concerns, avoid wearing perfume or perfume-scented products.</li>
-        </ul>
-        <p>Employees found to be out of compliance will be asked to clock out, leave, and return dressed appropriately.</p>
 
-        <h3>🚭 Drug & Alcohol Policy</h3>
-        <p>AAP maintains a <strong>drug and alcohol-free workplace.</strong> Employees may not use or be under the
-        influence of alcohol, drugs, or any intoxicating substance while at work. Employees are subject to
-        <strong>random drug testing at any time.</strong></p>
-        <ul>
-            <li>All work-related accidents require immediate drug and alcohol testing.</li>
-            <li>Violations may result in immediate termination and/or required participation in a rehab program.</li>
-            <li>The Employee Assistance Program (EAP) is available to employees who need support with substance concerns.</li>
-        </ul>
-
-        <h3>🛡️ Workplace Safety</h3>
-        <p>The <strong>VP of Human Resources</strong> is responsible for AAP's safety program. Each employee is
-        expected to:</p>
-        <ul>
-            <li>Obey all safety rules and exercise caution in all work activities.</li>
-            <li>Immediately report any unsafe condition to the appropriate supervisor.</li>
-            <li>Report all work-related injuries to HR or a supervisor immediately, no matter how minor.</li>
-        </ul>
-        <p>Violating safety standards may result in disciplinary action, up to and including termination.</p>
-
-        <h3>💻 Computer & Email Use</h3>
-        <p>All computers, files, email systems, and software are <strong>AAP property</strong> intended for
-        business use. AAP may monitor computer and email usage to ensure compliance.</p>
-        <ul>
-            <li>Do not use a password, access a file, or retrieve stored communications without authorization.</li>
-            <li>Transmission of sexually explicit images, ethnic slurs, racial comments, or off-color jokes
-            is strictly prohibited.</li>
-            <li>Do not illegally duplicate software or its documentation.</li>
-        </ul>
-
-        <h3>🚷 Workplace Violence</h3>
-        <p>AAP has zero tolerance for workplace violence. This includes verbal or physical harassment or threats,
-        assaults, bullying, and any behavior that causes others to feel unsafe.</p>
-        <p>All threatening incidents must be <strong>reported within 24 hours</strong> and will be investigated
-        and documented by Human Resources.</p>
-
-        <h3>⏰ Work Schedules & Overtime</h3>
-        <p>Your supervisor will advise you of your individual work schedule. Staffing needs may require variations
-        in hours. <strong>All overtime must be approved by your supervisor before it is performed.</strong>
-        Unauthorized overtime or failure to work scheduled overtime may result in disciplinary action.</p>
-    </div>
-    """)
-
-    st.markdown("### ✅ Module 3 Checklist")
-    checklist_items = {
-        "point_system": "I understand the no-fault attendance point system and the point values.",
-        "corrective_levels": "I know the corrective action steps (coaching at 5, verbal at 6, written at 7, termination at 8).",
-        "perfect_att": "I know I can earn a point removal and a $75 bonus for perfect attendance.",
-        "no_call": "I understand that 2 consecutive no-call/no-shows may be treated as a resignation.",
-        "appearance": "I understand AAP's personal appearance standards.",
-        "drug_policy": "I understand AAP's drug and alcohol-free workplace policy.",
-        "safety": "I know to immediately report any unsafe condition or work-related injury.",
-        "computer_policy": "I understand that company computers and email are for business use and may be monitored.",
-    }
-
-    mk = "policies"
-    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
-        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
-
-    changed = False
-    for key, label in checklist_items.items():
-        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
-        if val != st.session_state.checklist_items[mk].get(key, False):
-            st.session_state.checklist_items[mk][key] = val
-            changed = True
-    if changed:
-        update_progress(mk)
-
-    st.markdown("### 📝 Module 3 Quiz")
-    if st.session_state.quiz_results.get(mk) is not None:
-        score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/5.")
-    else:
-        with st.form("quiz_policies"):
-            q1 = st.radio("1. How many points does a full shift no-call / no-show receive?",
-                ["½ point", "1 point", "1½ points", "2 points"], key="p_q1", index=None)
-            q2 = st.radio("2. At how many points within 12 months is an employee terminated?",
-                ["6 points", "7 points", "8 points", "10 points"], key="p_q2", index=None)
-            q3 = st.radio("3. How many consecutive months of perfect attendance earns the $75 bonus?",
-                ["1 month", "2 months", "3 months", "6 months"], key="p_q3", index=None)
-            q4 = st.radio("4. Who is responsible for AAP's safety program?",
-                ["The CEO",
-                 "The VP of Human Resources",
-                 "Each individual department head",
-                 "OSHA"], key="p_q4", index=None)
-            q5 = st.radio("5. Pre-approved vacation days are excluded from the attendance point system.",
-                ["True", "False"], key="p_q5", index=None)
-            submitted = st.form_submit_button("Submit Quiz")
-            if submitted:
-                score = sum([
-                    q1 == "1½ points",
-                    q2 == "8 points",
-                    q3 == "3 months",
-                    q4 == "The VP of Human Resources",
-                    q5 == "True",
-                ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
-                st.rerun()
-
-# ─────────────────────────────────────────────
-#  MODULE 4 — BENEFITS & TIME OFF
-# ─────────────────────────────────────────────
 def show_module_benefits():
-    render_html("""
-    <div class="content-section">
-        <h2>💼 Module 4: Benefits & Time Off</h2>
-        <p>Benefits eligibility depends on your employment classification. Review the key differences below, then
-        explore each benefit area.</p>
-    </div>
-    """)
+    section_header("Module 5: Benefits", "Health, retirement & day‑one resources", "💼")
+    st.write(
+        """
+        **Health** — Medical, dental, vision become effective on the **1st of the month after 60 days** (eligibility applies).  
+        **401(k)** — Company matches **100%** of the first **3%** you contribute.  
+        **Day‑one** — Teladoc and LinkedIn Learning are available right away.
+        """
+    )
+    st.markdown("### ✅ Checklist")
+    checklist_block("benefits", {
+        "health_effective": "I know when health coverage begins.",
+        "plan_options": "I know there are multiple medical plan options.",
+        "401k_match": "I understand the 401(k) match.",
+        "teladoc_day1": "I know Teladoc is available day one for my household.",
+        "support_resources": "I can find EAP, BenefitHub, and LinkedIn Learning.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("benefits", [
+        ("Health benefits become effective on:", [
+            "Your first day",
+            "1st of the month after 60 days",
+            "After 90 days",
+            "January 1 next year"], "1st of the month after 60 days"),
+        ("401(k) match on the first 3%:", ["50%", "75%", "100%", "200%"], "100%"),
+        ("Teladoc is available to:", ["FT only", "FT & PT", "Everyone in your household, Day 1", "After 60 days"], "Everyone in your household, Day 1"),
+        ("Day‑one resource:", ["BenefitHub & LinkedIn Learning", "Medical enrollment", "401(k) contributions", "FMLA"], "BenefitHub & LinkedIn Learning"),
+    ])
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["⏰ Leave & Holidays", "🏥 Health Benefits", "💰 401k & Life", "🌟 Perks & EAP", "FT vs PT Summary"])
 
-    with tab1:
-        render_html("""
-        <div class="content-section">
-            <h3>🏖️ Vacation (Full-Time Only)</h3>
-            <p>Vacation begins accruing after <strong>60 days of full-time service</strong> and is accrued weekly.</p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Length of Employment</th><th>Days Per Year</th><th>Hours Per Year</th><th>Accrual Rate</th></tr>
-            <tr><td>60 days → 1st Anniversary</td><td>3</td><td>24</td><td>0.46 hrs/week</td></tr>
-            <tr><td>1st → 2nd Anniversary</td><td>5</td><td>40</td><td>0.77 hrs/week</td></tr>
-            <tr><td>2nd → 3rd Anniversary</td><td>7</td><td>56</td><td>1.07 hrs/week</td></tr>
-            <tr><td>3rd → 5th Anniversary</td><td>10</td><td>80</td><td>1.54 hrs/week</td></tr>
-            <tr><td>5th → 9th Anniversary</td><td>15</td><td>120</td><td>2.31 hrs/week</td></tr>
-            <tr><td>10th → 19th Anniversary</td><td>17</td><td>136</td><td>2.62 hrs/week</td></tr>
-            <tr><td>20th Anniversary+</td><td>19</td><td>152</td><td>2.93 hrs/week</td></tr>
-        </table>
-        """)
-        st.markdown(info_box("Unused vacation may be banked up to 19 days (152 hours) total. Any remaining time beyond the bank limit is paid out. Accrued vacation is paid out upon termination."), unsafe_allow_html=True)
-
-        render_html("""
-        <div class="content-section">
-            <h3>📅 Personal Leave</h3>
-            <p>Available to full-time and part-time employees after the initial 60-day waiting period.
-            Personal leave <strong>does not carry over</strong> year to year and is not paid out upon termination.</p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Classification</th><th>Upon Initial Eligibility</th><th>After 1 Year</th><th>After 5 Years</th></tr>
-            <tr><td>Full-Time</td><td>24 hours (3 days)</td><td>32 hours (4 days)</td><td>40 hours (5 days)</td></tr>
-            <tr><td>Part-Time</td><td>1 hr per 30 hrs worked, up to 24 hrs</td><td>Up to 32 hrs</td><td>Up to 40 hrs</td></tr>
-        </table>
-        """)
-
-        render_html("""
-        <div class="content-section">
-            <h3>🎄 Paid Holidays</h3>
-            <p>Eligible after <strong>60 days of service.</strong> To receive holiday pay, employees must work the
-            last scheduled day <em>before</em> and the first scheduled day <em>after</em> the holiday.</p>
-            <ul>
-                <li>New Year's Day (January 1)</li>
-                <li>Memorial Day (last Monday in May)</li>
-                <li>Independence Day (July 4)</li>
-                <li>Labor Day (first Monday in September)</li>
-                <li>Thanksgiving (fourth Thursday in November)</li>
-                <li>Christmas Day (December 25)</li>
-                <li><strong>Floating Holiday:</strong> Christmas Eve OR Day After Thanksgiving (based on scheduling needs)</li>
-                <li><strong>Floating Holiday:</strong> Same as above — department-dependent</li>
-            </ul>
-            <p>Employees asked to work a designated holiday will receive a floating holiday to use within 90 days.</p>
-
-            <h3>😷 Long-Term Sick Leave (Full-Time Only)</h3>
-            <p>Reserved for serious illness requiring <strong>3 or more consecutive days</strong> away from work,
-            as mandated by a physician. Cannot be used for cosmetic procedures, routine follow-up visits, or
-            absences under 3 consecutive days.</p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Years of Service</th><th>Days Earned</th></tr>
-            <tr><td>4 years</td><td>10 days (80 hours)</td></tr>
-            <tr><td>9 years</td><td>Additional 10 days</td></tr>
-            <tr><td>14 years</td><td>Additional 10 days</td></tr>
-            <tr><td>19 years</td><td>Additional 10 days</td></tr>
-            <tr><td>Every 5 years thereafter</td><td>Additional 10 days</td></tr>
-        </table>
-        """)
-        st.markdown(info_box("Long-term sick leave can be banked up to 40 days (320 hours) total. It is NOT paid out upon termination."), unsafe_allow_html=True)
-
-        render_html("""
-        <div class="content-section">
-            <h3>🏥 FMLA Leave</h3>
-            <p>Eligible full-time employees who have completed <strong>365 calendar days of service</strong> may
-            request up to <strong>12 weeks of unpaid, job-protected leave</strong> in a 12-month period for:</p>
-            <ul>
-                <li>A serious health condition of the employee</li>
-                <li>Birth or adoption of a child</li>
-                <li>Care for a spouse, child, or parent with a serious health condition</li>
-                <li>Qualifying military exigencies (up to 26 weeks for care of a seriously injured service member)</li>
-            </ul>
-            <p>Health insurance benefits continue during approved FMLA leave. Requests should be made at least
-            <strong>30 days in advance</strong> for foreseeable events.</p>
-
-            <h3>🌸 Other Leave Types</h3>
-            <ul>
-                <li><strong>Bereavement:</strong> Up to 5 paid days for immediate family members (spouse, parent, child, sibling, grandparents, grandchildren, and their spouses).</li>
-                <li><strong>Jury Duty:</strong> Up to 2 weeks paid leave per year.</li>
-                <li><strong>Voting:</strong> Employees unable to vote outside of work hours may request reasonable time off.</li>
-            </ul>
-        </div>
-        """)
-
-    with tab2:
-        render_html("""
-        <div class="content-section">
-            <h3>🏥 Medical Insurance</h3>
-            <p>Eligible after <strong>60 days of employment.</strong> Benefits are effective the
-            <strong>1st of the month following 60 days</strong> of service. Full-time employees working
-            30+ hours per week are eligible.</p>
-            <p>AAP offers <strong>two plans through BlueCross BlueShield of Alabama:</strong></p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th></th><th>Option 1: PPO Plan</th><th>Option 2: HDHP + HSA</th></tr>
-            <tr><td><b>Employee Only</b></td><td>$157.20/mo</td><td>$136.34/mo</td></tr>
-            <tr><td><b>Employee + Spouse</b></td><td>$492.32/mo</td><td>$404.66/mo</td></tr>
-            <tr><td><b>Employee + Child(ren)</b></td><td>$444.36/mo</td><td>$373.04/mo</td></tr>
-            <tr><td><b>Employee + Family</b></td><td>$678.62/mo</td><td>$581.72/mo</td></tr>
-            <tr><td><b>Deductible (Ind/Fam)</b></td><td>$500 / $1,000</td><td>$1,700 / $3,400</td></tr>
-            <tr><td><b>Coinsurance</b></td><td>20%</td><td>10%</td></tr>
-            <tr><td><b>AAP HSA Contribution</b></td><td>N/A</td><td>$900 / $1,800 per year</td></tr>
-            <tr><td><b>Out-of-Pocket Max (Ind/Fam)</b></td><td>$2,250 / $4,500</td><td>$3,400 / $6,800</td></tr>
-            <tr><td><b>Preventive Care</b></td><td>100%</td><td>100%</td></tr>
-            <tr><td><b>PCP / Specialist Copay</b></td><td>$30 / $45</td><td>Ded then 10%</td></tr>
-            <tr><td><b>Telehealth (Teladoc)</b></td><td>FREE (company paid)</td><td>FREE (company paid)</td></tr>
-        </table>
-        """)
-        st.markdown(info_box("📌 <b>HDHP HSA tip:</b> The HSA is owned by <b>you</b> — funds roll over year to year and go with you if you leave AAP. 2026 contribution limits: $4,400 (Single) / $8,750 (Family). If age 55+, add an extra $1,000."), unsafe_allow_html=True)
-
-        render_html("""
-        <div class="content-section">
-            <h3>🦷 Dental Insurance (Guardian)</h3>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th></th><th>Base Plan</th><th>High Plan</th></tr>
-            <tr><td>Employee</td><td>$6.78/mo</td><td>$10.66/mo</td></tr>
-            <tr><td>Employee + Spouse</td><td>$20.56/mo</td><td>$28.80/mo</td></tr>
-            <tr><td>Employee + Child(ren)</td><td>$20.76/mo</td><td>$28.32/mo</td></tr>
-            <tr><td>Employee + Family</td><td>$34.54/mo</td><td>$47.10/mo</td></tr>
-            <tr><td>Annual Max Benefit</td><td>$1,500/member</td><td>$3,000/member</td></tr>
-            <tr><td>Preventive (exams, cleanings)</td><td>100%</td><td>100%</td></tr>
-            <tr><td>Basic Services</td><td>80% after deductible</td><td>100%</td></tr>
-            <tr><td>Major Services</td><td>50% after deductible</td><td>50% after deductible</td></tr>
-            <tr><td>Orthodontics Lifetime Max</td><td>$1,000</td><td>$1,500</td></tr>
-        </table>
-        """)
-
-        render_html("""
-        <div class="content-section">
-            <h3>👓 Vision Insurance (Guardian / Davis Vision)</h3>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th></th><th>Cost / Coverage</th></tr>
-            <tr><td>Employee</td><td>$6.93/mo</td></tr>
-            <tr><td>Employee + One Dependent</td><td>$10.04/mo</td></tr>
-            <tr><td>Employee + Family</td><td>$18.00/mo</td></tr>
-            <tr><td>Eye Exam</td><td>$10 copay (every 12 months)</td></tr>
-            <tr><td>Lenses</td><td>$25 copay (every 12 months)</td></tr>
-            <tr><td>Frames Allowance</td><td>$130 (every 24 months)</td></tr>
-            <tr><td>Contacts</td><td>$130 max (every 12 months)</td></tr>
-        </table>
-        """)
-        st.markdown(info_box("📅 <b>Enrollment reminder:</b> New employees must enroll within <b>30 days of hire.</b> Benefits take effect the 1st of the month following 60 days. Qualified life events allow mid-year changes within 30 days of the event."), unsafe_allow_html=True)
-
-    with tab3:
-        render_html("""
-        <div class="content-section">
-            <h3>💰 401(k) Savings Plan</h3>
-            <p>Eligible on the <strong>1st of the month following 60 days</strong> of continuous full-time employment.</p>
-            <ul>
-                <li>AAP matches <strong>100%</strong> of the first <strong>3%</strong> you contribute.</li>
-                <li>AAP matches <strong>50%</strong> of the next <strong>2%</strong> you contribute.</li>
-                <li>Company match is <strong>100% vested immediately</strong> — it's yours from day one.</li>
-            </ul>
-            <p>Part-time employees are eligible after <strong>1 year of service and 1,000 hours worked.</strong></p>
-
-            <h3>🛡️ Life Insurance & AD&D</h3>
-            <p>AAP provides <strong>Basic Life and AD&D insurance at no cost to you</strong>, equal to your annual
-            earnings up to a maximum of $270,000, through Guardian. This coverage is effective the 1st of the month
-            after 60 days of employment.</p>
-            <p>You may also elect <strong>Voluntary Life and AD&D</strong> for yourself, your spouse, and/or
-            dependents during your initial enrollment period:</p>
-            <ul>
-                <li><strong>Employee:</strong> $10,000 minimum up to 5x annual salary or $500,000 (guarantee issue up to $100,000)</li>
-                <li><strong>Spouse:</strong> $5,000 minimum up to $100,000 (guarantee issue up to $50,000)</li>
-                <li><strong>Child(ren):</strong> $2,000–$10,000 (guarantee issue up to $10,000)</li>
-            </ul>
-            <p>⚠️ If you do not enroll during initial enrollment, future enrollment requires Evidence of Insurability (EOI) approval from Guardian.</p>
-
-            <h3>♿ Disability Insurance</h3>
-            <ul>
-                <li><strong>Short-Term Disability:</strong> 60% of basic weekly earnings up to $1,250/week, after a 7-day elimination period. Benefits continue up to 12 weeks. <em>Employee pays the premium.</em></li>
-                <li><strong>Long-Term Disability:</strong> 60% of basic monthly earnings up to $10,000/month, after a 90-day waiting period. <em>AAP pays 100% of the premium.</em></li>
-            </ul>
-        </div>
-        """)
-
-    with tab4:
-        render_html("""
-        <div class="content-section">
-            <h3>📞 Teladoc — Free Telehealth (Day 1)</h3>
-            <p>Teladoc is a <strong>company-paid benefit effective on your date of hire</strong> — no copays,
-            no appointments needed. Available to <strong>everyone in your household.</strong></p>
-            <ul>
-                <li>General Medical: Board-certified clinicians by phone or video, 24/7</li>
-                <li>Mental Health: Connect with a therapist or psychiatrist, 7 days/week</li>
-                <li>Access at Teladoc.com or by calling 1-800-835-2362</li>
-            </ul>
-
-            <h3>🤝 Employee Assistance Program — LifeMatters (Day 1)</h3>
-            <p>Free, confidential counseling and support services available <strong>24/7/365</strong> to you
-            and your eligible dependents.</p>
-            <ul>
-                <li>Stress, depression, and personal problems</li>
-                <li>Balancing work and personal needs</li>
-                <li>Family and relationship concerns</li>
-                <li>Financial consultation and legal consultation</li>
-                <li>Child and elder care resources</li>
-            </ul>
-            <p>Call: <strong>1-800-634-6433</strong> | Web: mylifematters.com (password: AAP1)</p>
-
-            <h3>🎁 Employee Perks — BenefitHub</h3>
-            <p>AAP has partnered with BenefitHub to give you access to discounts on travel, entertainment,
-            restaurants, auto, electronics, fitness, and more — across 1,000s of brands including Hertz,
-            Groupon, Sam's Club, Dell, and Legoland.</p>
-            <ul>
-                <li>Register at: <strong>aapperks.benefithub.com</strong></li>
-                <li>Referral Code: <strong>9Y7G26</strong></li>
-            </ul>
-
-            <h3>📚 LinkedIn Learning (Day 1)</h3>
-            <p>AAP provides a company-paid LinkedIn Learning subscription effective on your date of hire.
-            Access over 16,000 courses in business, technology, personal development, and more.
-            Check your email for your activation invitation from HR.</p>
-
-            <h3>📱 Verizon Wireless Discount</h3>
-            <p>AAP employees are eligible for a <strong>22% discount</strong> on Verizon Wireless.
-            The account must be in your name. Ask HR for details.</p>
-        </div>
-        """)
-
-    with tab5:
-        render_html("""
-        <div class="content-section">
-            <h3>Full-Time vs. Part-Time: Key Differences</h3>
-            <p>Full-time employees work <strong>30+ hours per week.</strong> Part-time employees work
-            <strong>fewer than 30 hours per week.</strong> Any part-time employee who averages 30+ scheduled
-            hours per week over a 6-month rolling period will be reclassified as full-time.</p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Benefit</th><th>Full-Time</th><th>Part-Time</th></tr>
-            <tr><td>Vacation Time</td><td>✅ Accrues weekly based on tenure</td><td>❌ Not eligible</td></tr>
-            <tr><td>Personal Time</td><td>✅ Lump sum annually</td><td>✅ 1 hr per 30 hrs worked</td></tr>
-            <tr><td>Paid Holidays</td><td>✅ 8 paid holidays</td><td>✅ 8 paid holidays</td></tr>
-            <tr><td>Health/Dental/Vision</td><td>✅ After 60 days</td><td>❌ Not eligible</td></tr>
-            <tr><td>401(k)</td><td>✅ After 60 days</td><td>✅ After 1 year + 1,000 hours</td></tr>
-            <tr><td>Company-Paid Life Insurance</td><td>✅ After 60 days</td><td>❌ Not eligible</td></tr>
-            <tr><td>Long-Term Disability</td><td>✅ After 60 days</td><td>❌ Not eligible</td></tr>
-            <tr><td>Long-Term Sick Leave</td><td>✅ After 4 years</td><td>❌ Not eligible</td></tr>
-            <tr><td>Teladoc</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>LinkedIn Learning</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>EAP / LifeMatters</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-        </table>
-        """)
-
-    st.markdown("### ✅ Module 4 Checklist")
-    checklist_items = {
-        "vacation_schedule": "I understand the vacation accrual schedule and when I become eligible.",
-        "personal_leave": "I understand personal leave amounts and that they do not roll over.",
-        "holidays": "I know the 6 standard paid holidays plus 2 floating holidays.",
-        "medical_plans": "I understand the two medical plan options (PPO and HDHP/HSA).",
-        "dental_vision": "I know dental and vision are available through Guardian.",
-        "401k": "I understand the 401k match formula and immediate vesting.",
-        "life_insurance": "I know AAP provides basic life insurance at no cost to me.",
-        "teladoc": "I know Teladoc is free, effective Day 1, and available to my household.",
-        "eap": "I know the EAP (LifeMatters) is free, confidential, and available 24/7.",
-        "benefithub": "I know about the BenefitHub perks program and the referral code.",
-        "ft_pt_diff": "I understand the key differences between full-time and part-time benefits.",
-    }
-
-    mk = "benefits"
-    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
-        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
-
-    changed = False
-    for key, label in checklist_items.items():
-        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
-        if val != st.session_state.checklist_items[mk].get(key, False):
-            st.session_state.checklist_items[mk][key] = val
-            changed = True
-    if changed:
-        update_progress(mk)
-
-    st.markdown("### 📝 Module 4 Quiz")
-    if st.session_state.quiz_results.get(mk) is not None:
-        score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/5.")
-    else:
-        with st.form("quiz_benefits"):
-            q1 = st.radio("1. Medical, dental, and vision benefits become effective on:",
-                ["Your first day of work",
-                 "The 1st of the month following 60 days of employment",
-                 "After 90 days of employment",
-                 "January 1 of the following year"], key="b_q1", index=None)
-            q2 = st.radio("2. What is AAP's 401(k) match for the first 3% you contribute?",
-                ["50%", "75%", "100%", "200%"], key="b_q2", index=None)
-            q3 = st.radio("3. Teladoc is available to:",
-                ["Full-time employees only",
-                 "Full-time and part-time employees",
-                 "Everyone in your household, effective Day 1",
-                 "Employees after 60 days of service"], key="b_q3", index=None)
-            q4 = st.radio("4. Long-Term Sick Leave requires that the absence be:",
-                ["Any absence longer than 1 day",
-                 "Any physician-mandated absence",
-                 "At least 3 consecutive days mandated by a physician",
-                 "At least 5 consecutive days"], key="b_q4", index=None)
-            q5 = st.radio("5. Part-time employees are eligible for which of the following?",
-                ["Vacation accrual",
-                 "Company-paid life insurance",
-                 "Health insurance after 60 days",
-                 "Teladoc and LinkedIn Learning from Day 1"], key="b_q5", index=None)
-            submitted = st.form_submit_button("Submit Quiz")
-            if submitted:
-                score = sum([
-                    q1 == "The 1st of the month following 60 days of employment",
-                    q2 == "100%",
-                    q3 == "Everyone in your household, effective Day 1",
-                    q4 == "At least 3 consecutive days mandated by a physician",
-                    q5 == "Teladoc and LinkedIn Learning from Day 1",
-                ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
-                st.rerun()
-
-# ─────────────────────────────────────────────
-#  MODULE 5 — FIRST STEPS
-# ─────────────────────────────────────────────
 def show_module_firststeps():
-    render_html("""
-    <div class="content-section">
-        <h2>🚀 Module 5: Your First Steps</h2>
-        <p>This module covers everything you need to get set up and hit the ground running on Day 1 and beyond.</p>
-
-        <h3>📋 Documents to Sign at Hire</h3>
-        <ul>
-            <li>Payroll Direct Deposit</li>
-            <li>Employee Acknowledgment Form</li>
-            <li>Employee Code of Conduct</li>
-            <li>Employee Withholding (W-4 and A-4)</li>
-            <li>Confidentiality &amp; Non-Disclosure Agreement</li>
-            <li>Form: Employee Medical Information</li>
-            <li>"No Sexual Harassment" Statement</li>
-            <li>Overtime / Company Premises Memo</li>
-            <li>DEA Applicant Information Release Authorization</li>
-            <li>Motor Vehicle Report Release Form</li>
-            <li>Drug Policy Acknowledgment</li>
-            <li>Employee's Responsibility to Report Drug Diversion</li>
-            <li>API Staff Alerts</li>
-            <li>Form I-9 (Employment Eligibility Verification)</li>
-            <li>Employee Handbook Acknowledgment</li>
-        </ul>
-    </div>
-    """)
-
-    render_html("""
-    <div class="content-section">
-        <h3>💻 Systems You'll Use</h3>
-
-        <h3>Paylocity — Payroll & HR Self-Service</h3>
-        <p>Paylocity is AAP's payroll platform where you'll view pay stubs, manage direct deposit, and access
-        tax forms. <strong>API Company ID: 123959</strong></p>
-        <p>To register: Go to <strong>access.paylocity.com</strong>, click "Register New User," and enter your
-        Company ID, last name, SSN, and home zip code. You'll set up a username, password, and security questions.</p>
-
-        <h3>BambooHR — Employee Records & Directory</h3>
-        <p>BambooHR is AAP's HRIS (HR Information System). You'll use it to access your employee records, view
-        the company directory, and more. HR will walk you through BambooHR navigation during orientation.
-        Be sure to <strong>upload your profile photo</strong> after logging in.</p>
-
-        <h3>LinkedIn Learning — Professional Development</h3>
-        <p>You should have received an activation email when you were offered the position. If you didn't receive
-        it, contact HR. LinkedIn Learning gives you access to <strong>over 16,000 courses</strong> in business,
-        technology, and personal development — available on any device, at your own pace.</p>
-
-        <h3>Teladoc — Free Telehealth</h3>
-        <p>Set up your Teladoc account by visiting <strong>Teladoc.com</strong> and clicking "Get Started."
-        Select your health insurance plan from the drop-down and confirm coverage. Once set up, general medical
-        visits, mental health visits, and more are <strong>completely free.</strong></p>
-    </div>
-    """)
-
-    render_html("""
-    <div class="content-section">
-        <h3>👥 Key Contacts</h3>
-    </div>
-    """)
-
-    contacts = [
-        ("Brandy Hooper", "VP of Human Resources", "brandy.hooper@rxaap.com", "256-574-7526"),
-        ("Nicole Thornton", "HR Administrator (API)", "nicole.thornton@apirx.com", "256-574-7528"),
-        ("CBIZ Benefits", "Benefits Broker", "844.200.CBIZ (2249)", ""),
-        ("Teladoc", "Free Telehealth", "800-835-2362 | Teladoc.com", ""),
-        ("LifeMatters EAP", "Employee Assistance", "800-634-6433 | mylifematters.com", ""),
-        ("BCBS of Alabama", "Medical Insurance", "888-267-2955 | bcbsal.org", ""),
-        ("Guardian", "Dental, Vision, Life, Disability", "888-482-7342 | guardiananytime.com", ""),
-        ("HealthEquity", "HSA Accounts", "866-274-9887 | healthequity.com", ""),
-    ]
-
-    contact_rows = "".join(
-        f"<tr><td><b>{c[0]}</b></td><td>{c[1]}</td><td>{c[2]}{(' | ' + c[3]) if c[3] else ''}</td></tr>"
-        for c in contacts
-    )
-    render_html(
-        f'<table class="styled-table">'
-        f"<tr><th>Name / Resource</th><th>Role</th><th>Contact</th></tr>"
-        f"{contact_rows}</table>"
+    section_header("Module 6: Your First Steps", "Let’s get you set up", "🚀")
+    st.write(
+        f"""
+        **Documents to sign** — Direct Deposit · Acknowledgments · W‑4/A‑4 · NDA · I‑9 · Handbook.  
+        **Paylocity** — Register at access.paylocity.com (Company ID: **{PAYLOCITY_COMPANY_ID}**).  
+        **BambooHR** — HR will walk you through it. Add a profile photo.  
+        **LinkedIn Learning** — Activation email at offer; ask HR if missing.  
+        **Teladoc** — Visit Teladoc.com → Get Started. Free general & mental health visits.
+        """
     )
 
-    render_html("""
-    <div class="content-section">
-        <h3>📆 What to Expect in Your First 90 Days</h3>
-        <ul>
-            <li><strong>Days 1–30:</strong> Complete orientation, sign all paperwork, get access to systems,
-            meet your team, shadow key processes, and complete 30-day survey.</li>
-            <li><strong>Days 31–60:</strong> Begin independently executing your core responsibilities with
-            supervisor support. Complete your 60-day survey. Become eligible for most benefits.</li>
-            <li><strong>Days 61–90:</strong> Build confidence and consistency in your role. Identify opportunities
-            for improvement. Full introductory period concludes.</li>
-        </ul>
+    st.markdown("### 👥 Key Contacts")
+    for name, role, contact, phone in CONTACTS:
+        line = f"**{name}** — {role} · {contact}"
+        if phone:
+            line += f" · {phone}"
+        st.write("- " + line)
 
-        <h3>📬 Important Policies to Remember Going Forward</h3>
-        <ul>
-            <li>Update HR immediately with any personal data changes (address, dependents, emergency contacts).</li>
-            <li>If you have a qualifying life event (marriage, birth, etc.), notify HR within <strong>30 days</strong>
-            to make benefits changes.</li>
-            <li>Performance evaluations are conducted approximately every 12 months from your hire anniversary.</li>
-            <li>AAP is an at-will employer — either party may end the relationship at any time for any lawful reason.</li>
-            <li>Report all concerns through the problem resolution process — starting with your supervisor,
-            then escalating to HR and management if needed.</li>
-        </ul>
-    </div>
-    """)
-
-    st.markdown("### ✅ Module 5 Checklist")
-    checklist_items = {
-        "paperwork": "I understand which documents I need to sign during orientation.",
-        "paylocity": "I know how to register for Paylocity (Company ID: 123959).",
-        "bamboohr": "I understand what BambooHR is used for and that I need to upload my photo.",
-        "linkedin": "I have received or know how to request my LinkedIn Learning activation.",
+    st.markdown("### ✅ Checklist")
+    checklist_block("firststeps", {
+        "paperwork": "I know what I’m signing during orientation.",
+        "paylocity": f"I know how to register for Paylocity (Company ID: {PAYLOCITY_COMPANY_ID}).",
+        "bamboohr": "I know what BambooHR is for (and to upload my photo).",
+        "linkedin": "I have my LinkedIn Learning activation or know how to request it.",
         "teladoc_setup": "I know how to set up my Teladoc account.",
-        "key_contacts": "I know who to contact for HR, benefits, payroll, and telehealth questions.",
-        "first90": "I understand what is expected of me in my first 30, 60, and 90 days.",
-        "at_will": "I understand AAP is an at-will employer.",
-        "life_event": "I know I have 30 days to notify HR of qualifying life events for benefits changes.",
-    }
-
-    mk = "firststeps"
-    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
-        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
-
-    changed = False
-    for key, label in checklist_items.items():
-        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
-        if val != st.session_state.checklist_items[mk].get(key, False):
-            st.session_state.checklist_items[mk][key] = val
-            changed = True
-    if changed:
-        update_progress(mk)
-
-    st.markdown("### 📝 Module 5 Quiz")
-    if st.session_state.quiz_results.get(mk) is not None:
-        score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/4.")
-    else:
-        with st.form("quiz_firststeps"):
-            q1 = st.radio("1. What is the Paylocity Company ID for API employees?",
-                ["123456", "123959", "987654", "112358"], key="f_q1", index=None)
-            q2 = st.radio("2. How many days do you have to notify HR of a qualifying life event for benefits changes?",
-                ["7 days", "14 days", "30 days", "60 days"], key="f_q2", index=None)
-            q3 = st.radio("3. Which of the following is available to you on your very first day of employment?",
-                ["Medical insurance",
-                 "Vacation accrual",
-                 "Teladoc and LinkedIn Learning",
-                 "401(k) enrollment"], key="f_q3", index=None)
-            q4 = st.radio("4. AAP's employment relationship is best described as:",
-                ["Guaranteed for a fixed term",
-                 "At-will, meaning either party may end employment at any time for any lawful reason",
-                 "Protected by a union contract",
-                 "Governed by a mandatory 2-year commitment"], key="f_q4", index=None)
-            submitted = st.form_submit_button("Submit Quiz")
-            if submitted:
-                score = sum([
-                    q1 == "123959",
-                    q2 == "30 days",
-                    q3 == "Teladoc and LinkedIn Learning",
-                    q4 == "At-will, meaning either party may end employment at any time for any lawful reason",
-                ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
-                st.rerun()
-
-    # Completion check
-    total_pct = int(sum(st.session_state.progress.values()) / len(MODULES))
-    if total_pct == 100:
-        render_html("""
-        <div class="content-section" style="border-left:4px solid #2ecc71;text-align:center;padding:36px;">
-            <h2 style="color:#2ecc71;">🎉 Congratulations!</h2>
-            <p style="font-size:1.1rem;">You have completed all five AAP orientation modules.
-            Welcome to the team — we're glad you're here!</p>
-        </div>
-        """)
+        "key_contacts": "I know who to contact for HR, benefits, payroll, and telehealth.",
+        "first90": "I know the 30/60/90‑day expectations.",
+        "at_will": "I understand AAP is an at‑will employer.",
+        "life_event": "I know I have 30 days to notify HR of qualifying life events.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("firststeps", [
+        ("What’s the Paylocity Company ID?", ["123456", "123959", "987654", "112358"], "123959"),
+        ("Notify HR of a qualifying life event within:", ["7 days", "14 days", "30 days", "60 days"], "30 days"),
+        ("Which is available Day 1?", ["Medical", "Vacation accrual", "Teladoc & LinkedIn Learning", "401(k)"], "Teladoc & LinkedIn Learning"),
+        ("Employment at AAP is:", ["Fixed term", "At‑will", "Union‑protected", "2‑year commitment"], "At‑will"),
+    ])
 
 
-# ─────────────────────────────────────────────
-#  WAREHOUSE MODULE 1 — WELCOME (WAREHOUSE)
-# ─────────────────────────────────────────────
+# --- Warehouse modules (content adapted) ---
+
 def show_wh_module_welcome():
-    render_html("""
-    <div class="content-section">
-        <h2>🏢 Module 1: Welcome to AAP — Warehouse Edition</h2>
+    section_header("Module 1: Welcome — Warehouse", "Your role in the operation", "🏢")
+    st.write(
+        """
+        You’re on the front lines of AAP’s mission. Accuracy, speed, and care in the
+        warehouse directly impact pharmacies and their patients. What you do matters.
 
-        <h3>A Message From Our CEO</h3>
-        <p>On behalf of your colleagues, I welcome you to AAP and wish you every success here. We believe that each
-        employee contributes directly to AAP's growth and success, and we hope you will take pride in being a member
-        of our team. This handbook was developed to describe some of the expectations of our employees and to outline
-        the policies, programs, and benefits available to eligible employees.</p>
-        <p>We hope that your experience here will be challenging, enjoyable, and rewarding.</p>
-        <p><strong>— Jon Copeland, R.Ph., Chief Executive Officer</strong></p>
-
-        <h3>Who We Are</h3>
-        <p>American Associated Pharmacies (AAP) is a national cooperative of more than <strong>2,000 independent
-        pharmacies</strong>. AAP began in <strong>2009</strong>, when two major pharmacy cooperatives —
-        <strong>United Drugs</strong> of Phoenix, AZ, and <strong>Associated Pharmacies, Inc. (API)</strong>
-        of Scottsboro, AL — joined forces to form one of America's largest independent pharmacy organizations.</p>
-        <p>Today, AAP operates API, its independent warehouse and distributor, with <strong>two warehouse locations
-        in the U.S.</strong> You are part of the team that makes this possible. The warehouse is the engine of API —
-        the products that reach independent pharmacies and ultimately their patients pass through your hands every day.</p>
-
-        <h3>Your Role in the Operation</h3>
-        <p>As a warehouse employee, you are on the front lines of AAP's mission. Whether you are receiving shipments,
-        pulling orders, stocking shelves, or preparing outbound freight, your accuracy, speed, and care directly
-        affect the pharmacies we serve — and the patients who depend on them. <strong>What you do matters.</strong></p>
-
-        <h3>Our Mission</h3>
-        <p>AAP provides support and customized solutions for independent community pharmacies to enhance their
-        profitability, streamline their operations and improve the quality of patient care.</p>
-
-        <h3>Our Vision</h3>
-        <p>Helping independent pharmacies thrive in a competitive healthcare market.</p>
-
-        <h3>Our Values & Guiding Principles</h3>
-        <p>Our values guide every decision, discussion and behavior — including every shift on the warehouse floor.</p>
-    </div>
-    """)
-
-    values = [
-        ("🎯", "Customer Focus", "Everything we do in the warehouse — accuracy, speed, careful handling — serves the independent pharmacies and the patients they care for. Customer service is not a department, it is an attitude that starts on the warehouse floor."),
-        ("🤝", "Integrity", "We act with honesty and integrity. In a warehouse setting, this means accurate counts, honest reporting of damage or errors, and responsible use of company time and equipment."),
-        ("💙", "Respect", "We treat coworkers, supervisors, and visitors with dignity and courtesy. We recognize the power of teamwork — no single role in this warehouse succeeds without the others."),
-        ("⭐", "Excellence", "We strive for the highest quality in everything we do — from careful order fulfillment to proper storage and safe operation of equipment."),
-        ("🙋", "Ownership", "We take responsibility for our work. When something goes wrong — a mispick, a damaged item, a near-miss — we report it honestly and help fix it."),
-    ]
-
-    for icon, value, desc in values:
-        render_html(f"""
-        <div class="content-section" style="padding:18px 24px;margin-bottom:10px;">
-            <h3 style="margin-top:0">{icon} {value}</h3>
-            <p style="margin:0">{desc}</p>
-        </div>
-        """)
-
-    st.markdown("### ✅ Module 1 Checklist")
-    checklist_items = {
-        "ceo_welcome": "I have read the CEO welcome message.",
+        Mission · Vision · Values are the same — now applied to the warehouse floor.
+        """
+    )
+    st.markdown("### ✅ Checklist")
+    checklist_block("wh_welcome", {
+        "ceo_welcome": "I read the CEO welcome message.",
         "who_we_are": "I understand who AAP is and when it was founded.",
-        "my_role": "I understand the warehouse team's role in serving pharmacies and patients.",
-        "mission": "I can explain AAP's mission statement.",
-        "vision": "I can explain AAP's vision statement.",
-        "values_5": "I can name all five of AAP's core values.",
-        "values_warehouse": "I understand how AAP's values apply to my work in the warehouse.",
-    }
-
-    mk = "wh_welcome"
-    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
-        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
-
-    changed = False
-    for key, label in checklist_items.items():
-        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
-        if val != st.session_state.checklist_items[mk].get(key, False):
-            st.session_state.checklist_items[mk][key] = val
-            changed = True
-    if changed:
-        update_progress(mk)
-
-    st.markdown("### 📝 Module 1 Quiz")
-    if st.session_state.quiz_results.get(mk) is not None:
-        score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/4.")
-    else:
-        with st.form("quiz_wh_welcome"):
-            q1 = st.radio("1. In what year was AAP formed?",
-                ["2005", "2007", "2009", "2012"], key="ww_q1", index=None)
-            q2 = st.radio("2. Which city is home to AAP's subsidiary API?",
-                ["Phoenix, AZ", "Scottsboro, AL", "Huntsville, AL", "Nashville, TN"], key="ww_q2", index=None)
-            q3 = st.radio("3. Which of the following is NOT one of AAP's five core values?",
-                ["Integrity", "Ownership", "Innovation", "Excellence"], key="ww_q3", index=None)
-            q4 = st.radio("4. How does the Ownership value apply to warehouse employees?",
-                ["Only managers need to take ownership of problems",
-                 "Report damage, errors, and near-misses honestly and help fix them",
-                 "Ownership means protecting company assets from customers",
-                 "Ownership refers to not losing your personal belongings at work"], key="ww_q4", index=None)
-            submitted = st.form_submit_button("Submit Quiz")
-            if submitted:
-                score = sum([
-                    q1 == "2009",
-                    q2 == "Scottsboro, AL",
-                    q3 == "Innovation",
-                    q4 == "Report damage, errors, and near-misses honestly and help fix them",
-                ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
-                st.rerun()
+        "my_role": "I understand the warehouse team’s role.",
+        "mission": "I can explain AAP's mission.",
+        "vision": "I can explain AAP's vision.",
+        "values_5": "I can name all five core values.",
+        "values_warehouse": "I know how our values apply on the floor.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("wh_welcome", [
+        ("In what year was AAP formed?", ["2005", "2007", "2009", "2012"], "2009"),
+        ("Which city is home to API?", ["Phoenix, AZ", "Scottsboro, AL", "Huntsville, AL", "Nashville, TN"], "Scottsboro, AL"),
+        ("Which is NOT a core value?", ["Integrity", "Ownership", "Innovation", "Excellence"], "Innovation"),
+        ("Ownership on the floor means:", [
+            "Only managers take ownership",
+            "Report damage/errors/near‑misses and help fix them",
+            "Protect assets from customers",
+            "Not losing personal items"],
+            "Report damage/errors/near‑misses and help fix them"
+        ),
+    ])
 
 
-# ─────────────────────────────────────────────
-#  WAREHOUSE MODULE 2 — CONDUCT (WAREHOUSE)
-# ─────────────────────────────────────────────
 def show_wh_module_conduct():
-    render_html("""
-    <div class="content-section">
-        <h2>⚖️ Module 2: Code of Conduct & Ethics</h2>
+    section_header("Module 2: Conduct — Warehouse", "Ethics, honesty, respect", "⚖️")
+    st.write(
+        """
+        Accuracy and honesty matter. Report counts, pick errors, and damaged product
+        promptly. Treat coworkers and visitors with respect. Follow all safety rules.
 
-        <h3>Our Commitment</h3>
-        <p>The success of AAP is dependent upon our customers' trust — and in the warehouse, that trust is built
-        every day through accuracy, honest reporting, and professional behavior. AAP will comply with all applicable
-        laws and regulations and expects all employees to conduct themselves in accordance with those laws and with
-        the highest ethical standards. <strong>Compliance with this policy is every AAP employee's responsibility.</strong></p>
-
-        <h3>As an AAP Warehouse Employee, I Will…</h3>
-        <ul>
-            <li><strong>Work diligently and safely</strong> to meet the team's goals without cutting corners or
-            creating hazards for others.</li>
-            <li><strong>Protect company assets</strong> — including inventory, equipment, vehicles, and tools —
-            from theft, misuse, or careless damage.</li>
-            <li><strong>Report counts, pick errors, and damaged product honestly.</strong> Accurate records are
-            essential to serving our pharmacy members correctly.</li>
-            <li><strong>Treat coworkers, supervisors, and visitors</strong> with respect, dignity, and courtesy
-            at all times — on the floor, in break areas, and in all company communications.</li>
-            <li><strong>Follow all safety rules without exception.</strong> Shortcuts in a warehouse environment
-            can cause serious injury to yourself or others.</li>
-            <li><strong>Accept responsibility</strong> for my work and report any errors, near-misses, or damage
-            to my supervisor immediately — not after the shift.</li>
-            <li><strong>Protect confidential information</strong> — including inventory levels, pricing, customer
-            data, and internal processes.</li>
-            <li><strong>Report known or suspected illegal or unethical behavior</strong> to my supervisor immediately.</li>
-            <li><strong>Avoid conflicts of interest</strong> and disclose any real or potential conflict to my employer.</li>
-        </ul>
-    </div>
-    """)
-
-    render_html("""
-    <div class="content-section">
-        <h3>⚠️ Unacceptable Conduct</h3>
-        <p>The following are examples of conduct that may result in disciplinary action,
-        <strong>up to and including termination of employment:</strong></p>
-        <ul>
-            <li>Theft or unauthorized removal of company property or inventory</li>
-            <li>Falsification of records, including pick counts, timekeeping, or damage reports</li>
-            <li>Working under the influence of alcohol or illegal drugs</li>
-            <li>Possession, distribution, sale, or use of alcohol or illegal drugs on company premises</li>
-            <li>Fighting, threatening violence, or creating a hostile environment on the warehouse floor</li>
-            <li>Negligence or recklessness that leads to damage of inventory, equipment, or property</li>
-            <li>Operating equipment (forklifts, pallet jacks, etc.) without authorization or proper certification</li>
-            <li>Ignoring, bypassing, or disabling safety equipment or procedures</li>
-            <li>Insubordination or other disrespectful conduct toward supervisors or coworkers</li>
-            <li>Sexual or other unlawful harassment</li>
-            <li>Possession of dangerous or unauthorized materials (explosives, unauthorized firearms) on premises</li>
-            <li>Excessive absenteeism or any absence without notice</li>
-            <li>Unauthorized use of company equipment, vehicles, or systems</li>
-            <li>Unauthorized disclosure of business secrets or confidential information</li>
-            <li>Unsatisfactory performance or conduct</li>
-        </ul>
-    </div>
-    """)
-
-    render_html("""
-    <div class="content-section">
-        <h3>🛡️ Equal Employment Opportunity (EEO)</h3>
-        <p>Employment decisions at AAP are based on <strong>merit, qualifications, and abilities.</strong> AAP does
-        not discriminate in employment opportunities or practices on the basis of race, color, religion, sex, national
-        origin, age, disability, or any other characteristic protected by law.</p>
-        <p>Employees can raise concerns and make reports without fear of reprisal. Anyone found to be engaging in
-        unlawful discrimination will be subject to disciplinary action, up to and including termination.</p>
-
-        <h3>🚫 Sexual & Other Unlawful Harassment</h3>
-        <p>AAP is committed to providing a workplace free of discrimination and unlawful harassment — including on
-        the warehouse floor, in break rooms, and in locker areas. Harassment can take many forms:</p>
-        <ul>
-            <li>Offensive comments, jokes, or insults</li>
-            <li>Sexual advances or unnecessary touching</li>
-            <li>Comments about a person's body</li>
-            <li>Showing sexually suggestive images or objects</li>
-            <li>Implied promises or threats tied to participation in sexual conduct</li>
-        </ul>
-        <p><strong>This conduct has no place at AAP and will not be tolerated anywhere on company premises.</strong></p>
-        <p>If you believe you have been harassed, you should:</p>
-        <ul>
-            <li>Tell the offender their conduct is offensive (if comfortable doing so).</li>
-            <li>Report it to your immediate supervisor or the HR department.</li>
-            <li>If the harasser is your supervisor, contact the <strong>VP of Human Resources</strong> directly.</li>
-        </ul>
-        <p>No one will be retaliated against for complaining in good faith about harassment.</p>
-
-        <h3>🔒 Confidentiality</h3>
-        <p>All employees are required to sign a Confidentiality and Non-Disclosure Agreement upon hire. All written
-        and verbal communication regarding the Company's operations or your position must remain strictly confidential
-        unless otherwise permitted by your supervisor or by Company policy.
-        <strong>Refusal to sign is grounds for immediate termination.</strong></p>
-    </div>
-    """)
-
-    st.markdown("### ✅ Module 2 Checklist")
-    checklist_items = {
-        "code_reviewed": "I have read and understand the AAP Employee Code of Conduct.",
-        "warehouse_honesty": "I understand the importance of honest reporting in a warehouse setting (counts, errors, damage).",
-        "unacceptable": "I understand examples of unacceptable warehouse conduct, including unauthorized equipment operation.",
-        "eeo": "I understand AAP's Equal Employment Opportunity policy.",
-        "harassment": "I know how to report harassment and that retaliation is prohibited.",
-        "confidentiality": "I understand my confidentiality obligations and will sign the NDA.",
-        "reporting": "I know to report known or suspected illegal/unethical behavior to my supervisor immediately.",
-    }
-
-    mk = "wh_conduct"
-    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
-        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
-
-    changed = False
-    for key, label in checklist_items.items():
-        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
-        if val != st.session_state.checklist_items[mk].get(key, False):
-            st.session_state.checklist_items[mk][key] = val
-            changed = True
-    if changed:
-        update_progress(mk)
-
-    st.markdown("### 📝 Module 2 Quiz")
-    if st.session_state.quiz_results.get(mk) is not None:
-        score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/4.")
-    else:
-        with st.form("quiz_wh_conduct"):
-            q1 = st.radio("1. AAP's employment decisions are based on which of the following?",
-                ["Seniority and connections",
-                 "Merit, qualifications, and abilities",
-                 "Education level only",
-                 "Manager discretion"], key="wc_q1", index=None)
-            q2 = st.radio("2. Operating a forklift or pallet jack without authorization or certification is considered:",
-                ["Acceptable if supervised",
-                 "Acceptable in an emergency",
-                 "Unacceptable conduct and grounds for disciplinary action",
-                 "Only a minor policy violation"], key="wc_q2", index=None)
-            q3 = st.radio("3. If you find damaged inventory during your shift, you should:",
-                ["Leave it and hope someone else handles it",
-                 "Discard it to keep the floor clean",
-                 "Report it to your supervisor immediately and document it accurately",
-                 "Wait until end of shift to report it"], key="wc_q3", index=None)
-            q4 = st.radio("4. Refusing to sign the Confidentiality and Non-Disclosure Agreement results in:",
-                ["A written warning",
-                 "A meeting with HR",
-                 "Immediate termination",
-                 "A probationary period"], key="wc_q4", index=None)
-            submitted = st.form_submit_button("Submit Quiz")
-            if submitted:
-                score = sum([
-                    q1 == "Merit, qualifications, and abilities",
-                    q2 == "Unacceptable conduct and grounds for disciplinary action",
-                    q3 == "Report it to your supervisor immediately and document it accurately",
-                    q4 == "Immediate termination",
-                ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
-                st.rerun()
+        **Unacceptable** — Theft, falsifying counts/time, unauthorized equipment use,
+        harassment, violence, impairment at work, unsafe shortcuts.
+        """
+    )
+    st.markdown("### ✅ Checklist")
+    checklist_block("wh_conduct", {
+        "code_reviewed": "I’ve read the Code of Conduct.",
+        "warehouse_honesty": "I will report counts/errors/damage honestly.",
+        "unacceptable": "I understand unacceptable conduct (incl. unauthorized equipment).",
+        "eeo": "I understand EEO.",
+        "harassment": "I know how to report harassment (no retaliation).",
+        "confidentiality": "I understand confidentiality.",
+        "reporting": "I will report illegal/unethical behavior immediately.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("wh_conduct", [
+        ("AAP decisions are based on:", ["Seniority", "Merit, qualifications, and abilities", "Education only", "Manager discretion"], "Merit, qualifications, and abilities"),
+        ("Operating a forklift without authorization is:", ["OK if supervised", "OK in emergency", "Unacceptable (discipline)", "Minor"], "Unacceptable (discipline)"),
+        ("If you find damaged inventory:", ["Leave it", "Discard it", "Report and document immediately", "Report at end of shift"], "Report and document immediately"),
+        ("Refusing to sign the NDA results in:", ["Warning", "HR meeting", "Immediate termination", "Probation"], "Immediate termination"),
+    ])
 
 
-# ─────────────────────────────────────────────
-#  WAREHOUSE MODULE 3 — SAFETY & POLICIES
-# ─────────────────────────────────────────────
 def show_wh_module_safety():
-    render_html("""
-    <div class="content-section">
-        <h2>🦺 Module 3: Warehouse Policies & Safety</h2>
-        <p>This module covers the policies and safety expectations specific to your role in the warehouse.
-        Safety is not optional — it protects you, your coworkers, and the products you handle every day.</p>
+    section_header("Module 3: Warehouse Policies & Safety", "PPE, attendance & equipment", "🦺")
+    st.write(
+        """
+        **Attendance (no‑fault points)** and corrective actions mirror the general policy.  
+        **Dress code** — Closed‑toe shoes/boots are required on the warehouse floor.  
+        **PPE** — Gloves available; add any role‑specific PPE here.
 
-        <h3>🕐 Attendance & Punctuality</h3>
-        <p>AAP uses a <strong>no-fault point system</strong> to manage attendance fairly and consistently for all
-        non-exempt employees, including warehouse staff. In a warehouse environment, prompt attendance is especially
-        critical — your absence affects pick rates, shipping schedules, and your teammates' workload.</p>
+        **Safety** — Report hazards immediately; keep aisles/exits clear; wear PPE; only
+        operate equipment you’re trained and certified to use.
+        """
+    )
+    if SHOW_PLACEHOLDERS:
+        st.warning("PLACEHOLDER: Add shift schedules, additional PPE, and certification details before publishing.")
 
-        <p><strong>Excluded from points (these do NOT count against you):</strong>
-        FMLA leave, pre-approved personal leaves, bereavement leave, jury/witness duty, pre-approved vacation days,
-        personal days, holidays, long-term sick leave, approved early leaves, short-term disability, and emergency
-        closing absences.</p>
-
-        <p><strong>Point Values:</strong></p>
-    </div>
-    """)
-
-    render_html("""
-    <table class="styled-table">
-        <tr><th>Reason</th><th>Points</th></tr>
-        <tr><td>Tardy up to 5 minutes (grace period)</td><td>0</td></tr>
-        <tr><td>Tardy or early leave (less than 4 hours)</td><td>½</td></tr>
-        <tr><td>Full shift absence, tardy or early leave (4+ hours)</td><td>1</td></tr>
-        <tr><td>Absence with no report or call 15+ minutes after start of shift</td><td>1½</td></tr>
-    </table>
-    """)
-
-    render_html("""
-    <table class="styled-table">
-        <tr><th>Points Accumulated (in 12 months)</th><th>Action</th></tr>
-        <tr><td>5 points</td><td>Coaching Session</td></tr>
-        <tr><td>6 points</td><td>Verbal Warning</td></tr>
-        <tr><td>7 points</td><td>Written Warning</td></tr>
-        <tr><td>8 points</td><td>Termination</td></tr>
-    </table>
-    """)
-
-    st.markdown(info_box("💡 <b>Perfect Attendance Rewards:</b> 1 point is removed after <b>2 consecutive months</b> of perfect attendance. Employees with <b>3 consecutive months</b> of perfect attendance receive a <b>$75 bonus</b> on their next paycheck."), unsafe_allow_html=True)
-    st.markdown(info_box("⚠️ <b>No Call / No Show:</b> 2 consecutive days without reporting in will be treated as a voluntary resignation.", "yellow"), unsafe_allow_html=True)
-    st.markdown(info_box("📋 <b>Doctor's Notes:</b> Required for illness greater than 1 day, up to a maximum of 3 consecutive days. The note must include dates of absence and the return-to-work date."), unsafe_allow_html=True)
-
-    render_html("""
-    <div class="content-section">
-        <h3>⏰ Shift Schedules & Overtime</h3>
-    </div>
-    """)
-
-    st.markdown(info_box("📌 <b>PLACEHOLDER — Shift Schedule Details:</b> Update this section with your warehouse shift times, days of operation, and any rotation or on-call policies before publishing. Contact HR or your warehouse manager for these details.", "yellow"), unsafe_allow_html=True)
-
-    render_html("""
-    <div class="content-section">
-        <p>Your supervisor will inform you of your assigned shift during your first day. All overtime must be
-        <strong>pre-approved by your supervisor before it is performed.</strong> Unauthorized overtime or failure
-        to work scheduled overtime may result in disciplinary action.</p>
-
-        <h3>👔 Personal Appearance & Dress Code</h3>
-        <p>Warehouse employees are expected to report to work dressed appropriately for a physical work environment.
-        The following standards apply at all times:</p>
-        <ul>
-            <li>A neat, clean, and professional appearance is required.</li>
-            <li><strong>Closed-toe shoes are required at all times on the warehouse floor.</strong>
-            Open-toed shoes, sandals, or flip-flops are not permitted for safety reasons.</li>
-            <li>Clothing must allow for safe, unrestricted movement.</li>
-            <li>Avoid clothing with offensive or inappropriate logos or graphics.</li>
-            <li>Due to allergies and asthma concerns, avoid wearing perfume or scented products.</li>
-        </ul>
-        <p>Employees found to be out of compliance with the dress code — especially closed-toe shoe requirements —
-        will be asked to clock out, leave, and return dressed appropriately.</p>
-    </div>
-    """)
-
-    render_html("""
-    <div class="content-section">
-        <h3>🦺 Personal Protective Equipment (PPE)</h3>
-        <p>AAP provides PPE to all warehouse employees. You are responsible for using it properly and caring for
-        the equipment issued to you.</p>
-
-        <table class="styled-table">
-            <tr><th>PPE Item</th><th>Requirement</th></tr>
-            <tr><td>Closed-toe shoes / boots</td><td>Required — must be worn at all times on the warehouse floor</td></tr>
-            <tr><td>Gloves</td><td>Available to all employees — recommended when handling boxes, sharp edges, or heavy items</td></tr>
-        </table>
-    </div>
-    """)
-
-    st.markdown(info_box("📌 <b>PLACEHOLDER — Additional PPE:</b> If your warehouse requires high-visibility vests, eye protection, hard hats, or other PPE for specific tasks or zones, add those requirements here before publishing.", "yellow"), unsafe_allow_html=True)
-
-    render_html("""
-    <div class="content-section">
-        <h3>🛡️ Warehouse Safety Rules</h3>
-        <p>The <strong>VP of Human Resources</strong> is responsible for AAP's safety program. Each warehouse
-        employee is expected to:</p>
-        <ul>
-            <li>Obey all safety rules and exercise caution in all work activities at all times.</li>
-            <li>Immediately report any unsafe condition, equipment malfunction, or hazard to your supervisor —
-            do not wait until the end of your shift.</li>
-            <li>Report <strong>all work-related injuries to HR or your supervisor immediately,</strong>
-            no matter how minor. Even small injuries must be documented.</li>
-            <li>Wear required PPE whenever you are on the warehouse floor.</li>
-            <li>Keep aisles, emergency exits, and fire suppression equipment clear at all times.</li>
-            <li>Never operate equipment (forklifts, pallet jacks, reach trucks) without proper training,
-            authorization, and certification for that specific piece of equipment.</li>
-            <li>Do not take shortcuts that compromise safety, even under time pressure.</li>
-        </ul>
-        <p><strong>Violating safety standards may result in disciplinary action, up to and including termination.</strong></p>
-        <p>All work-related accidents require <strong>immediate drug and alcohol testing.</strong></p>
-
-        <h3>🚜 Forklift & Equipment Policies</h3>
-        <p>Forklifts, pallet jacks, reach trucks, and other powered industrial trucks are potentially dangerous
-        equipment. The following rules apply to all warehouse employees:</p>
-        <ul>
-            <li>Only employees who are <strong>properly trained and certified</strong> for a specific piece of
-            equipment may operate it.</li>
-            <li>Certification is role-specific. Do not assume that certification for one type of equipment
-            authorizes you to operate another.</li>
-            <li>Conduct a <strong>pre-shift inspection</strong> of any equipment you will operate and report
-            any defects to your supervisor before use.</li>
-            <li>Never operate equipment at unsafe speeds or in a manner that endangers other employees.</li>
-            <li>Pedestrians always have the right of way in designated pedestrian zones.</li>
-            <li>Never allow unauthorized personnel to ride on or operate powered equipment.</li>
-            <li>Report any equipment damage, malfunction, or near-miss immediately.</li>
-        </ul>
-    </div>
-    """)
-
-    st.markdown(info_box("📌 <b>PLACEHOLDER — Forklift Certification Roles:</b> Specify which warehouse roles require forklift or equipment certification, which piece(s) of equipment each role is authorized to operate, and the certification process/timeline here before publishing.", "yellow"), unsafe_allow_html=True)
-
-    render_html("""
-    <div class="content-section">
-        <h3>📦 Warehouse Procedures & Receiving Process</h3>
-
-        <h3>Receiving Inbound Shipments</h3>
-        <ul>
-            <li>Verify all inbound shipments against the <strong>purchase order (PO)</strong> or packing slip
-            before signing for the delivery.</li>
-            <li>Inspect all incoming product for damage before accepting the shipment. Note any damage on the
-            delivery receipt and photograph damaged items before moving them.</li>
-            <li>Do not accept shipments with missing, altered, or illegible documentation without supervisor approval.</li>
-            <li>All discrepancies between the PO and the physical shipment must be reported to your supervisor
-            and documented immediately.</li>
-        </ul>
-
-        <h3>Storage & Organization</h3>
-        <ul>
-            <li>All product must be stored in its designated location. Do not place product in random locations
-            — this causes inventory errors that affect pharmacy orders.</li>
-            <li>Follow <strong>FIFO (First In, First Out)</strong> rotation: older stock goes to the front,
-            newer stock goes behind it.</li>
-            <li>Do not stack product higher than designated height limits. Unstable stacking is a safety hazard.</li>
-            <li>Report any product approaching expiration dates to your supervisor promptly.</li>
-        </ul>
-
-        <h3>Order Picking & Fulfillment</h3>
-        <ul>
-            <li>Pick orders accurately — errors in pharmaceutical distribution have real consequences for pharmacies
-            and their patients.</li>
-            <li>Double-check product NDC numbers, quantities, and lot numbers before placing items in an order.</li>
-            <li>If a product cannot be located or is out of stock, notify your supervisor immediately. Do not
-            substitute products without authorization.</li>
-            <li>All picked orders must be verified before they are sealed and staged for shipping.</li>
-        </ul>
-
-        <h3>Outbound Shipping</h3>
-        <ul>
-            <li>All outbound orders must be properly packaged, labeled, and staged in designated shipping areas.</li>
-            <li>Confirm the carrier and shipping method match the order before releasing freight.</li>
-            <li>Any outbound discrepancies must be reported to your supervisor before the shipment leaves
-            the facility.</li>
-        </ul>
-
-        <h3>🚭 Drug & Alcohol Policy</h3>
-        <p>AAP maintains a <strong>drug and alcohol-free workplace.</strong> This is especially critical in a
-        warehouse environment where impaired judgment can cause serious injury. Employees are subject to
-        <strong>random drug testing at any time,</strong> and all work-related accidents require immediate
-        drug and alcohol testing.</p>
-        <ul>
-            <li>Violations may result in immediate termination and/or required participation in a rehab program.</li>
-            <li>The Employee Assistance Program (EAP) is available to employees who need support.</li>
-        </ul>
-
-        <h3>🚷 Workplace Violence</h3>
-        <p>AAP has zero tolerance for workplace violence. All threatening incidents must be
-        <strong>reported within 24 hours</strong> and will be investigated and documented by Human Resources.</p>
-    </div>
-    """)
-
-    st.markdown("### ✅ Module 3 Checklist")
-    checklist_items = {
-        "point_system": "I understand the no-fault attendance point system and the point values.",
-        "corrective_levels": "I know the corrective action steps (coaching at 5, verbal at 6, written at 7, termination at 8).",
-        "perfect_att": "I know I can earn a point removal and a $75 bonus for perfect attendance.",
-        "no_call": "I understand that 2 consecutive no-call/no-shows may be treated as a resignation.",
-        "closed_toe": "I understand that closed-toe shoes are required on the warehouse floor at all times.",
-        "ppe_gloves": "I know gloves are available to all warehouse employees.",
-        "safety_report": "I know to immediately report any unsafe condition or work-related injury to my supervisor.",
-        "equipment_cert": "I understand I may only operate equipment I am trained and certified for.",
-        "receiving": "I understand the receiving process: verify PO, inspect for damage, document discrepancies.",
-        "fifo": "I understand FIFO rotation and accurate order picking procedures.",
-        "drug_policy": "I understand AAP's drug and alcohol-free workplace policy and accident testing requirement.",
-    }
-
-    mk = "wh_safety"
-    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
-        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
-
-    changed = False
-    for key, label in checklist_items.items():
-        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
-        if val != st.session_state.checklist_items[mk].get(key, False):
-            st.session_state.checklist_items[mk][key] = val
-            changed = True
-    if changed:
-        update_progress(mk)
-
-    st.markdown("### 📝 Module 3 Quiz")
-    if st.session_state.quiz_results.get(mk) is not None:
-        score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/5.")
-    else:
-        with st.form("quiz_wh_safety"):
-            q1 = st.radio("1. Which footwear is required at all times on the warehouse floor?",
-                ["Any athletic shoe", "Closed-toe shoes or boots", "Steel-toed boots only", "Any shoes are acceptable"], key="ws_q1", index=None)
-            q2 = st.radio("2. What should you do if you notice damage on an inbound shipment?",
-                ["Accept it and report it later",
-                 "Refuse to unload the truck",
-                 "Note it on the delivery receipt, photograph the damage, then notify your supervisor",
-                 "Set it aside and check again at end of shift"], key="ws_q2", index=None)
-            q3 = st.radio("3. How many points within 12 months results in termination?",
-                ["6 points", "7 points", "8 points", "10 points"], key="ws_q3", index=None)
-            q4 = st.radio("4. What does FIFO mean in warehouse storage?",
-                ["First In, First Out — older stock goes to the front",
-                 "Fast Items, Fast Outbound — priority items ship first",
-                 "Full Inventory, Full Order — no partial picks allowed",
-                 "First Inspection, Final Output — check before shipping"], key="ws_q4", index=None)
-            q5 = st.radio("5. You may operate a forklift if:",
-                ["You have operated one before at a previous job",
-                 "Your supervisor is watching",
-                 "You are trained, authorized, and certified for that specific equipment",
-                 "The regular operator is absent and it is an emergency"], key="ws_q5", index=None)
-            submitted = st.form_submit_button("Submit Quiz")
-            if submitted:
-                score = sum([
-                    q1 == "Closed-toe shoes or boots",
-                    q2 == "Note it on the delivery receipt, photograph the damage, then notify your supervisor",
-                    q3 == "8 points",
-                    q4 == "First In, First Out — older stock goes to the front",
-                    q5 == "You are trained, authorized, and certified for that specific equipment",
-                ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
-                st.rerun()
+    st.markdown("### ✅ Checklist")
+    checklist_block("wh_safety", {
+        "point_system": "I understand the attendance point system.",
+        "corrective_levels": "I know corrective steps (5: coaching · 6: verbal · 7: written · 8: termination).",
+        "perfect_att": "I know point removal and $75 bonus rules.",
+        "no_call": "I understand 2‑day no‑call/no‑show can be a resignation.",
+        "closed_toe": "I know closed‑toe shoes are required on the floor.",
+        "ppe_gloves": "I know gloves are available.",
+        "safety_report": "I will report unsafe conditions/injuries immediately.",
+        "equipment_cert": "I’ll operate only equipment I’m trained & certified to use.",
+        "receiving": "I understand receiving: verify PO, inspect, document discrepancies.",
+        "fifo": "I understand FIFO rotation & accurate picking.",
+        "drug_policy": "I understand the drug & alcohol policy and accident testing.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("wh_safety", [
+        ("Footwear required on the floor:", ["Any athletic shoe", "Closed‑toe shoes/boots", "Steel‑toed only", "Any shoes"], "Closed‑toe shoes/boots"),
+        ("Damage on inbound shipment:", [
+            "Accept then report later",
+            "Refuse to unload",
+            "Note on receipt, photograph, notify supervisor",
+            "Set aside for later"], "Note on receipt, photograph, notify supervisor"),
+        ("Points for termination (12 mo):", ["6", "7", "8", "10"], "8"),
+        ("FIFO means:", ["First In, First Out", "Fast Items, Fast Out", "Full Inventory, Full Order", "First Inspection, Final Output"], "First In, First Out"),
+        ("Operate a forklift when:", ["Used one before", "Supervisor watching", "Trained, authorized & certified", "Emergency"], "Trained, authorized & certified"),
+    ])
 
 
-# ─────────────────────────────────────────────
-#  WAREHOUSE MODULE 4 — BENEFITS (WAREHOUSE)
-# ─────────────────────────────────────────────
+def show_wh_module_timeoff():
+    section_header("Module 4: Time Off & Leave — Warehouse", "Requests, FMLA & life events", "⏰")
+    st.write(
+        """
+        Pre‑approved vacation doesn’t add points. Use proper channels to report
+        absences and request time off. LTSL requires 3+ days with physician mandate.
+        FMLA as defined; life events within 30 days.
+        """
+    )
+    st.markdown("### ✅ Checklist")
+    checklist_block("wh_timeoff", {
+        "vacation_points": "I know pre‑approved vacation is excluded from points.",
+        "attendance_reporting": "I know the correct channels for reporting absences and requesting time off.",
+        "ltsl_rules": "I understand when Long‑Term Sick Leave applies.",
+        "fmla_requirements": "I know baseline FMLA requirements.",
+        "life_event_deadline": "I know life‑event updates must be within 30 days.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("wh_timeoff", [
+        ("Pre‑approved vacation days are excluded from points.", ["True", "False"], "True"),
+        ("LTSL requires:", ["1 day", "3+ consecutive physician‑mandated days", "5 days", "Verbal notice"], "3+ consecutive physician‑mandated days"),
+        ("FMLA eligibility:", ["6 months", "12 months & 1,250 hours", "At hire", "Manager only"], "12 months & 1,250 hours"),
+        ("Report life‑event changes within:", ["7", "14", "30", "90"], "30"),
+    ])
+
+
 def show_wh_module_benefits():
-    # Benefits content is the same for all employees — reuse the general version
-    # but with a warehouse-framed header
-    render_html("""
-    <div class="content-section">
-        <h2>💼 Module 4: Benefits & Time Off</h2>
-        <p>Your benefits are the same regardless of which department you work in — AAP is committed to supporting
-        all employees equally. Benefits eligibility depends on your employment classification (full-time vs. part-time).
-        Review the key details below.</p>
-    </div>
-    """)
-
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["⏰ Leave & Holidays", "🏥 Health Benefits", "💰 401k & Life", "🌟 Perks & EAP", "FT vs PT Summary"])
-
-    with tab1:
-        render_html("""
-        <div class="content-section">
-            <h3>🏖️ Vacation (Full-Time Only)</h3>
-            <p>Vacation begins accruing after <strong>60 days of full-time service</strong> and is accrued weekly.</p>
-        </div>
-        """)
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Years of Service</th><th>Vacation Days/Year</th><th>Accrual Rate (per week)</th></tr>
-            <tr><td>0–4 years</td><td>10 days (2 weeks)</td><td>0.1923 hours/week</td></tr>
-            <tr><td>5–9 years</td><td>15 days (3 weeks)</td><td>0.2885 hours/week</td></tr>
-            <tr><td>10+ years</td><td>20 days (4 weeks)</td><td>0.3846 hours/week</td></tr>
-        </table>
-        """)
-        st.markdown(info_box("💡 Vacation is accrued from your hire date but cannot be used until after the 60-day introductory period. No payout for unused vacation upon termination unless required by state law."), unsafe_allow_html=True)
-        render_html("""
-        <div class="content-section">
-            <h3>🏥 Sick Leave</h3>
-            <p>All employees (full-time and part-time) receive <strong>3 paid sick days per year</strong>,
-            available after 60 days of employment. Sick leave does not roll over. A physician's note is required
-            for illness lasting more than 1 day, for up to a maximum of 3 consecutive days.</p>
-
-            <h3>👶 Personal Days</h3>
-            <p>Full-time employees receive <strong>2 personal days per calendar year</strong> after completing
-            the 60-day introductory period. Personal days must be pre-approved by your supervisor.</p>
-
-            <h3>🏛️ Holidays</h3>
-            <p>Full-time employees receive <strong>6 paid holidays per year:</strong>
-            New Year's Day, Memorial Day, Independence Day, Labor Day, Thanksgiving Day, and Christmas Day.
-            Part-time employees receive holiday pay proportional to their scheduled hours.</p>
-
-            <h3>💔 Bereavement Leave</h3>
-            <p><strong>3 paid days</strong> for the death of an immediate family member (spouse, child, parent,
-            sibling, grandparent, in-law). Additional unpaid leave may be approved by HR at their discretion.</p>
-
-            <h3>⚖️ Jury Duty & Witness Duty</h3>
-            <p>AAP provides <strong>paid leave for the duration</strong> of jury duty or court-mandated witness duty.
-            Provide a copy of your summons to HR as soon as you receive it.</p>
-
-            <h3>🤱 Family & Medical Leave (FMLA)</h3>
-            <p>Employees who have worked for AAP for at least <strong>12 months</strong> and at least
-            <strong>1,250 hours</strong> in the past year may be eligible for up to <strong>12 weeks of unpaid,
-            job-protected leave</strong> under the Family and Medical Leave Act (FMLA) for qualifying reasons.</p>
-        </div>
-        """)
-
-    with tab2:
-        render_html("""
-        <div class="content-section">
-            <h3>🏥 Medical Insurance — BCBS of Alabama</h3>
-            <p>Medical coverage through <strong>Blue Cross Blue Shield of Alabama</strong> is available to
-            full-time employees effective the <strong>1st of the month following 60 days of employment.</strong></p>
-            <ul>
-                <li>AAP covers <strong>100% of the employee-only premium.</strong></li>
-                <li>Dependent coverage is available at the employee's expense.</li>
-                <li>Your entire household is eligible for coverage on your effective date.</li>
-            </ul>
-            <p>📞 BCBS: 888-267-2955 | bcbsal.org</p>
-
-            <h3>🦷 Dental & 👁️ Vision — Guardian</h3>
-            <p>Dental and vision coverage through <strong>Guardian</strong> is available to all employees
-            (full-time and part-time) effective <strong>Day 1 of employment.</strong></p>
-            <ul>
-                <li>AAP covers <strong>100% of the employee-only premium</strong> for dental and vision.</li>
-                <li>Dependent coverage is available at the employee's expense.</li>
-            </ul>
-            <p>📞 Guardian: 888-482-7342 | guardiananytime.com</p>
-
-            <h3>💳 Health Savings Account (HSA) — HealthEquity</h3>
-            <p>Employees enrolled in the <strong>High Deductible Health Plan (HDHP)</strong> medical option
-            are eligible for an HSA through <strong>HealthEquity.</strong> AAP contributes to your HSA annually.</p>
-            <p>📞 HealthEquity: 866-274-9887 | healthequity.com</p>
-
-            <h3>📞 Teladoc — Free Telehealth (Day 1)</h3>
-            <p>All employees have access to <strong>Teladoc telehealth services beginning Day 1</strong> —
-            no waiting period. General medical visits, mental health visits, and more are
-            <strong>completely free</strong> through Teladoc.</p>
-            <p>Register at Teladoc.com or call 800-835-2362.</p>
-        </div>
-        """)
-
-    with tab3:
-        render_html("""
-        <div class="content-section">
-            <h3>💰 401(k) Retirement Plan</h3>
-            <p>Full-time employees are eligible to enroll in the AAP 401(k) plan after
-            <strong>1 year of service.</strong> AAP matches a percentage of employee contributions.
-            Contact HR for current match details.</p>
-
-            <h3>🛡️ Life Insurance & Disability — Guardian</h3>
-            <p>Basic life insurance and short-term disability coverage are available to full-time employees
-            through Guardian. Contact HR or CBIZ Benefits for coverage amounts and enrollment details.</p>
-            <p>📞 Guardian: 888-482-7342 | guardiananytime.com</p>
-        </div>
-        """)
-
-    with tab4:
-        render_html("""
-        <div class="content-section">
-            <h3>🌟 Employee Assistance Program (EAP) — LifeMatters</h3>
-            <p>All employees and their household members have access to the <strong>LifeMatters EAP</strong>
-            beginning <strong>Day 1.</strong> Services include confidential counseling, financial advice,
-            legal guidance, and more — completely free.</p>
-            <p>📞 LifeMatters: 800-634-6433 | mylifematters.com</p>
-
-            <h3>📚 LinkedIn Learning (Day 1)</h3>
-            <p>All employees have access to LinkedIn Learning beginning Day 1 — over
-            <strong>16,000 courses</strong> in business, technology, and personal development,
-            available on any device at your own pace.</p>
-            <p>Check your email for an activation link. If you didn't receive one, contact HR.</p>
-        </div>
-        """)
-
-    with tab5:
-        render_html("""
-        <table class="styled-table">
-            <tr><th>Benefit</th><th>Full-Time</th><th>Part-Time</th></tr>
-            <tr><td>Medical (BCBS)</td><td>✅ After 60 days</td><td>❌</td></tr>
-            <tr><td>Dental & Vision (Guardian)</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>HSA (HealthEquity)</td><td>✅ With HDHP plan</td><td>❌</td></tr>
-            <tr><td>Teladoc</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>EAP (LifeMatters)</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>LinkedIn Learning</td><td>✅ Day 1</td><td>✅ Day 1</td></tr>
-            <tr><td>Vacation</td><td>✅ After 60 days</td><td>❌</td></tr>
-            <tr><td>Sick Leave (3 days)</td><td>✅ After 60 days</td><td>✅ After 60 days</td></tr>
-            <tr><td>Personal Days (2)</td><td>✅ After 60 days</td><td>❌</td></tr>
-            <tr><td>Paid Holidays (6)</td><td>✅</td><td>Proportional</td></tr>
-            <tr><td>Bereavement (3 days)</td><td>✅</td><td>✅</td></tr>
-            <tr><td>401(k)</td><td>✅ After 1 year</td><td>❌</td></tr>
-            <tr><td>Life & Disability (Guardian)</td><td>✅</td><td>❌</td></tr>
-        </table>
-        """)
-
-    st.markdown("### ✅ Module 4 Checklist")
-    checklist_items = {
-        "medical_elig": "I understand when medical insurance becomes effective (1st of the month after 60 days).",
-        "company_pays": "I know AAP pays 100% of my employee-only medical, dental, and vision premiums.",
-        "dental_vision_day1": "I know dental and vision coverage begins on Day 1.",
-        "dependents": "I understand that everyone in my household is eligible for coverage on my effective date.",
-        "vacation": "I understand how vacation accrual works and when it starts.",
-        "sick_personal": "I know I receive 3 sick days and 2 personal days per year (after 60 days, full-time).",
-        "fmla": "I understand the basic eligibility requirements for FMLA leave.",
-        "teladoc": "I know Teladoc is available to me on Day 1 and is completely free.",
-        "eap": "I know the EAP (LifeMatters) is available to me and my household beginning Day 1.",
-        "linkedin": "I understand I have access to LinkedIn Learning from Day 1.",
-    }
-
-    mk = "wh_benefits"
-    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
-        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
-
-    changed = False
-    for key, label in checklist_items.items():
-        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
-        if val != st.session_state.checklist_items[mk].get(key, False):
-            st.session_state.checklist_items[mk][key] = val
-            changed = True
-    if changed:
-        update_progress(mk)
-
-    st.markdown("### 📝 Module 4 Quiz")
-    if st.session_state.quiz_results.get(mk) is not None:
-        score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/5.")
-    else:
-        with st.form("quiz_wh_benefits"):
-            q1 = st.radio("1. When does medical insurance become effective for full-time employees?",
-                ["Day 1 of employment",
-                 "The 1st of the month following 60 days of employment",
-                 "After 90 days of employment",
-                 "After 1 year of employment"], key="wb_q1", index=None)
-            q2 = st.radio("2. What percentage of the employee-only medical premium does AAP cover?",
-                ["50%", "75%", "100%", "80%"], key="wb_q2", index=None)
-            q3 = st.radio("3. Which of the following is available to ALL employees starting on Day 1?",
-                ["Medical insurance",
-                 "Vacation accrual",
-                 "Teladoc and LinkedIn Learning",
-                 "401(k) enrollment"], key="wb_q3", index=None)
-            q4 = st.radio("4. How many paid sick days do full-time and part-time employees receive per year (after 60 days)?",
-                ["1 day", "3 days", "5 days", "7 days"], key="wb_q4", index=None)
-            q5 = st.radio("5. How long must you work at AAP before becoming eligible for FMLA leave?",
-                ["60 days", "6 months",
-                 "12 months and at least 1,250 hours worked",
-                 "2 years"], key="wb_q5", index=None)
-            submitted = st.form_submit_button("Submit Quiz")
-            if submitted:
-                score = sum([
-                    q1 == "The 1st of the month following 60 days of employment",
-                    q2 == "100%",
-                    q3 == "Teladoc and LinkedIn Learning",
-                    q4 == "3 days",
-                    q5 == "12 months and at least 1,250 hours worked",
-                ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
-                st.rerun()
+    section_header("Module 5: Benefits — Warehouse", "Health, retirement & support", "💼")
+    st.write(
+        """
+        Health coverage: 1st of the month after 60 days (eligibility).  
+        401(k): 100% match on first 3%.  
+        Day‑one: Teladoc & LinkedIn Learning. EAP available 24/7.
+        """
+    )
+    st.markdown("### ✅ Checklist")
+    checklist_block("wh_benefits", {
+        "effective_date": "I know when eligible health benefits begin.",
+        "retirement_match": "I understand the 401(k) match.",
+        "day1_resources": "I know Teladoc & LinkedIn Learning are day‑one resources.",
+        "eap_support": "I know how to access the EAP.",
+        "benefits_help": "I know who to contact for benefits questions.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("wh_benefits", [
+        ("When do eligible health benefits begin?", ["Day 1", "After 30 days", "1st of month after 60 days", "After 1 year"], "1st of month after 60 days"),
+        ("401(k) match on first 3%:", ["50%", "75%", "100%", "No match"], "100%"),
+        ("Day‑one resources:", ["Payroll only", "Teladoc & LinkedIn Learning", "Medical enrollment", "401(k) loan options"], "Teladoc & LinkedIn Learning"),
+        ("Confidential wellbeing support:", ["BenefitHub", "LifeMatters EAP", "Payroll", "OSHA"], "LifeMatters EAP"),
+    ])
 
 
-# ─────────────────────────────────────────────
-#  WAREHOUSE MODULE 5 — FIRST STEPS (WAREHOUSE)
-# ─────────────────────────────────────────────
 def show_wh_module_firststeps():
-    render_html("""
-    <div class="content-section">
-        <h2>🚀 Module 5: Your First Steps — Warehouse Edition</h2>
-        <p>This module covers everything you need to get set up and hit the ground running on Day 1 and beyond
-        in your warehouse role.</p>
-
-        <h3>📋 Documents to Sign at Hire</h3>
-        <ul>
-            <li>Payroll Direct Deposit</li>
-            <li>Employee Acknowledgment Form</li>
-            <li>Employee Code of Conduct</li>
-            <li>Employee Withholding (W-4 and A-4)</li>
-            <li>Confidentiality &amp; Non-Disclosure Agreement</li>
-            <li>Form: Employee Medical Information</li>
-            <li>"No Sexual Harassment" Statement</li>
-            <li>Overtime / Company Premises Memo</li>
-            <li>Drug Policy Acknowledgment</li>
-            <li>Employee's Responsibility to Report Drug Diversion</li>
-            <li>API Staff Alerts</li>
-            <li>Form I-9 (Employment Eligibility Verification)</li>
-            <li>Employee Handbook Acknowledgment</li>
-            <li>Warehouse Safety Acknowledgment</li>
-        </ul>
-    </div>
-    """)
-
-    render_html("""
-    <div class="content-section">
-        <h3>💻 Systems You'll Use</h3>
-
-        <h3>Paylocity — Payroll & HR Self-Service</h3>
-        <p>Paylocity is AAP's payroll platform where you'll view pay stubs, manage direct deposit, and access
-        tax forms. <strong>API Company ID: 123959</strong></p>
-        <p>To register: Go to <strong>access.paylocity.com</strong>, click "Register New User," and enter your
-        Company ID, last name, SSN, and home zip code.</p>
-
-        <h3>BambooHR — Employee Records & Directory</h3>
-        <p>BambooHR is AAP's HRIS (HR Information System). You'll use it to access your employee records and
-        the company directory. HR will walk you through BambooHR during orientation. Be sure to
-        <strong>upload your profile photo</strong> after logging in.</p>
-
-        <h3>Teladoc — Free Telehealth (Day 1)</h3>
-        <p>Set up your Teladoc account by visiting <strong>Teladoc.com</strong> and clicking "Get Started."
-        Select your health insurance plan from the drop-down and confirm coverage. General medical visits,
-        mental health visits, and more are <strong>completely free.</strong></p>
-
-        <h3>LinkedIn Learning — Professional Development (Day 1)</h3>
-        <p>You should have received an activation email when you were offered the position. If you didn't receive
-        it, contact HR. Over <strong>16,000 courses</strong> available on any device, at your own pace.</p>
-    </div>
-    """)
-
-    render_html("""
-    <div class="content-section">
-        <h3>🏭 Your First Day on the Warehouse Floor</h3>
-        <p>Here's what to expect when you arrive for your first shift:</p>
-        <ul>
-            <li>Report to <strong>HR or your assigned supervisor</strong> upon arrival to complete
-            remaining paperwork and receive your facility tour.</li>
-            <li>You will be shown your workstation, locker assignment (if applicable), break areas,
-            emergency exits, and restroom locations.</li>
-            <li>Review the facility's safety posting board — OSHA required postings and emergency
-            procedures are located there.</li>
-            <li>You will be issued any required PPE. Confirm fit and ask questions before heading to the floor.</li>
-            <li>You will shadow a trainer or experienced teammate for your first shifts before working independently.</li>
-            <li>Do not operate any equipment until you have been formally trained and authorized to do so.</li>
-        </ul>
-    </div>
-    """)
-
-    st.markdown(info_box("📌 <b>PLACEHOLDER — Equipment Training Schedule:</b> Add the specific timeline and process for forklift and equipment certification for applicable roles here before publishing. Include who schedules the training and approximately how many days of shadowing are expected before independent operation.", "yellow"), unsafe_allow_html=True)
-
-    render_html("""
-    <div class="content-section">
-        <h3>📆 What to Expect in Your First 90 Days</h3>
-        <ul>
-            <li><strong>Days 1–30:</strong> Complete orientation and all paperwork. Receive your facility tour
-            and safety briefing. Shadow experienced teammates. Get set up on Paylocity and BambooHR.
-            Complete your 30-day check-in survey.</li>
-            <li><strong>Days 31–60:</strong> Begin executing core warehouse responsibilities with supervisor
-            support. Build speed and accuracy in your role. Complete your 60-day survey and become eligible
-            for most benefits.</li>
-            <li><strong>Days 61–90:</strong> Build consistency and confidence. Identify opportunities to improve
-            your process. Complete equipment training/certification if applicable to your role.
-            Your introductory period concludes at 90 days.</li>
-        </ul>
-
-        <h3>📬 Important Reminders Going Forward</h3>
-        <ul>
-            <li>Update HR immediately with any personal data changes (address, dependents, emergency contacts).</li>
-            <li>If you have a qualifying life event (marriage, birth, etc.), notify HR within <strong>30 days</strong>
-            to make benefits changes.</li>
-            <li>Performance evaluations are conducted approximately every 12 months from your hire anniversary.</li>
-            <li>AAP is an at-will employer — either party may end the relationship at any time for any lawful reason.</li>
-            <li>Report all concerns through the problem resolution process — starting with your supervisor,
-            then escalating to HR and management if needed.</li>
-            <li><strong>Never hesitate to report a safety concern.</strong> You cannot get in trouble for reporting
-            a genuine safety hazard — you can only get in trouble for ignoring one.</li>
-        </ul>
-    </div>
-    """)
-
-    render_html("""
-    <div class="content-section">
-        <h3>👥 Key Contacts</h3>
-    </div>
-    """)
-
-    contacts = [
-        ("Brandy Hooper", "VP of Human Resources", "brandy.hooper@rxaap.com", "256-574-7526"),
-        ("Nicole Thornton", "HR Administrator (API)", "nicole.thornton@apirx.com", "256-574-7528"),
-        ("CBIZ Benefits", "Benefits Broker", "844.200.CBIZ (2249)", ""),
-        ("Teladoc", "Free Telehealth", "800-835-2362 | Teladoc.com", ""),
-        ("LifeMatters EAP", "Employee Assistance", "800-634-6433 | mylifematters.com", ""),
-        ("BCBS of Alabama", "Medical Insurance", "888-267-2955 | bcbsal.org", ""),
-        ("Guardian", "Dental, Vision, Life, Disability", "888-482-7342 | guardiananytime.com", ""),
-        ("HealthEquity", "HSA Accounts", "866-274-9887 | healthequity.com", ""),
-    ]
-
-    contact_rows = "".join(
-        f"<tr><td><b>{c[0]}</b></td><td>{c[1]}</td><td>{c[2]}{(' | ' + c[3]) if c[3] else ''}</td></tr>"
-        for c in contacts
-    )
-    render_html(
-        f'<table class="styled-table">'
-        f"<tr><th>Name / Resource</th><th>Role</th><th>Contact</th></tr>"
-        f"{contact_rows}</table>"
+    section_header("Module 6: Your First Steps — Warehouse", "Day 1, training & contacts", "🚀")
+    st.write(
+        f"""
+        **Day 1** — Tour, paperwork, safety briefing, PPE issued, shadow a trainer.  
+        **Do not operate equipment** until you’re trained and authorized.  
+        **Paylocity** — Register (Company ID: **{PAYLOCITY_COMPANY_ID}**).  
+        **BambooHR** — Get set up; add a profile photo.  
+        **LinkedIn Learning** — Ask HR if you need the activation email.  
+        **Teladoc** — Set up at Teladoc.com.
+        """
     )
 
-    st.markdown("### ✅ Module 5 Checklist")
-    checklist_items = {
-        "paperwork": "I understand which documents I need to sign during orientation.",
-        "paylocity": "I know how to register for Paylocity (Company ID: 123959).",
-        "bamboohr": "I understand what BambooHR is used for and that I need to upload my photo.",
+    st.markdown("### 👥 Key Contacts")
+    for name, role, contact, phone in CONTACTS:
+        line = f"**{name}** — {role} · {contact}"
+        if phone:
+            line += f" · {phone}"
+        st.write("- " + line)
+
+    st.markdown("### ✅ Checklist")
+    checklist_block("wh_firststeps", {
+        "paperwork": "I know what I’m signing during orientation.",
+        "paylocity": f"I know how to register for Paylocity (Company ID: {PAYLOCITY_COMPANY_ID}).",
+        "bamboohr": "I know what BambooHR is used for.",
         "teladoc_setup": "I know how to set up my Teladoc account.",
-        "linkedin": "I have received or know how to request my LinkedIn Learning activation.",
-        "day1_floor": "I know what to expect on my first day on the warehouse floor.",
-        "no_equip": "I understand I cannot operate equipment until I am formally trained and authorized.",
-        "key_contacts": "I know who to contact for HR, benefits, payroll, and safety questions.",
-        "first90": "I understand what is expected of me in my first 30, 60, and 90 days.",
-        "at_will": "I understand AAP is an at-will employer.",
-        "life_event": "I know I have 30 days to notify HR of qualifying life events for benefits changes.",
-        "safety_report_reminder": "I know I can and should always report genuine safety concerns without fear.",
-    }
-
-    mk = "wh_firststeps"
-    if mk not in st.session_state.checklist_items or not st.session_state.checklist_items[mk]:
-        st.session_state.checklist_items[mk] = {k: False for k in checklist_items}
-
-    changed = False
-    for key, label in checklist_items.items():
-        val = st.checkbox(label, value=st.session_state.checklist_items[mk].get(key, False), key=f"{mk}_chk_{key}")
-        if val != st.session_state.checklist_items[mk].get(key, False):
-            st.session_state.checklist_items[mk][key] = val
-            changed = True
-    if changed:
-        update_progress(mk)
-
-    st.markdown("### 📝 Module 5 Quiz")
-    if st.session_state.quiz_results.get(mk) is not None:
-        score = st.session_state.quiz_results[mk]
-        st.success(f"✅ Quiz completed! You scored {score}/4.")
-    else:
-        with st.form("quiz_wh_firststeps"):
-            q1 = st.radio("1. What is the Paylocity Company ID for API employees?",
-                ["123456", "123959", "987654", "112358"], key="wf_q1", index=None)
-            q2 = st.radio("2. How many days do you have to notify HR of a qualifying life event for benefits changes?",
-                ["7 days", "14 days", "30 days", "60 days"], key="wf_q2", index=None)
-            q3 = st.radio("3. When can you begin operating warehouse equipment such as a forklift?",
-                ["After your first week of employment",
-                 "Immediately if you have experience from a previous job",
-                 "Only after you have been formally trained and authorized for that specific equipment",
-                 "After your 90-day introductory period ends"], key="wf_q3", index=None)
-            q4 = st.radio("4. AAP's employment relationship is best described as:",
-                ["Guaranteed for a fixed term",
-                 "At-will, meaning either party may end employment at any time for any lawful reason",
-                 "Protected by a union contract",
-                 "Governed by a mandatory 2-year commitment"], key="wf_q4", index=None)
-            submitted = st.form_submit_button("Submit Quiz")
-            if submitted:
-                score = sum([
-                    q1 == "123959",
-                    q2 == "30 days",
-                    q3 == "Only after you have been formally trained and authorized for that specific equipment",
-                    q4 == "At-will, meaning either party may end employment at any time for any lawful reason",
-                ])
-                st.session_state.quiz_results[mk] = score
-                update_progress(mk)
-                st.rerun()
-
-    # Completion check
-    active_modules = WAREHOUSE_MODULES if st.session_state.get("role_track") == "warehouse" else MODULES
-    total_pct = int(sum(st.session_state.progress.values()) / len(active_modules))
-    if total_pct == 100:
-        render_html("""
-        <div class="content-section" style="border-left:4px solid #2ecc71;text-align:center;padding:36px;">
-            <h2 style="color:#2ecc71;">🎉 Congratulations!</h2>
-            <p style="font-size:1.1rem;">You have completed all five AAP Warehouse orientation modules.
-            Welcome to the team — we're glad you're here!</p>
-        </div>
-        """)
+        "linkedin": "I have or can request my LinkedIn Learning activation.",
+        "day1_floor": "I know what to expect on my first day on the floor.",
+        "no_equip": "I won’t operate equipment until trained & authorized.",
+        "key_contacts": "I know who to contact for HR, benefits, payroll, and safety.",
+        "first90": "I know the 30/60/90‑day expectations.",
+        "at_will": "I understand AAP is an at‑will employer.",
+        "life_event": "I know life‑event benefit changes must be within 30 days.",
+        "safety_report_reminder": "I’ll report safety concerns immediately.",
+    })
+    st.markdown("### 📝 Quick Quiz")
+    quiz_block("wh_firststeps", [
+        ("Paylocity Company ID?", ["123456", "123959", "987654", "112358"], "123959"),
+        ("Notify HR of life events within:", ["7", "14", "30", "60"], "30"),
+        ("When can you operate a forklift?", [
+            "After first week",
+            "Immediately if experienced",
+            "Only after you’re trained & authorized for that equipment",
+            "After 90‑day period"], "Only after you’re trained & authorized for that equipment"),
+        ("Employment at AAP is:", ["Fixed term", "At‑will", "Union‑protected", "2‑year commitment"], "At‑will"),
+    ])
 
 
 # ─────────────────────────────────────────────
-#  ROUTER  — gate everything behind authentication
+# Router & layout
 # ─────────────────────────────────────────────
+
+def render_module_shell_start(module_key: str):
+    is_wh = st.session_state.get("role_track") == "warehouse"
+    modules = WAREHOUSE_MODULES if is_wh else MODULES
+    module = next((m for m in modules if m["key"] == module_key), None)
+    if not module:
+        return
+    pct = st.session_state.progress.get(module_key, 0)
+    status = "Complete" if pct == 100 else ("In Progress" if pct > 0 else "Queued")
+    with st.container(border=True):
+        st.markdown(f"### {module['icon']} Module {module['number']}: {module['title']}")
+        st.caption(module["subtitle"]) 
+        st.markdown(pct_bar(pct), unsafe_allow_html=True)
+        st.caption(f"Status · {status}")
+
+
+def render_module_shell_end():
+    st.write("")
+
+
+# Mapping
+GENERAL_MAP = {
+    "welcome": show_module_welcome,
+    "conduct": show_module_conduct,
+    "policies": show_module_policies,
+    "timeoff": show_module_timeoff,
+    "benefits": show_module_benefits,
+    "firststeps": show_module_firststeps,
+}
+WAREHOUSE_MAP = {
+    "wh_welcome": show_wh_module_welcome,
+    "wh_conduct": show_wh_module_conduct,
+    "wh_safety": show_wh_module_safety,
+    "wh_timeoff": show_wh_module_timeoff,
+    "wh_benefits": show_wh_module_benefits,
+    "wh_firststeps": show_wh_module_firststeps,
+}
+
+
+# ─────────────────────────────────────────────
+# Main app
+# ─────────────────────────────────────────────
+inject_ui_enhancements(st.session_state.get("sound_enabled", True))
+
 if not st.session_state.authenticated:
     show_login()
 else:
-    general_map = {
-        "welcome":    show_module_welcome,
-        "conduct":    show_module_conduct,
-        "policies":   show_module_policies,
-        "benefits":   show_module_benefits,
-        "firststeps": show_module_firststeps,
-    }
-    warehouse_map = {
-        "wh_welcome":    show_wh_module_welcome,
-        "wh_conduct":    show_wh_module_conduct,
-        "wh_safety":     show_wh_module_safety,
-        "wh_benefits":   show_wh_module_benefits,
-        "wh_firststeps": show_wh_module_firststeps,
-    }
+    with st.sidebar:
+        render_sidebar()
 
     is_warehouse = st.session_state.get("role_track") == "warehouse"
-    module_map   = warehouse_map if is_warehouse else general_map
+    module_map = WAREHOUSE_MAP if is_warehouse else GENERAL_MAP
 
     selected = st.session_state.selected_module
     if selected and selected in module_map:

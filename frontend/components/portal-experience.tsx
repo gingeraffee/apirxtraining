@@ -511,12 +511,22 @@ function SectionRail({
   nextSection,
   toolkitComplete,
 }: SectionRailProps) {
+  const progressPercent = totalCount ? Math.round((progressCount / totalCount) * 100) : 0;
+
   return (
     <div className="section-rail-inner">
       <div className="section-rail-header">
         <p className="section-label">AAP/API</p>
         <h1>Onboarding</h1>
-        <p>{progressCount}/{totalCount} sections complete</p>
+        <div className="rail-progress" aria-hidden="true">
+          <div className="rail-progress-track">
+            <span className="rail-progress-fill" style={{ width: `${progressPercent}%` }} />
+          </div>
+          <div className="rail-progress-meta">
+            <strong>{progressPercent}%</strong>
+            <span>core flow complete</span>
+          </div>
+        </div>
         {nextSection && (
           <Link className="section-rail-inline" href={`/modules/${nextSection.slug}`}>
             Continue with {nextSection.title}
@@ -684,12 +694,22 @@ type ToolkitRailProps = {
 };
 
 function ToolkitRail({ sections, slug, completedSections, progressCount, totalCount, toolkitComplete }: ToolkitRailProps) {
+  const progressPercent = totalCount ? Math.round((progressCount / totalCount) * 100) : 0;
+
   return (
     <div className="toolkit-rail-inner">
       <div className="toolkit-rail-header">
         <p className="section-label">AAP/API</p>
         <h1>Toolkit</h1>
-        <p>{progressCount}/{totalCount} general sections done</p>
+        <div className="rail-progress" aria-hidden="true">
+          <div className="rail-progress-track">
+            <span className="rail-progress-fill" style={{ width: `${progressPercent}%` }} />
+          </div>
+          <div className="rail-progress-meta">
+            <strong>{progressPercent}%</strong>
+            <span>general flow done</span>
+          </div>
+        </div>
       </div>
 
       <nav className="toolkit-rail-nav">

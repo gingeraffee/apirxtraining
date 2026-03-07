@@ -70,6 +70,16 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
     ? Math.round(((progress?.completed_sections.length ?? 0) / sections.length) * 100)
     : 0;
   const nextSection = sections.find((section) => !completedSections.has(section.slug)) ?? sections[0] ?? null;
+  const contextTitle = kind === "section" && activeSection
+    ? activeSection.title
+    : kind === "toolkit" && toolkit
+      ? toolkit.title
+      : "Overview";
+  const contextType = kind === "toolkit"
+    ? "Role-specific toolkit"
+    : kind === "section"
+      ? "Core onboarding section"
+      : "Core onboarding overview";
 
   useEffect(() => {
     if (!activeSection) {
@@ -210,6 +220,11 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
               <p className="section-label">Progress</p>
               <strong>{completionPercent}% complete</strong>
               <p>{progress.completed_sections.length} of {sections.length} general sections reviewed.</p>
+              <div className="rail-progress" aria-hidden="true">
+                <div className="rail-progress-track">
+                  <span className="rail-progress-fill" style={{ width: `${completionPercent}%` }} />
+                </div>
+              </div>
               {nextSection && (
                 <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
                   Continue with {nextSection.title}
@@ -218,7 +233,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
             </div>
 
             <div className="rail-panel">
-              <p className="section-label">General flow</p>
+              <p className="rail-group-label">General flow</p>
               <nav className="nav-stack">
                 <Link className={kind === "overview" ? "nav-link active" : "nav-link"} href="/">
                   <span>Overview</span>
@@ -242,7 +257,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
             </div>
 
             <div className="rail-panel">
-              <p className="section-label">Separate role-specific lane</p>
+              <p className="rail-group-label">Separate role-specific lane</p>
               <Link className="nav-link" href="/toolkits/hr-administrative-assistant">
                 <div>
                   <strong>HR Administrative Assistant Toolkit</strong>
@@ -268,8 +283,33 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
           <div className="topbar-meta">
             <span>{progress.updated_at ? "Progress saved" : "Progress ready"}</span>
             <strong>{progress.completed_sections.length}/{sections.length}</strong>
+            <div className="topbar-progress-track" aria-hidden="true">
+              <span className="topbar-progress-fill" style={{ width: `${completionPercent}%` }} />
+            </div>
           </div>
         </header>
+
+        <section className="context-strip" aria-label="Current onboarding context">
+          <article className="context-chip">
+            <span>Now viewing</span>
+            <strong>{contextTitle}</strong>
+            <p>{contextType}</p>
+          </article>
+          {nextSection && (
+            <article className="context-chip emphasis">
+              <span>Next up</span>
+              <strong>{nextSection.title}</strong>
+              <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
+                Continue section
+              </Link>
+            </article>
+          )}
+          <article className="context-chip">
+            <span>Completion</span>
+            <strong>{completionPercent}%</strong>
+            <p>{progress.completed_sections.length} of {sections.length} core sections complete</p>
+          </article>
+        </section>
 
         {kind === "overview" && (
           <OverviewScreen experience={experience} progress={progress} nextSection={nextSection} />
@@ -299,6 +339,14 @@ type OverviewProps = {
 };
 
 function OverviewScreen({ experience, progress, nextSection }: OverviewProps) {
+  const completedCount = progress.completed_sections.length;
+  const totalCount = experience.sections.length;
+  const remainingCount = Math.max(totalCount - completedCount, 0);
+  const remainingMinutes = experience.sections
+    .filter((section) => !progress.completed_sections.includes(section.slug))
+    .reduce((runningTotal, section) => runningTotal + section.estimatedMinutes, 0);
+  const primaryContact = experience.contacts[0];
+
   return (
     <div className="page-stack">
       <section className="page-hero">
@@ -324,24 +372,51 @@ function OverviewScreen({ experience, progress, nextSection }: OverviewProps) {
         </div>
       </section>
 
+      <section className="overview-glance-grid">
+        <article className="content-panel glance-card glance-primary-card">
+          <p className="section-label">Core path status</p>
+          <h3>{completedCount} complete, {remainingCount} to go</h3>
+          <p>Stay in one section until you can acknowledge it with confidence.</p>
+          {nextSection && (
+            <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
+              Resume {nextSection.title}
+            </Link>
+          )}
+        </article>
+        <article className="content-panel glance-card">
+          <p className="section-label">Estimated remaining time</p>
+          <h3>{remainingMinutes} minutes</h3>
+          <p>Short focused sessions keep this path moving without overload.</p>
+        </article>
+        <article className="content-panel glance-card">
+          <p className="section-label">Need help quickly</p>
+          <h3>{primaryContact?.name ?? "HR Team"}</h3>
+          <p>{primaryContact?.role ?? "HR support"}</p>
+          {primaryContact && <p className="glance-meta">{primaryContact.phone}</p>}
+        </article>
+      </section>
+
       <section className="content-columns overview-columns">
-        <div className="content-panel">
+        <div className="content-panel roadmap-shell">
           <p className="section-label">Core onboarding flow</p>
           <h3>One focused section at a time</h3>
+          <p className="roadmap-intro">Clear order, obvious status, and one next action per module.</p>
           <ol className="roadmap-list">
             {experience.sections.map((section, index) => {
               const complete = progress.completed_sections.includes(section.slug);
+              const upNext = !complete && nextSection?.slug === section.slug;
               return (
-                <li key={section.slug} className="roadmap-item">
+                <li key={section.slug} className={complete ? "roadmap-item done" : upNext ? "roadmap-item next" : "roadmap-item"}>
                   <div className="roadmap-index">{index + 1}</div>
                   <div className="roadmap-copy">
                     <div className="roadmap-head">
                       <strong>{section.title}</strong>
                       <span className={complete ? "status-chip done" : "status-chip"}>{complete ? "Done" : `${section.estimatedMinutes} min`}</span>
                     </div>
+                    <span className={upNext ? "roadmap-status upcoming" : complete ? "roadmap-status complete" : "roadmap-status"}>{upNext ? "Up next" : complete ? "Completed" : "In queue"}</span>
                     <p>{section.summary}</p>
                     <Link className="inline-action" href={`/modules/${section.slug}`}>
-                      Open section
+                      {complete ? "Review section" : upNext ? "Continue section" : "Open section"}
                     </Link>
                   </div>
                 </li>
@@ -404,6 +479,8 @@ type SectionProps = {
 
 function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknowledge, isPending }: SectionProps) {
   const allChecked = selections.length === section.acknowledgment.items.length && selections.every(Boolean);
+  const checkedCount = selections.filter(Boolean).length;
+  const remainingChecks = Math.max(section.acknowledgment.items.length - checkedCount, 0);
 
   return (
     <div className="page-stack section-page">
@@ -419,10 +496,25 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
           <div className="focus-list">
             {section.focuses.map((focus) => <span key={focus} className="focus-pill">{focus}</span>)}
           </div>
+          <div className="hero-support-divider" />
+          <p className="section-label">Completion status</p>
+          <div className="hero-progress-copy">
+            <strong>{checkedCount}/{section.acknowledgment.items.length} checkpoints marked</strong>
+            <p>{isAcknowledged ? "Section acknowledged and saved." : remainingChecks === 0 ? "Ready to mark complete." : `${remainingChecks} checks left before completion.`}</p>
+            <a className="inline-action" href="#section-acknowledgment">
+              Jump to completion
+            </a>
+          </div>
         </aside>
       </section>
 
-      <section className="section-band takeaway-band">
+      <div className="jump-chip-row">
+        <a className="jump-chip" href="#section-takeaways">Takeaways</a>
+        <a className="jump-chip" href="#section-policy">Policy map</a>
+        <a className="jump-chip emphasis" href="#section-acknowledgment">{isAcknowledged ? "Acknowledged" : "Complete section"}</a>
+      </div>
+
+      <section className="section-band takeaway-band" id="section-takeaways">
         <div className="section-band-head">
           <p className="section-label">Core takeaways</p>
           <h2>Read this first</h2>
@@ -437,7 +529,7 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
         </div>
       </section>
 
-      <section className="section-band policy-band">
+      <section className="section-band policy-band" id="section-policy">
         <div className="section-band-head">
           <p className="section-label">Policy structure</p>
           <h2>What the documents actually cover here</h2>
@@ -476,7 +568,7 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
         </div>
       </section>
 
-      <section className="content-panel acknowledgment-panel">
+      <section className="content-panel acknowledgment-panel" id="section-acknowledgment">
         <p className="section-label">Acknowledge this section</p>
         <h3>{section.acknowledgment.title}</h3>
         <p>{section.acknowledgment.statement}</p>
@@ -516,6 +608,7 @@ function SectionRail({
   toolkitComplete,
 }: SectionRailProps) {
   const progressPercent = totalCount ? Math.round((progressCount / totalCount) * 100) : 0;
+  const activeSection = sections.find((section) => section.slug === slug);
 
   return (
     <div className="section-rail-inner">
@@ -538,25 +631,39 @@ function SectionRail({
         )}
       </div>
 
-      <nav className="section-rail-nav">
-        <Link className={slug ? "section-rail-link" : "section-rail-link active"} href="/">
-          <span>Overview</span>
-          <em>{progressCount === totalCount ? "Done" : "Start here"}</em>
-        </Link>
-        {sections.map((section, index) => (
-          <Link
-            key={section.slug}
-            className={slug === section.slug ? "section-rail-link active" : "section-rail-link"}
-            href={`/modules/${section.slug}`}
-          >
-            <span>{index + 1}. {section.title}</span>
-            <em>{completedSections.has(section.slug) ? "Done" : `${section.estimatedMinutes} min`}</em>
+      <div className="section-rail-context">
+        <p className="section-label">Now in view</p>
+        <strong>{activeSection ? activeSection.title : "Overview"}</strong>
+        <p>{activeSection ? `${activeSection.estimatedMinutes} min section` : "Start here, then move into the core modules."}</p>
+        {nextSection && (
+          <Link className="section-rail-inline" href={`/modules/${nextSection.slug}`}>
+            {activeSection?.slug === nextSection.slug ? "This section is your next completion target" : `Up next: ${nextSection.title}`}
           </Link>
-        ))}
-      </nav>
+        )}
+      </div>
+
+      <div className="rail-nav-group">
+        <p className="rail-group-label">Core onboarding</p>
+        <nav className="section-rail-nav">
+          <Link className={slug ? "section-rail-link" : "section-rail-link active"} href="/">
+            <span>Overview</span>
+            <em>{progressCount === totalCount ? "Done" : "Start here"}</em>
+          </Link>
+          {sections.map((section, index) => (
+            <Link
+              key={section.slug}
+              className={slug === section.slug ? "section-rail-link active" : "section-rail-link"}
+              href={`/modules/${section.slug}`}
+            >
+              <span>{index + 1}. {section.title}</span>
+              <em>{completedSections.has(section.slug) ? "Done" : `${section.estimatedMinutes} min`}</em>
+            </Link>
+          ))}
+        </nav>
+      </div>
 
       <div className="section-rail-footer">
-        <p className="section-label">Separate role-specific lane</p>
+        <p className="rail-group-label">Separate role-specific lane</p>
         <Link className="section-rail-link" href="/toolkits/hr-administrative-assistant">
           <span>HR Administrative Assistant Toolkit</span>
           <em>{toolkitComplete ? "Reviewed" : "Separate"}</em>
@@ -591,7 +698,13 @@ function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProp
         </div>
       </section>
 
-      <section className="content-panel primary-panel systems-panel">
+      <div className="jump-chip-row">
+        <a className="jump-chip" href="#toolkit-systems">Systems</a>
+        <a className="jump-chip" href="#toolkit-playbooks">Playbooks</a>
+        <a className="jump-chip emphasis" href="#toolkit-review">{complete ? "Reviewed" : "Mark reviewed"}</a>
+      </div>
+
+      <section className="content-panel primary-panel systems-panel" id="toolkit-systems">
         <p className="section-label">Systems</p>
         <h3>Where the HR admin work happens</h3>
         <div className="system-list primary-system-list">
@@ -631,7 +744,7 @@ function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProp
         </div>
       </section>
 
-      <section className="content-panel quiet-panel">
+      <section className="content-panel quiet-panel" id="toolkit-playbooks">
         <p className="section-label">Playbooks</p>
         <h3>Use these patterns instead of improvising</h3>
         {toolkit.playbooks.map((playbook) => (
@@ -672,7 +785,7 @@ function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProp
           </div>
         </div>
 
-        <div className="content-panel acknowledgment-panel quiet-panel">
+        <div className="content-panel acknowledgment-panel quiet-panel" id="toolkit-review">
           <p className="section-label">Toolkit review</p>
           <h3>{toolkit.acknowledgment.title}</h3>
           <p>{toolkit.acknowledgment.statement}</p>
@@ -716,25 +829,37 @@ function ToolkitRail({ sections, slug, completedSections, progressCount, totalCo
         </div>
       </div>
 
-      <nav className="toolkit-rail-nav">
-        <Link className="toolkit-rail-link" href="/">
-          <span>Overview</span>
+      <div className="section-rail-context toolkit-context">
+        <p className="section-label">Mode</p>
+        <strong>Role-specific reference</strong>
+        <p>{toolkitComplete ? "Toolkit reviewed and saved." : "Complete this lane without mixing it into the core flow."}</p>
+        <Link className="section-rail-inline" href="/">
+          Return to overview
         </Link>
-        {sections.map((section, index) => (
-          <Link
-            key={section.slug}
-            className={slug === section.slug ? "toolkit-rail-link active" : "toolkit-rail-link"}
-            href={`/modules/${section.slug}`}
-          >
-            <span>{index + 1}. {section.title}</span>
-            {completedSections.has(section.slug) && <em>Done</em>}
+      </div>
+
+      <div className="rail-nav-group">
+        <p className="rail-group-label">General onboarding</p>
+        <nav className="toolkit-rail-nav">
+          <Link className="toolkit-rail-link" href="/">
+            <span>Overview</span>
           </Link>
-        ))}
-        <Link className="toolkit-rail-link active toolkit-link-current" href="/toolkits/hr-administrative-assistant">
-          <span>HR Administrative Assistant Toolkit</span>
-          <em>{toolkitComplete ? "Reviewed" : "Current"}</em>
-        </Link>
-      </nav>
+          {sections.map((section, index) => (
+            <Link
+              key={section.slug}
+              className={slug === section.slug ? "toolkit-rail-link active" : "toolkit-rail-link"}
+              href={`/modules/${section.slug}`}
+            >
+              <span>{index + 1}. {section.title}</span>
+              {completedSections.has(section.slug) && <em>Done</em>}
+            </Link>
+          ))}
+          <Link className="toolkit-rail-link active toolkit-link-current" href="/toolkits/hr-administrative-assistant">
+            <span>HR Administrative Assistant Toolkit</span>
+            <em>{toolkitComplete ? "Reviewed" : "Current"}</em>
+          </Link>
+        </nav>
+      </div>
     </div>
   );
 }

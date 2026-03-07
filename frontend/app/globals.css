@@ -1357,261 +1357,546 @@ button {
   background: linear-gradient(90deg, rgba(79, 220, 255, 0.96), rgba(255, 95, 109, 0.9));
 }
 
-.overview-page {
+/* ============================================
+   OVERVIEW PAGE — Discord-inspired dark surface
+   3-zone layout: Hero / Course Path / Support
+   ============================================ */
+
+@keyframes ov-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(79, 220, 255, 0.4); }
+  50% { box-shadow: 0 0 18px 4px rgba(79, 220, 255, 0.18); }
+}
+
+@keyframes ov-glow-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ov-page {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
+  padding: 0 0 48px;
 }
 
-.overview-hero {
-  grid-template-columns: minmax(0, 1.42fr) minmax(260px, 0.58fr);
-  padding: 24px 26px;
-}
+/* ---- Zone 1: Hero / Welcome / Continue ---- */
 
-.overview-hero-copy {
+.ov-hero {
   display: grid;
-  align-content: start;
-  gap: 8px;
+  grid-template-columns: minmax(0, 1.42fr) minmax(260px, 0.58fr);
+  gap: 24px;
+  padding: 36px 32px;
+  background:
+    linear-gradient(135deg, rgba(15, 25, 42, 0.88) 0%, rgba(10, 18, 32, 0.92) 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+  position: relative;
+  overflow: hidden;
 }
 
-.overview-hero .lead,
-.overview-hero .purpose-line {
-  max-width: 62ch;
+.ov-hero::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 50%;
+  height: 120%;
+  background: radial-gradient(circle, rgba(79, 220, 255, 0.06) 0%, transparent 70%);
+  pointer-events: none;
 }
 
-.overview-hero-actions {
+.ov-hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.ov-hero-copy h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-weight: 780;
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+  color: #f0f6ff;
+  margin: 0;
+}
+
+.ov-hero-lead {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: var(--text-inverse-soft);
+  max-width: 52ch;
+  margin: 0;
+}
+
+.ov-hero-sub {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-inverse-muted);
+  margin: 0;
+}
+
+.ov-hero-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.ov-hero-actions .primary-action {
+  box-shadow: 0 0 20px rgba(79, 220, 255, 0.18);
+  transition: transform 160ms ease, box-shadow 200ms ease, background 160ms ease;
+}
+
+.ov-hero-actions .primary-action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 28px rgba(79, 220, 255, 0.3);
+}
+
+.ov-hero-progress {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-inverse-muted);
+  letter-spacing: 0.01em;
+}
+
+.ov-hero-expect {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
-  margin-top: 4px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  position: relative;
+  z-index: 1;
+  align-self: start;
+}
+
+.ov-hero-expect h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-inverse);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.ov-expect-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.ov-expect-list li {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--text-inverse-soft);
+  padding-left: 16px;
+  position: relative;
+}
+
+.ov-expect-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--cyan);
 }
 
 .done-action {
-  opacity: 0.8;
+  opacity: 0.7;
   cursor: default;
 }
 
-.overview-hero-note {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  font-weight: 700;
+/* ---- Zone 2: Course Path ---- */
+
+.ov-path {
+  background:
+    linear-gradient(180deg, rgba(13, 22, 38, 0.9) 0%, rgba(10, 17, 30, 0.94) 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.26);
+  padding: 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.overview-summary-panel {
-  align-self: start;
-  padding: 12px 14px;
-  border-color: rgba(11, 31, 55, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 252, 255, 0.88));
-  box-shadow: 0 9px 20px rgba(8, 16, 29, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.96);
-}
-
-.overview-summary-panel h3 {
-  margin-bottom: 8px;
-  font-size: 1.03rem;
-}
-
-.overview-summary-panel .plain-list {
-  gap: 6px;
-  padding-left: 15px;
-}
-
-.overview-journey {
-  padding: 20px 22px;
-}
-
-.overview-journey-head {
+.ov-path-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 12px;
+  gap: 16px;
 }
 
-.overview-journey-head h3 {
-  margin-bottom: 4px;
+.ov-path-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.22rem;
+  font-weight: 720;
+  color: #f0f6ff;
+  margin: 0;
+  line-height: 1.3;
 }
 
-.overview-journey-meta {
-  display: grid;
-  justify-items: end;
+.ov-path-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 2px;
 }
 
-.overview-journey-meta strong {
-  color: var(--text-strong);
-  font-family: var(--font-display);
-  font-size: 1.08rem;
-  letter-spacing: -0.03em;
-}
-
-.overview-journey-meta span {
-  color: var(--text-muted);
-  font-size: 0.84rem;
-}
-
-.overview-journey-progress {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 10px 0 14px;
-}
-
-.overview-journey-progress .rail-progress {
-  flex: 1;
-  margin: 0;
-}
-
-.journey-action {
-  white-space: nowrap;
-}
-
-.journey-complete-note {
-  margin: 0;
-  color: var(--text-soft);
-  font-size: 0.88rem;
-}
-
-.overview-journey-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 10px;
-}
-
-.journey-item {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr);
-  gap: 12px;
-  padding: 11px 0;
-  border-top: 1px solid rgba(11, 31, 55, 0.08);
-}
-
-.journey-item:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-
-.journey-step {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(180deg, rgba(79, 220, 255, 0.14), rgba(79, 220, 255, 0.08));
-  color: var(--cyan-strong);
-  font-family: var(--font-display);
-  font-size: 0.96rem;
-}
-
-.journey-item.current .journey-step,
-.journey-item.next .journey-step {
-  background: linear-gradient(150deg, rgba(79, 220, 255, 0.22), rgba(255, 95, 109, 0.18));
-}
-
-.journey-item.done .journey-step {
-  background: linear-gradient(180deg, rgba(79, 220, 255, 0.16), rgba(79, 220, 255, 0.1));
-}
-
-.journey-content {
-  display: grid;
-  gap: 6px;
-}
-
-.journey-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-
-.journey-title {
-  color: var(--text-strong);
-  font-size: 1.01rem;
-  line-height: 1.15;
-}
-
-.journey-state {
-  white-space: nowrap;
-  padding: 4px 9px;
-  border-radius: 999px;
-  border: 1px solid rgba(11, 31, 55, 0.08);
-  background: rgba(11, 31, 55, 0.05);
-  color: var(--text-muted);
-  font-size: 0.67rem;
+.ov-path-stats strong {
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  color: var(--text-inverse);
+}
+
+.ov-path-stats span {
+  font-size: 0.8rem;
+  color: var(--text-inverse-muted);
+}
+
+.ov-path-progress {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ov-progress-bar {
+  flex: 1;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.ov-progress-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #43b581, #4fdcff);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.ov-complete-note {
+  font-size: 0.82rem;
+  color: var(--text-inverse-muted);
+  white-space: nowrap;
+  margin: 0;
+}
+
+/* Journey roadmap — vertical timeline */
+
+.ov-journey {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ov-step {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 0 14px;
+  min-height: 0;
+}
+
+.ov-step-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ov-step-marker {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  transition: all 0.22s ease;
+}
+
+/* Completed: green like Discord's online indicator */
+.ov-step.completed .ov-step-marker {
+  background: rgba(67, 181, 129, 0.16);
+  color: #43b581;
+  border: 2px solid rgba(67, 181, 129, 0.35);
+}
+
+/* Current: cyan with pulse */
+.ov-step.current .ov-step-marker {
+  background: var(--cyan);
+  color: var(--shell);
+  border: 2px solid var(--cyan);
+  animation: ov-pulse 2.4s ease-in-out infinite;
+}
+
+.ov-step.next .ov-step-marker {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-inverse-soft);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+}
+
+.ov-step.upcoming .ov-step-marker {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-inverse-muted);
+  border: 2px solid rgba(255, 255, 255, 0.06);
+}
+
+.ov-step-line {
+  width: 2px;
+  flex: 1;
+  min-height: 14px;
+  transition: background 0.2s ease;
+}
+
+.ov-step.completed .ov-step-line {
+  background: rgba(67, 181, 129, 0.25);
+}
+
+.ov-step.current .ov-step-line,
+.ov-step.next .ov-step-line {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ov-step.upcoming .ov-step-line {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ov-step.last .ov-step-line {
+  display: none;
+}
+
+/* Step body — hover interaction */
+
+.ov-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px 22px;
+  border-radius: 12px;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+  border: 1px solid transparent;
+}
+
+.ov-step:not(.completed) .ov-step-body:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+  transform: translateX(2px);
+}
+
+.ov-step.last .ov-step-body {
+  padding-bottom: 0;
+}
+
+.ov-step-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ov-step-title {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-weight: 680;
+  color: #f0f6ff;
+  line-height: 1.3;
+  transition: color 180ms ease;
+}
+
+.ov-step.completed .ov-step-title {
+  color: var(--text-inverse-muted);
+}
+
+.ov-step:not(.completed) .ov-step-body:hover .ov-step-title {
+  color: var(--cyan);
+}
+
+.ov-step-meta {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-inverse-muted);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.journey-item.current .journey-state,
-.journey-item.next .journey-state {
-  color: var(--cyan-strong);
-  border-color: rgba(79, 220, 255, 0.22);
-  background: rgba(79, 220, 255, 0.13);
+.ov-step.current .ov-step-meta {
+  color: var(--cyan);
 }
 
-.journey-item.done .journey-state {
-  color: #0e90ac;
-  border-color: rgba(79, 220, 255, 0.18);
-  background: rgba(79, 220, 255, 0.1);
+.ov-step.completed .ov-step-meta {
+  color: #43b581;
 }
 
-.journey-why,
-.journey-covers {
+.ov-step-why {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--text-inverse-soft);
   margin: 0;
-  color: var(--text-soft);
-  font-size: 0.9rem;
-  line-height: 1.42;
 }
 
-.compact-primary {
-  padding: 8px 12px;
-  border-radius: 12px;
-  font-size: 0.82rem;
-  letter-spacing: 0;
+.ov-step.completed .ov-step-why {
+  color: rgba(145, 166, 191, 0.6);
 }
 
-.overview-help {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.94fr);
-  gap: 12px;
-  padding: 16px 18px;
+.ov-step .primary-action,
+.ov-step .inline-action {
+  margin-top: 6px;
+  align-self: flex-start;
 }
 
-.overview-help h3 {
+/* Current lesson highlight */
+.ov-step.current .ov-step-body {
+  background: rgba(79, 220, 255, 0.05);
+  border-color: rgba(79, 220, 255, 0.12);
+  padding: 14px;
   margin-bottom: 8px;
 }
 
-.overview-help-copy p {
-  margin: 0;
+.ov-step.current.last .ov-step-body {
+  margin-bottom: 0;
 }
 
-.overview-help-contact {
-  padding: 12px 13px;
-  border-radius: 14px;
-  border: 1px solid rgba(11, 31, 55, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(246, 251, 255, 0.88));
+.compact-primary {
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  letter-spacing: 0;
+  box-shadow: 0 0 14px rgba(79, 220, 255, 0.12);
+  transition: transform 160ms ease, box-shadow 200ms ease;
+}
+
+.compact-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 22px rgba(79, 220, 255, 0.24);
+}
+
+/* ---- Zone 3: Support / Contact ---- */
+
+.ov-support {
   display: grid;
-  gap: 7px;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  background:
+    linear-gradient(135deg, rgba(13, 22, 38, 0.88) 0%, rgba(10, 17, 30, 0.92) 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+  padding: 24px 28px;
 }
 
-.overview-help-contact p {
+.ov-support-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ov-support-copy h3 {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: #f0f6ff;
   margin: 0;
 }
 
-.overview-help-actions {
+.ov-support-copy p {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-inverse-soft);
+  margin: 0;
+}
+
+.ov-support-card {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ov-support-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ov-support-identity strong {
+  font-size: 1rem;
+  font-weight: 680;
+  color: var(--text-inverse);
+}
+
+.ov-support-identity span {
+  font-size: 0.82rem;
+  color: var(--text-inverse-muted);
+}
+
+.ov-support-details p {
+  font-size: 0.85rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.ov-support-details a {
+  color: var(--cyan);
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.ov-support-details a:hover {
+  color: #80e8ff;
+  text-decoration: none;
+}
+
+.ov-support-actions {
+  display: flex;
+  gap: 8px;
   flex-wrap: wrap;
-  gap: 7px;
 }
 
-.overview-help-actions .inline-action {
-  margin-top: 0;
+.ov-support-future {
+  /* Virtual business card / QR code area — reserved for future rollout */
 }
 
-.overview-help-note {
-  color: var(--text-muted);
-  font-size: 0.77rem;
+/* ---- Overview dark-surface overrides ---- */
+
+.ov-page .section-label {
+  color: var(--text-inverse-muted);
+}
+
+.ov-page .inline-action {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-inverse);
+}
+
+.ov-page .inline-action:hover {
+  border-color: rgba(79, 220, 255, 0.28);
+  background: rgba(79, 220, 255, 0.08);
+  box-shadow: 0 0 14px rgba(79, 220, 255, 0.1);
+}
+
+.ov-path .inline-action {
+  color: var(--cyan);
+  font-weight: 650;
 }
 
 .context-strip {
@@ -1848,32 +2133,31 @@ summary:focus-visible {
   .toolkit-secondary-grid,
   .toolkit-support-grid,
   .context-strip,
-  .overview-help {
+  .ov-hero {
     grid-template-columns: 1fr;
   }
 
-  .overview-journey-head {
+  .ov-support {
+    grid-template-columns: 1fr;
+  }
+
+  .ov-path-header {
     flex-direction: column;
     align-items: flex-start;
   }
 
-  .overview-journey-progress {
+  .ov-path-progress {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .journey-action {
-    width: 100%;
-    text-align: center;
-  }
-
-  .journey-top {
+  .ov-step-head {
     flex-direction: column;
-    align-items: flex-start;
+    gap: 2px;
   }
 
-  .overview-help-actions .inline-action {
-    width: 100%;
+  .ov-support-actions .inline-action {
+    flex: 1;
   }
 
   .side-rail,
@@ -1944,8 +2228,27 @@ summary:focus-visible {
     width: 100%;
   }
 
-  .overview-help {
-    gap: 10px;
+  .ov-hero {
+    padding: 24px 20px;
+  }
+
+  .ov-path {
+    padding: 24px 20px;
+  }
+
+  .ov-support {
+    padding: 24px 20px;
+  }
+
+  .ov-step {
+    grid-template-columns: 32px 1fr;
+    gap: 0 12px;
+  }
+
+  .ov-step-marker {
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
   }
 
   .jump-chip {

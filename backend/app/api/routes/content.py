@@ -10,8 +10,8 @@ router = APIRouter(prefix="/content", tags=["content"])
 
 
 @router.get("/experience", response_model=ContentResponse)
-def read_experience() -> ContentResponse:
-    return ContentResponse(**get_experience_content())
+def read_experience(track: str = "default") -> ContentResponse:
+    return ContentResponse(**get_experience_content(track_id=track))
 
 
 @router.get("/sections/{slug}", response_model=SectionResponse)

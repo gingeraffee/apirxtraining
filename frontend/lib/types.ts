@@ -53,6 +53,21 @@ export type Toolkit = {
   };
 };
 
+export type SupportContact = {
+  name: string;
+  role: string;
+  phone: string;
+  email: string;
+};
+
+export type TrackInfo = {
+  id: string;
+  name: string;
+  support_contact: SupportContact;
+  toolkit_slugs: string[];
+  section_overrides: Record<string, unknown>;
+};
+
 export type ExperienceContent = {
   organization: {
     name: string;
@@ -67,6 +82,7 @@ export type ExperienceContent = {
   contacts: Contact[];
   sections: Section[];
   toolkits: Toolkit[];
+  track: TrackInfo;
 };
 
 export type ProgressRecord = {

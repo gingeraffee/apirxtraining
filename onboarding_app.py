@@ -329,74 +329,196 @@ def inject_theme():
     st.markdown(
         """
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Sora:wght@600;700&display=swap');
         :root {
-            --navy:#0a1f45;
-            --navy-2:#173a78;
-            --cyan:#2ad9ff;
-            --red:#ff425e;
-            --ink:#0f2b56;
-            --muted:#4f6586;
-            --line:rgba(20,56,111,0.16);
+            --navy-950:#061428;
+            --navy-900:#0b1f45;
+            --navy-700:#173f83;
+            --cyan-500:#12d8ff;
+            --cyan-300:#9ef1ff;
+            --red-500:#ff3f60;
+            --red-400:#ff5b76;
+            --ink:#0d264f;
+            --muted:#4d6489;
+            --line:rgba(17,53,110,.17);
+            --panel:#ffffff;
         }
         html, body, [class*="css"] {font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+        h1, h2, h3 {font-family:'Sora','Space Grotesk',sans-serif; letter-spacing:-0.02em;}
         .stApp {
             background:
-                radial-gradient(circle at 80% -10%, rgba(42,217,255,.30), transparent 30%),
-                radial-gradient(circle at 10% 0%, rgba(255,66,94,.18), transparent 24%),
-                linear-gradient(180deg, #f9fdff 0%, #eef6ff 100%);
-            color:var(--ink);
+                radial-gradient(circle at 82% -18%, rgba(18,216,255,.35), transparent 36%),
+                radial-gradient(circle at 3% 8%, rgba(255,63,96,.20), transparent 28%),
+                linear-gradient(180deg, #f8fdff 0%, #eef6ff 62%, #f4fbff 100%);
+            color: var(--ink);
         }
         [data-testid="stHeader"] {background:transparent;}
+        [data-testid="stToolbar"] {right: 12px;}
         [data-testid="stVerticalBlockBorderWrapper"] {
-            border-radius:18px !important;
-            border:1px solid var(--line) !important;
-            background:#fff;
-            box-shadow:0 16px 36px rgba(10,31,69,.10);
-            animation:rise 280ms ease;
+            border-radius: 20px !important;
+            border: 1px solid var(--line) !important;
+            background: var(--panel);
+            box-shadow: 0 18px 36px rgba(10,31,69,.10);
+            animation: rise 280ms ease;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        }
+        [data-testid="stVerticalBlockBorderWrapper"]:hover {
+            transform: translateY(-2px);
+            border-color: rgba(17,53,110,.24) !important;
+            box-shadow: 0 22px 44px rgba(10,31,69,.14);
         }
         [data-testid="stMetric"] {
-            border:1px solid var(--line);
-            border-radius:13px;
-            background:rgba(255,255,255,.82);
-            box-shadow:0 10px 24px rgba(15,43,86,.08);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: rgba(255,255,255,.86);
+            box-shadow: 0 10px 24px rgba(15,43,86,.08);
+            padding: 8px 10px;
         }
         .hero {
-            border:1px solid rgba(42,217,255,.36);
-            border-radius:22px;
-            padding:22px;
-            color:#f4fbff;
-            background:linear-gradient(140deg, rgba(10,31,69,.95), rgba(23,58,120,.94));
-            box-shadow:0 20px 40px rgba(10,31,69,.36);
+            border: 1px solid rgba(18,216,255,.42);
+            border-radius: 24px;
+            padding: 24px;
+            color: #f4fbff;
+            background:
+                radial-gradient(circle at 90% 10%, rgba(18,216,255,.24), transparent 40%),
+                linear-gradient(132deg, rgba(6,20,40,.97), rgba(13,40,82,.96));
+            box-shadow: 0 24px 46px rgba(7,23,49,.38);
         }
         .pill {
-            display:inline-block;
-            padding:5px 10px;
-            border-radius:999px;
-            background:rgba(9,33,69,.55);
-            border:1px solid rgba(42,217,255,.5);
-            color:#ddfbff;
-            font-size:.78rem;
-            margin-bottom:10px;
+            display: inline-block;
+            padding: 6px 11px;
+            border-radius: 999px;
+            background: rgba(10,38,81,.56);
+            border: 1px solid rgba(18,216,255,.62);
+            color: #dcfbff;
+            font-size: .78rem;
+            margin-bottom: 10px;
+            letter-spacing: .02em;
+            text-transform: uppercase;
+            font-weight: 600;
         }
         .module-head {
-            border-radius:14px;
-            border:1px solid rgba(255,66,94,.28);
-            background:linear-gradient(130deg, rgba(255,66,94,.08), rgba(42,217,255,.10));
-            padding:14px;
-            margin-bottom:8px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,63,96,.31);
+            background: linear-gradient(130deg, rgba(255,63,96,.10), rgba(18,216,255,.12));
+            padding: 14px;
+            margin-bottom: 10px;
         }
-        .module-head h3 {margin:0;font-size:1.15rem;color:var(--navy);}
-        .module-head p {margin:5px 0 0;color:var(--muted);}
-        .progress-rail {width:100%;height:10px;background:#dce8f8;border-radius:999px;overflow:hidden;}
-        .progress-fill {height:100%;background:linear-gradient(90deg,var(--red),var(--cyan));transition:width .3s ease;}
-        .quick-note {border:1px dashed rgba(23,58,120,.24);border-radius:12px;padding:10px;font-size:.9rem;background:rgba(10,31,69,.04);color:#1b447e;}
-        .nav-caption {color:var(--muted);font-size:.88rem;margin:2px 0 9px;}
-        .stButton > button, .stFormSubmitButton > button {border-radius:12px;font-weight:700;transition:transform .12s ease,filter .12s ease;}
-        .stButton > button[kind="primary"], .stFormSubmitButton > button[kind="primary"] {background:linear-gradient(90deg,#f03250,#ff425e);color:#fff;border:0;box-shadow:0 10px 22px rgba(255,66,94,.34);}
-        .stButton > button:hover, .stFormSubmitButton > button:hover {transform:translateY(-1px);filter:saturate(1.03);}
-        @keyframes rise {from {opacity:0;transform:translateY(5px);} to {opacity:1;transform:translateY(0);} }
+        .module-head h3 {margin:0;font-size:1.16rem;color:var(--navy-900);}
+        .module-head p {margin:6px 0 0;color:var(--muted);}
+        .progress-rail {
+            width: 100%;
+            height: 11px;
+            background: #d9e8fb;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--red-500), var(--cyan-500));
+            transition: width .34s ease;
+        }
+        .nav-caption {
+            color: var(--muted);
+            font-size: .9rem;
+            margin: 0 0 10px;
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .caption-pill {
+            font-size: .74rem;
+            border: 1px solid rgba(18,216,255,.42);
+            color: #145085;
+            border-radius: 999px;
+            padding: 4px 9px;
+            background: rgba(18,216,255,.12);
+            font-weight: 600;
+        }
+        .stat-strip {
+            border-radius: 20px;
+            border: 1px solid rgba(17,53,110,.18);
+            background:
+                linear-gradient(135deg, rgba(255,63,96,.08), rgba(255,255,255,.72) 30%, rgba(18,216,255,.08));
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .stat-card {
+            border-radius: 14px;
+            border: 1px solid rgba(17,53,110,.16);
+            background: rgba(255,255,255,.86);
+            padding: 10px;
+        }
+        .stat-label {
+            font-size: .75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            margin-bottom: 4px;
+        }
+        .stat-value {
+            font-family: 'Sora','Space Grotesk',sans-serif;
+            font-size: 1.08rem;
+            color: var(--navy-900);
+            font-weight: 700;
+        }
+        .guide-list {margin:0;padding-left:18px;}
+        .guide-list li {margin:6px 0;color:var(--ink);}
+        .quick-note {
+            border: 1px dashed rgba(23,58,120,.24);
+            border-radius: 12px;
+            padding: 10px;
+            font-size: .9rem;
+            background: rgba(10,31,69,.04);
+            color: #1b447e;
+        }
+        .support-item {
+            border: 1px solid rgba(17,53,110,.14);
+            border-radius: 12px;
+            background: rgba(250,254,255,.9);
+            padding: 9px 10px;
+            margin-bottom: 8px;
+        }
+        .support-item strong {color: var(--navy-900);}
+        .stButton > button,
+        .stFormSubmitButton > button {
+            border-radius: 12px;
+            font-weight: 700;
+            transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+            border: 1px solid rgba(17,53,110,.18);
+            background: rgba(255,255,255,.76);
+            color: var(--navy-900);
+        }
+        .stButton > button[kind="primary"],
+        .stFormSubmitButton > button[kind="primary"] {
+            background: linear-gradient(90deg, #f03250, #ff4866);
+            color: #fff;
+            border: 0;
+            box-shadow: 0 10px 22px rgba(255,66,94,.34);
+        }
+        .stButton > button:hover,
+        .stFormSubmitButton > button:hover {
+            transform: translateY(-1px);
+            filter: saturate(1.04);
+            box-shadow: 0 12px 24px rgba(10,31,69,.18);
+        }
+        [data-baseweb="radio"] > div,
+        [data-baseweb="checkbox"] > div {transition: transform .12s ease;}
+        [data-baseweb="radio"]:hover > div,
+        [data-baseweb="checkbox"]:hover > div {transform: translateX(2px);}
+        @keyframes rise {
+            from {opacity:0;transform:translateY(5px);} 
+            to {opacity:1;transform:translateY(0);} 
+        }
         @media (prefers-reduced-motion: reduce) { * {animation:none !important; transition:none !important;} }
+        @media (max-width: 980px) {
+            .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -408,13 +530,49 @@ def progress_bar(pct: int):
     st.markdown(f'<div class="progress-rail"><div class="progress-fill" style="width:{safe}%;"></div></div>', unsafe_allow_html=True)
 
 
-def render_login():
-    st.markdown("<section class='hero' style='max-width:860px;margin:0 auto 8px;'><div class='pill'>API Onboarding Studio</div><h1 style='margin:0;'>Start Strong on Day One</h1><p style='margin-top:10px;'>Secure sign-in unlocks your guided onboarding and tracks progress automatically.</p></section>", unsafe_allow_html=True)
+def module_status(pct: int) -> str:
+    if pct >= 100:
+        return "Complete"
+    if pct > 0:
+        return "In Progress"
+    return "Queued"
 
-    center = st.columns([1, 1.5, 1])
-    with center[1]:
+
+def next_incomplete_module() -> dict[str, Any] | None:
+    for module in active_modules():
+        if st.session_state.progress.get(module["key"], 0) < 100:
+            return module
+    return None
+
+
+def render_login():
+    st.markdown(
+        "<section class='hero' style='max-width:980px;margin:0 auto 10px;'><div class='pill'>API Onboarding Studio</div><h1 style='margin:0;'>First Week, But Make It Smooth</h1><p style='margin-top:10px;'>One clean path. Bite-size modules. Zero handbook chaos.</p></section>",
+        unsafe_allow_html=True,
+    )
+
+    left, right = st.columns([1.05, 1], gap="large")
+    with left:
         with st.container(border=True):
-            st.markdown(f"<div style='text-align:center;margin-bottom:8px;'><img src='{logo_src()}' alt='API' style='height:52px;margin-bottom:8px;'/><div style='font-size:1.05rem;font-weight:700;'>Employee Sign In</div><div style='color:#4f6586;'>Use the credentials provided by HR.</div></div>", unsafe_allow_html=True)
+            st.markdown("### What Happens Next")
+            st.markdown(
+                """
+                <ul class="guide-list">
+                    <li>Sign in with your HR-provided credentials.</li>
+                    <li>Complete each module in short, guided checkpoints.</li>
+                    <li>Watch progress update instantly as you go.</li>
+                </ul>
+                """,
+                unsafe_allow_html=True,
+            )
+            st.markdown("<div class='quick-note'>Most employees finish this orientation in focused short sessions, not one long marathon.</div>", unsafe_allow_html=True)
+
+    with right:
+        with st.container(border=True):
+            st.markdown(
+                f"<div style='text-align:center;margin-bottom:10px;'><img src='{logo_src()}' alt='API' style='height:56px;margin-bottom:8px;'/><div style='font-size:1.08rem;font-weight:700;'>Employee Sign In</div><div style='color:#4f6586;'>Use the exact name listed in your HR records.</div></div>",
+                unsafe_allow_html=True,
+            )
             with st.form("login_form", clear_on_submit=False):
                 access_code = st.text_input("Access Code", type="password")
                 employee_id = st.text_input("Employee ID", placeholder="Example: 10042")
@@ -441,7 +599,7 @@ def render_login():
                 st.session_state.employee_id = employee_id.strip()
                 st.session_state.auth_error = ""
                 seed_track_state(track)
-                st.toast("Welcome to your onboarding portal.")
+                st.toast("Welcome in. Your onboarding map is ready.")
                 st.rerun()
 
         st.caption("Need help signing in? Contact Nicole Thornton at nicole.thornton@apirx.com")
@@ -449,16 +607,29 @@ def render_login():
 
 def render_top_shell():
     track = st.session_state.role_track or "general"
-    st.markdown(f"<section class='hero'><div class='pill'>{TRACKS[track]['label']} Track</div><h1 style='margin:0;'>Welcome, {st.session_state.username or 'New Teammate'}</h1><p style='margin-top:10px;'>Navigate modules, complete checkpoints, and move through onboarding with momentum.</p></section>", unsafe_allow_html=True)
-    progress_bar(overall_progress())
-    st.caption(f"Overall progress: {overall_progress()}%")
+    total_pct = overall_progress()
+    next_module = next_incomplete_module()
 
-    c1, c2, c3 = st.columns([1.4, 1, 0.8])
-    with c1:
-        st.markdown(f"**Signed in:** {st.session_state.username} ({st.session_state.employee_id})")
-    with c2:
-        st.markdown(f"**Track:** {TRACKS[track]['label']}")
-    with c3:
+    left, right = st.columns([1.65, 1], gap="large")
+    with left:
+        st.markdown(
+            f"<section class='hero'><div class='pill'>{TRACKS[track]['label']} Track</div><h1 style='margin:0;'>Welcome, {st.session_state.username or 'New Teammate'}</h1><p style='margin-top:10px;'>Your onboarding flow is modular, guided, and always picks up where you left off.</p></section>",
+            unsafe_allow_html=True,
+        )
+        progress_bar(total_pct)
+        st.caption(f"Overall progress: {total_pct}%")
+
+    with right:
+        with st.container(border=True):
+            st.markdown("### Your Snapshot")
+            st.markdown(f"**Employee ID:** {st.session_state.employee_id}")
+            st.markdown(f"**Track:** {TRACKS[track]['label']}")
+            if next_module:
+                st.markdown(f"**Next Up:** Module {next_module['number']} - {next_module['title']}")
+            else:
+                st.markdown("**Next Up:** All modules complete. Nicely done.")
+            st.markdown("<div class='quick-note'>Flow tip: checkboxes first, quick quiz second, then jump to next module.</div>", unsafe_allow_html=True)
+
         if st.button("Sign Out", use_container_width=True):
             for key in list(st.session_state.keys()):
                 del st.session_state[key]
@@ -467,39 +638,67 @@ def render_top_shell():
 
 def render_nav():
     options: list[tuple[str, str]] = [("home", "Home")]
-    options.extend((m["key"], f"M{m['number']}") for m in active_modules())
-    st.markdown("<div class='nav-caption'>Navigate modules without losing context.</div>", unsafe_allow_html=True)
-    cols = st.columns(len(options))
-    for i, (dest, label) in enumerate(options):
-        with cols[i]:
-            if st.button(label, key=f"nav_{dest}", type="primary" if st.session_state.nav_key == dest else "secondary", use_container_width=True):
-                st.session_state.nav_key = dest
-                st.rerun()
+    options.extend((module["key"], f"{module['number']:02d}") for module in active_modules())
+    current = st.session_state.nav_key
+
+    with st.container(border=True):
+        current_label = "Home"
+        if current != "home":
+            selected = get_module(current)
+            if selected:
+                current_label = f"Module {selected['number']}: {selected['title']}"
+        st.markdown(
+            f"<div class='nav-caption'><span>Jump between modules without losing progress.</span><span class='caption-pill'>Viewing: {current_label}</span></div>",
+            unsafe_allow_html=True,
+        )
+        cols = st.columns(len(options), gap="small")
+        for i, (dest, label) in enumerate(options):
+            with cols[i]:
+                button_label = label if dest == "home" else f"M{label}"
+                if st.button(button_label, key=f"nav_{dest}", type="primary" if current == dest else "secondary", use_container_width=True):
+                    st.session_state.nav_key = dest
+                    st.rerun()
 
 
 def render_home():
     modules = active_modules()
     done = sum(1 for m in modules if st.session_state.progress.get(m["key"], 0) == 100)
     quiz_done = sum(1 for m in modules if m["key"] in st.session_state.quiz_results)
+    next_module = next_incomplete_module()
 
-    m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Modules Completed", f"{done}/{len(modules)}")
-    m2.metric("Overall Progress", f"{overall_progress()}%")
-    m3.metric("Quizzes Submitted", f"{quiz_done}/{len(modules)}")
-    m4.metric("Current Track", TRACKS[st.session_state.role_track]["label"])
+    next_focus = "Done" if not next_module else f"M{next_module['number']}"
+    st.markdown(
+        f"""
+        <div class="stat-strip">
+            <div class="stat-grid">
+                <div class="stat-card"><div class="stat-label">Modules Complete</div><div class="stat-value">{done}/{len(modules)}</div></div>
+                <div class="stat-card"><div class="stat-label">Overall Progress</div><div class="stat-value">{overall_progress()}%</div></div>
+                <div class="stat-card"><div class="stat-label">Quizzes Submitted</div><div class="stat-value">{quiz_done}/{len(modules)}</div></div>
+                <div class="stat-card"><div class="stat-label">Current Focus</div><div class="stat-value">{next_focus}</div></div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     st.markdown("### Training Path")
-    st.caption("Open any module card to continue where you left off.")
+    st.caption("Choose a module card to continue. The experience stays guided and modular.")
 
     grid = st.columns(2)
     for idx, module in enumerate(modules):
         pct = st.session_state.progress.get(module["key"], 0)
-        status = "Complete" if pct >= 100 else ("In Progress" if pct > 0 else "Queued")
+        status = module_status(pct)
+        checklist_total = len(module["checklist"])
+        checklist_done = sum(1 for v in st.session_state.checklist_items.get(module["key"], {}).values() if v)
+        quiz_result = st.session_state.quiz_results.get(module["key"])
+        quiz_text = f"{quiz_result[0]}/{quiz_result[1]}" if quiz_result else "Not submitted"
+
         with grid[idx % 2]:
             with st.container(border=True):
                 st.markdown(f"<div class='module-head'><h3>Module {module['number']}: {module['title']}</h3><p>{module['subtitle']}</p></div>", unsafe_allow_html=True)
                 progress_bar(pct)
                 st.caption(f"Status: {status} | Progress: {pct}%")
+                st.markdown(f"Checklist: **{checklist_done}/{checklist_total}**  |  Quiz: **{quiz_text}**")
                 if st.button("Open Module", key=f"open_{module['key']}", use_container_width=True, type="primary"):
                     st.session_state.nav_key = module["key"]
                     st.rerun()
@@ -509,14 +708,20 @@ def render_contacts():
         st.markdown("### Support Contacts")
         for name, role, email, phone in CONTACTS:
             extra = f" | {phone}" if phone else ""
-            st.write(f"{name} - {role} | {email}{extra}")
+            st.markdown(f"<div class='support-item'><strong>{name}</strong><br/>{role}<br/>{email}{extra}</div>", unsafe_allow_html=True)
 
 
 def render_checklist(module: dict[str, Any]):
     mk = module["key"]
     with st.container(border=True):
         st.markdown("### Checklist")
-        st.caption("Complete each checkpoint to earn checklist progress credit.")
+        st.caption("Mark each checkpoint as you go. This section contributes 70% of module progress.")
+        checklist_values = st.session_state.checklist_items.get(mk, {})
+        checked = sum(1 for v in checklist_values.values() if v)
+        total = max(1, len(module["checklist"]))
+        progress_bar(int(checked / total * 100))
+        st.caption(f"Checklist completion: {checked}/{len(module['checklist'])}")
+
         changed = False
         for item_key, label in module["checklist"].items():
             widget_key = f"ck_{mk}_{item_key}"
@@ -525,6 +730,7 @@ def render_checklist(module: dict[str, Any]):
             if value != current:
                 st.session_state.checklist_items[mk][item_key] = value
                 changed = True
+
         if changed:
             update_module_progress(mk)
             checked = sum(1 for flag in st.session_state.checklist_items[mk].values() if flag)
@@ -536,7 +742,7 @@ def render_quiz(module: dict[str, Any]):
     quiz = module["quiz"]
     with st.container(border=True):
         st.markdown("### Quick Quiz")
-        st.caption(f"Quiz credit unlocks at {int(PASSING_FRACTION * 100)}% or higher.")
+        st.caption(f"Quiz credit unlocks at {int(PASSING_FRACTION * 100)}% or higher. Keep it quick and clean.")
 
         existing = st.session_state.quiz_results.get(mk)
         if existing:
@@ -567,16 +773,20 @@ def render_quiz(module: dict[str, Any]):
 def render_module(module: dict[str, Any]):
     mk = module["key"]
     pct = st.session_state.progress.get(mk, 0)
+    mods = active_modules()
+    keys = [m["key"] for m in mods]
+    idx = keys.index(mk)
+    prev_key = keys[idx - 1] if idx > 0 else "home"
+    next_key = keys[idx + 1] if idx < len(keys) - 1 else "home"
 
     st.markdown(f"<div class='module-head'><h3>Module {module['number']}: {module['title']}</h3><p>{module['subtitle']}</p></div>", unsafe_allow_html=True)
 
-    left, right = st.columns([2.2, 1])
+    left, right = st.columns([2.1, 1], gap="large")
     with left:
         with st.container(border=True):
             st.markdown("### What This Module Covers")
             st.caption(module["intro"])
-            for bullet in module["bullets"]:
-                st.write(f"- {bullet}")
+            st.markdown("<ul class='guide-list'>" + "".join(f"<li>{bullet}</li>" for bullet in module["bullets"]) + "</ul>", unsafe_allow_html=True)
         render_checklist(module)
         render_quiz(module)
 
@@ -584,17 +794,22 @@ def render_module(module: dict[str, Any]):
         with st.container(border=True):
             st.markdown("### Module Progress")
             progress_bar(pct)
-            st.caption(f"{pct}% complete")
+            st.caption(f"{pct}% complete | Status: {module_status(pct)}")
             st.markdown("<div class='quick-note'>Progress formula: 70% checklist + 30% quiz (passing score required).</div>", unsafe_allow_html=True)
+            st.markdown("**Guided flow**")
+            st.markdown(
+                """
+                <ul class="guide-list">
+                    <li>Read the module context.</li>
+                    <li>Complete checklist checkpoints.</li>
+                    <li>Submit quiz and move to next module.</li>
+                </ul>
+                """,
+                unsafe_allow_html=True,
+            )
 
         if mk in ("firststeps", "wh_firststeps"):
             render_contacts()
-
-        mods = active_modules()
-        keys = [m["key"] for m in mods]
-        idx = keys.index(mk)
-        prev_key = keys[idx - 1] if idx > 0 else "home"
-        next_key = keys[idx + 1] if idx < len(keys) - 1 else "home"
 
         c1, c2 = st.columns(2)
         with c1:

@@ -389,3 +389,12 @@ Before finalizing work:
 ## Default standard
 Every feature should feel:
 modern, cohesive, guided, interactive, visually confident, and premium — with personality and energy, but without clutter or gimmicks.
+
+## UI anti-drift rules
+Do not interpret “premium” as flat matte cards on a dark background.
+Do not interpret “clean” as large pale slabs with weak depth.
+Do not rely on repeated oversized rounded rectangles for structure.
+Primary content should feel luminous, layered, and active against the darker shell.
+Glass should feel selective, dimensional, and premium — not absent, and not applied uniformly.
+Typography should do real hierarchy work and give the UI personality.
+The interface should feel like active software, not a static styled document.

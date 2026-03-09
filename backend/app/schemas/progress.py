@@ -11,7 +11,6 @@ class ProgressRecord(BaseModel):
     current_section: str | None = None
     completed_sections: list[str] = Field(default_factory=list)
     acknowledged_sections: list[str] = Field(default_factory=list)
-    toolkit_completed: bool = False
     started_at: datetime | None = None
     updated_at: datetime | None = None
     core_total_sections: int = 0
@@ -23,7 +22,6 @@ class ProgressUpdate(BaseModel):
     current_section: str | None = None
     completed_sections: list[str] = Field(default_factory=list)
     acknowledged_sections: list[str] = Field(default_factory=list)
-    toolkit_completed: bool = False
 
 
 class AcknowledgmentUpdate(BaseModel):

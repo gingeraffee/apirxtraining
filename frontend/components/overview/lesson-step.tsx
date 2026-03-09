@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import type { Section } from "@/lib/types";
 
@@ -13,13 +13,7 @@ type LessonStepProps = {
 
 const CheckIcon = () => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-    <path
-      d="M2.5 7L5.5 10L11.5 4"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+    <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -28,7 +22,7 @@ export function LessonStep({ section, index, state, isLast }: LessonStepProps) {
     state === "completed" ? "Done"
     : state === "current" ? "In progress"
     : state === "next" ? "Up next"
-    : "Soon";
+    : "Queued";
 
   const ctaLabel = state === "current" ? "Continue" : "Start";
   const showAction = state === "current" || state === "next";
@@ -49,13 +43,8 @@ export function LessonStep({ section, index, state, isLast }: LessonStepProps) {
         </div>
 
         <p className="ov-step-summary">{section.summary}</p>
-        <p className="ov-step-meta">{section.estimatedMinutes} min</p>
-
-        {showAction ? (
-          <p className="ov-step-purpose">{section.purpose}</p>
-        ) : (
-          <p className="ov-step-purpose subtle">{section.purpose}</p>
-        )}
+        <p className="ov-step-meta">{section.focuses.join(" • ")}</p>
+        <p className={`ov-step-purpose${showAction ? "" : " subtle"}`}>{section.purpose}</p>
 
         {showAction && (
           <Link className="primary-action compact-primary" href={`/modules/${section.slug}`}>

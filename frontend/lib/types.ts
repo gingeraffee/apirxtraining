@@ -5,11 +5,19 @@
 };
 
 export type Contact = {
+  id: string;
   name: string;
   role: string;
   email: string;
   phone: string;
   note: string;
+};
+
+export type Acknowledgment = {
+  mode: "manual" | "checklist";
+  title: string;
+  statement: string;
+  items: string[];
 };
 
 export type Section = {
@@ -18,39 +26,43 @@ export type Section = {
   eyebrow: string;
   title: string;
   summary: string;
-  estimatedMinutes: number;
   purpose: string;
   focuses: string[];
   essentials: { title: string; body: string }[];
   policyAreas: { title: string; items: { label: string; body: string }[] }[];
   actions: string[];
   escalation: string[];
-  acknowledgment: {
-    title: string;
-    statement: string;
-    items: string[];
-  };
+  acknowledgment: Acknowledgment;
 };
 
-export type Toolkit = {
+export type ResourceItem = {
+  id: string;
+  type: "file" | "link" | "contact";
+  title: string;
+  description: string;
+  href?: string;
+  contactId?: string;
+  download?: boolean;
+};
+
+export type ResourceCategory = {
+  id: string;
+  title: string;
+  description: string;
+  items: ResourceItem[];
+};
+
+export type SupplementalPage = {
   id: string;
   slug: string;
   eyebrow: string;
   title: string;
   summary: string;
-  estimatedMinutes: number;
-  purpose: string;
-  whenToUse: string[];
-  systems: { name: string; link: string; use: string }[];
-  playbooks: { title: string; summary: string; doThis: string[]; escalateWhen: string[] }[];
-  quickAnswers: { question: string; answer: string; reference: string }[];
-  escalateImmediately: string[];
-  contacts: { name: string; role: string; phone: string; email: string }[];
-  acknowledgment: {
-    title: string;
-    statement: string;
-    items: string[];
-  };
+  state: "coming_soon" | "live";
+  description: string;
+  callout?: string;
+  content?: { title: string; body: string }[];
+  resourceCategories?: ResourceCategory[];
 };
 
 export type SupportContact = {
@@ -63,14 +75,17 @@ export type SupportContact = {
 export type TrackInfo = {
   id: string;
   name: string;
-  support_contact: SupportContact;
-  toolkit_slugs: string[];
+  supportContactId: string;
   section_overrides: Record<string, unknown>;
 };
 
 export type ExperienceContent = {
+  brand: {
+    portalName: string;
+  };
   organization: {
-    name: string;
+    companyName: string;
+    companyShortName: string;
     headline: string;
     tagline: string;
     mission: string;
@@ -81,7 +96,8 @@ export type ExperienceContent = {
   dashboardStats: Stat[];
   contacts: Contact[];
   sections: Section[];
-  toolkits: Toolkit[];
+  supplementalPages: SupplementalPage[];
+  toolkits: [];
   track: TrackInfo;
 };
 
@@ -91,7 +107,6 @@ export type ProgressRecord = {
   current_section: string | null;
   completed_sections: string[];
   acknowledged_sections: string[];
-  toolkit_completed: boolean;
   started_at: string | null;
   updated_at: string | null;
   core_total_sections: number;
@@ -103,5 +118,4 @@ export type ProgressUpdate = {
   current_section?: string | null;
   completed_sections: string[];
   acknowledged_sections: string[];
-  toolkit_completed: boolean;
 };

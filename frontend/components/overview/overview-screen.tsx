@@ -1,6 +1,4 @@
-import Link from "next/link";
-
-import type { ExperienceContent, ProgressRecord, Section } from "@/lib/types";
+﻿import type { Contact, ExperienceContent, ProgressRecord, Section } from "@/lib/types";
 
 import { OverviewHero } from "./overview-hero";
 import { CoursePath } from "./course-path";
@@ -18,29 +16,17 @@ export function OverviewScreen({ experience, progress, nextSection, firstName }:
   const totalCount = experience.sections.length;
   const completionPercent = totalCount ? Math.round((completedCount / totalCount) * 100) : 0;
   const remainingCount = Math.max(totalCount - completedCount, 0);
-  const remainingMinutes = experience.sections
-    .filter((section) => !progress.completed_sections.includes(section.slug))
-    .reduce((sum, section) => sum + section.estimatedMinutes, 0);
-  const averageMinutes = totalCount
-    ? Math.round(experience.sections.reduce((sum, section) => sum + section.estimatedMinutes, 0) / totalCount)
-    : 0;
+  const currentSection = experience.sections.find((section) => section.slug === progress.current_section);
+  const activeLesson = currentSection && !progress.completed_sections.includes(currentSection.slug)
+    ? currentSection
+    : nextSection;
 
-  const currentSection = experience.sections.find((s) => s.slug === progress.current_section);
-  const activeLesson =
-    currentSection && !progress.completed_sections.includes(currentSection.slug)
-      ? currentSection
-      : nextSection;
-
-  const supportContact = experience.track?.support_contact ?? null;
+  const supportContact = experience.contacts.find((contact) => contact.id === experience.track.supportContactId) ?? null;
   const supportFirstName = supportContact?.name.split(" ")[0] ?? "Support";
   const supportPhoneDigits = supportContact ? supportContact.phone.replace(/\D/g, "") : "";
-
-  // Build context string for the AI tip — pulls from next module or current state
   const tipContext = nextSection
-    ? `${nextSection.title}: ${nextSection.summary ?? ""}`.trim()
-    : completedCount === 0
-      ? "General onboarding — employee is just getting started at AAP/API Rx"
-      : "Employee has just completed all core onboarding modules at AAP/API Rx";
+    ? `${nextSection.title}: ${nextSection.summary}`
+    : "The employee completed the tracked launch path and may revisit Resource Hub for reference.";
 
   return (
     <div className="ov-page">
@@ -48,25 +34,26 @@ export function OverviewScreen({ experience, progress, nextSection, firstName }:
         <div className="ov-main-column">
           <OverviewHero
             firstName={firstName}
-            nextSection={nextSection}
+            nextSectionSlug={nextSection?.slug ?? null}
+            nextSectionTitle={nextSection?.title ?? null}
             completedCount={completedCount}
             totalCount={totalCount}
             completionPercent={completionPercent}
             remainingCount={remainingCount}
-            remainingMinutes={remainingMinutes}
+            supplementalPages={experience.supplementalPages}
           />
 
           <section className="ov-overview-notes" aria-label="Helpful overview notes">
             <article className="ov-note-card">
               <p className="section-label">How it runs</p>
-              <h3>One module at a time, in the right order.</h3>
-              <p>No hunting around. We keep the next step close.</p>
+              <h3>Manual completion, one clear finish line.</h3>
+              <p>The path only tracks the nine live modules. Supplemental pages stay visible without changing progress.</p>
             </article>
 
             <article className="ov-note-card">
-              <p className="section-label">Good to know</p>
-              <h3>Most modules land in about {averageMinutes} minutes.</h3>
-              <p>Easy to pick up, easy to pause, and saved the whole way through.</p>
+              <p className="section-label">Keep close</p>
+              <h3>Resource Hub stays available.</h3>
+              <p>Use it for the handbook file, support contacts, and quick relaunches into the right module.</p>
             </article>
           </section>
 
@@ -77,21 +64,42 @@ export function OverviewScreen({ experience, progress, nextSection, firstName }:
             activeLesson={activeLesson}
             firstName={firstName}
           />
+
+          <section className="supplemental-showcase" aria-label="Supplemental pages">
+            <div className="supplemental-showcase-head">
+              <p className="section-label">Beyond the tracked path</p>
+              <h2>Still visible, not counted.</h2>
+            </div>
+            <div className="supplemental-grid">
+              {experience.supplementalPages.map((page) => (
+                <article key={page.slug} className={`supplemental-card ${page.state === "coming_soon" ? "coming-soon" : "live"}`}>
+                  <div className="supplemental-card-head">
+                    <p className="section-label">{page.eyebrow}</p>
+                    <span className="supplemental-badge">{page.state === "coming_soon" ? "Coming Soon" : "Live"}</span>
+                  </div>
+                  <h3>{page.title}</h3>
+                  <p>{page.summary}</p>
+                  <a className="inline-action" href={`/modules/${page.slug}`}>
+                    {page.state === "coming_soon" ? "Preview page" : "Open Resource Hub"}
+                  </a>
+                </article>
+              ))}
+            </div>
+          </section>
         </div>
 
         <aside className="ov-side-rail" aria-label="Tips and support">
-          {/* Coach Tip card — replaces the old Next Up card */}
           <CoachTipCard context={tipContext} variant="rail" />
 
           <article className="ov-rail-card ov-rail-card-secondary">
             <p className="section-label">Progress</p>
-            <h3>{completionPercent}% through the core path.</h3>
+            <h3>{completionPercent}% through the tracked path.</h3>
             <div className="ov-rail-progress-track" aria-hidden="true">
               <span className="ov-rail-progress-fill" style={{ width: `${completionPercent}%` }} />
             </div>
             <ul className="ov-rail-list">
               <li>{remainingCount} module{remainingCount === 1 ? "" : "s"} left.</li>
-              <li>About {remainingMinutes} minutes to finish the essentials.</li>
+              <li>Supplemental pages stay out of progress on purpose.</li>
             </ul>
           </article>
 

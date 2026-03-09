@@ -1,17 +1,12 @@
 {
   "employees": {
     "demo-employee": {
-      "display_name": "JD Akins",
-      "current_section": "working-at-aap-api",
-      "completed_sections": [
-        "welcome-to-aap-api"
-      ],
-      "acknowledged_sections": [
-        "welcome-to-aap-api"
-      ],
-      "toolkit_completed": false,
+      "display_name": "Nicole Thornton",
+      "current_section": "welcome-to-aap",
+      "completed_sections": [],
+      "acknowledged_sections": [],
       "started_at": "2026-03-07T05:24:49.713479+00:00",
-      "updated_at": "2026-03-08T23:37:32.799756+00:00"
+      "updated_at": "2026-03-09T05:23:10.732354+00:00"
     }
   }
 }

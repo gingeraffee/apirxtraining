@@ -2,22 +2,23 @@
 
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TrackInfo(BaseModel):
     id: str
     name: str
-    support_contact: dict[str, str]
-    toolkit_slugs: list[str]
-    section_overrides: dict[str, Any] = {}
+    supportContactId: str
+    section_overrides: dict[str, Any] = Field(default_factory=dict)
 
 
 class ContentResponse(BaseModel):
+    brand: dict[str, Any]
     organization: dict[str, Any]
     dashboardStats: list[dict[str, Any]]
     contacts: list[dict[str, Any]]
     sections: list[dict[str, Any]]
+    supplementalPages: list[dict[str, Any]]
     toolkits: list[dict[str, Any]]
     track: TrackInfo
 

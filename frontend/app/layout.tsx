@@ -20,8 +20,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "AAP Onboarding Portal",
-  description: "Premium onboarding and training experience for AAP/API employees.",
+  title: "AAP Start",
+  description: "AAP Start is the launch onboarding portal for American Associated Pharmacies.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

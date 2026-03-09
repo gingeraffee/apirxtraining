@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import type { ProgressRecord, Section } from "@/lib/types";
 
@@ -17,21 +17,18 @@ export function CoursePath({ sections, progress, nextSection, activeLesson, firs
   const completedCount = progress.completed_sections.length;
   const totalCount = sections.length;
   const completionPercent = totalCount ? Math.round((completedCount / totalCount) * 100) : 0;
-  const remainingMinutes = sections
-    .filter((section) => !progress.completed_sections.includes(section.slug))
-    .reduce((sum, section) => sum + section.estimatedMinutes, 0);
   const completedSet = new Set(progress.completed_sections);
 
   return (
     <section className="ov-path" aria-label="Core onboarding path">
       <div className="ov-path-header">
         <div>
-          <p className="section-label">Core path</p>
-          <h2>{firstName}'s onboarding path</h2>
+          <p className="section-label">Tracked path</p>
+          <h2>{firstName}'s launch journey</h2>
         </div>
         <div className="ov-path-stats">
           <strong>{completedCount}/{totalCount} done</strong>
-          <span>{remainingMinutes} min left</span>
+          <span>Manual completion</span>
         </div>
       </div>
 
@@ -41,10 +38,10 @@ export function CoursePath({ sections, progress, nextSection, activeLesson, firs
         </div>
         {nextSection ? (
           <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
-            Open next module
+            Continue the path
           </Link>
         ) : (
-          <p className="ov-complete-note">Core path complete.</p>
+          <p className="ov-complete-note">You reached the finish line.</p>
         )}
       </div>
 

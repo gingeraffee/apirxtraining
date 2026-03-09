@@ -1,5 +1,5 @@
-﻿import { PortalExperience } from "@/components/portal-experience";
+﻿import { redirect } from "next/navigation";
 
 export default function ToolkitPage() {
-  return <PortalExperience kind="toolkit" slug="hr-administrative-assistant" />;
+  redirect("/");
 }

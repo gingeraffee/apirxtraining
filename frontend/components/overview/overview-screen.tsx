@@ -1,4 +1,4 @@
-import type { ExperienceContent, ProgressRecord, Section } from "@/lib/types";
+﻿import type { ExperienceContent, ProgressRecord, Section } from "@/lib/types";
 
 import { OverviewHero } from "./overview-hero";
 import { CoursePath } from "./course-path";
@@ -106,9 +106,14 @@ export function OverviewScreen({ experience, progress, nextSection, firstName }:
 
           {supportContact && (
             <article className="ov-rail-card ov-rail-card-support">
-              <p className="section-label">Questions</p>
-              <h3>{supportContact.name}</h3>
-              <p>{supportContact.role}</p>
+              <div className="question-card-head">
+                <div>
+                  <p className="section-label">Questions</p>
+                  <h3>{supportContact.name}</h3>
+                </div>
+                <span className="question-status-pill">Primary</span>
+              </div>
+              <p className="question-role-copy">{supportContact.role}</p>
               <div className="question-contact-stack">
                 <div className="question-contact-row">
                   <span>Email</span>
@@ -119,23 +124,31 @@ export function OverviewScreen({ experience, progress, nextSection, firstName }:
                   <a href={`tel:${supportPhoneDigits}`}>{supportContact.phone}</a>
                 </div>
               </div>
+              <div className="question-action-row">
+                <a className="question-action-pill" href={`mailto:${supportContact.email}`}>Email Nicole</a>
+                <a className="question-action-pill" href={`tel:${supportPhoneDigits}`}>Call Nicole</a>
+              </div>
               <p className="question-contact-note">{supportContact.note}</p>
               {escalationContact && (
-                <div className="question-escalation-block">
-                  <p className="question-escalation-label">Escalation support</p>
-                  <strong>{escalationContact.name}</strong>
-                  <span>{escalationContact.role}</span>
-                  <div className="question-contact-stack question-contact-stack--secondary">
-                    <div className="question-contact-row">
-                      <span>Email</span>
-                      <a href={`mailto:${escalationContact.email}`}>{escalationContact.email}</a>
-                    </div>
-                    <div className="question-contact-row">
-                      <span>Phone</span>
-                      <a href={`tel:${escalationPhoneDigits}`}>{escalationContact.phone}</a>
+                <details className="question-escalation-disclosure">
+                  <summary>
+                    <span>Escalation support</span>
+                    <strong>{escalationContact.name}</strong>
+                  </summary>
+                  <div className="question-escalation-block">
+                    <p className="question-role-copy">{escalationContact.role}</p>
+                    <div className="question-contact-stack question-contact-stack--secondary">
+                      <div className="question-contact-row">
+                        <span>Email</span>
+                        <a href={`mailto:${escalationContact.email}`}>{escalationContact.email}</a>
+                      </div>
+                      <div className="question-contact-row">
+                        <span>Phone</span>
+                        <a href={`tel:${escalationPhoneDigits}`}>{escalationContact.phone}</a>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </details>
               )}
             </article>
           )}

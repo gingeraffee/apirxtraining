@@ -21,10 +21,9 @@ export function PortalBrandLockup({
         priority={priority}
         className="brand-logo-img portal-lockup-logo"
       />
-      <div className="portal-brand-caption" aria-label="Portal identity">
-        <span className="portal-brand-caption-label">AAP Start</span>
-        <span className="portal-brand-caption-subline">American Associated Pharmacies</span>
-      </div>
+      <span className="portal-brand-caption-label" aria-label="AAP Start">
+        AAP Start
+      </span>
     </div>
   );
 }

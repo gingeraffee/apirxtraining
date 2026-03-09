@@ -1,4 +1,7 @@
-﻿import Link from "next/link";
+﻿"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import type { SupplementalPage } from "@/lib/types";
 
@@ -13,6 +16,49 @@ type OverviewHeroProps = {
   supplementalPages: SupplementalPage[];
 };
 
+type HeroMessage = {
+  welcome: (firstName: string) => string;
+  story: string;
+};
+
+const IN_PROGRESS_MESSAGES: HeroMessage[] = [
+  {
+    welcome: (firstName) => `Welcome in, ${firstName}.`,
+    story: "AAP Start keeps the essentials in one clean path so you can focus on one module at a time and still know where to find support.",
+  },
+  {
+    welcome: (firstName) => `You're in the right place, ${firstName}.`,
+    story: "This launch path is designed to keep your first stretch focused, useful, and easier to move through without handbook overload.",
+  },
+  {
+    welcome: (firstName) => `Good to see you, ${firstName}.`,
+    story: "AAP Start turns the early onboarding stretch into a guided system so you can build confidence, keep momentum, and know what comes next.",
+  },
+  {
+    welcome: (firstName) => `Let's make this easy, ${firstName}.`,
+    story: "The portal is here to keep the launch path clear: one live module at a time, with support and references still close when you need them.",
+  },
+];
+
+const COMPLETE_MESSAGES: HeroMessage[] = [
+  {
+    welcome: (firstName) => `You're all set, ${firstName}.`,
+    story: "You finished the tracked launch path. Resource Hub stays close whenever you want a quick reset, a live file, or the right support contact.",
+  },
+  {
+    welcome: (firstName) => `Nice work, ${firstName}.`,
+    story: "The live path is complete, but the portal still works like a good home base for support details, handbook access, and quick refreshers.",
+  },
+  {
+    welcome: (firstName) => `Launch path complete, ${firstName}.`,
+    story: "You made it through the tracked onboarding experience. What stays now is the useful part: fast references, contacts, and a clean place to revisit key info.",
+  },
+];
+
+function pickRandomMessage(messages: HeroMessage[]) {
+  return messages[Math.floor(Math.random() * messages.length)];
+}
+
 export function OverviewHero({
   firstName,
   nextSectionSlug,
@@ -25,6 +71,12 @@ export function OverviewHero({
 }: OverviewHeroProps) {
   const isComplete = completedCount >= totalCount && totalCount > 0;
   const comingSoonCount = supplementalPages.filter((page) => page.state === "coming_soon").length;
+  const messageSet = isComplete ? COMPLETE_MESSAGES : IN_PROGRESS_MESSAGES;
+  const [heroMessage, setHeroMessage] = useState<HeroMessage>(messageSet[0]);
+
+  useEffect(() => {
+    setHeroMessage(pickRandomMessage(messageSet));
+  }, [messageSet]);
 
   return (
     <section className="ov-hero" aria-label="Onboarding overview">
@@ -38,12 +90,8 @@ export function OverviewHero({
           </span>
         </div>
 
-        <h1>{isComplete ? `You're all set, ${firstName}.` : `Welcome in, ${firstName}.`}</h1>
-        <p className="ov-hero-lead">
-          {isComplete
-            ? "You finished the tracked launch path. The Resource Hub stays here whenever you need a quick reset or a live reference."
-            : "AAP Start keeps the essentials in one clean path so you can focus on one module at a time and still know where to find support."}
-        </p>
+        <h1>{heroMessage.welcome(firstName)}</h1>
+        <p className="ov-hero-lead">{heroMessage.story}</p>
 
         <div className="ov-hero-actions">
           {nextSectionSlug && nextSectionTitle ? (

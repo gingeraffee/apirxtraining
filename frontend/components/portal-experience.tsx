@@ -247,18 +247,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   const contextTitle = kind === "overview"
     ? "Overview"
     : activeSection?.title ?? activeSupplemental?.title ?? "Page not found";
-  const contextEyebrow = kind === "overview"
-    ? "Launch overview"
-    : activeSection?.eyebrow ?? activeSupplemental?.eyebrow ?? "Launch page";
-  const contextType = activeSection
-    ? "Tracked module"
-    : activeSupplemental?.slug === "where-you-make-an-impact"
-      ? "Role-specific coming soon page"
-      : activeSupplemental?.state === "coming_soon"
-        ? "Visible, untracked preview"
-        : activeSupplemental
-          ? "Visible, untracked reference page"
-          : "Launch overview";
+  const contextEyebrow = activeSection?.eyebrow ?? activeSupplemental?.eyebrow ?? null;
 
   return (
     <div className={`app-shell portal-shell${kind === "overview" ? "" : " portal-shell--detail"}`}>
@@ -346,18 +335,14 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
       </aside>
 
       <main className={`main-stage portal-stage${kind === "overview" ? "" : " portal-stage--detail"}`}>
-        <header className="topbar portal-topbar">
-          <div>
-            <p className="section-label">{contextEyebrow}</p>
-            <h1 className="topbar-title">{contextTitle}</h1>
-          </div>
-          <div className="topbar-right">
-            <div className="topbar-meta portal-topbar-meta">
-              <span>Now viewing</span>
-              <strong>{contextType}</strong>
+        {kind !== "overview" && (
+          <header className="topbar portal-topbar">
+            <div>
+              {contextEyebrow && <p className="section-label">{contextEyebrow}</p>}
+              <h1 className="topbar-title">{contextTitle}</h1>
             </div>
-          </div>
-        </header>
+          </header>
+        )}
 
         {kind === "overview" && (
           <OverviewScreen experience={experience} progress={progress} nextSection={overviewNextSection} firstName={firstName} />
@@ -410,51 +395,57 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
 
   return (
     <div className="page-stack section-page portal-page portal-page--detail portal-page--section">
-      <section className="page-hero single-focus-hero section-hero">
+      <section className="page-hero single-focus-hero section-hero section-hero--focused">
         <div className="section-hero-copy">
           <p className="section-label">{section.eyebrow}</p>
           <h1>{section.title}</h1>
           <p className="lead">{section.summary}</p>
           <p className="purpose-line">{section.purpose}</p>
+          <div className="module-hero-actions">
+            <a className="primary-action compact-primary" href="#section-acknowledgment">
+              {isAcknowledged ? "Module completed" : "Finish module"}
+            </a>
+            <a className="inline-action" href="#section-takeaways">Start with takeaways</a>
+          </div>
         </div>
-        <aside className="summary-panel hero-support-panel">
+      </section>
+
+      <section className="module-utility-strip" aria-label="Module guidance">
+        <article className="module-utility-card module-utility-card--focus">
           <p className="section-label">Focus areas</p>
           <div className="focus-list">
             {section.focuses.map((focus) => <span key={focus} className="focus-pill">{focus}</span>)}
           </div>
-          <hr className="hero-support-divider" />
+        </article>
+
+        <article className="module-utility-card module-utility-card--status">
           <p className="section-label">Completion status</p>
-          <div className="hero-progress-copy">
-            <strong>{isAcknowledged ? "Completed" : showChecklist ? `${checkedCount}/${section.acknowledgment.items.length} ready` : "Manual completion"}</strong>
-            <p>{isAcknowledged ? "Section saved." : section.acknowledgment.statement}</p>
-            <a className="inline-action" href="#section-acknowledgment">Jump to finish</a>
-          </div>
-          {nextSection && (
-            <>
-              <hr className="hero-support-divider" />
-              <p className="section-label">Next up</p>
-              <div className="hero-progress-copy hero-progress-copy--next">
-                <strong>{nextSection.title}</strong>
-                <p>Keep moving through the tracked path with the next live module.</p>
-                <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
-                  Open next module
-                </Link>
-              </div>
-            </>
-          )}
-        </aside>
+          <strong>{isAcknowledged ? "Completed" : showChecklist ? `${checkedCount}/${section.acknowledgment.items.length} ready` : "Manual completion"}</strong>
+          <p>{isAcknowledged ? "Section saved. You can revisit this page anytime." : section.acknowledgment.statement}</p>
+          <a className="inline-action" href="#section-acknowledgment">Jump to finish</a>
+        </article>
+
+        {nextSection && (
+          <article className="module-utility-card module-utility-card--next">
+            <p className="section-label">Next after this</p>
+            <strong>{nextSection.title}</strong>
+            <p>Keep moving through the tracked path once this step is complete.</p>
+            <Link className="module-next-link" href={`/modules/${nextSection.slug}`}>
+              Preview next module
+            </Link>
+          </article>
+        )}
       </section>
 
-      <div className="jump-chip-row">
+      <div className="jump-chip-row" aria-label="Module sections">
         <a className="jump-chip" href="#section-takeaways">Takeaways</a>
-        <a className="jump-chip" href="#section-policy">Policy map</a>
-        <a className="jump-chip emphasis" href="#section-acknowledgment">{isAcknowledged ? "Completed" : "Finish module"}</a>
+        <a className="jump-chip" href="#section-policy">Policy guide</a>
       </div>
 
       <section className="section-band takeaway-band" id="section-takeaways">
         <div className="section-band-head">
           <p className="section-label">Core takeaways</p>
-          <h2>Read this first</h2>
+          <h2>What matters most in this step</h2>
         </div>
         <div className="essential-grid compact-takeaways">
           {section.essentials.map((item) => (
@@ -468,8 +459,8 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
 
       <section className="section-band policy-band" id="section-policy">
         <div className="section-band-head">
-          <p className="section-label">Policy structure</p>
-          <h2>What to keep in mind</h2>
+          <p className="section-label">Policy guide</p>
+          <h2>Use this as your practical reference</h2>
         </div>
         <div className="policy-area-list">
           {section.policyAreas.map((area) => (

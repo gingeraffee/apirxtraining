@@ -1,9 +1,9 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from typing import Any
 
 ORGANIZATION = {
-    "name": "AAP/API",
+    "name": "AAP",
     "headline": "A guided onboarding flow built around what new employees actually need to know first.",
     "tagline": "Clear structure, real policy guidance, and less noise.",
     "mission": "AAP provides support and customized solutions for independent community pharmacies to enhance profitability, streamline operations, and improve the quality of patient care.",
@@ -36,13 +36,13 @@ SECTIONS = [
         "id": "welcome-to-aap-api",
         "slug": "welcome-to-aap-api",
         "eyebrow": "Start Here",
-        "title": "Welcome to AAP/API",
+        "title": "Welcome to AAP",
         "summary": "Start with the company story, the reason the organization exists, and what day-one onboarding is meant to set up.",
         "estimatedMinutes": 9,
-        "purpose": "Understand who AAP/API serves, why the business exists, and how the first stretch of onboarding should help you build confidence quickly.",
+        "purpose": "Understand who AAP serves, why the business exists, and how the first stretch of onboarding should help you build confidence quickly.",
         "focuses": ["Company story", "Mission and values", "First 60 days"],
         "essentials": [
-            {"title": "Who AAP/API is", "body": "AAP is a national cooperative supporting more than 2,000 independent pharmacies, and API operates as the warehouse and distribution arm that helps those pharmacies stay competitive."},
+            {"title": "Who AAP is", "body": "AAP is a national cooperative supporting more than 2,000 independent pharmacies, and API operates as the warehouse and distribution arm that helps those pharmacies stay competitive."},
             {"title": "What the company is aiming for", "body": "The mission is to support independent community pharmacies with solutions that improve profitability, streamline operations, and improve patient care."},
             {"title": "How culture is supposed to work", "body": "Customer focus, integrity, respect, excellence, and ownership are meant to show up in daily behavior, not just in orientation copy."},
         ],
@@ -50,7 +50,7 @@ SECTIONS = [
             {
                 "title": "Company context",
                 "items": [
-                    {"label": "Who we serve", "body": "Independent community pharmacies across the country rely on AAP/API for programs, operational support, and distribution."},
+                    {"label": "Who we serve", "body": "Independent community pharmacies across the country rely on AAP for programs, operational support, and distribution."},
                     {"label": "Why your role matters", "body": "Even roles that are not customer-facing affect service quality, team reliability, and pharmacy support outcomes."},
                 ],
             },
@@ -82,9 +82,9 @@ SECTIONS = [
         ],
         "acknowledgment": {
             "title": "Orientation checkpoint",
-            "statement": "I understand what AAP/API does, what the company is trying to accomplish, and where to go when a question becomes policy-specific.",
+            "statement": "I understand what AAP does, what the company is trying to accomplish, and where to go when a question becomes policy-specific.",
             "items": [
-                "I can explain AAP/API in plain language.",
+                "I can explain AAP in plain language.",
                 "I know the five company values.",
                 "I know HR is the right path for policy interpretation and sensitive issues.",
             ],
@@ -94,7 +94,7 @@ SECTIONS = [
         "id": "working-at-aap-api",
         "slug": "working-at-aap-api",
         "eyebrow": "Employment Basics",
-        "title": "Working at AAP/API",
+        "title": "Working at AAP",
         "summary": "Cover the employment framework, employee records, equal-opportunity expectations, and the rules that shape day-to-day employment.",
         "estimatedMinutes": 11,
         "purpose": "Understand how employment status works, what the company expects around fairness and conduct, and how employee information is handled.",
@@ -125,7 +125,7 @@ SECTIONS = [
                 "title": "Workplace standards tied to employment",
                 "items": [
                     {"label": "Business ethics", "body": "Employees are expected to comply with law and avoid dishonest, illegal, or unethical conduct."},
-                    {"label": "Outside employment", "body": "Outside work cannot interfere with AAP/API performance or create an adverse conflict of interest."},
+                    {"label": "Outside employment", "body": "Outside work cannot interfere with AAP performance or create an adverse conflict of interest."},
                     {"label": "Internal growth", "body": "AAP may post job openings internally to support movement and development when appropriate."},
                 ],
             },

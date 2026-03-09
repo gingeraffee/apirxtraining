@@ -10,9 +10,10 @@ type CoursePathProps = {
   progress: ProgressRecord;
   nextSection: Section | null;
   activeLesson: Section | null;
+  firstName: string;
 };
 
-export function CoursePath({ sections, progress, nextSection, activeLesson }: CoursePathProps) {
+export function CoursePath({ sections, progress, nextSection, activeLesson, firstName }: CoursePathProps) {
   const completedCount = progress.completed_sections.length;
   const totalCount = sections.length;
   const completionPercent = totalCount ? Math.round((completedCount / totalCount) * 100) : 0;
@@ -22,15 +23,15 @@ export function CoursePath({ sections, progress, nextSection, activeLesson }: Co
   const completedSet = new Set(progress.completed_sections);
 
   return (
-    <section className="ov-path" aria-label="Progress and course path">
+    <section className="ov-path" aria-label="Core onboarding path">
       <div className="ov-path-header">
         <div>
-          <p className="section-label">Your onboarding path</p>
-          <h2>Progress and lesson journey</h2>
+          <p className="section-label">Core path</p>
+          <h2>{firstName}'s onboarding path</h2>
         </div>
         <div className="ov-path-stats">
-          <strong>{completedCount}/{totalCount} complete</strong>
-          <span>{remainingMinutes} min remaining</span>
+          <strong>{completedCount}/{totalCount} done</strong>
+          <span>{remainingMinutes} min left</span>
         </div>
       </div>
 
@@ -40,10 +41,10 @@ export function CoursePath({ sections, progress, nextSection, activeLesson }: Co
         </div>
         {nextSection ? (
           <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
-            Next: {nextSection.title}
+            Open next module
           </Link>
         ) : (
-          <p className="ov-complete-note">All core lessons complete.</p>
+          <p className="ov-complete-note">Core path complete.</p>
         )}
       </div>
 

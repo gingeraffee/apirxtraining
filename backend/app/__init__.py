@@ -1,1 +1,1 @@
-﻿"""AAP/API onboarding backend."""
+"""AAP onboarding backend."""

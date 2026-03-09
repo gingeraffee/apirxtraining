@@ -25,15 +25,13 @@ const CheckIcon = () => (
 
 export function LessonStep({ section, index, state, isLast }: LessonStepProps) {
   const stateLabel =
-    state === "completed" ? "Completed"
+    state === "completed" ? "Done"
     : state === "current" ? "In progress"
     : state === "next" ? "Up next"
-    : "Upcoming";
+    : "Soon";
 
-  const ctaLabel =
-    state === "current" ? "Continue lesson"
-    : state === "next" ? "Start lesson"
-    : "Preview";
+  const ctaLabel = state === "current" ? "Continue" : "Start";
+  const showAction = state === "current" || state === "next";
 
   return (
     <li className={`ov-step ${state}${isLast ? " last" : ""}`}>
@@ -47,22 +45,20 @@ export function LessonStep({ section, index, state, isLast }: LessonStepProps) {
       <div className="ov-step-body">
         <div className="ov-step-head">
           <strong className="ov-step-title">{section.title}</strong>
-          <span className="ov-step-meta">
-            {stateLabel} · {section.estimatedMinutes} min
-          </span>
+          <span className={`ov-step-state ${state}`}>{stateLabel}</span>
         </div>
 
-        <p className="ov-step-why">{section.purpose}</p>
+        <p className="ov-step-summary">{section.summary}</p>
+        <p className="ov-step-meta">{section.estimatedMinutes} min</p>
 
-        {state !== "completed" && (
-          <Link
-            className={
-              state === "current" || state === "next"
-                ? "primary-action compact-primary"
-                : "inline-action"
-            }
-            href={`/modules/${section.slug}`}
-          >
+        {showAction ? (
+          <p className="ov-step-purpose">{section.purpose}</p>
+        ) : (
+          <p className="ov-step-purpose subtle">{section.purpose}</p>
+        )}
+
+        {showAction && (
+          <Link className="primary-action compact-primary" href={`/modules/${section.slug}`}>
             {ctaLabel}
           </Link>
         )}

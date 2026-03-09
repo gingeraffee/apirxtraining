@@ -1,0 +1,4697 @@
+/*
+ * globals-refined.css — AAP Portal Design Refinement
+ * ────────────────────────────────────────────────────
+ * Import AFTER globals.css in app/layout.tsx:
+ *   import "./globals.css";
+ *   import "./globals-refined.css";
+ *
+ * Sections:
+ *  §1  Color tokens
+ *  §2  Body & shell
+ *  §3  Sidebar — brand block (logo fix)
+ *  §4  Sidebar — progress panel
+ *  §5  Sidebar — navigation
+ *  §6  Sidebar — logout
+ *  §7  Topbar
+ *  §8  Overview main-stage canvas (login cohesion)
+ *  §9  Hero card (login card-header match)
+ *  §10 Hero stats
+ *  §11 Overview layout & right rail
+ *  §12 Module journey (ov-path)
+ *  §13 Unified card surfaces
+ *  §14 Step states
+ *  §15 Primary action button
+ *  §16 Support section
+ *  §17 Section/toolkit rail variants
+ *  §18 Focus & selection
+ */
+
+
+/* ============================================================
+   §1 · COLOR TOKENS
+   Aligned with the login screen's exact color language.
+   Login uses #4fdcff cyan and #0e2540 navy — we match those.
+   ============================================================ */
+
+:root {
+  /* Cyan — match the login's bright cyan family */
+  --cyan:        #3dd8f8;
+  --cyan-strong: #0fb8dc;
+
+  /* Red — wine, not neon */
+  --red:         #b03145;
+  --red-soft:    rgba(176, 49, 69, 0.1);
+
+  /* Navy — match login submit button and card header */
+  --navy:        #0e2540;
+
+  /* Shadows — deeper, richer */
+  --shadow-strong: 0 20px 50px rgba(4, 12, 24, 0.22);
+  --shadow-soft:   0 10px 26px rgba(6, 16, 30, 0.12);
+  --shadow-quiet:  0 6px 16px rgba(6, 16, 30, 0.08);
+  --shadow-rail:   0 18px 44px rgba(0, 0, 0, 0.24);
+
+  /* Focus ring */
+  --ring: 0 0 0 3px rgba(17, 183, 228, 0.18);
+
+  --glass-cyan: rgba(61, 216, 248, 0.07);
+  --glass-red:  rgba(176, 49, 69, 0.05);
+}
+
+
+/* ============================================================
+   §2 · BODY & SHELL
+   Login story panel: #020f1e → #051730 → #081b38
+   Match that exact depth.
+   ============================================================ */
+
+body {
+  background:
+    radial-gradient(ellipse at 18% 8%,  rgba(17, 183, 228, 0.1),  transparent 30%),
+    radial-gradient(ellipse at 82% 82%, rgba(176, 49, 69, 0.07),  transparent 32%),
+    linear-gradient(160deg, #020f1e 0%, #051730 50%, #081b38 100%);
+}
+
+
+/* ============================================================
+   §3 · SIDEBAR — BRAND BLOCK (logo fix)
+   Issue: overflow:hidden + ov-hero-texture div were clipping
+   the logo. Fix: generous padding, flex layout, no overflow clip.
+   ============================================================ */
+
+.brand-block {
+  padding: 20px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  /* No background, no border, no shadow — logo sits directly on sidebar */
+  background: none;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* Remove dot-grid */
+.brand-block::after {
+  display: none;
+}
+
+/* Remove any before pseudo too */
+.brand-block::before {
+  display: none;
+}
+
+.brand-logo-img {
+  max-width: 210px;
+  width: 100%;
+  height: auto;
+  display: block;
+  /* drop-shadow punches the logo off the sidebar — respects transparency */
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
+}
+
+.brand-tagline {
+  display: none;
+}
+
+/* Override the ov-page brand block that re-adds padding/border-radius */
+.app-shell:has(.ov-page) .brand-block {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 20px 14px 12px !important;
+}
+
+.app-shell:has(.ov-page) .brand-logo-img {
+  max-width: 210px !important;
+}
+
+
+/* ============================================================
+   §4 · SIDEBAR — PROGRESS PANEL
+   Clean, single-read. No glow on bar. Matches sidebar depth.
+   ============================================================ */
+
+.rail-panel,
+.status-card {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.progress-panel {
+  border-color: rgba(61, 216, 248, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Big % number */
+.progress-panel strong {
+  font-size: 1.7rem;
+  letter-spacing: -0.05em;
+  color: #ffffff;
+}
+
+.progress-panel p {
+  color: rgba(175, 210, 238, 0.6);
+  font-size: 0.76rem;
+}
+
+/* Progress bar — no glow */
+.rail-progress-fill {
+  background: linear-gradient(90deg, var(--cyan), rgba(176, 49, 69, 0.75));
+  box-shadow: none;
+  transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rail-progress-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Remove the duplicate meta row from overview sidebar only
+   (overview sidebar has dedicated progress-panel; section/toolkit rails
+   use rail-progress-meta as their primary progress display) */
+.side-rail:not(.section-rail):not(.toolkit-rail) .rail-progress-meta {
+  display: none;
+}
+
+
+/* ============================================================
+   §5 · SIDEBAR — NAVIGATION
+   Issues: font too large, titles cut off, chips eating width.
+   Fix: smaller type, allow wrapping, slimmer num badge.
+   ============================================================ */
+
+/* Smaller, tighter nav rows */
+.nav-link,
+.section-rail-link,
+.toolkit-rail-link {
+  padding: 7px 9px;
+  gap: 8px;
+  align-items: flex-start; /* allow title to wrap down */
+}
+
+/* Indicator bar — single color, thinner */
+.nav-link::before,
+.section-rail-link::before,
+.toolkit-rail-link::before {
+  width: 2px;
+  background: var(--cyan);
+  top: 10px;
+  bottom: 10px;
+}
+
+/* Hover & active — login-coherent tonal surface */
+.nav-link:hover,
+.section-rail-link:hover,
+.toolkit-rail-link:hover {
+  border-color: rgba(61, 216, 248, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+
+.nav-link.active,
+.section-rail-link.active,
+.toolkit-rail-link.active {
+  border-color: rgba(61, 216, 248, 0.2);
+  background: rgba(61, 216, 248, 0.09);
+  box-shadow: none;
+}
+
+/* Remove radial glow pseudo */
+.nav-link.active::after,
+.section-rail-link.active::after,
+.toolkit-rail-link.active::after {
+  display: none;
+}
+
+/* Number badge — slimmer */
+.nav-link-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  font-size: 0.66rem;
+  flex-shrink: 0;
+  margin-top: 1px; /* align to first line of wrapped text */
+}
+
+.nav-link:hover .nav-link-num,
+.section-rail-link:hover .nav-link-num {
+  background: rgba(61, 216, 248, 0.1);
+  border-color: rgba(61, 216, 248, 0.18);
+  color: var(--cyan);
+}
+
+.nav-link.active .nav-link-num,
+.section-rail-link.active .nav-link-num {
+  background: rgba(61, 216, 248, 0.14);
+  border-color: rgba(61, 216, 248, 0.26);
+  color: var(--cyan);
+}
+
+/* Title — smaller, allow wrap so full names are visible */
+.nav-link-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: normal;       /* was nowrap — was cutting off names */
+  overflow: visible;
+  text-overflow: unset;
+  line-height: 1.4;
+}
+
+/* Legacy span titles in section/toolkit rail */
+.section-rail-link span,
+.toolkit-rail-link span {
+  font-size: 0.78rem;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  line-height: 1.4;
+}
+
+/* em checkmarks in section rail */
+.section-rail-link em,
+.toolkit-rail-link em {
+  color: rgba(61, 216, 248, 0.8);
+  flex-shrink: 0;
+  margin-top: 2px;
+  font-size: 0.7rem;
+}
+
+.section-rail-link.active em,
+.toolkit-rail-link.active em {
+  color: var(--cyan);
+}
+
+/* Hide any remaining status chips in nav — belt and suspenders */
+.nav-link .status-chip,
+.section-rail-link .status-chip,
+.toolkit-rail-link .status-chip {
+  display: none;
+}
+
+/* Rail group labels */
+.rail-group-label {
+  color: rgba(175, 210, 238, 0.38);
+  letter-spacing: 0.18em;
+}
+
+/* Section rail inline link */
+.section-rail-inline {
+  color: rgba(61, 216, 248, 0.85);
+  font-size: 0.76rem;
+}
+
+.section-rail-inline:hover {
+  color: #a8eeff;
+}
+
+/* Section rail context block */
+.section-rail-context {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.section-rail-context strong {
+  font-size: 0.9rem;
+}
+
+
+/* ============================================================
+   §6 · SIDEBAR — LOGOUT (if moved to sidebar via rail-logout)
+   ============================================================ */
+
+.side-rail {
+  display: flex;
+  flex-direction: column;
+}
+
+.rail-logout {
+  margin-top: auto;
+  flex-shrink: 0;
+  width: 100%;
+  justify-content: flex-start;
+  border-radius: 12px;
+  min-height: 40px;
+  padding: 0 12px;
+  font-size: 0.78rem;
+  border-color: rgba(255, 255, 255, 0.07);
+  background: transparent;
+  box-shadow: none;
+  color: rgba(175, 210, 238, 0.45);
+}
+
+.rail-logout:hover {
+  border-color: rgba(61, 216, 248, 0.16);
+  background: rgba(61, 216, 248, 0.06);
+  box-shadow: none;
+  color: rgba(175, 210, 238, 0.72);
+  transform: none;
+}
+
+
+/* ============================================================
+   §7 · TOPBAR
+   Overview topbar: light surface — match login form panel.
+   Section topbar: keep dark (on dark main stage).
+   Topbar-meta: simplified — just shows name, no progress bar.
+   ============================================================ */
+
+/* Hide the topbar progress track — we removed it in TSX but be safe */
+.topbar-progress-track {
+  display: none;
+}
+
+/* Overview context topbar — clean light */
+.main-stage:has(> .ov-page) .topbar-meta {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(11, 31, 55, 0.08);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  box-shadow:
+    0 2px 6px rgba(8, 20, 44, 0.06),
+    0 8px 20px rgba(8, 20, 44, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  padding: 10px 16px;
+  min-width: 0; /* let it size to content */
+}
+
+.main-stage:has(> .ov-page) .topbar-meta span {
+  color: #7a8fa6; /* login's muted copy color */
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+}
+
+.main-stage:has(> .ov-page) .topbar-meta strong {
+  color: #0e1c2e; /* login's headline color */
+  font-size: 0.98rem;
+  letter-spacing: -0.02em;
+}
+
+/* Overview logout button — light surface */
+.main-stage:has(> .ov-page) .topbar-logout {
+  border-color: rgba(11, 31, 55, 0.08);
+  background: rgba(255, 255, 255, 0.88);
+  color: #5a6e82;
+  box-shadow: 0 2px 6px rgba(8, 20, 44, 0.06), 0 8px 20px rgba(8, 20, 44, 0.06);
+}
+
+.main-stage:has(> .ov-page) .topbar-logout:hover {
+  border-color: rgba(17, 183, 228, 0.22);
+  background: #ffffff;
+  color: #2a3d52;
+}
+
+.main-stage:has(> .ov-page) .topbar-logout-icon {
+  background: rgba(17, 183, 228, 0.08);
+  color: var(--cyan-strong);
+}
+
+/* Dark topbar (section/toolkit pages) — quiet logout */
+.topbar-logout {
+  border-color: rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+}
+
+.topbar-logout:hover {
+  border-color: rgba(61, 216, 248, 0.2);
+  background: rgba(61, 216, 248, 0.08);
+  box-shadow: none;
+}
+
+.topbar-logout-icon {
+  color: rgba(61, 216, 248, 0.85);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+
+/* ============================================================
+   §8 · OVERVIEW MAIN-STAGE CANVAS
+   The login right panel is #f1f3f7 — a cool, clean light gray.
+   The portal overview main stage should match it exactly.
+   This is the key fix for login/portal visual cohesion.
+   ============================================================ */
+
+.main-stage:has(> .ov-page) {
+  background:
+    radial-gradient(ellipse at 55% 0%, rgba(210, 225, 245, 0.5), transparent 45%),
+    radial-gradient(ellipse at 95% 95%, rgba(200, 220, 240, 0.25), transparent 40%),
+    linear-gradient(180deg, #eef2f7 0%, #f1f4f9 100%);
+}
+
+/* Remove the glass-card pseudo on the light canvas */
+.main-stage:has(> .ov-page)::before {
+  display: none;
+}
+
+/* Section labels on light canvas */
+.main-stage:has(> .ov-page) .topbar .section-label,
+.main-stage:has(> .ov-page) .ov-page .section-label {
+  color: #8a9eb5;
+}
+
+
+/* ============================================================
+   §9 · HERO CARD — MATCHES LOGIN CARD HEADER
+   Login card header: linear-gradient(135deg, #071a30 0%, #0b2240 100%)
+   with a subtle cyan radial. We match that exactly.
+   The hero IS the "card header" of the portal, just as the
+   login card header is the branded entry point of the login.
+   ============================================================ */
+
+.ov-hero {
+  background:
+    radial-gradient(ellipse at 10% 50%, rgba(17, 183, 228, 0.1), transparent 50%),
+    linear-gradient(135deg, #071a30 0%, #0b2240 100%);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 20px 48px rgba(4, 12, 24, 0.26),
+    0 4px 10px rgba(4, 12, 24, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* Fix 1: Hero accent line
+   The original globals has a rotated (transform: rotate(-12deg)) pseudo that
+   clips into a diagonal slash. We reset every geometry property explicitly,
+   then turn it into a clean horizontal top stripe like the login card header. */
+.ov-hero::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 3px !important;
+  transform: none !important;
+  background: linear-gradient(90deg, var(--cyan) 0%, #38bdf8 50%, var(--red) 100%) !important;
+  border-radius: 22px 22px 0 0 !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+}
+
+/* Remove the warm bottom-left glow */
+.ov-hero::after {
+  display: none !important;
+}
+
+/* Remove dot-grid */
+.ov-hero-texture {
+  display: none;
+}
+
+/* Hero headline */
+.ov-hero-copy h1 {
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: none;
+  font-size: clamp(1.85rem, 2.8vw, 2.5rem);
+}
+
+.ov-hero-lead {
+  color: rgba(200, 225, 248, 0.82);
+}
+
+.ov-hero-head .section-label {
+  color: rgba(61, 216, 248, 0.7) !important;
+}
+
+.ov-hero-status {
+  border-color: rgba(61, 216, 248, 0.22);
+  background: rgba(61, 216, 248, 0.1);
+  color: rgba(61, 216, 248, 0.9);
+}
+
+.ov-hero-note {
+  color: rgba(175, 210, 238, 0.5);
+}
+
+
+/* ============================================================
+   §10 · HERO STATS
+   Borderless inline columns — tonal divider only.
+   Cleaner, more editorial. Matches login-stat-card aesthetic.
+   ============================================================ */
+
+.ov-hero-stats {
+  gap: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 20px;
+}
+
+.ov-hero-stats div {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  box-shadow: none;
+  padding: 0 20px 0 0;
+}
+
+.ov-hero-stats div + div {
+  padding: 0 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.ov-hero-stats div:last-child {
+  padding-right: 0;
+}
+
+.ov-hero-stats div:hover {
+  background: transparent;
+  border-color: transparent;
+}
+
+.ov-hero-stats strong {
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+}
+
+.ov-hero-stats span {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgba(160, 205, 235, 0.58);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+
+/* ============================================================
+   §11 · OVERVIEW LAYOUT & RIGHT RAIL
+   Right rail: simplify. Priority card is dominant.
+   Secondary cards are quieter. Remove redundant progress.
+   ============================================================ */
+
+.ov-layout-grid {
+  gap: 16px;
+}
+
+/* Priority card (continue / next up) — dark, dominant */
+.ov-rail-card-priority {
+  background:
+    radial-gradient(ellipse at 10% 50%, rgba(17, 183, 228, 0.1), transparent 55%),
+    linear-gradient(145deg, #071a30 0%, #0b2240 100%);
+  border-color: rgba(61, 216, 248, 0.14);
+  box-shadow:
+    0 16px 36px rgba(4, 12, 24, 0.22),
+    0 0 0 1px rgba(61, 216, 248, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.ov-rail-card-priority::before {
+  background: radial-gradient(
+    circle, rgba(61, 216, 248, 0.09) 0%, transparent 60%
+  );
+}
+
+.ov-rail-card-priority .section-label {
+  color: rgba(61, 216, 248, 0.65) !important;
+}
+
+.ov-rail-card-priority h3 {
+  color: #ffffff !important;
+}
+
+.ov-rail-card-priority p {
+  color: rgba(175, 210, 238, 0.68) !important;
+}
+
+/* Regular light cards */
+.ov-rail-card {
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 55, 0.08);
+  border-radius: 14px;
+  box-shadow:
+    0 2px 6px rgba(8, 20, 44, 0.05),
+    0 8px 20px rgba(8, 20, 44, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.ov-rail-card:hover {
+  box-shadow:
+    0 4px 10px rgba(8, 20, 44, 0.07),
+    0 12px 26px rgba(8, 20, 44, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* The PROGRESS rail card is hidden entirely in §19 Fix 2 below.
+   This keeps the rule as a belt-and-suspenders fallback for the track only. */
+.ov-side-rail .ov-rail-progress-track {
+  display: none;
+}
+
+/* Rail card list dots */
+.ov-rail-list li::before {
+  background: var(--cyan-strong);
+  box-shadow: none;
+}
+
+
+/* ============================================================
+   §12 · MODULE JOURNEY (ov-path)
+   Light card on light canvas — use clean white with
+   consistent border/shadow matching login-card aesthetic.
+   Remove redundant progress bar from journey.
+   ============================================================ */
+
+.ov-path {
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 55, 0.08);
+  border-radius: 18px;
+  box-shadow:
+    0 2px 6px rgba(8, 20, 44, 0.05),
+    0 10px 28px rgba(8, 20, 44, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  padding: 24px 26px;
+  gap: 20px;
+}
+
+.ov-path .section-label {
+  color: #8a9eb5 !important;
+}
+
+.ov-path-header h2 {
+  color: #0e1c2e;
+  font-size: 1.12rem;
+}
+
+.ov-path-stats strong {
+  color: #0e1c2e;
+}
+
+.ov-path-stats span {
+  color: #7a8fa6;
+}
+
+/* Remove redundant progress bar from journey — it's in the hero & sidebar */
+.ov-path-progress {
+  display: none;
+}
+
+/* Progress bar (when used elsewhere) — no glow */
+.ov-progress-fill {
+  background: linear-gradient(90deg, var(--cyan-strong), rgba(176, 49, 69, 0.8));
+  box-shadow: none;
+}
+
+.ov-complete-note {
+  color: #0b6a85;
+  font-size: 0.74rem;
+}
+
+
+/* ============================================================
+   §13 · UNIFIED CARD SURFACES
+   All light-surface cards follow the same system:
+   white fill · 1px navy/8% border · layered shadow · no glow
+   Matches the login card aesthetic precisely.
+   ============================================================ */
+
+/* Note cards (the 2-col grid) */
+.ov-note-card {
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 55, 0.08);
+  border-left: 1px solid rgba(11, 31, 55, 0.08); /* remove colored left border */
+  border-radius: 14px;
+  box-shadow:
+    0 2px 6px rgba(8, 20, 44, 0.05),
+    0 8px 20px rgba(8, 20, 44, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.ov-note-card:hover {
+  border-color: rgba(17, 183, 228, 0.2);
+  border-left-color: rgba(17, 183, 228, 0.2);
+  box-shadow:
+    0 4px 10px rgba(8, 20, 44, 0.07),
+    0 14px 28px rgba(8, 20, 44, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+}
+
+.ov-note-card h3 {
+  color: #0e1c2e;
+}
+
+.ov-note-card p {
+  color: #5a6e82;
+}
+
+.ov-note-card .section-label {
+  color: #8a9eb5 !important;
+}
+
+/* Support section */
+.ov-support {
+  background: #ffffff;
+  border: 1px solid rgba(11, 31, 55, 0.08);
+  border-radius: 18px;
+  box-shadow:
+    0 2px 6px rgba(8, 20, 44, 0.05),
+    0 10px 28px rgba(8, 20, 44, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+.ov-support-copy h3 {
+  color: #0e1c2e;
+}
+
+.ov-support-copy p {
+  color: #5a6e82;
+}
+
+.ov-support-card {
+  background: rgba(241, 244, 249, 0.8);
+  border-color: rgba(11, 31, 55, 0.07);
+}
+
+.ov-support-avatar {
+  background: linear-gradient(135deg, var(--cyan-strong), var(--navy));
+  box-shadow: none;
+}
+
+.ov-support-identity strong {
+  color: #0e1c2e;
+}
+
+.ov-support-details a {
+  color: var(--cyan-strong);
+}
+
+.ov-support-details a:hover {
+  color: #0998bc;
+}
+
+
+/* ============================================================
+   §14 · STEP STATES
+   Journey steps on white cards — clean, no glows.
+   ============================================================ */
+
+.ov-step-body {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(11, 31, 55, 0.07);
+  box-shadow: none;
+}
+
+.ov-step:not(.completed):not(.upcoming) .ov-step-body:hover {
+  background: #ffffff;
+  border-color: rgba(17, 183, 228, 0.18);
+  box-shadow: 0 6px 16px rgba(8, 20, 44, 0.07);
+  transform: translateY(-1px);
+}
+
+.ov-step.current .ov-step-body {
+  background: rgba(237, 249, 254, 0.98);
+  border-color: rgba(17, 183, 228, 0.22);
+  box-shadow: 0 4px 14px rgba(17, 183, 228, 0.08);
+}
+
+.ov-step.current .ov-step-marker {
+  background: rgba(17, 183, 228, 0.14);
+  border-color: rgba(17, 183, 228, 0.38);
+  color: #0b6a85;
+  box-shadow: none;
+  animation: none; /* remove pulse — it reads as anxiety */
+}
+
+.ov-step.next .ov-step-body {
+  background: rgba(255, 252, 253, 0.94);
+  border-color: rgba(176, 49, 69, 0.12);
+}
+
+.ov-step.next .ov-step-marker {
+  background: rgba(176, 49, 69, 0.09);
+  border-color: rgba(176, 49, 69, 0.24);
+  color: #8a3245;
+}
+
+.ov-step.completed .ov-step-marker {
+  background: rgba(46, 139, 95, 0.12);
+  border-color: rgba(46, 139, 95, 0.28);
+  color: #2a7d55;
+}
+
+.ov-step-title {
+  color: #0e1c2e;
+}
+
+.ov-step.completed .ov-step-title {
+  color: #8a9eb5;
+}
+
+.ov-step-summary {
+  color: #5a6e82;
+}
+
+.ov-step-meta {
+  color: #8a9eb5;
+}
+
+.ov-step.current .ov-step-meta,
+.ov-step-state.current {
+  color: #0b6a85;
+}
+
+.ov-step-state.current {
+  background: rgba(17, 183, 228, 0.1);
+  border-color: rgba(17, 183, 228, 0.22);
+}
+
+.ov-step-state.next {
+  background: rgba(176, 49, 69, 0.08);
+  border-color: rgba(176, 49, 69, 0.18);
+  color: #8a3245;
+}
+
+.ov-step-purpose {
+  color: #4a6075;
+}
+
+.ov-step-line {
+  background: rgba(11, 31, 55, 0.08);
+}
+
+.ov-step.completed .ov-step-line {
+  background: rgba(46, 139, 95, 0.18);
+}
+
+
+/* ============================================================
+   §15 · PRIMARY ACTION BUTTON
+   Login submit is #0e2540 (dark navy) — match it.
+   This is the single most important cohesion fix.
+   Bright cyan gradient CTAs scream "different product."
+   ============================================================ */
+
+
+.main-stage:has(> .ov-page) .primary-action:hover {
+  background: #13305a;
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.12),
+    0 8px 22px rgba(9, 28, 54, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  filter: none;
+}
+
+/* Compact primary */
+.compact-primary {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    0 3px 10px rgba(9, 28, 54, 0.2);
+}
+
+.compact-primary:hover {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.1),
+    0 6px 18px rgba(9, 28, 54, 0.26);
+  transform: translateY(-1px);
+}
+
+/* Done action */
+.main-stage:has(> .ov-page) .done-action {
+  background: linear-gradient(135deg, #1a6d49, #2a8e61);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(26, 109, 73, 0.26);
+}
+
+/* Inline action on light canvas */
+.main-stage:has(> .ov-page) .inline-action {
+  border-color: rgba(11, 31, 55, 0.1);
+  background: rgba(8, 20, 35, 0.04);
+  color: #2a3d52;
+}
+
+.main-stage:has(> .ov-page) .inline-action:hover {
+  border-color: rgba(17, 183, 228, 0.28);
+  background: rgba(17, 183, 228, 0.07);
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+/* Focus ring */
+.main-stage:has(> .ov-page) a:focus-visible,
+.main-stage:has(> .ov-page) button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(17, 183, 228, 0.18), 0 0 0 1px rgba(11, 31, 55, 0.1);
+}
+
+/* Login culture CTA — keep its existing cyan to not break login */
+.login-culture-cta-btn {
+  background: linear-gradient(135deg, #22d4f5 0%, #0ea5e9 100%);
+  color: #041624;
+}
+
+
+/* ============================================================
+   §16 · SUPPORT / POLICY / PLAYBOOK SURFACES
+   Consistent light treatment on the overview canvas.
+   ============================================================ */
+
+.policy-row::before {
+  background: var(--cyan-strong);
+}
+
+.playbook[open],
+.quick-answer-item[open] {
+  border-color: rgba(17, 183, 228, 0.18);
+}
+
+.roadmap-item.done .roadmap-index {
+  background: rgba(46, 139, 95, 0.14);
+  color: #2a7d55;
+  border-color: rgba(46, 139, 95, 0.22);
+  box-shadow: none;
+}
+
+.roadmap-item.next .roadmap-index {
+  background: rgba(176, 49, 69, 0.1);
+  color: #8a3245;
+  border-color: rgba(176, 49, 69, 0.2);
+  box-shadow: none;
+}
+
+
+/* ============================================================
+   §17 · SECTION & TOOLKIT RAIL VARIANTS
+   Keep dark rail with the same cohesive nav treatment.
+   ============================================================ */
+
+.section-rail-header h1,
+.toolkit-rail-header h1 {
+  color: #ffffff;
+  letter-spacing: -0.045em;
+}
+
+.section-rail-header .section-label,
+.toolkit-rail-header .section-label {
+  color: rgba(175, 210, 238, 0.45);
+}
+
+.section-rail-context {
+  gap: 4px;
+}
+
+.section-rail-context .section-label {
+  color: rgba(175, 210, 238, 0.45);
+}
+
+.section-rail-context strong {
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.section-rail-context p {
+  font-size: 0.78rem;
+  color: rgba(175, 210, 238, 0.55);
+}
+
+
+/* ============================================================
+   §18 · SELECTION & GLOBAL FOCUS
+   ============================================================ */
+
+::selection {
+  background: rgba(17, 183, 228, 0.16);
+  color: #0e1c2e;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+
+/* ============================================================
+   §19 · PRIORITY FIXES (from screenshot review)
+   1. Hero diagonal line     — already fixed in §9 above
+   2. PROGRESS rail card     — hide redundant right-rail card
+   3. Hero stats hierarchy   — primary stat visually dominant
+   4. GOOD START pill        — remove competing focal point
+   5. Topbar composition     — unified feel, not two orphans
+   6. User chip              — clean user chip replaces N avatar
+   ============================================================ */
+
+
+/* ── Fix 2: Hide the redundant PROGRESS right-rail card ────────
+   The right rail has 3 cards: Next Up (priority), Progress, Questions.
+   Progress is the only one with an ov-rail-progress-track inside it.
+   We use :has() to target it precisely without touching the others. */
+
+.ov-side-rail .ov-rail-card:has(.ov-rail-progress-track) {
+  display: none;
+}
+
+/* Fallback: if :has() isn't supported, target by nth-child position.
+   Priority card is 1st, Progress is 2nd, Questions is 3rd. */
+@supports not selector(.ov-side-rail .ov-rail-card:has(.ov-rail-progress-track)) {
+  .ov-side-rail > *:nth-child(2) {
+    display: none;
+  }
+}
+
+
+/* ── Fix 3: Hero stats hierarchy ───────────────────────────────
+   The % completion is the anchor number — it should be 2×  
+   the size of the supporting stats. Currently all three are equal. */
+
+/* Primary stat — the big number */
+.ov-hero-stats > div:first-child {
+  padding-right: 24px;
+}
+
+.ov-hero-stats > div:first-child strong {
+  font-size: 2.6rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.055em !important;
+  line-height: 0.95 !important;
+  color: #ffffff !important;
+}
+
+.ov-hero-stats > div:first-child span {
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  color: rgba(160, 205, 235, 0.65) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em !important;
+}
+
+/* Secondary stats — smaller, clearly supporting role */
+.ov-hero-stats > div:not(:first-child) strong {
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.ov-hero-stats > div:not(:first-child) span {
+  font-size: 0.68rem !important;
+  color: rgba(150, 195, 225, 0.52) !important;
+}
+
+
+/* ── Fix 4: GOOD START pill ────────────────────────────────────
+   The status pill competes directly with the section-label kicker
+   in the same header row and reads as a random badge. Remove it.
+   The hero headline already communicates progress state. */
+
+.ov-hero-status {
+  display: none;
+}
+
+
+/* ── Fix 5: Topbar composition ─────────────────────────────────
+   Goal: topbar-meta and sign-out button feel like one composed unit,
+   not two separate cards floating independently. 
+   Strategy: unified container, consistent height, tighter gap. */
+
+.main-stage:has(> .ov-page) .topbar-right {
+  gap: 0;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(11, 31, 55, 0.08);
+  border-radius: 16px;
+  box-shadow:
+    0 2px 6px rgba(8, 20, 44, 0.05),
+    0 8px 20px rgba(8, 20, 44, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  overflow: hidden;
+  align-items: stretch;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* topbar-meta: left section of unified pill */
+.main-stage:has(> .ov-page) .topbar-meta {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 10px 16px !important;
+  min-width: 0 !important;
+  border-right: 1px solid rgba(11, 31, 55, 0.07) !important;
+  align-items: flex-start;
+  justify-items: start;
+}
+
+.main-stage:has(> .ov-page) .topbar-meta span {
+  color: #8a9eb5 !important;
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+.main-stage:has(> .ov-page) .topbar-meta strong {
+  color: #0e1c2e !important;
+  font-size: 1rem !important;
+  font-family: var(--font-display) !important;
+  letter-spacing: -0.03em !important;
+}
+
+/* Sign out: right section of unified pill */
+.main-stage:has(> .ov-page) .topbar-logout {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  min-height: unset !important;
+  padding: 0 16px !important;
+  color: #5a6e82 !important;
+  align-self: stretch;
+}
+
+.main-stage:has(> .ov-page) .topbar-logout:hover {
+  background: rgba(17, 183, 228, 0.06) !important;
+  color: #2a3d52 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.main-stage:has(> .ov-page) .topbar-logout-icon {
+  background: rgba(17, 183, 228, 0.08) !important;
+  color: var(--cyan-strong) !important;
+  box-shadow: none !important;
+}
+
+
+/* ── Fix 6: User chip (sidebar bottom) ─────────────────────────
+   The unstyled N avatar in the live project is replaced by a  
+   properly designed user chip added in portal-experience.tsx.
+   This CSS styles the new rail-user-chip component. */
+
+/* Push chip to bottom of sidebar */
+.app-shell:has(.ov-page) .side-rail {
+  display: flex;
+  flex-direction: column;
+}
+
+.rail-user-chip {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.04);
+  transition: background 180ms ease, border-color 180ms ease;
+  cursor: default;
+}
+
+.rail-user-chip:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.rail-user-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0b6a85 0%, #0e2540 100%);
+  border: 1px solid rgba(61, 216, 248, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(61, 216, 248, 0.95);
+  font-size: 0.78rem;
+  font-weight: 800;
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.rail-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.rail-user-info strong {
+  display: block;
+  color: rgba(240, 248, 255, 0.9);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.rail-user-info span {
+  display: block;
+  color: rgba(160, 200, 230, 0.45);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+
+
+/* ============================================================
+   §20 · CONTRAST FIX — Light surface text
+   #8a9eb5 / #7a8fa6 read too faint on white cards.
+   Darker equivalents that pass WCAG AA without losing tone.
+   ============================================================ */
+
+/* Section labels on white canvas — "NEXT UP", "CORE PATH", etc. */
+.main-stage:has(> .ov-page) .topbar .section-label,
+.main-stage:has(> .ov-page) .ov-page .section-label {
+  color: #4d6275 !important;
+}
+
+.ov-path .section-label {
+  color: #4d6275 !important;
+}
+
+.ov-note-card .section-label {
+  color: #4d6275 !important;
+}
+
+/* Topbar "WELCOME BACK" label */
+.main-stage:has(> .ov-page) .topbar-meta span {
+  color: #4d6275 !important;
+}
+
+/* Step meta labels — "CURRENT", "NEXT", etc. */
+.ov-step-meta {
+  color: #4d6275 !important;
+}
+
+/* Muted body copy — readable but not shouting */
+.ov-note-card p {
+  color: #3d5166;
+}
+
+.ov-support-copy p {
+  color: #3d5166;
+}
+
+.ov-step-summary {
+  color: #3d5166;
+}
+
+.ov-step-purpose {
+  color: #3d5166;
+}
+
+/* Path stats supporting label */
+.ov-path-stats span {
+  color: #4d6275;
+}
+
+/* "Progress saves as you go" note in hero */
+.ov-hero-note {
+  color: rgba(185, 215, 238, 0.65);
+}
+
+/* Complete note — was cyan #0b6a85, now dark enough to read */
+.ov-complete-note {
+  color: #2a6b82;
+  font-weight: 600;
+}
+
+
+/* ============================================================
+   §21 · CLEANUP PASS (screenshot review)
+   A. Hide overview topbar entirely — no duplicate label, no
+      floating sign-out. Hero card IS the page identity.
+   B. Sign-out lives in sidebar user chip (already in TSX).
+   C. Reduce page noise — hide the filler note cards.
+   D. Hard contrast fix — all white-surface labels.
+   E. User chip is now a button — style accordingly.
+   ============================================================ */
+
+
+/* ── A: Hide overview topbar ───────────────────────────────── */
+
+.overview-topbar {
+  display: none !important;
+}
+
+
+/* ── B: Sidebar user chip as button ───────────────────────────
+   The chip is now a <button> with onClick={handleLogout}.
+   Style it as a proper interactive element. */
+
+.rail-user-chip {
+  /* Reset button defaults */
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  /* Existing layout from §19 stays, just add hover intent */
+}
+
+.rail-user-chip:hover .rail-user-info span {
+  color: rgba(61, 216, 248, 0.85);
+}
+
+.rail-user-chip:hover .rail-user-signout {
+  color: rgba(61, 216, 248, 0.85);
+  transform: translateX(2px);
+}
+
+.rail-user-signout {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: rgba(160, 200, 230, 0.35);
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.rail-user-chip:active {
+  transform: scale(0.98);
+}
+
+
+/* ── C: Remove filler note cards ("HOW IT RUNS" / "GOOD TO KNOW")
+   These add visual weight without providing navigation value.
+   The hero + journey cards already communicate everything needed. */
+
+.ov-overview-notes {
+  display: none;
+}
+
+
+/* ── D: Hard contrast — every white-surface label must pass AA ─
+   Consolidating all overrides into one authoritative block.
+   Supersedes earlier §20 values with stronger, cleaner ones. */
+
+/* Section label kickers on light canvas (NEXT UP, QUESTIONS, etc.) */
+.main-stage:has(> .ov-page) .ov-page .section-label,
+.ov-rail-card .section-label,
+.ov-path .section-label,
+.ov-note-card .section-label,
+.ov-support .section-label {
+  color: #3a5068 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.14em !important;
+}
+
+/* Rail card body text */
+.ov-rail-card p {
+  color: #2e4257 !important;
+}
+
+.ov-rail-card h3 {
+  color: #0a1c2e !important;
+}
+
+/* Rail list items (bullet points inside cards) */
+.ov-rail-list li {
+  color: #2e4257 !important;
+}
+
+/* Note card text */
+.ov-note-card h3 {
+  color: #0a1c2e !important;
+}
+
+.ov-note-card p {
+  color: #2e4257 !important;
+}
+
+/* Path card text */
+.ov-path-header h2 {
+  color: #0a1c2e !important;
+}
+
+.ov-path-stats strong {
+  color: #0a1c2e !important;
+}
+
+.ov-path-stats span {
+  color: #3a5068 !important;
+}
+
+/* Step text */
+.ov-step-title {
+  color: #0a1c2e !important;
+}
+
+.ov-step-summary {
+  color: #2e4257 !important;
+}
+
+.ov-step-meta {
+  color: #3a5068 !important;
+}
+
+.ov-step-purpose {
+  color: #2e4257 !important;
+}
+
+/* Support section */
+.ov-support-copy h3 {
+  color: #0a1c2e !important;
+}
+
+.ov-support-copy p {
+  color: #2e4257 !important;
+}
+
+.ov-support-identity strong {
+  color: #0a1c2e !important;
+}
+
+/* Topbar meta (section/toolkit pages — dark context) */
+.topbar-meta strong {
+  color: var(--text-strong);
+}
+
+
+
+/* ============================================================
+   §22 · SIDEBAR — SLATE GRAY SURFACE
+   Replace near-black navy with a cool blue-slate.
+   All white-alpha nav/text values stay readable on this tone.
+   ============================================================ */
+
+/* Base sidebar (section + toolkit pages) */
+.side-rail {
+  background:
+    linear-gradient(180deg, #1f2e3c 0%, #192530 100%) !important;
+  border-right-color: rgba(255, 255, 255, 0.06) !important;
+  box-shadow:
+    inset -1px 0 0 rgba(255, 255, 255, 0.04),
+    4px 0 24px rgba(0, 0, 0, 0.22) !important;
+}
+
+/* Overview sidebar */
+.app-shell:has(.ov-page) .side-rail {
+  background:
+    linear-gradient(180deg, #1f2e3c 0%, #192530 100%) !important;
+  border-right-color: rgba(255, 255, 255, 0.05) !important;
+  box-shadow:
+    inset -1px 0 0 rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Progress panel — slightly more opaque so it pops on slate */
+.rail-panel,
+.status-card {
+  background: rgba(0, 0, 0, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.progress-panel {
+  background: rgba(0, 0, 0, 0.18) !important;
+  border-color: rgba(61, 216, 248, 0.18) !important;
+}
+
+/* Progress bar track — visible on slate */
+.rail-progress-track {
+  background: rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Group labels — bump opacity, readable on slate */
+.rail-group-label {
+  color: rgba(175, 210, 238, 0.5) !important;
+}
+
+/* Nav link hover + active — slightly deeper tonal */
+.nav-link:hover,
+.section-rail-link:hover,
+.toolkit-rail-link:hover {
+  background: rgba(0, 0, 0, 0.18) !important;
+  border-color: rgba(61, 216, 248, 0.15) !important;
+}
+
+.nav-link.active,
+.section-rail-link.active,
+.toolkit-rail-link.active {
+  background: rgba(61, 216, 248, 0.1) !important;
+  border-color: rgba(61, 216, 248, 0.22) !important;
+}
+
+/* User chip — inset on slate */
+.rail-user-chip {
+  background: rgba(0, 0, 0, 0.18) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.rail-user-chip:hover {
+  background: rgba(0, 0, 0, 0.28) !important;
+  border-color: rgba(61, 216, 248, 0.2) !important;
+}
+
+/* User avatar tile — cyan on slate */
+.rail-user-avatar {
+  background: rgba(61, 216, 248, 0.15) !important;
+  border-color: rgba(61, 216, 248, 0.25) !important;
+  color: var(--cyan) !important;
+}
+
+
+
+/* ============================================================
+   §23 · DETAIL POLISH PASS
+   Refinement only. No new blocks, no information architecture
+   changes. Every rule below is a targeted improvement.
+
+   A  Brand block — sizing, spacing, intentionality
+   B  Sidebar typography — font, rhythm, readability
+   C  Sidebar state indicators — elegant done/active states
+   D  Hero — internal rhythm, stat row, CTA breathing
+   E  Right rail — Next Up dominant, Questions quieter
+   F  Card consistency — unified shadow/surface system
+   G  Overall spacing — layout grid, section gaps
+   ============================================================ */
+
+
+/* ── A: BRAND BLOCK ─────────────────────────────────────────── */
+
+.brand-block {
+  padding: 22px 16px 14px !important;
+  margin-bottom: 6px;
+}
+
+.brand-logo-img {
+  max-width: 175px !important; /* was 210 — nearly filled the sidebar horizontally */
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+}
+
+.app-shell:has(.ov-page) .brand-logo-img {
+  max-width: 175px !important;
+}
+
+
+/* ── B: SIDEBAR TYPOGRAPHY ──────────────────────────────────── */
+
+/* Group labels — reduce letter-spacing, bump readability */
+.rail-group-label {
+  font-size: 0.62rem !important;
+  letter-spacing: 0.12em !important;
+  color: rgba(175, 210, 238, 0.48) !important;
+  padding-left: 2px;
+}
+
+/* Module number badge — 18px is slightly less bulky, more refined */
+.nav-link-num {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 5px !important;
+  font-size: 0.6rem !important;
+  flex-shrink: 0;
+  margin-top: 2px; /* sits on first line of title */
+}
+
+/* Nav link row — tighter vertical padding for longer lists */
+.nav-link,
+.section-rail-link,
+.toolkit-rail-link {
+  padding: 6px 9px !important;
+  gap: 8px !important;
+}
+
+/* Title — slightly lighter weight is more legible at small size */
+.nav-link-title {
+  font-size: 0.76rem !important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  color: rgba(220, 235, 250, 0.82);
+}
+
+/* Active row — title goes bold so the eye lands on it */
+.nav-link.active .nav-link-title,
+.section-rail-link.active .nav-link-title {
+  font-weight: 700 !important;
+  color: rgba(235, 248, 255, 0.96) !important;
+}
+
+/* Overview icon link — match the same weight treatment */
+.nav-link.active .nav-link-title {
+  color: #ffffff !important;
+}
+
+
+/* ── C: SIDEBAR STATE INDICATORS ───────────────────────────── */
+
+/* Completed module rows — clearly done, not just unlabeled */
+/* Dim the row so it recedes behind current/future steps */
+.nav-link:has(.ov-step-done) .nav-link-title,
+/* Simpler: match by check SVG inside nav-link-num */
+.nav-link .nav-link-num:has(path[d*="7.5"]) {
+  /* belt-and-suspenders: handled below via sibling */
+}
+
+/* Checkmark badge — clean green tint, not cyan */
+.nav-link .nav-link-num:has(svg) {
+  background: rgba(46, 139, 95, 0.14) !important;
+  border-color: rgba(46, 139, 95, 0.28) !important;
+  color: #2e7d58 !important;
+}
+
+/* Slight dim on completed title — done means done */
+.nav-link:has(.nav-link-num svg) .nav-link-title {
+  color: rgba(175, 210, 238, 0.52) !important;
+  font-weight: 400 !important;
+}
+
+/* Active left indicator — 3px, full row height, rounded */
+.nav-link::before,
+.section-rail-link::before,
+.toolkit-rail-link::before {
+  width: 2px !important;
+  top: 8px !important;
+  bottom: 8px !important;
+  border-radius: 2px;
+}
+
+/* Progress panel — YOUR PROGRESS label */
+.progress-panel .section-label {
+  font-size: 0.62rem !important;
+  letter-spacing: 0.12em !important;
+  color: rgba(175, 210, 238, 0.48) !important;
+}
+
+/* Tighten gap between nav group label and first link */
+.rail-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.rail-nav-group .rail-group-label {
+  margin-bottom: 1px;
+}
+
+
+/* ── D: HERO — INTERNAL RHYTHM ──────────────────────────────── */
+
+/* More generous horizontal padding — the headline needs room */
+.ov-hero {
+  padding: 32px 36px 30px !important;
+  gap: 20px !important;
+}
+
+/* Kicker label + headline gap — tighten the head block */
+.ov-hero-copy {
+  gap: 12px !important;
+}
+
+.ov-hero-head {
+  margin-bottom: -2px; /* pull headline closer to kicker */
+}
+
+/* Headline — slightly tighter line-height for impact */
+.ov-hero-copy h1 {
+  font-size: clamp(1.9rem, 2.6vw, 2.4rem) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.03em !important;
+  max-width: 20ch !important;
+  font-weight: 800 !important;
+}
+
+/* Lead text — readable, soft */
+.ov-hero-lead {
+  font-size: 0.9rem !important;
+  line-height: 1.6 !important;
+  max-width: 52ch !important;
+  color: rgba(190, 220, 245, 0.78) !important;
+}
+
+/* Stats row — more top breathing, cleaner divider */
+.ov-hero-stats {
+  border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
+  padding-top: 18px !important;
+  margin-top: 2px;
+}
+
+/* CTA row — more breathing above it */
+.ov-hero-actions {
+  margin-top: 6px !important;
+  gap: 10px !important;
+  align-items: center;
+}
+
+/* Note text ("1 of 7 complete…") — aligned with CTA */
+.ov-hero-note {
+  font-size: 0.76rem !important;
+  color: rgba(175, 210, 238, 0.44) !important;
+}
+
+
+/* ── E: RIGHT RAIL ──────────────────────────────────────────── */
+
+/* Priority card (NEXT UP) — dominant, more internal room */
+.ov-rail-card-priority {
+  padding: 20px 20px 18px !important;
+  gap: 12px !important;
+  border-radius: 16px !important;
+}
+
+/* NEXT UP label — crisp and authoritative */
+.ov-rail-card-priority .section-label {
+  font-size: 0.62rem !important;
+  letter-spacing: 0.14em !important;
+  font-weight: 800 !important;
+  color: rgba(61, 216, 248, 0.72) !important;
+}
+
+/* NEXT UP headline — strong */
+.ov-rail-card-priority h3 {
+  font-size: 1.05rem !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.25 !important;
+}
+
+/* NEXT UP body — clear, not muted */
+.ov-rail-card-priority p {
+  font-size: 0.8rem !important;
+  line-height: 1.5 !important;
+  color: rgba(185, 215, 240, 0.72) !important;
+}
+
+/* Continue module button — full width, max presence */
+.ov-rail-card-priority .primary-action {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+/* Questions card — useful but clearly secondary */
+.ov-rail-card:not(.ov-rail-card-priority) {
+  padding: 14px 16px !important;
+  gap: 8px !important;
+}
+
+/* Questions h3 — slightly smaller than NEXT UP */
+.ov-rail-card:not(.ov-rail-card-priority) h3 {
+  font-size: 0.96rem !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* Questions label */
+.ov-rail-card:not(.ov-rail-card-priority) .section-label {
+  font-size: 0.6rem !important;
+  letter-spacing: 0.12em !important;
+}
+
+/* Action buttons inside Questions card — quiet, secondary style */
+.ov-rail-card:not(.ov-rail-card-priority) .inline-action {
+  font-size: 0.77rem !important;
+  padding: 6px 12px !important;
+  min-height: 30px !important;
+}
+
+/* Side rail gap — slightly more air between cards */
+.ov-side-rail {
+  gap: 14px !important;
+}
+
+
+/* ── F: CARD CONSISTENCY ────────────────────────────────────── */
+
+/* Single unified shadow for all light-surface cards:
+   - ov-path (journey card)
+   - ov-rail-card (right rail)
+   - ov-step-body (step cards within journey)
+   All share the same visual language. */
+
+.ov-path,
+.ov-rail-card:not(.ov-rail-card-priority) {
+  box-shadow:
+    0 1px 2px rgba(8, 20, 44, 0.04),
+    0 4px 12px rgba(8, 20, 44, 0.06),
+    0 12px 28px rgba(8, 20, 44, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  border: 1px solid rgba(11, 31, 55, 0.07) !important;
+}
+
+.ov-path:hover,
+.ov-rail-card:not(.ov-rail-card-priority):hover {
+  box-shadow:
+    0 2px 4px rgba(8, 20, 44, 0.05),
+    0 6px 16px rgba(8, 20, 44, 0.08),
+    0 16px 36px rgba(8, 20, 44, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Step body cards — same language, slightly quieter */
+.ov-step-body {
+  box-shadow:
+    0 1px 2px rgba(8, 20, 44, 0.03),
+    0 3px 8px rgba(8, 20, 44, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(11, 31, 55, 0.065) !important;
+}
+
+.ov-step:not(.completed):not(.upcoming) .ov-step-body:hover {
+  box-shadow:
+    0 2px 4px rgba(8, 20, 44, 0.05),
+    0 6px 16px rgba(8, 20, 44, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  border-color: rgba(17, 183, 228, 0.16) !important;
+}
+
+/* Path card header */
+.ov-path-header {
+  margin-bottom: 2px;
+}
+
+.ov-path-header h2 {
+  font-size: 1.1rem !important;
+  letter-spacing: -0.025em !important;
+}
+
+
+/* ── G: OVERALL SPACING ─────────────────────────────────────── */
+
+/* Main column gap — more breathing between hero and journey card */
+.ov-main-column {
+  gap: 18px !important;
+}
+
+/* Layout grid — slightly wider gutter between content and rail */
+.ov-layout-grid {
+  gap: 20px !important;
+}
+
+/* Page padding — more bottom room */
+.ov-page {
+  gap: 20px !important;
+  padding-bottom: 64px !important;
+}
+
+/* Sidebar internal gap — balanced spacing between groups */
+.app-shell:has(.ov-page) .side-rail {
+  gap: 8px !important;
+  padding: 0 12px 16px !important;
+}
+
+/* Add a touch more top room on the brand block */
+.app-shell:has(.ov-page) .brand-block {
+  padding-top: 22px !important;
+  padding-bottom: 14px !important;
+}
+
+
+
+/* ============================================================
+   §24 · STRUCTURE & HIERARCHY PASS — Overview screen
+   Targets: logo clip, progress duplication, time estimates,
+   sidebar readability, right rail cleanliness.
+   No color polish here — layout and hierarchy only.
+   ============================================================ */
+
+
+/* ── 1. BRAND BLOCK — Logo clip fix ────────────────────────────
+   Root cause: the side-rail has overflow-y:auto which creates
+   a stacking context that clips filter: drop-shadow at the
+   top edge. Fix: remove the drop-shadow filter, ensure the
+   brand-block is fully flush and unclipped.
+   The sidebar is 248px wide. With 0 12px side-rail padding
+   and 16px brand-block side padding, the logo has 192px of
+   room. Set max-width to match. */
+
+.brand-logo-img {
+  max-width: 190px !important;
+  filter: none !important;   /* drop-shadow clips at overflow-y:auto boundary */
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.app-shell:has(.ov-page) .brand-logo-img {
+  max-width: 190px !important;
+}
+
+.brand-block {
+  /* No card treatment — logo floats directly on sidebar */
+  padding: 20px 16px 12px !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  margin-bottom: 2px;
+}
+
+.app-shell:has(.ov-page) .brand-block {
+  padding: 20px 16px 12px !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+
+/* ── 2. PROGRESS — Remove duplication ─────────────────────────
+   Primary:   Sidebar progress panel (% + bar + count)  KEEP
+   Secondary: Hero stats 14% number                      KEEP
+   Remove:    Hero stats 3rd column (~72 min remaining)  HIDE
+   Remove:    Journey card header stats (1/7 + MIN LEFT)  HIDE
+   Remove:    Per-step time estimates (9 MIN etc)         HIDE
+   Right-rail progress card already hidden in §19.       DONE */
+
+/* Hero stats: hide the 3rd column (time estimate) */
+.ov-hero-stats > div:nth-child(3) {
+  display: none;
+}
+
+/* Adjust hero stats layout now that 3rd column is gone —
+   2-column feels more balanced with a stronger divider */
+.ov-hero-stats {
+  grid-template-columns: auto 1fr !important;
+}
+
+/* Journey card stats row (1/7 done + 72 MIN LEFT) — redundant with sidebar */
+.ov-path-stats {
+  display: none !important;
+}
+
+/* Per-step time estimates ("9 MIN", "11 MIN" etc) inside journey steps */
+.ov-step-meta {
+  display: none !important;
+}
+
+
+/* ── 3. SIDEBAR — Layout and readability ───────────────────────
+   Sidebar column is 248px. The layout needs: brand block,
+   progress panel, module nav, sign-out chip — in that order.
+   No time estimates, no status chips, nothing extra. */
+
+/* Side rail: flex column so user chip pushes to bottom */
+.side-rail {
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 0 10px 14px !important;
+  gap: 0 !important;            /* manage spacing via child margins */
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Progress panel — sits directly below logo */
+.progress-panel {
+  margin: 0 0 8px !important;
+  padding: 12px !important;
+  border-radius: 12px !important;
+}
+
+/* Nav groups — consistent vertical rhythm */
+.rail-nav-group {
+  margin-bottom: 6px;
+}
+
+.rail-group-label {
+  padding: 4px 4px 3px !important;
+  margin-bottom: 2px !important;
+  font-size: 0.6rem !important;
+  letter-spacing: 0.13em !important;
+}
+
+/* Nav links — full width, titles wrap cleanly */
+.nav-link {
+  padding: 5px 8px !important;
+  gap: 7px !important;
+  border-radius: 8px !important;
+  align-items: flex-start !important;
+}
+
+.nav-link-title {
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  flex: 1 !important;
+}
+
+.nav-link.active .nav-link-title {
+  font-weight: 700 !important;
+}
+
+.nav-link-num {
+  width: 17px !important;
+  height: 17px !important;
+  border-radius: 4px !important;
+  font-size: 0.58rem !important;
+  flex-shrink: 0 !important;
+  margin-top: 2px !important;  /* aligns num badge to first text line */
+}
+
+/* Nav stack — tighter row gaps */
+.nav-stack {
+  gap: 1px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Section — the overview icon nav link */
+.nav-link:first-child {
+  margin-bottom: 1px;
+}
+
+/* Sign-out chip — pushed to bottom by flex margin */
+.rail-user-chip {
+  margin-top: auto !important;
+  flex-shrink: 0 !important;
+}
+
+
+/* ── 4. RIGHT RAIL — Ensure only Next Up + Questions ───────────
+   Belt-and-suspenders: the :has() selector in §19 handles
+   modern browsers. Add a direct class target as well. */
+
+/* Any card in the rail that shows a progress bar is redundant */
+.ov-side-rail .ov-rail-card:has(.ov-rail-progress-track),
+.ov-side-rail .ov-rail-card:has(.ov-progress-bar) {
+  display: none !important;
+}
+
+/* Rail spacing — slightly more generous between the two remaining cards */
+.ov-side-rail {
+  gap: 12px !important;
+}
+
+
+/* ── 5. OVERVIEW PAGE — Remove leftover noise ──────────────────
+   These were already hidden in §21 but re-confirming with
+   stronger selectors for structural correctness. */
+
+/* Note cards (HOW IT RUNS / GOOD TO KNOW) */
+.ov-overview-notes {
+  display: none !important;
+}
+
+/* Overview topbar — hero is the page header */
+.overview-topbar {
+  display: none !important;
+}
+
+
+
+/* ============================================================
+   §25 · VISUAL COHESION PASS
+   Source of truth: the login page.
+   Structural analogy:
+     sidebar       ↔  login story panel
+     main stage    ↔  login form panel
+     hero card     ↔  login card header
+     light cards   ↔  login card body
+     progress pill ↔  login stat card
+     CTA button    ↔  login submit button
+
+   No new surfaces, no new cards. Typography, color, shadow,
+   and texture brought into alignment with the login language.
+   ============================================================ */
+
+
+/* ── A. COLOR TOKENS — aligned to login's exact values ─────────
+   Login uses #020f1e/#051730/#081b38 for deep panels.
+   rgba(79,220,255,...) is the login's cyan family.
+   #f1f3f7 is the login form panel base.
+   #0e2540 is the login submit button.
+   ---------------------------------------------------------------------- */
+
+:root {
+  /* Exact login cyan family */
+  --cy:          rgba(79, 220, 255, 1);
+  --cy-92:       rgba(79, 220, 255, 0.92);
+  --cy-18:       rgba(79, 220, 255, 0.18);
+  --cy-12:       rgba(79, 220, 255, 0.12);
+  --cy-08:       rgba(79, 220, 255, 0.08);
+
+  /* Login ink palette */
+  --ink-deep:    #020f1e;   /* story panel base */
+  --ink-mid:     #051730;   /* story panel mid */
+  --ink-top:     #081b38;   /* story panel top */
+  --ink-card:    #071a30;   /* card header base */
+  --ink-card-hi: #0b2240;   /* card header top */
+  --ink-cta:     #0e2540;   /* submit button */
+
+  /* Login mist palette (form panel) */
+  --mist:        #f1f3f7;
+  --mist-border: rgba(0, 0, 0, 0.07);
+
+  /* Light card shadow — exact login card shadow */
+  --shadow-card:
+    0 0 0 1px rgba(0, 0, 0, 0.02),
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    0 24px 48px rgba(0, 0, 0, 0.05);
+
+  /* Dark card shadow — login card header adapted */
+  --shadow-dark:
+    0 24px 48px rgba(4, 12, 24, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+
+/* ── B. SIDEBAR — login story panel ────────────────────────────
+   Login left panel: deep ink gradient + two radial glows +
+   dot-grid texture overlay. The sidebar should feel like a
+   continuation of that same surface from the login screen. */
+
+.side-rail,
+.app-shell:has(.ov-page) .side-rail {
+  background:
+    radial-gradient(ellipse at 18% 8%,  rgba(17, 183, 228, 0.09), transparent 36%),
+    radial-gradient(ellipse at 85% 88%, rgba(255, 95, 109, 0.07),  transparent 34%),
+    linear-gradient(170deg, #020f1e 0%, #051730 55%, #081b38 100%) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.04) !important;
+  box-shadow:
+    inset -1px 0 0 rgba(255, 255, 255, 0.03),
+    4px 0 28px rgba(0, 0, 0, 0.28) !important;
+}
+
+/* Dot-grid texture on sidebar — matches login story panel exactly */
+.side-rail::after {
+  content: "";
+  position: fixed;       /* fixed so it doesn't scroll with the rail */
+  top: 0; left: 0;
+  width: 248px;          /* sidebar column width */
+  height: 100vh;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* All rail content sits above the dot-grid */
+.side-rail > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Section/toolkit sidebar widths differ — override the fixed width on ::after */
+.section-shell .side-rail::after  { width: 248px; }
+.toolkit-shell .side-rail::after  { width: 228px; }
+
+
+/* ── C. PROGRESS PANEL — login stat card ───────────────────────
+   Login stat card: rgba(79,220,255,0.08) bg + 0.18 cyan border.
+   Applying this makes the progress panel read as a premium
+   data element, not a generic widget. */
+
+.progress-panel {
+  background: rgba(79, 220, 255, 0.07) !important;
+  border: 1px solid rgba(79, 220, 255, 0.18) !important;
+  border-radius: 10px !important;
+}
+
+.rail-panel,
+.status-card {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+/* Progress % number */
+.progress-panel strong {
+  color: #ffffff !important;
+  font-size: 1.6rem !important;
+  letter-spacing: -0.05em !important;
+  line-height: 1 !important;
+}
+
+/* Module count line */
+.progress-panel p {
+  color: rgba(160, 210, 240, 0.75) !important;
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+/* Progress bar — clean cyan fill, no glow */
+.rail-progress-fill {
+  background: linear-gradient(90deg, rgba(79, 220, 255, 0.9), rgba(79, 220, 255, 0.6)) !important;
+  box-shadow: none !important;
+}
+
+.rail-progress-track {
+  background: rgba(79, 220, 255, 0.12) !important;
+  height: 5px !important;
+}
+
+
+/* ── D. HERO CARD — login card header ──────────────────────────
+   Add dot-grid texture matching login card header.
+   Align accent stripe to login accent (5px, full bleed, no radius).
+   The hero already has overflow:hidden which clips the stripe corners
+   to match the card's border-radius. */
+
+.ov-hero {
+  background:
+    radial-gradient(ellipse at 10% 50%, rgba(17, 183, 228, 0.12), transparent 50%),
+    radial-gradient(circle, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(135deg, #071a30 0%, #0b2240 100%) !important;
+  background-size: auto, 18px 18px, auto !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--shadow-dark) !important;
+  padding: 32px 34px 28px !important;
+}
+
+/* Accent stripe — match login card accent exactly:
+   5px, full bleed, let overflow:hidden handle corner clipping */
+.ov-hero::before {
+  height: 5px !important;
+  background: linear-gradient(90deg, rgba(79, 220, 255, 1) 0%, #38bdf8 45%, var(--red) 100%) !important;
+  border-radius: 0 !important;   /* overflow:hidden on parent handles corner */
+  box-shadow: 0 0 14px rgba(79, 220, 255, 0.3) !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  transform: none !important;
+}
+
+
+/* ── E. HERO TYPOGRAPHY — login kicker + title language ────────
+   Login kicker: rgba(79,220,255,0.92), 0.65rem, 0.26em tracking.
+   Login title: #f0f6ff, -0.04em, 800.
+   Login lead: rgba(210,228,244,0.76), 0.96rem, 500. */
+
+.ov-hero-head .section-label {
+  color: rgba(79, 220, 255, 0.92) !important;
+  font-size: 0.65rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.26em !important;
+}
+
+.ov-hero-copy h1 {
+  color: #f0f6ff !important;
+  font-size: clamp(1.9rem, 2.5vw, 2.35rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.04em !important;
+  line-height: 1.08 !important;
+}
+
+.ov-hero-lead {
+  color: rgba(210, 228, 244, 0.76) !important;
+  font-size: 0.93rem !important;
+  font-weight: 500 !important;
+  line-height: 1.6 !important;
+}
+
+/* Hero stats — align label style to login stat card label */
+.ov-hero-stats > div:first-child strong {
+  font-size: 2.4rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.05em !important;
+  color: #ffffff !important;
+}
+
+.ov-hero-stats span {
+  font-size: 0.64rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: rgba(160, 210, 240, 0.65) !important;
+}
+
+/* Hero note ("progress saves as you go") */
+.ov-hero-note {
+  font-size: 0.75rem !important;
+  color: rgba(160, 210, 240, 0.42) !important;
+}
+
+
+/* ── F. MAIN STAGE CANVAS — login form panel ───────────────────
+   Login right panel: #f1f3f7 base, two cool radials.
+   Exact match so the portal feels like a continuation. */
+
+.main-stage:has(> .ov-page) {
+  background:
+    radial-gradient(ellipse at 50% 0%,   rgba(220, 230, 245, 0.5), transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(210, 225, 245, 0.3), transparent 40%),
+    #f1f3f7 !important;
+}
+
+
+/* ── G. LIGHT CARD SYSTEM — login card surface ─────────────────
+   Login card: white bg, rgba(0,0,0,0.07) border, border-radius 16px,
+   and the precise 4-layer shadow below.
+   Every white card on the portal should use this system. */
+
+/* Shared card shadow + border (used as vars in rules below) */
+
+.ov-path,
+.ov-rail-card:not(.ov-rail-card-priority),
+.ov-note-card,
+.ov-support {
+  background: #ffffff !important;
+  border: 1px solid var(--mist-border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+.ov-path:hover,
+.ov-rail-card:not(.ov-rail-card-priority):hover,
+.ov-note-card:hover {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.03),
+    0 4px 8px rgba(0, 0, 0, 0.05),
+    0 14px 32px rgba(0, 0, 0, 0.07),
+    0 32px 56px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Journey steps use a quieter version of the same language */
+.ov-step-body {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.ov-step:not(.completed):not(.upcoming) .ov-step-body:hover {
+  border-color: rgba(79, 220, 255, 0.2) !important;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 8px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+.ov-step.current .ov-step-body {
+  border-color: rgba(79, 220, 255, 0.24) !important;
+  background: #fafeff !important;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.03),
+    0 8px 20px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(79, 220, 255, 0.1) !important;
+}
+
+
+/* ── H. LIGHT SURFACE TYPOGRAPHY — login card body ─────────────
+   login copy h2: #0e1c2e, -0.03em, 700
+   login muted: #7a8fa6
+   login field label: #3d4f62, 0.7rem, 700, 0.12em  */
+
+/* Card headings on white */
+.ov-path-header h2,
+.ov-rail-card h3,
+.ov-step-title {
+  color: #0e1c2e !important;
+  letter-spacing: -0.025em !important;
+}
+
+/* Body copy on white — login muted color */
+.ov-rail-card:not(.ov-rail-card-priority) p,
+.ov-step-summary,
+.ov-step-purpose {
+  color: #5a6e82 !important;
+  font-size: 0.83rem !important;
+  line-height: 1.5 !important;
+}
+
+/* Section-label kickers on white surfaces — login field label color */
+.ov-rail-card .section-label,
+.ov-path .section-label,
+.ov-step-meta,
+.ov-support .section-label {
+  color: #3d4f62 !important;
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+}
+
+
+/* ── I. SIDEBAR KICKERS — login kicker treatment ───────────────
+   Rail group labels on deep navy use the login kicker style. */
+
+.rail-group-label {
+  color: rgba(79, 220, 255, 0.5) !important;
+  font-size: 0.6rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+}
+
+/* Priority card kicker */
+.ov-rail-card-priority .section-label {
+  color: rgba(79, 220, 255, 0.85) !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.22em !important;
+  font-weight: 700 !important;
+}
+
+/* Nav link titles on deep navy */
+.nav-link-title {
+  color: rgba(220, 232, 248, 0.78) !important;
+}
+
+.nav-link.active .nav-link-title {
+  color: #f0f6ff !important;
+}
+
+/* Completed step title — clearly receded */
+.nav-link:has(.nav-link-num svg) .nav-link-title {
+  color: rgba(160, 195, 230, 0.45) !important;
+}
+
+
+/* ── J. CTA BUTTON — exact login submit ────────────────────────
+   Every primary action uses #0e2540 + login submit shadow.
+   This is the most important cohesion fix — same fingerprint. */
+
+.primary-action,
+.main-stage:has(> .ov-page) .primary-action {
+  background: #0e2540 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(9, 28, 54, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  filter: none !important;
+}
+
+.primary-action:hover,
+.main-stage:has(> .ov-page) .primary-action:hover {
+  background: #122d50 !important;
+  transform: translateY(-1px) !important;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.12),
+    0 8px 20px rgba(9, 28, 54, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.primary-action:active,
+.main-stage:has(> .ov-page) .primary-action:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 6px rgba(9, 28, 54, 0.16) !important;
+}
+
+
+/* ── K. RIGHT RAIL PRIORITY CARD — cohesion with sidebar ───────
+   The priority card lives on the light canvas but is a dark
+   surface. It should share the hero's ink color so all three
+   dark surfaces (sidebar, hero, priority card) feel like one
+   family. */
+
+.ov-rail-card-priority {
+  background:
+    radial-gradient(ellipse at 10% 50%, rgba(17, 183, 228, 0.1), transparent 52%),
+    linear-gradient(148deg, #071a30 0%, #0a1f3a 100%) !important;
+  border: 1px solid rgba(79, 220, 255, 0.12) !important;
+  border-radius: 16px !important;
+  box-shadow:
+    0 16px 40px rgba(4, 12, 24, 0.24),
+    0 0 0 1px rgba(79, 220, 255, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Priority card text */
+.ov-rail-card-priority h3 {
+  color: #f0f6ff !important;
+  font-size: 1.02rem !important;
+  letter-spacing: -0.025em !important;
+}
+
+.ov-rail-card-priority p {
+  color: rgba(210, 228, 244, 0.68) !important;
+  font-size: 0.82rem !important;
+  line-height: 1.5 !important;
+}
+
+
+
+/* ============================================================
+   §26 · DETAIL POLISH PASS
+   Resolves residual issues after §23–§25.
+   Every rule here is a targeted fix — no reinvention.
+
+   A  Sidebar — breathing room, badge refinement
+   B  Brand block — visual anchor, spacing
+   C  Hero — headline, stat row, CTA alignment
+   D  Cards — journey card, step bodies, Questions card
+   E  User chip — adapted for deep ink sidebar
+   F  Spacing finalisation
+   ============================================================ */
+
+
+/* ── A. SIDEBAR — breathing room + badge refinement ────────────*/
+
+/* Nav link rows: 5px vertical is too compressed.
+   Restore to 7px — enough air for premium feel without bloat. */
+.nav-link,
+.section-rail-link,
+.toolkit-rail-link {
+  padding: 7px 9px !important;
+  gap: 8px !important;
+}
+
+/* Nav stack: 1px gap is hair-thin. 2px is correct. */
+.nav-stack {
+  gap: 2px !important;
+}
+
+/* Nav title: 0.75rem is correct; line-height 1.45 lets 2-line
+   titles breathe without pushing the row too tall. */
+.nav-link-title {
+  font-size: 0.74rem !important;
+  line-height: 1.45 !important;
+  /* Remove max-width/truncation — titles must be fully readable */
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  flex: 1 !important;
+}
+
+/* Number badge: 17px is correct size. Ensure it sits on first
+   text line of a wrapped title. */
+.nav-link-num {
+  margin-top: 1px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Active indicator bar: align to full nav-link height */
+.nav-link::before,
+.section-rail-link::before,
+.toolkit-rail-link::before {
+  width: 2px !important;
+  top: 6px !important;
+  bottom: 6px !important;
+  border-radius: 2px;
+  background: rgba(79, 220, 255, 0.85);
+}
+
+/* Nav group spacing — consistent gap between groups */
+.rail-nav-group {
+  margin-bottom: 4px;
+}
+
+/* Rail group label — slightly more top room */
+.rail-group-label {
+  padding: 6px 4px 3px !important;
+}
+
+
+/* ── B. BRAND BLOCK — visual anchor ────────────────────────────
+   On the deep ink sidebar the logo floats without a separator.
+   A hairline bottom edge anchors it before the progress panel.
+   Matches the login story panel's scene-divider convention:
+   border-top: 1px solid rgba(255,255,255,0.06). */
+
+.brand-block {
+  padding: 22px 14px 16px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  margin-bottom: 0 !important;
+}
+
+.app-shell:has(.ov-page) .brand-block {
+  padding: 22px 14px 16px !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  margin-bottom: 0 !important;
+}
+
+/* Logo: max-width based on sidebar (248px) minus rail padding
+   (10px × 2 = 20px) minus brand-block side padding (14px × 2 = 28px)
+   = 200px max. Set to 185px for tasteful margin. */
+.brand-logo-img {
+  max-width: 185px !important;
+  filter: none !important;
+}
+
+.app-shell:has(.ov-page) .brand-logo-img {
+  max-width: 185px !important;
+}
+
+
+/* ── C. HERO — headline, stat row, CTA ─────────────────────────*/
+
+/* Headline max-width: 20ch clips multi-word titles at a bad
+   breakpoint. Remove the cap — the hero grid handles line length. */
+.ov-hero-copy h1 {
+  max-width: none !important;
+}
+
+/* Hero stat row: grid-template-columns: auto 1fr causes the
+   second cell to expand unnecessarily wide.
+   Use auto auto with a fixed gap and start alignment. */
+.ov-hero-stats {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 24px !important;
+  padding-top: 20px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Each stat column */
+.ov-hero-stats > div {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* Divider between stat columns */
+.ov-hero-stats > div + div {
+  padding-left: 20px !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Primary stat number (% complete) */
+.ov-hero-stats > div:first-child strong {
+  font-size: 2.2rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.055em !important;
+  line-height: 1 !important;
+  color: #ffffff !important;
+}
+
+/* Secondary stat number */
+.ov-hero-stats > div:not(:first-child) strong {
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  color: rgba(240, 248, 255, 0.88) !important;
+  line-height: 1 !important;
+}
+
+/* Stat labels — both columns same treatment */
+.ov-hero-stats > div strong + span,
+.ov-hero-stats span {
+  font-size: 0.63rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.07em !important;
+  text-transform: uppercase !important;
+  color: rgba(160, 210, 240, 0.58) !important;
+  line-height: 1.3 !important;
+}
+
+/* CTA row: CTA button + note should align left, not center */
+.ov-hero-actions {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 9px !important;
+  margin-top: 8px !important;
+}
+
+/* CTA button size — match login submit exactly */
+.ov-hero-actions .primary-action {
+  min-height: 40px !important;
+  padding: 0 22px !important;
+  font-size: 0.88rem !important;
+  border-radius: 8px !important;
+}
+
+
+/* ── D. CARDS — journey, steps, Questions ───────────────────────*/
+
+/* Journey card: horizontal padding was 26px. Reduce to 22px to
+   align with the hero's 34px page margin (proportional rhythm). */
+.ov-path {
+  padding: 22px 22px !important;
+}
+
+/* Step body padding: base is 13px 16px 16px, which is fine.
+   Ensure border-radius matches our card system (12px). */
+.ov-step-body {
+  padding: 14px 16px 16px !important;
+  border-radius: 12px !important;
+}
+
+/* Step title on light surface: lock in final value */
+.ov-step-title {
+  font-size: 0.96rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  color: #0e1c2e !important;
+}
+
+.ov-step.completed .ov-step-title {
+  color: #8a9eb5 !important;
+  font-weight: 500 !important;
+}
+
+/* Step summary */
+.ov-step-summary {
+  font-size: 0.82rem !important;
+  color: #5a6e82 !important;
+  line-height: 1.5 !important;
+}
+
+/* Step purpose line — slightly more muted than summary */
+.ov-step-purpose {
+  font-size: 0.8rem !important;
+  color: #6b7f92 !important;
+  line-height: 1.45 !important;
+}
+
+/* Step state badges (CURRENT / NEXT) — clean, not loud */
+.ov-step-state {
+  font-size: 0.6rem !important;
+  letter-spacing: 0.1em !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+}
+
+/* Questions card: 14px 16px padding is too tight */
+.ov-rail-card:not(.ov-rail-card-priority) {
+  padding: 16px 18px !important;
+}
+
+/* Rail side gap (final value) */
+.ov-side-rail {
+  gap: 12px !important;
+}
+
+
+/* ── E. USER CHIP — adapted for deep ink sidebar ────────────────
+   rgba(0,0,0,0.18) goes DARKER than the sidebar on #020f1e.
+   Use rgba(255,255,255,0.07) so it reads as a lift, not a hole.
+   Add top separator to anchor it at the rail bottom. */
+
+.rail-user-chip {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  border-radius: 12px !important;
+  padding: 9px 12px !important;
+  margin-top: auto !important;
+}
+
+.rail-user-chip:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: rgba(79, 220, 255, 0.2) !important;
+}
+
+.rail-user-avatar {
+  background: rgba(79, 220, 255, 0.14) !important;
+  border: 1px solid rgba(79, 220, 255, 0.22) !important;
+  color: rgba(79, 220, 255, 0.95) !important;
+  border-radius: 8px !important;
+}
+
+/* Sign-out label */
+.rail-user-info span {
+  color: rgba(160, 200, 235, 0.45) !important;
+}
+
+.rail-user-chip:hover .rail-user-info span {
+  color: rgba(79, 220, 255, 0.8) !important;
+}
+
+/* Signout arrow */
+.rail-user-signout {
+  color: rgba(160, 200, 235, 0.28) !important;
+}
+
+.rail-user-chip:hover .rail-user-signout {
+  color: rgba(79, 220, 255, 0.7) !important;
+  transform: translateX(2px) !important;
+}
+
+
+/* ── F. SPACING FINALISATION ────────────────────────────────────*/
+
+/* Sidebar internal flex rhythm (gap:0; spacing via children) */
+.app-shell:has(.ov-page) .side-rail {
+  padding: 0 10px 14px !important;
+}
+
+/* Progress panel — breathing room after brand block separator */
+.progress-panel {
+  margin: 10px 0 10px !important;
+  padding: 12px 13px !important;
+}
+
+/* Journey column gap */
+.ov-main-column {
+  gap: 16px !important;
+}
+
+/* Page outer gaps */
+.ov-layout-grid {
+  gap: 18px !important;
+}
+
+.ov-page {
+  gap: 18px !important;
+  padding: 0 0 64px !important;
+}
+
+
+
+/* ============================================================
+   §27 · FINAL QA PASS
+   Targeted fixes only. No new surfaces, no reinvention.
+
+   A  Contact card — Nicole Thornton's injected rail card
+   B  Logo / branding final clip fix
+   C  Progress deduplication — belt-and-suspenders
+   D  Sidebar type — final size lock + wrapping fix
+   E  Card depth consistency — ov-step shadows lifted
+   F  Spacing / rhythm — hero padding, rail top gap
+   G  Utility suppression — ov-support dark block hidden
+   H  Color polish — residual inconsistencies
+   ============================================================ */
+
+
+/* ── A. CONTACT CARD ────────────────────────────────────────────
+   Nicole's card replaces the generic Questions card.
+   Lives on the white card surface; tone is warm + premium. */
+
+/* Card container already gets ov-rail-card styles. These only
+   add the contact-specific sub-elements. */
+
+.contact-identity {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.contact-avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0b6a85 0%, #0e2540 100%);
+  border: 1px solid rgba(79, 220, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: rgba(79, 220, 255, 0.95);
+  font-family: var(--font-display, sans-serif);
+}
+
+.contact-identity-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contact-identity-text strong {
+  font-size: 0.93rem;
+  font-weight: 700;
+  color: #0e1c2e;
+  letter-spacing: -0.02em;
+  font-family: var(--font-display, sans-serif);
+}
+
+.contact-identity-text span {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #5a6e82;
+}
+
+.contact-blurb {
+  font-size: 0.8rem !important;
+  line-height: 1.55 !important;
+  color: #5a6e82 !important;
+  margin: 0 !important;
+}
+
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0e2540;
+  text-decoration: none;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(11, 31, 55, 0.09);
+  background: rgba(11, 31, 55, 0.03);
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+  letter-spacing: -0.01em;
+}
+
+.contact-link svg {
+  flex-shrink: 0;
+  color: #5a6e82;
+  transition: color 150ms ease;
+}
+
+.contact-link:hover {
+  background: rgba(79, 220, 255, 0.07);
+  border-color: rgba(79, 220, 255, 0.22);
+  color: #0b6a85;
+}
+
+.contact-link:hover svg {
+  color: rgba(79, 220, 255, 0.8);
+}
+
+.contact-link--phone:hover {
+  background: rgba(79, 220, 255, 0.07);
+}
+
+.contact-link--email:hover {
+  background: rgba(79, 220, 255, 0.07);
+}
+
+
+/* ── B. LOGO CLIP — final ───────────────────────────────────────
+   Ensure no filter creates a stacking context that clips at the
+   overflow-y:auto boundary. Belt-and-suspenders with §24/§26. */
+
+.brand-logo-img {
+  filter: none !important;
+  -webkit-filter: none !important;
+  transform: translateZ(0); /* promote to own layer — prevents clip */
+  max-width: 185px !important;
+  display: block;
+  height: auto;
+}
+
+/* Brand block: no overflow clipping, no card surface */
+.brand-block {
+  overflow: visible !important;
+  -webkit-overflow-scrolling: auto;
+}
+
+
+/* ── C. PROGRESS — no repetition anywhere ───────────────────────
+   §24 already hides time estimates + path stats. Belt-and-suspenders
+   for any remaining duplicate count displays. */
+
+/* Hero: only show % and module count. Hide time column if present. */
+.ov-hero-stats > div:nth-child(3) {
+  display: none !important;
+}
+
+/* Journey card header stats row — redundant with sidebar panel */
+.ov-path-stats {
+  display: none !important;
+}
+
+/* Per-step time estimate ("9 MIN", "11 MIN") */
+.ov-step-meta {
+  display: none !important;
+}
+
+/* Right-rail progress track card — already hidden in §19/§24 */
+.ov-side-rail .ov-rail-card:has(.ov-rail-progress-track),
+.ov-side-rail .ov-rail-card:has(.ov-progress-bar) {
+  display: none !important;
+}
+
+
+/* ── D. SIDEBAR TYPE — final lock ───────────────────────────────
+   0.74rem nav title is correct. Ensure nothing earlier overrides. */
+
+.nav-link-title,
+.section-rail-link .nav-link-title,
+.toolkit-rail-link .nav-link-title {
+  font-size: 0.74rem !important;
+  font-weight: 500 !important;
+  line-height: 1.45 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  word-break: break-word;
+}
+
+.nav-link.active .nav-link-title {
+  font-weight: 700 !important;
+  color: #f0f6ff !important;
+}
+
+/* Completed nav title — clearly receded */
+.nav-link:has(.nav-link-num svg) .nav-link-title {
+  color: rgba(160, 195, 230, 0.42) !important;
+  font-weight: 400 !important;
+}
+
+/* Number badge — top-aligned to first text line */
+.nav-link-num {
+  margin-top: 1px !important;
+  flex-shrink: 0 !important;
+  align-self: flex-start !important;
+}
+
+
+/* ── E. CARD DEPTH — step bodies match card system ──────────────
+   ov-step-body was quieter than other cards. Lift to match
+   the unified login-card shadow language. */
+
+.ov-step-body {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.065) !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.015),
+    0 2px 6px rgba(8, 20, 44, 0.04),
+    0 8px 20px rgba(8, 20, 44, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Current step — subtle cyan edge, still white */
+.ov-step.current .ov-step-body {
+  background: #fafeff !important;
+  border-color: rgba(79, 220, 255, 0.22) !important;
+  box-shadow:
+    0 0 0 1px rgba(79, 220, 255, 0.08),
+    0 2px 6px rgba(8, 20, 44, 0.04),
+    0 8px 20px rgba(8, 20, 44, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Next step — barely-there red tint */
+.ov-step.next .ov-step-body {
+  border-color: rgba(176, 49, 69, 0.12) !important;
+}
+
+/* Hover lift — matches ov-path hover */
+.ov-step:not(.completed):not(.upcoming) .ov-step-body:hover {
+  box-shadow:
+    0 0 0 1px rgba(79, 220, 255, 0.1),
+    0 4px 10px rgba(8, 20, 44, 0.06),
+    0 12px 28px rgba(8, 20, 44, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  border-color: rgba(79, 220, 255, 0.18) !important;
+  transform: translateY(-1px);
+}
+
+
+/* ── F. SPACING / RHYTHM ────────────────────────────────────────*/
+
+/* Hero: the ::before accent stripe must be flush. 
+   Ensure padding-top accounts for the 5px stripe. */
+.ov-hero {
+  padding: 34px 34px 30px !important;
+}
+
+/* Slight top gap before the first rail card */
+.ov-side-rail {
+  padding-top: 2px;
+}
+
+/* Questions / contact card: slightly more internal room */
+.ov-rail-card:not(.ov-rail-card-priority) {
+  padding: 18px 18px !important;
+  gap: 12px !important;
+}
+
+/* Journey card inner padding */
+.ov-path {
+  padding: 24px 22px 22px !important;
+}
+
+/* Step inner body gap — tighter between title and summary */
+.ov-step-body {
+  gap: 6px !important;
+}
+
+/* Journey list gap between steps */
+.ov-journey {
+  gap: 0 !important; /* steps connect via the line marker */
+}
+
+
+/* ── G. UTILITY SUPPRESSION ─────────────────────────────────────
+   ov-support is the full-width dark contact card at the bottom
+   of the overview page. With Nicole's info now in the rail card,
+   this block is redundant. Remove it entirely. */
+
+.ov-support {
+  display: none !important;
+}
+
+/* Overview notes (HOW IT RUNS / GOOD TO KNOW) — already hidden in §21/§24,
+   belt-and-suspenders */
+.ov-overview-notes {
+  display: none !important;
+}
+
+/* GOOD START / hero-status pill — already hidden in §19 */
+.ov-hero-status {
+  display: none !important;
+}
+
+
+/* ── H. COLOR POLISH ────────────────────────────────────────────
+   Ensure all light-surface copy uses login card color language.
+   No orphaned color values from globals.css base. */
+
+/* Journey card section label — login field label color */
+.ov-path .section-label {
+  color: #3d4f62 !important;
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.18em !important;
+}
+
+/* Step title on white — strong navy */
+.ov-step-title {
+  color: #0e1c2e !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.3 !important;
+}
+
+.ov-step.completed .ov-step-title {
+  color: #9aacbe !important;
+  font-weight: 500 !important;
+}
+
+/* Hover: cyan accent, not white */
+.ov-step:not(.completed):not(.upcoming) .ov-step-body:hover .ov-step-title {
+  color: #0b6a85 !important;
+}
+
+/* Step summary */
+.ov-step-summary {
+  color: #5a6e82 !important;
+  font-size: 0.81rem !important;
+}
+
+/* Step purpose */
+.ov-step-purpose {
+  color: #6b7f92 !important;
+  font-size: 0.79rem !important;
+}
+
+/* Hero note ("progress saves as you go") — very quiet */
+.ov-hero-note {
+  color: rgba(160, 210, 240, 0.38) !important;
+  font-size: 0.74rem !important;
+}
+
+/* Inline-action buttons on white — consistent with login ghost button */
+.main-stage:has(> .ov-page) .inline-action {
+  color: #0e2540 !important;
+  border-color: rgba(11, 31, 55, 0.11) !important;
+  background: rgba(11, 31, 55, 0.03) !important;
+  font-weight: 600 !important;
+  font-size: 0.8rem !important;
+}
+
+.main-stage:has(> .ov-page) .inline-action:hover {
+  border-color: rgba(79, 220, 255, 0.28) !important;
+  background: rgba(79, 220, 255, 0.06) !important;
+  color: #0b6a85 !important;
+}
+
+
+
+/* ============================================================
+   §28 · FOCUSED REFINEMENT PASS
+   Six targeted fixes. No new surfaces, no redesign.
+
+   A  Hero height + suppress duplicate CTA button
+   B  Hero "next up" label — injected text treatment
+   C  Hero stats — final clean state
+   D  Completion badge — green → muted cyan (on-brand)
+   E  Sidebar nav — soften badges, refine state markers
+   F  Belt-and-suspenders on duplicate card / ov-support
+   ============================================================ */
+
+
+/* ── A. HERO — tighter height, button suppressed ───────────────
+   The hero was set to 34px top padding which reads tall for the
+   amount of copy. Reduce to 22px top, 20px bottom.
+   The primary-action inside .ov-hero is the duplicate "Continue";
+   hide it now — the injected .hero-next-label replaces it.
+   Also hide .ov-hero-note; the next-label carries that idea. */
+
+.ov-hero {
+  padding: 22px 32px 20px !important;
+}
+
+.ov-hero .ov-hero-copy {
+  gap: 10px !important;
+}
+
+/* Suppress the duplicate hero CTA button */
+.ov-hero .primary-action,
+.ov-hero .ov-hero-actions .primary-action {
+  display: none !important;
+}
+
+/* Suppress the "progress saves as you go" note — replaced by next-label */
+.ov-hero .ov-hero-note {
+  display: none !important;
+}
+
+/* Give the hero actions area just enough room for the next-label */
+.ov-hero .ov-hero-actions {
+  margin-top: 6px !important;
+  gap: 0 !important;
+}
+
+
+/* ── B. HERO "NEXT UP" LABEL — injected element ────────────────
+   Rendered by the useEffect into .ov-hero-actions.
+   Style: quiet inline text, not a button. Gives directional
+   signal without competing with the NEXT UP rail card. */
+
+.hero-next-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.hero-next-prefix {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(79, 220, 255, 0.6);
+}
+
+.hero-next-sep {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.18);
+  font-weight: 300;
+}
+
+.hero-next-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(220, 236, 252, 0.72);
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+
+/* ── C. HERO STATS — two clean columns, nothing extra ──────────
+   §26 already sets display:flex with a divider. Just ensure
+   the stat row sits close to the copy, not floating too far. */
+
+.ov-hero-stats {
+  margin-top: 14px !important;
+  padding-top: 14px !important;
+}
+
+/* Belt-and-suspenders: keep third column hidden */
+.ov-hero-stats > div:nth-child(3) {
+  display: none !important;
+}
+
+
+/* ── D. COMPLETION BADGE — green → muted cyan ──────────────────
+   Green is off-brand. The sidebar's language is cyan-on-navy.
+   A desaturated cyan badge (very low opacity) reads as "done"
+   without introducing a new hue. Using rgba(79,220,255,...) —
+   the same family already used throughout the sidebar. */
+
+/* Sidebar nav badge with checkmark svg */
+.nav-link .nav-link-num:has(svg) {
+  background:    rgba(79, 220, 255, 0.07) !important;
+  border-color:  rgba(79, 220, 255, 0.18) !important;
+  color:         rgba(79, 220, 255, 0.55) !important;
+}
+
+/* Step marker for completed step in journey card */
+.ov-step.completed .ov-step-marker {
+  background:   rgba(79, 220, 255, 0.08) !important;
+  border-color: rgba(79, 220, 255, 0.18) !important;
+  color:        rgba(79, 220, 255, 0.52) !important;
+  box-shadow:   none !important;
+}
+
+/* Completed step line connector — subtle cyan tint, not green */
+.ov-step.completed .ov-step-line {
+  background: rgba(79, 220, 255, 0.12) !important;
+}
+
+
+/* ── E. SIDEBAR NAV — softer badges, more elegant states ────────
+   The number badges currently have a solid square appearance.
+   Reduce to ghost-level contrast for inactive, clear for active.
+   Completed = muted cyan (§D above). Active = clean white text
+   on cyan-tinted background. Inactive = barely visible. */
+
+/* Inactive badge — almost invisible, just a placeholder */
+.nav-link-num {
+  width: 17px !important;
+  height: 17px !important;
+  border-radius: 4px !important;
+  font-size: 0.58rem !important;
+  font-weight: 700 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: rgba(160, 200, 238, 0.38) !important;
+  flex-shrink: 0 !important;
+  align-self: flex-start !important;
+  margin-top: 2px !important;
+}
+
+/* Active badge — crisp, matches active row color */
+.nav-link.active .nav-link-num,
+.section-rail-link.active .nav-link-num {
+  background: rgba(79, 220, 255, 0.14) !important;
+  border-color: rgba(79, 220, 255, 0.28) !important;
+  color: rgba(79, 220, 255, 0.95) !important;
+}
+
+/* Active row indicator bar — 2px left edge */
+.nav-link.active::before,
+.section-rail-link.active::before {
+  background: rgba(79, 220, 255, 0.8) !important;
+  box-shadow: 0 0 6px rgba(79, 220, 255, 0.35) !important;
+}
+
+/* Nav link title — fine-tune inactive opacity for scan-friendliness */
+.nav-link-title {
+  color: rgba(210, 228, 248, 0.65) !important;
+}
+
+.nav-link.active .nav-link-title {
+  color: rgba(240, 248, 255, 0.96) !important;
+}
+
+/* Hover — gentle lift, not a full active treatment */
+.nav-link:hover:not(.active) .nav-link-num {
+  background: rgba(255, 255, 255, 0.09) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  color: rgba(160, 200, 238, 0.65) !important;
+}
+
+.nav-link:hover:not(.active) .nav-link-title {
+  color: rgba(220, 235, 252, 0.82) !important;
+}
+
+
+/* ── F. BELT-AND-SUSPENDERS — contact duplication ───────────────
+   Ensure ov-support (dark full-width block) stays hidden.
+   The useEffect targets only the last qualifying rail card
+   but CSS-side we also confirm there's no ov-support visible. */
+
+.ov-support {
+  display: none !important;
+}
+
+/* Hide any rail card that has a progress track (the progress card)
+   so it is never visible and never receives contact injection */
+.ov-side-rail .ov-rail-card:has(.ov-rail-progress-track),
+.ov-side-rail .ov-rail-card:has(.ov-progress-bar) {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+
+
+/* ============================================================
+   §29 · FINAL SMALL REFINEMENT PASS
+   Four targeted edits only. No layout or structure changes.
+
+   A  Remove "Continue module" button from NEXT UP rail card
+   B  Style the injected NEXT UP preview content
+   C  DONE pill — replace green with on-brand muted slate-cyan
+   D  Sidebar nav — slightly increase inactive title legibility
+   ============================================================ */
+
+
+/* ── A. NEXT UP CARD — button removed ──────────────────────────
+   The primary-action inside the priority card is the duplicate
+   "Continue module" button. The useEffect replaces the full card
+   content (no button injected), but hide it in CSS too as a
+   robust belt-and-suspenders against any render-timing edge case. */
+
+.ov-rail-card-priority .primary-action,
+.ov-side-rail .ov-rail-card-priority .primary-action {
+  display: none !important;
+}
+
+
+/* ── B. NEXT UP INJECTED CONTENT — informational preview ────────
+   The useEffect writes .nextup-title, .nextup-summary,
+   .nextup-purpose into .ov-rail-card-priority.
+   All three live on the dark ink surface (same as the hero). */
+
+/* Module title — strong, same as hero h1 family */
+.nextup-title {
+  margin: 0;
+  font-family: var(--font-display, sans-serif);
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.28 !important;
+  color: #f0f6ff !important;
+}
+
+/* Summary — what you'll learn; clear, not loud */
+.nextup-summary {
+  margin: 0 !important;
+  font-size: 0.8rem !important;
+  line-height: 1.55 !important;
+  color: rgba(210, 228, 244, 0.72) !important;
+  font-weight: 400 !important;
+}
+
+/* Purpose — why it matters; a shade quieter than summary */
+.nextup-purpose {
+  margin: 0 !important;
+  font-size: 0.76rem !important;
+  line-height: 1.5 !important;
+  color: rgba(160, 200, 238, 0.5) !important;
+  font-weight: 400 !important;
+  font-style: italic;
+  padding-top: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Tighten the card's internal gap now there's no button */
+.ov-rail-card-priority {
+  gap: 10px !important;
+  padding: 18px 18px !important;
+}
+
+/* NEXT UP section-label — crisp, consistent with sidebar kicker language */
+.ov-rail-card-priority .section-label {
+  color: rgba(79, 220, 255, 0.7) !important;
+  font-size: 0.6rem !important;
+  letter-spacing: 0.24em !important;
+  font-weight: 700 !important;
+}
+
+
+/* ── C. DONE PILL — green → muted slate-cyan ───────────────────
+   .ov-step-state.completed uses rgba(67,181,129,...) green.
+   Replace with the same desaturated cyan family used for the
+   completed nav badge — on-brand, calm, unobtrusive. */
+
+.ov-step-state.completed {
+  border-color: rgba(79, 220, 255, 0.16) !important;
+  background:   rgba(79, 220, 255, 0.07) !important;
+  color:        rgba(79, 220, 255, 0.52) !important;
+}
+
+/* Belt-and-suspenders: also target the generic selector pattern
+   in case overview-screen applies it via a compound class */
+.ov-step-state[class*="completed"],
+.ov-step-state[class*="done"] {
+  border-color: rgba(79, 220, 255, 0.16) !important;
+  background:   rgba(79, 220, 255, 0.07) !important;
+  color:        rgba(79, 220, 255, 0.52) !important;
+}
+
+
+/* ── D. SIDEBAR — inactive title legibility bump ────────────────
+   §28 set inactive to rgba(210,228,248,0.65). Nudge to 0.74 —
+   enough to be readable at a glance without competing with the
+   active item. Completed titles stay receded at 0.42. */
+
+.nav-link-title {
+  color: rgba(210, 228, 248, 0.74) !important;
+}
+
+/* Active — unchanged: full brightness */
+.nav-link.active .nav-link-title {
+  color: rgba(240, 248, 255, 0.96) !important;
+}
+
+/* Completed — stay receded */
+.nav-link:has(.nav-link-num svg) .nav-link-title {
+  color: rgba(160, 195, 230, 0.42) !important;
+  font-weight: 400 !important;
+}
+
+/* Hover on inactive — gentle step up */
+.nav-link:hover:not(.active) .nav-link-title {
+  color: rgba(220, 236, 252, 0.88) !important;
+}
+
+
+
+/* ============================================================
+   §29 · FINAL REFINEMENT PASS
+   Four focused edits only.
+
+   A  Rail card button — belt-and-suspenders removal
+   B  NEXT UP eyebrow — kicker line style
+   C  DONE pill — confirm cyan, suppress all green residuals
+   D  Sidebar inactive titles — nudge readability
+   ============================================================ */
+
+
+/* ── A. RAIL CTA BUTTON — fully suppressed ──────────────────────
+   The sole Continue action is inside the active module card
+   (ov-step.current) in the main content area.
+   Belt-and-suspenders: cover every specificity path. */
+
+.ov-rail-card-priority .primary-action,
+.ov-side-rail .primary-action,
+.ov-side-rail .ov-rail-card-priority a.primary-action,
+.ov-side-rail .ov-rail-card-priority button.primary-action {
+  display: none !important;
+}
+
+/* Ensure the current-step CTA in the journey card stays fully visible */
+.ov-step.current .ov-step-body .inline-action,
+.ov-step.next    .ov-step-body .inline-action {
+  display: inline-flex !important;
+  visibility: visible !important;
+}
+
+
+/* ── B. NEXT UP EYEBROW — kicker line ───────────────────────────
+   nextEyebrow is the section's short descriptor (e.g. "YOUR FIRST WEEK").
+   Sits between the title and summary as a secondary label.
+   Uses the same tone as sidebar group labels: muted, uppercase, small. */
+
+.nextup-eyebrow {
+  margin: 0 !important;
+  font-size: 0.63rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+  color: rgba(79, 220, 255, 0.42) !important;
+  line-height: 1.3 !important;
+  margin-top: -2px !important; /* tighten below the h3 title */
+}
+
+
+/* ── C. DONE PILL — confirm no green anywhere ───────────────────
+   Final lock on every possible selector that could render green.
+   The completed state uses muted cyan: visually calm, on-brand. */
+
+.ov-step-state.completed,
+[class*="ov-step-state"][class*="completed"],
+.ov-step-state[class*="done"] {
+  border-color: rgba(79, 220, 255, 0.15) !important;
+  background:   rgba(79, 220, 255, 0.06) !important;
+  color:        rgba(79, 220, 255, 0.50) !important;
+}
+
+/* Sidebar completed badge */
+.nav-link .nav-link-num:has(svg) {
+  background:   rgba(79, 220, 255, 0.06) !important;
+  border-color: rgba(79, 220, 255, 0.16) !important;
+  color:        rgba(79, 220, 255, 0.48) !important;
+}
+
+/* Journey step marker */
+.ov-step.completed .ov-step-marker {
+  background:   rgba(79, 220, 255, 0.07) !important;
+  border-color: rgba(79, 220, 255, 0.16) !important;
+  color:        rgba(79, 220, 255, 0.46) !important;
+  box-shadow:   none !important;
+}
+
+/* Connector line */
+.ov-step.completed .ov-step-line {
+  background: rgba(79, 220, 255, 0.10) !important;
+}
+
+
+/* ── D. SIDEBAR INACTIVE TITLES — slightly more readable ────────
+   Current: rgba(210,228,248,0.74) — already improved from 0.65.
+   Nudge to 0.78 for slightly better scan without losing the
+   contrast hierarchy between inactive, hover, and active states.
+   Font-size stays at 0.74rem — do not increase. */
+
+.nav-link-title {
+  color: rgba(210, 228, 248, 0.78) !important;
+}
+
+/* Active state — unchanged, full brightness */
+.nav-link.active .nav-link-title {
+  color: rgba(240, 248, 255, 0.96) !important;
+}
+
+/* Completed — stay receded, clearly subordinate */
+.nav-link:has(.nav-link-num svg) .nav-link-title {
+  color: rgba(160, 195, 230, 0.40) !important;
+  font-weight: 400 !important;
+}
+
+/* Hover on inactive — step up toward active, not equal to it */
+.nav-link:hover:not(.active) .nav-link-title {
+  color: rgba(225, 238, 255, 0.88) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   COACH TIP — RAIL CARD VARIANT
+   ───────────────────────────────────────────────────────────── */
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip {
+  background: linear-gradient(135deg, #08121f 0%, #0c1a2e 100%) !important;
+  border: 1px solid rgba(0, 232, 255, 0.22) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 232, 255, 0.06),
+    0 4px 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(0, 232, 255, 0.08) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip:hover {
+  box-shadow:
+    0 0 0 1px rgba(0, 232, 255, 0.1),
+    0 6px 28px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(0, 232, 255, 0.1) !important;
+}
+
+.ov-rail-card-tip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(0, 232, 255, 0.09) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.tip-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tip-card-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tip-spark-icon {
+  color: #00e8ff;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Override section-label color inside the tip card */
+.ov-rail-card-tip .section-label {
+  color: #00e8ff;
+  letter-spacing: 0.08em;
+}
+
+/* Force text colors dark-theme — override base ov-rail-card p/h3 rules */
+.ov-side-rail .ov-rail-card.ov-rail-card-tip p,
+.ov-side-rail .ov-rail-card.ov-rail-card-tip h3 {
+  color: #ffffff !important;
+}
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip .section-label {
+  color: #00e8ff !important;
+}
+
+.tip-refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 232, 255, 0.3);
+  background: rgba(0, 232, 255, 0.1);
+  color: #00e8ff;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  flex-shrink: 0;
+}
+
+.tip-refresh-btn:hover:not(:disabled) {
+  background: rgba(0, 232, 255, 0.2);
+  color: #fff;
+  border-color: rgba(0, 232, 255, 0.55);
+}
+
+.tip-refresh-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tip-refresh-btn.spin svg {
+  animation: tip-spin 0.4s ease-in-out;
+}
+
+@keyframes tip-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Tip body text */
+.tip-body-text {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #ffffff;
+  margin: 0 0 14px;
+  min-height: 52px; /* prevent layout jump */
+  animation: tip-fade-in 0.3s ease;
+}
+
+@keyframes tip-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton loading state */
+.tip-skeleton-block {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 14px;
+  min-height: 52px;
+}
+
+.tip-skeleton-line {
+  display: block;
+  height: 11px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.11) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+  width: 100%;
+}
+
+.tip-skeleton-line.med  { width: 82%; }
+.tip-skeleton-line.short { width: 58%; }
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
+/* Footer label */
+.tip-card-footer {
+  border-top: 1px solid rgba(0, 210, 230, 0.1);
+  padding-top: 10px;
+  margin-top: auto;
+}
+
+.tip-footer-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(0, 232, 255, 0.6);
+  font-weight: 600;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   COACH TIP — RAIL CARD VARIANT
+   ───────────────────────────────────────────────────────────── */
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip {
+  background: linear-gradient(135deg, #08121f 0%, #0c1a2e 100%) !important;
+  border: 1px solid rgba(0, 232, 255, 0.22) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 232, 255, 0.06),
+    0 4px 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(0, 232, 255, 0.08) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip:hover {
+  box-shadow:
+    0 0 0 1px rgba(0, 232, 255, 0.1),
+    0 6px 28px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(0, 232, 255, 0.1) !important;
+}
+
+.ov-rail-card-tip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(0, 232, 255, 0.09) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.tip-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tip-card-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tip-spark-icon {
+  color: #00e8ff;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Override section-label color inside the tip card */
+.ov-rail-card-tip .section-label {
+  color: #00e8ff;
+  letter-spacing: 0.08em;
+}
+
+/* Force text colors dark-theme — override base ov-rail-card p/h3 rules */
+.ov-side-rail .ov-rail-card.ov-rail-card-tip p,
+.ov-side-rail .ov-rail-card.ov-rail-card-tip h3 {
+  color: #ffffff !important;
+}
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip .section-label {
+  color: #00e8ff !important;
+}
+
+.tip-refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 232, 255, 0.3);
+  background: rgba(0, 232, 255, 0.1);
+  color: #00e8ff;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  flex-shrink: 0;
+}
+
+.tip-refresh-btn:hover:not(:disabled) {
+  background: rgba(0, 232, 255, 0.2);
+  color: #fff;
+  border-color: rgba(0, 232, 255, 0.55);
+}
+
+.tip-refresh-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tip-refresh-btn.spin svg {
+  animation: tip-spin 0.4s ease-in-out;
+}
+
+@keyframes tip-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Tip body text */
+.tip-body-text {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #ffffff;
+  margin: 0 0 14px;
+  min-height: 52px; /* prevent layout jump */
+  animation: tip-fade-in 0.3s ease;
+}
+
+.tip-prefix {
+  font-weight: 700;
+  color: #00e8ff;
+}
+
+@keyframes tip-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton loading state */
+.tip-skeleton-block {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 14px;
+  min-height: 52px;
+}
+
+.tip-skeleton-line {
+  display: block;
+  height: 11px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.11) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+  width: 100%;
+}
+
+.tip-skeleton-line.med  { width: 82%; }
+.tip-skeleton-line.short { width: 58%; }
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
+/* Footer label */
+.tip-card-footer {
+  border-top: 1px solid rgba(0, 210, 230, 0.1);
+  padding-top: 10px;
+  margin-top: auto;
+}
+
+.tip-footer-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(0, 232, 255, 0.6);
+  font-weight: 600;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   COACH TIP — HERO STRIP VARIANT
+   ───────────────────────────────────────────────────────────── */
+
+.hero-tip-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(0, 210, 230, 0.07);
+  border: 1px solid rgba(0, 210, 230, 0.15);
+  backdrop-filter: blur(4px);
+  animation: tip-fade-in 0.4s ease 0.2s both;
+}
+
+.hero-tip-icon {
+  color: #00d2e6;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-tip-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hero-tip-text {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  animation: tip-fade-in 0.3s ease;
+}
+
+.hero-tip-text strong {
+  color: #00d2e6;
+  font-weight: 600;
+}
+
+/* Hero skeleton lines */
+.hero-tip-skeleton {
+  display: block;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+}
+
+.hero-tip-skeleton.wide   { width: 100%; }
+.hero-tip-skeleton.narrow { width: 68%; }
+
+/* Hero refresh button */
+.hero-tip-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 210, 230, 0.18);
+  background: transparent;
+  color: rgba(0, 210, 230, 0.55);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.hero-tip-refresh:hover:not(:disabled) {
+  background: rgba(0, 210, 230, 0.12);
+  color: #00d2e6;
+}
+
+.hero-tip-refresh:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.hero-tip-refresh.spin svg {
+  animation: tip-spin 0.4s ease-in-out;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   HERO NEXT-UP BLOCK
+   ───────────────────────────────────────────────────────────── */
+
+.ov-hero-next {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ov-hero-next-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.ov-hero-next-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.ov-hero-next-meta {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 6px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PASTE THIS INTO globals-refined.css
+   These power the "Next up" pill + title block in the hero
+   ───────────────────────────────────────────────────────────── */
+
+.ov-hero-next {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.ov-hero-next-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+
+.ov-hero-next-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.4;
+}
+
+.ov-hero-next-meta {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   COACH TIP — RAIL CARD VARIANT
+   ───────────────────────────────────────────────────────────── */
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip {
+  background: linear-gradient(135deg, #08121f 0%, #0c1a2e 100%) !important;
+  border: 1px solid rgba(0, 232, 255, 0.22) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 232, 255, 0.06),
+    0 4px 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(0, 232, 255, 0.08) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip:hover {
+  box-shadow:
+    0 0 0 1px rgba(0, 232, 255, 0.1),
+    0 6px 28px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(0, 232, 255, 0.1) !important;
+}
+
+.ov-rail-card-tip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(0, 232, 255, 0.09) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.tip-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tip-card-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tip-spark-icon {
+  color: #00e8ff;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Override section-label color inside the tip card */
+.ov-rail-card-tip .section-label {
+  color: #00e8ff;
+  letter-spacing: 0.08em;
+}
+
+/* Force text colors dark-theme — override base ov-rail-card p/h3 rules */
+.ov-side-rail .ov-rail-card.ov-rail-card-tip p,
+.ov-side-rail .ov-rail-card.ov-rail-card-tip h3 {
+  color: #ffffff !important;
+}
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip .section-label {
+  color: #00e8ff !important;
+}
+
+.tip-refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 232, 255, 0.3);
+  background: rgba(0, 232, 255, 0.1);
+  color: #00e8ff;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  flex-shrink: 0;
+}
+
+.tip-refresh-btn:hover:not(:disabled) {
+  background: rgba(0, 232, 255, 0.2);
+  color: #fff;
+  border-color: rgba(0, 232, 255, 0.55);
+}
+
+.tip-refresh-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tip-refresh-btn.spin svg {
+  animation: tip-spin 0.4s ease-in-out;
+}
+
+@keyframes tip-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Tip body text */
+.tip-body-text {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #ffffff;
+  margin: 0 0 14px;
+  min-height: 52px; /* prevent layout jump */
+  animation: tip-fade-in 0.3s ease;
+}
+
+.tip-prefix {
+  font-weight: 700;
+  color: #00e8ff;
+}
+
+@keyframes tip-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton loading state */
+.tip-skeleton-block {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 14px;
+  min-height: 52px;
+}
+
+.tip-skeleton-line {
+  display: block;
+  height: 11px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.11) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+  width: 100%;
+}
+
+.tip-skeleton-line.med  { width: 82%; }
+.tip-skeleton-line.short { width: 58%; }
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
+/* Footer label */
+.tip-card-footer {
+  border-top: 1px solid rgba(0, 210, 230, 0.1);
+  padding-top: 10px;
+  margin-top: auto;
+}
+
+.tip-footer-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(0, 232, 255, 0.6);
+  font-weight: 600;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   COACH TIP — HERO STRIP VARIANT
+   ───────────────────────────────────────────────────────────── */
+
+.hero-tip-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(0, 210, 230, 0.07);
+  border: 1px solid rgba(0, 210, 230, 0.15);
+  backdrop-filter: blur(4px);
+  animation: tip-fade-in 0.4s ease 0.2s both;
+}
+
+.hero-tip-icon {
+  color: #00d2e6;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-tip-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hero-tip-text {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  animation: tip-fade-in 0.3s ease;
+}
+
+.hero-tip-text strong {
+  color: #00d2e6;
+  font-weight: 600;
+}
+
+/* Hero skeleton lines */
+.hero-tip-skeleton {
+  display: block;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+}
+
+.hero-tip-skeleton.wide   { width: 100%; }
+.hero-tip-skeleton.narrow { width: 68%; }
+
+/* Hero refresh button */
+.hero-tip-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 210, 230, 0.18);
+  background: transparent;
+  color: rgba(0, 210, 230, 0.55);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.hero-tip-refresh:hover:not(:disabled) {
+  background: rgba(0, 210, 230, 0.12);
+  color: #00d2e6;
+}
+
+.hero-tip-refresh:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.hero-tip-refresh.spin svg {
+  animation: tip-spin 0.4s ease-in-out;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   HERO NEXT-UP BLOCK
+   ───────────────────────────────────────────────────────────── */
+
+.ov-hero-next {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ov-hero-next-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.ov-hero-next-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.ov-hero-next-meta {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 6px;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   COACH TIP — RAIL CARD VARIANT
+   ───────────────────────────────────────────────────────────── */
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip {
+  background: linear-gradient(135deg, #08121f 0%, #0c1a2e 100%) !important;
+  border: 1px solid rgba(0, 232, 255, 0.22) !important;
+  box-shadow:
+    0 0 0 1px rgba(0, 232, 255, 0.06),
+    0 4px 24px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(0, 232, 255, 0.08) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip:hover {
+  box-shadow:
+    0 0 0 1px rgba(0, 232, 255, 0.1),
+    0 6px 28px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(0, 232, 255, 0.1) !important;
+}
+
+.ov-rail-card-tip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top right, rgba(0, 232, 255, 0.09) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.tip-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tip-card-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tip-spark-icon {
+  color: #00e8ff;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Override section-label color inside the tip card */
+.ov-rail-card-tip .section-label {
+  color: #00e8ff;
+  letter-spacing: 0.08em;
+}
+
+/* Force text colors dark-theme — override base ov-rail-card p/h3 rules */
+.ov-side-rail .ov-rail-card.ov-rail-card-tip p,
+.ov-side-rail .ov-rail-card.ov-rail-card-tip h3 {
+  color: #ffffff !important;
+}
+
+.ov-side-rail .ov-rail-card.ov-rail-card-tip .section-label {
+  color: #00e8ff !important;
+}
+
+.tip-refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 232, 255, 0.3);
+  background: rgba(0, 232, 255, 0.1);
+  color: #00e8ff;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  flex-shrink: 0;
+}
+
+.tip-refresh-btn:hover:not(:disabled) {
+  background: rgba(0, 232, 255, 0.2);
+  color: #fff;
+  border-color: rgba(0, 232, 255, 0.55);
+}
+
+.tip-refresh-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tip-refresh-btn.spin svg {
+  animation: tip-spin 0.4s ease-in-out;
+}
+
+@keyframes tip-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Tip body text */
+.tip-body-text {
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #ffffff;
+  margin: 0 0 14px;
+  min-height: 52px; /* prevent layout jump */
+  animation: tip-fade-in 0.3s ease;
+}
+
+.tip-prefix {
+  font-weight: 700;
+  color: #00e8ff;
+}
+
+@keyframes tip-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Skeleton loading state */
+.tip-skeleton-block {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 14px;
+  min-height: 52px;
+}
+
+.tip-skeleton-line {
+  display: block;
+  height: 11px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.11) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+  width: 100%;
+}
+
+.tip-skeleton-line.med  { width: 82%; }
+.tip-skeleton-line.short { width: 58%; }
+
+@keyframes skeleton-shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+
+/* Footer label */
+.tip-card-footer {
+  border-top: 1px solid rgba(0, 210, 230, 0.1);
+  padding-top: 10px;
+  margin-top: auto;
+}
+
+.tip-footer-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(0, 232, 255, 0.6);
+  font-weight: 600;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   COACH TIP — HERO STRIP VARIANT
+   ───────────────────────────────────────────────────────────── */
+
+.hero-tip-strip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(0, 210, 230, 0.07);
+  border: 1px solid rgba(0, 210, 230, 0.15);
+  backdrop-filter: blur(4px);
+  animation: tip-fade-in 0.4s ease 0.2s both;
+}
+
+.hero-tip-icon {
+  color: #00d2e6;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+}
+
+.hero-tip-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.hero-tip-text {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  animation: tip-fade-in 0.3s ease;
+}
+
+.hero-tip-text strong {
+  color: #00d2e6;
+  font-weight: 600;
+}
+
+/* Hero skeleton lines */
+.hero-tip-skeleton {
+  display: block;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s infinite;
+}
+
+.hero-tip-skeleton.wide   { width: 100%; }
+.hero-tip-skeleton.narrow { width: 68%; }
+
+/* Hero refresh button */
+.hero-tip-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 210, 230, 0.18);
+  background: transparent;
+  color: rgba(0, 210, 230, 0.55);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.hero-tip-refresh:hover:not(:disabled) {
+  background: rgba(0, 210, 230, 0.12);
+  color: #00d2e6;
+}
+
+.hero-tip-refresh:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.hero-tip-refresh.spin svg {
+  animation: tip-spin 0.4s ease-in-out;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   HERO NEXT-UP BLOCK
+   ───────────────────────────────────────────────────────────── */
+
+.ov-hero-next {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ov-hero-next-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+
+.ov-hero-next-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.ov-hero-next-meta {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 6px;
+}
+
+
+

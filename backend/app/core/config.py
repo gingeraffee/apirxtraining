@@ -1,10 +1,10 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import os
 
 
 class Settings:
-    app_name = "AAP/API Onboarding API"
+    app_name = "AAP Onboarding API"
     app_version = "0.1.0"
     api_prefix = "/api/v1"
     default_cors_origins = [

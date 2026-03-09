@@ -1,4 +1,4 @@
-# AAP/API Onboarding Platform
+# AAP Onboarding Platform
 
 This repository is a two-app onboarding platform:
 
@@ -9,8 +9,8 @@ This repository is a two-app onboarding platform:
 
 The rebuilt experience follows the structure defined in `AGENTS.md`:
 
-1. Welcome to AAP/API
-2. Working at AAP/API
+1. Welcome to AAP
+2. Working at AAP
 3. Attendance, Timekeeping, and PTO
 4. Benefits and Eligibility
 5. Conduct, Confidentiality, and Workplace Standards

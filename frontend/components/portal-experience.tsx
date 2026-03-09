@@ -6,6 +6,7 @@ import { useEffect, useState, useTransition } from "react";
 import { acknowledgeSection, fetchExperience, fetchProgress, saveProgress } from "@/lib/api";
 import type { ExperienceContent, ProgressRecord, Section, Toolkit } from "@/lib/types";
 import { OverviewScreen } from "@/components/overview/overview-screen";
+import { LoginScreen } from "@/components/login-screen";
 
 type PortalKind = "overview" | "section" | "toolkit";
 
@@ -15,15 +16,23 @@ type PortalExperienceProps = {
 };
 
 const EMPLOYEE_ID = "demo-employee";
-const DISPLAY_NAME = "New Hire Demo";
+const AUTH_NAME_KEY = "aap_portal_name";
+const FALLBACK_DISPLAY_NAME = "";
 
 export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   const [experience, setExperience] = useState<ExperienceContent | null>(null);
   const [progress, setProgress] = useState<ProgressRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileName, setProfileName] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(AUTH_NAME_KEY) ?? null;
+    }
+    return null;
+  });
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean[]>>({});
   const [isPending, startTransition] = useTransition();
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   useEffect(() => {
     let isCancelled = false;
@@ -62,6 +71,8 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
     };
   }, []);
 
+  const displayName = profileName ?? progress?.display_name ?? FALLBACK_DISPLAY_NAME;
+  const firstName = displayName.split(" ")[0] ?? displayName;
   const sections = experience?.sections ?? [];
   const toolkit = experience?.toolkits[0];
   const activeSection = sections.find((section) => section.slug === slug);
@@ -106,7 +117,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
 
     try {
       const updated = await saveProgress(EMPLOYEE_ID, {
-        display_name: DISPLAY_NAME,
+        display_name: displayName,
         current_section: currentSlug,
         completed_sections: progress.completed_sections,
         acknowledged_sections: progress.acknowledged_sections,
@@ -119,13 +130,124 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   }
 
   useEffect(() => {
+    if (!profileName) {
+      return;
+    }
+
     if (kind === "section" && slug && progress) {
       void syncCurrentSection(slug);
     }
     if (kind === "toolkit" && slug && progress) {
       void syncCurrentSection(slug);
     }
-  }, [kind, slug, progress]);
+  }, [kind, slug, progress, profileName]);
+
+  // Post-render DOM customisation for the overview page.
+  // overview-screen.tsx is not directly editable, so we adjust three areas:
+  //   1. Hero actions — swap the duplicate "Continue" button for a quiet
+  //      "Next up — [module name]" text line.
+  //   2. NEXT UP rail card — replace the auto-generated description (which
+  //      includes a time estimate) with a genuine module preview: title,
+  //      what you'll learn, and why it matters. No button — the active
+  //      module card in the main content area is the sole CTA.
+  //   3. Contact rail card — replace the generic Questions card with
+  //      Nicole's actual contact details.
+  useEffect(() => {
+    if (kind !== "overview") return;
+
+    const nextTitle   = nextSection?.title   ?? null;
+    const nextEyebrow = nextSection?.eyebrow ?? null;
+    const nextSummary = nextSection?.summary ?? null;
+    const nextPurpose = nextSection?.purpose ?? null;
+
+    function injectOverview(): boolean {
+      let allReady = true;
+
+      // ── 1. Hero: replace button with quiet "Next up" text ──────────────
+      const heroActions = document.querySelector<HTMLElement>(".ov-hero .ov-hero-actions");
+      if (heroActions) {
+        if (!heroActions.dataset.heroInjected) {
+          heroActions.dataset.heroInjected = "true";
+          heroActions.innerHTML = nextTitle
+            ? `<div class="hero-next-label">
+                 <span class="hero-next-prefix">Next up</span>
+                 <span class="hero-next-sep">—</span>
+                 <span class="hero-next-title">${nextTitle}</span>
+               </div>`
+            : "";
+        }
+      } else {
+        allReady = false;
+      }
+
+      // ── 2. NEXT UP rail card: informational preview, no button ─────────
+      const priorityCard = document.querySelector<HTMLElement>(
+        ".ov-side-rail .ov-rail-card-priority"
+      );
+      if (priorityCard) {
+        if (!priorityCard.dataset.nextupInjected) {
+          priorityCard.dataset.nextupInjected = "true";
+          priorityCard.innerHTML = `
+            <p class="section-label">NEXT UP</p>
+            ${nextTitle   ? `<h3 class="nextup-title">${nextTitle}</h3>` : ""}
+            ${nextEyebrow ? `<p  class="nextup-eyebrow">${nextEyebrow}</p>` : ""}
+            ${nextSummary ? `<p  class="nextup-summary">${nextSummary}</p>` : ""}
+            ${nextPurpose ? `<p  class="nextup-purpose">${nextPurpose}</p>` : ""}
+          `;
+        }
+      } else {
+        allReady = false;
+      }
+
+      // ── 3. Contact card: inject only into the last non-priority card ───
+      // Filter out any hidden progress cards (they have a progress track element).
+      const contactTarget = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          ".ov-side-rail .ov-rail-card:not(.ov-rail-card-priority)"
+        )
+      )
+        .filter((c) => !c.querySelector(".ov-rail-progress-track, .ov-progress-bar"))
+        .at(-1);
+
+      if (!contactTarget) {
+        allReady = false;
+      } else if (!contactTarget.dataset.contactInjected) {
+        contactTarget.dataset.contactInjected = "true";
+        contactTarget.innerHTML = `
+          <p class="section-label">YOUR PEOPLE PERSON</p>
+          <div class="contact-identity">
+            <div class="contact-avatar" aria-hidden="true">NT</div>
+            <div class="contact-identity-text">
+              <strong>Nicole Thornton</strong>
+              <span>HR Manager</span>
+            </div>
+          </div>
+          <p class="contact-blurb">Questions, nerves, confusion, or just want to say hi — Nicole's your person. Genuinely happy to help.</p>
+          <div class="contact-details">
+            <a class="contact-link contact-link--phone" href="tel:2565747528">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .84h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              256-574-7528
+            </a>
+            <a class="contact-link contact-link--email" href="mailto:nicole.thornton@apirx.com">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+              nicole.thornton@apirx.com
+            </a>
+          </div>
+        `;
+      }
+
+      return allReady;
+    }
+
+    if (!injectOverview()) {
+      const id = requestAnimationFrame(() => {
+        if (!injectOverview()) {
+          setTimeout(injectOverview, 120);
+        }
+      });
+      return () => cancelAnimationFrame(id);
+    }
+  }, [kind, experience, nextSection]);
 
   function toggleItem(sectionSlug: string, itemIndex: number) {
     setCheckedItems((current) => {
@@ -147,7 +269,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
     }
 
     startTransition(() => {
-      void acknowledgeSection(EMPLOYEE_ID, section.slug, DISPLAY_NAME).then((updated) => {
+      void acknowledgeSection(EMPLOYEE_ID, section.slug, displayName).then((updated) => {
         setProgress(updated);
       });
     });
@@ -160,7 +282,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
 
     startTransition(() => {
       void saveProgress(EMPLOYEE_ID, {
-        display_name: DISPLAY_NAME,
+        display_name: displayName,
         current_section: roleToolkit.slug,
         completed_sections: progress.completed_sections,
         acknowledged_sections: progress.acknowledged_sections,
@@ -171,12 +293,42 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
     });
   }
 
+  async function handleLogin(nextName: string) {
+    if (!progress) {
+      return;
+    }
+
+    setIsSigningIn(true);
+    setProfileName(nextName);
+    localStorage.setItem(AUTH_NAME_KEY, nextName);
+
+    try {
+      const updated = await saveProgress(EMPLOYEE_ID, {
+        display_name: nextName,
+        current_section: progress.current_section,
+        completed_sections: progress.completed_sections,
+        acknowledged_sections: progress.acknowledged_sections,
+        toolkit_completed: progress.toolkit_completed,
+      });
+      setProgress(updated);
+    } catch {
+      // Let the user continue even if the profile sync misses once.
+    } finally {
+      setIsSigningIn(false);
+    }
+  }
+
+  function handleLogout() {
+    setProfileName(null);
+    localStorage.removeItem(AUTH_NAME_KEY);
+  }
+
   if (loading) {
     return (
       <div className="status-screen">
         <div className="status-card">
           <p className="section-label">AAP/API Onboarding</p>
-          <h1>Loading your experience…</h1>
+          <h1>Loading your experience...</h1>
           <p>Connecting to the onboarding API.</p>
         </div>
       </div>
@@ -192,6 +344,16 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
           <p>{error}</p>
         </div>
       </div>
+    );
+  }
+
+  if (!profileName) {
+    return (
+      <LoginScreen
+        defaultName=""
+        isPending={isSigningIn}
+        onSubmit={handleLogin}
+      />
     );
   }
 
@@ -219,41 +381,30 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
           />
         ) : (
           <>
-            {/* Brand block */}
+            {/* Brand block — logo only */}
             <div className="brand-block">
-              <div className="ov-hero-texture" aria-hidden="true" />
               <img
                 src="/logo.png"
-                alt="AAP / API — American Associated Pharmacies"
+                alt="AAP / API - American Associated Pharmacies"
                 className="brand-logo-img"
               />
-              <p className="brand-tagline">{experience.organization.tagline}</p>
             </div>
 
             {/* Progress panel */}
             <div className="rail-panel progress-panel">
               <p className="section-label">Your progress</p>
               <strong>{completionPercent}%</strong>
-              <p>{progress.completed_sections.length} of {sections.length} sections done</p>
+              <p>{progress.completed_sections.length} of {sections.length} modules complete</p>
               <div className="rail-progress" aria-hidden="true">
                 <div className="rail-progress-track">
                   <span className="rail-progress-fill" style={{ width: `${completionPercent}%` }} />
                 </div>
-                <div className="rail-progress-meta">
-                  <strong>{completionPercent}%</strong>
-                  <span>complete</span>
-                </div>
               </div>
-              {nextSection && (
-                <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
-                  Continue →
-                </Link>
-              )}
             </div>
 
             {/* Module nav */}
             <div className="rail-nav-group">
-              <p className="rail-group-label">Modules</p>
+              <p className="rail-group-label">Core modules</p>
               <nav className="nav-stack">
                 <Link className={kind === "overview" ? "nav-link active" : "nav-link"} href="/">
                   <span className="nav-link-num">
@@ -280,9 +431,6 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
                       ) : (index + 1)}
                     </span>
                     <span className="nav-link-title">{section.title}</span>
-                    <span className={completedSections.has(section.slug) ? "status-chip done" : "status-chip"}>
-                      {completedSections.has(section.slug) ? "✓" : `${section.estimatedMinutes}m`}
-                    </span>
                   </Link>
                 ))}
               </nav>
@@ -290,7 +438,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
 
             {/* Toolkit link */}
             <div className="rail-nav-group">
-              <p className="rail-group-label">Role-specific</p>
+              <p className="rail-group-label">Toolkit</p>
               <Link className="nav-link" href="/toolkits/hr-administrative-assistant">
                 <span className="nav-link-num">
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
@@ -298,30 +446,53 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
                   </svg>
                 </span>
                 <span className="nav-link-title">HR Admin Toolkit</span>
-                <span className={progress.toolkit_completed ? "status-chip done" : "status-chip"}>
-                  {progress.toolkit_completed ? "✓" : "Extra"}
-                </span>
               </Link>
             </div>
+
+            {/* User + sign out — sidebar bottom */}
+            <button className="rail-user-chip" type="button" onClick={handleLogout}>
+              <div className="rail-user-avatar" aria-hidden="true">
+                {firstName.charAt(0).toUpperCase()}
+              </div>
+              <div className="rail-user-info">
+                <strong>{firstName}</strong>
+                <span>Sign out</span>
+              </div>
+              <svg className="rail-user-signout" width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M5 2.25H3.875C3.379 2.25 2.902 2.447 2.552 2.798C2.201 3.148 2.004 3.625 2.004 4.121V9.879C2.004 10.375 2.201 10.852 2.552 11.202C2.902 11.553 3.379 11.75 3.875 11.75H5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M8.25 9.75L11 7L8.25 4.25" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M11 7H5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </>
         )}
       </aside>
 
       <main className={kind === "toolkit" ? "main-stage toolkit-stage" : kind === "section" ? "main-stage section-stage" : "main-stage"}>
-        <header className={kind === "toolkit" ? "topbar toolkit-topbar" : kind === "section" ? "topbar section-topbar" : "topbar"}>
+        <header className={kind === "toolkit" ? "topbar toolkit-topbar" : kind === "section" ? "topbar section-topbar" : "topbar overview-topbar"}>
           <div>
             <p className="section-label">
-              {kind === "toolkit" ? "Role-specific reference" : kind === "section" ? "General onboarding section" : "General onboarding"}
+              {kind === "toolkit" ? "Role-specific reference" : kind === "section" ? "General onboarding section" : "Onboarding overview"}
             </p>
-            <h2>{DISPLAY_NAME}</h2>
           </div>
-          <div className="topbar-meta">
-            <span>{progress.updated_at ? "Progress saved" : "Progress ready"}</span>
-            <strong>{progress.completed_sections.length}/{sections.length}</strong>
-            <div className="topbar-progress-track" aria-hidden="true">
-              <span className="topbar-progress-fill" style={{ width: `${completionPercent}%` }} />
+          {kind !== "overview" && (
+            <div className="topbar-right">
+              <div className="topbar-meta">
+                <span>Welcome back</span>
+                <strong>{firstName}</strong>
+              </div>
+              <button className="topbar-logout" type="button" onClick={handleLogout}>
+                <span className="topbar-logout-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M5 2.25H3.875C3.37868 2.25 2.90247 2.4471 2.55178 2.79779C2.20112 3.14848 2.004 3.62469 2.004 4.121V9.879C2.004 10.3753 2.20112 10.8515 2.55178 11.2022C2.90247 11.5529 3.37868 11.75 3.875 11.75H5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M8.25 9.75L11 7L8.25 4.25" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M11 7H5" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
+                <span>Sign out</span>
+              </button>
             </div>
-          </div>
+          )}
         </header>
 
         {kind !== "overview" && (
@@ -336,20 +507,15 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
                 <span>Next up</span>
                 <strong>{nextSection.title}</strong>
                 <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
-                  Continue section
+                  Continue
                 </Link>
               </article>
             )}
-            <article className="context-chip">
-              <span>Completion</span>
-              <strong>{completionPercent}%</strong>
-              <p>{progress.completed_sections.length} of {sections.length} core sections done</p>
-            </article>
           </section>
         )}
 
         {kind === "overview" && (
-          <OverviewScreen experience={experience} progress={progress} nextSection={nextSection} />
+          <OverviewScreen experience={experience} progress={progress} nextSection={nextSection} firstName={firstName} />
         )}
         {kind === "section" && activeSection && (
           <SectionScreen
@@ -419,7 +585,7 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
         <a className="jump-chip" href="#section-takeaways">Takeaways</a>
         <a className="jump-chip" href="#section-policy">Policy map</a>
         <a className="jump-chip emphasis" href="#section-acknowledgment">
-          {isAcknowledged ? "✓ Acknowledged" : "Complete section"}
+          {isAcknowledged ? "\u2713 Acknowledged" : "Complete section"}
         </a>
       </div>
 
@@ -506,7 +672,7 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
           onClick={() => onAcknowledge(section)}
           type="button"
         >
-          {isAcknowledged ? "✓ Section acknowledged" : isPending ? "Saving…" : "Mark section complete"}
+          {isAcknowledged ? "\u2713 Section acknowledged" : isPending ? "Saving..." : "Mark section complete"}
         </button>
       </section>
     </div>
@@ -559,7 +725,7 @@ function SectionRail({
       <div className="section-rail-context">
         <p className="section-label">Now in view</p>
         <strong>{activeSection ? activeSection.title : "Overview"}</strong>
-        <p>{activeSection ? `${activeSection.estimatedMinutes} min section` : "Start here, then move into the core modules."}</p>
+        <p>{activeSection ? activeSection.eyebrow : "Start here, then move into the core modules."}</p>
         {nextSection && (
           <Link className="section-rail-inline" href={`/modules/${nextSection.slug}`}>
             {activeSection?.slug === nextSection.slug ? "Your next target" : `Up next: ${nextSection.title}`}
@@ -572,7 +738,6 @@ function SectionRail({
         <nav className="section-rail-nav">
           <Link className={slug ? "section-rail-link" : "section-rail-link active"} href="/">
             <span>Overview</span>
-            <em>{progressCount === totalCount ? "Done" : "Start"}</em>
           </Link>
           {sections.map((section, index) => (
             <Link
@@ -581,7 +746,7 @@ function SectionRail({
               href={`/modules/${section.slug}`}
             >
               <span>{index + 1}. {section.title}</span>
-              <em>{completedSections.has(section.slug) ? "✓" : `${section.estimatedMinutes}m`}</em>
+              {completedSections.has(section.slug) && <em>✓</em>}
             </Link>
           ))}
         </nav>
@@ -591,7 +756,7 @@ function SectionRail({
         <p className="rail-group-label">Role-specific</p>
         <Link className="section-rail-link" href="/toolkits/hr-administrative-assistant">
           <span>HR Admin Toolkit</span>
-          <em>{toolkitComplete ? "✓" : "Extra"}</em>
+          {toolkitComplete && <em>✓</em>}
         </Link>
       </div>
     </div>
@@ -626,7 +791,7 @@ function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProp
       <div className="jump-chip-row">
         <a className="jump-chip" href="#toolkit-systems">Systems</a>
         <a className="jump-chip" href="#toolkit-playbooks">Playbooks</a>
-        <a className="jump-chip emphasis" href="#toolkit-review">{complete ? "✓ Reviewed" : "Mark reviewed"}</a>
+        <a className="jump-chip emphasis" href="#toolkit-review">{complete ? "\u2713 Reviewed" : "Mark reviewed"}</a>
       </div>
 
       <section className="content-panel primary-panel systems-panel" id="toolkit-systems">
@@ -723,7 +888,7 @@ function ToolkitScreen({ toolkit, complete, onComplete, isPending }: ToolkitProp
             onClick={() => onComplete(toolkit)}
             type="button"
           >
-            {complete ? "✓ Toolkit marked complete" : isPending ? "Saving…" : "Mark toolkit reviewed"}
+            {complete ? "\u2713 Toolkit marked complete" : isPending ? "Saving..." : "Mark toolkit reviewed"}
           </button>
         </div>
       </section>
@@ -764,7 +929,7 @@ function ToolkitRail({ sections, slug, completedSections, progressCount, totalCo
         <strong>Role-specific reference</strong>
         <p>{toolkitComplete ? "Toolkit reviewed and saved." : "Complete this lane separately from the core flow."}</p>
         <Link className="section-rail-inline" href="/">
-          ← Return to overview
+          {"\u2190"} Return to overview
         </Link>
       </div>
 
@@ -781,12 +946,12 @@ function ToolkitRail({ sections, slug, completedSections, progressCount, totalCo
               href={`/modules/${section.slug}`}
             >
               <span>{index + 1}. {section.title}</span>
-              {completedSections.has(section.slug) && <em>✓</em>}
+              {completedSections.has(section.slug) && <em>{"\u2713"}</em>}
             </Link>
           ))}
           <Link className="toolkit-rail-link active toolkit-link-current" href="/toolkits/hr-administrative-assistant">
             <span>HR Admin Toolkit</span>
-            <em>{toolkitComplete ? "✓" : "Here"}</em>
+            <em>{toolkitComplete ? "\u2713" : "Here"}</em>
           </Link>
         </nav>
       </div>

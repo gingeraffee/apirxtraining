@@ -1,164 +1,326 @@
-## Visual execution rules
-The UI must use contrast in a deliberate way:
-- the outer shell/background should be darker, atmospheric, and quieter
-- the main active content region should feel brighter, more luminous, and more readable than the shell
-- primary content surfaces should not blend into the background
-- supporting surfaces should be quieter than the primary content
-- not every section should use the same surface treatment
+# AGENTS.md
 
-Avoid:
-- navy-on-navy-on-navy layouts
-- large matte gray slabs
-- repeated oversized rounded rectangles with identical styling
-- every panel feeling equally important
-- pages where all surfaces share the same tonal weight
+## Purpose
+This repository contains the launch version of the **AAP Start** onboarding portal.
 
-The interface should feel layered, not filled.
+Your job is to implement the launch experience using the current launch spec as the primary source of truth, while preventing legacy onboarding structures, branding, assumptions, and UI behavior from leaking back into the codebase.
 
-## Surface system
-Use a deliberate three-level surface hierarchy:
+## Source of Truth
+Treat the following file as the controlling launch spec:
 
-### Level 1: Shell / background
-- dark navy or deep atmospheric surfaces
-- low visual noise
-- provides contrast and framing
-- should recede behind the main content
+- `app_start_launch_spec.md`
 
-### Level 2: Primary content surfaces
-- brighter frosted or near-white panels
-- subtle translucency where appropriate
-- refined borders
-- gentle inner highlights
-- crisp readable contrast
-- should feel luminous and elevated above the shell
+When this spec conflicts with:
+- legacy onboarding copy
+- older content structures
+- outdated branding
+- existing navigation assumptions
+- old progress logic
+- old toolkit behavior
+- visible time-estimate behavior
 
-### Level 3: Secondary/supporting surfaces
-- quieter than primary content
-- may be semi-transparent, darker, or lighter depending on context
-- should support the page without competing with the main content
+follow the launch spec.
 
-Do not use the same card treatment everywhere.
-Primary, secondary, and background layers must feel distinct.
+Do **not** merge conflicting legacy onboarding structures into the launch implementation.
 
-## Glassmorphism rules
-Glass should be:
-- selective
-- dimensional
-- premium
-- readable
+## Core Launch Rules
 
-Good glass includes:
-- subtle blur
-- translucent surfaces
-- soft 1px borders
-- faint inner highlights
-- layered shadows
-- slight depth separation from the shell
+### Branding
+Keep portal branding separate from company identity.
 
-Avoid:
-- heavy blur on all panels
-- low-contrast translucent text areas
-- identical glass styling applied to every section
-- muddy gray cards mistaken for glass
-- decorative effects without hierarchy benefit
+- Portal / product name: **AAP Start**
+- Company identity: **American Associated Pharmacies**
+- Company short name: **AAP**
 
-Glass should create focus and depth, not visual fog.
+Do not use `AAP Start` where the UI is referring to the company itself.
 
-## Typography system rules
-Typography must carry real hierarchy and personality.
+Replace old visible branding such as:
+- `AAP/API Onboarding`
+- `AAP Onboarding Portal`
+- `AAP/API`
+- other mixed legacy onboarding labels
 
-Use a two-role type system:
-1. Display/heading voice for hero headings and major section titles
-2. UI/body voice for navigation, body copy, metadata, and supporting content
+unless a legacy label must remain only for historical filename/reference reasons and is not user-facing.
 
-Typography goals:
-- hero headings should feel premium, editorial, and distinctive
-- section headings should be strong but clearly secondary to hero headings
-- card headings should be crisp and compact
-- labels/eyebrows should be small, refined, uppercase or semi-uppercase, and slightly tracked out
-- body copy should be easy to scan and slightly compact
-- metadata should be quieter and less dominant
-- navigation should feel clean, calm, and product-like
+---
 
-Avoid:
-- generic default-looking type
-- oversized body text
-- weak distinction between labels, headings, and body copy
-- letting panel size do all the hierarchy work
+### Launch Navigation
+The launch UI must show:
 
-Typography should create focus before color or decoration does.
+#### Tracked onboarding path
+Exactly 9 live tracked modules:
+1. Welcome to AAP
+2. How We Show Up
+3. Tools & Systems
+4. How Work Works
+5. Benefits, Pay & Time Away
+6. Support, Leave & Employee Resources
+7. Safety at AAP
+8. Your First 90 Days
+9. Final Review & Acknowledgment
 
-## Page composition rules
-Each page should have a clear visual hierarchy:
-- one primary region
-- one secondary region
-- quiet supporting structure
+#### Visible but untracked
+- `Where You Make an Impact`
+  - visible in nav
+  - Coming Soon
+  - excluded from progress
+- `Resource Hub`
+  - visible in nav
+  - excluded from progress
 
-Pages should not feel like a stack of equally weighted cards.
+Do not hide `Where You Make an Impact`.
+Do not count `Where You Make an Impact` or `Resource Hub` toward progress.
 
-Prefer:
-- one dominant hero or intro area
-- compact summary/takeaway areas
-- lower-detail content that feels structured but quieter
-- spacing that creates rhythm and emphasis
-- a navigation rail that feels like navigation, not a second dashboard
+---
 
-Avoid:
-- multiple competing hero-like panels
-- too many large containers with equal prominence
-- oversized sections that feel padded instead of purposeful
-- layouts where every block demands equal attention
+### Progress and Completion
+Launch completion behavior must be:
 
-A user should understand the page hierarchy in 3 seconds.
+- manual only
+- no auto-complete on scroll
+- no auto-complete on page-end reach
+- progress calculated only from the 9 live tracked modules
+- Final Review & Acknowledgment is the clearest finish line
 
-## Interaction rules
-The interface should feel alive like active software, not a static styled document.
+If the current code relies on an acknowledgment object:
+- manual launch mode is allowed
+- empty checklist items are allowed only if the UI does not render fake checklist shells
 
-Add subtle but noticeable interaction polish:
-- hover lift on cards where appropriate
-- shadow or border shifts on hover/focus
-- tactile active nav states
-- smooth expand/collapse behavior
-- responsive chips, pills, and buttons
-- subtle progress animation or emphasis
-- transitions that feel polished and responsive
+Do not show:
+- `0/0 checkpoints`
+- empty checklist containers
+- quiz placeholders
+- unfinished interactive blocks
 
-Motion should be:
-- subtle
-- premium
-- smooth
-- restrained
+---
 
-Avoid:
-- dead static surfaces
-- flashy animation
-- decorative motion without UX value
-- interactions that are too weak to notice
+### Toolkits
+Toolkits are not part of launch.
 
-## Brightness and contrast rules
-Do not interpret “clean” as washed out.
-Do not interpret “premium” as overly dark.
-Do not interpret “glassy” as low-contrast gray.
+Rules:
+- `toolkits` should be empty at launch
+- hide toolkit nav when `toolkits.length === 0`
+- hide toolkit UI sections when empty
+- do not render empty role-specific areas
+- do not show `HR Admin Toolkit` in launch UI
 
-The target balance is:
-- dark shell
-- luminous content
-- crisp typography
-- selective cyan accents
-- restrained red emphasis
-- strong active/inactive contrast
+---
 
-Main content should feel brighter and more energized than the surrounding frame.
+### Time Estimates
+Launch must not show visible module time estimates.
 
-## UI definition of done
-A page is not visually complete unless all of the following are true:
-- the main content stands out clearly from the shell
-- there is a clear primary area and quieter secondary areas
-- surfaces feel layered rather than flat
-- typography creates obvious hierarchy
-- the page does not rely on repeated oversized slabs
-- the interface feels interactive, not static
-- the page is readable in 3 seconds
-- the result feels like premium SaaS software, not a styled internal document
+Remove or neutralize launch-facing dependencies on:
+- `estimatedMinutes`
+- remaining minutes
+- average minutes
+- `min left`
+- other visible duration language
 
-If the page still looks like flat panels arranged on a dark background, it is not done yet.
+If a timing field must remain internally for future work, keep it out of the launch UI.
+
+---
+
+### Resource Hub
+Resource Hub must launch with:
+- real categories
+- only approved live items
+- no pending links rendered as live
+- no placeholder clutter exposed in UI
+
+Allowed launch behavior:
+- categories may exist with a limited number of real entries
+- only approved files/contacts/links should render
+
+Do not expose:
+- fake polished placeholders
+- dead links
+- “coming later” junk in live hub sections
+
+---
+
+## Data Model Rules
+
+### Preferred launch truth
+Use these collections as the truth:
+
+- `sections` = tracked live modules
+- `supplementalPages` = visible untracked pages
+- `toolkits` = empty at launch
+
+Navigation should be derived from:
+- `sections`
+- `supplementalPages`
+
+Avoid keeping the same module truth in multiple parallel structures.
+
+Do not maintain redundant launch truth across:
+- tracked slug arrays
+- supplemental slug arrays
+- duplicate nav manifests
+- duplicate module order definitions
+
+unless absolutely required for app stability.
+
+---
+
+### Branding model
+Do not use one ambiguous `organization.name` field for both company identity and product branding.
+
+Preferred pattern:
+- `brand.portalName = "AAP Start"`
+- `organization.companyName = "American Associated Pharmacies"`
+- `organization.companyShortName = "AAP"`
+
+---
+
+### Contacts
+Contacts must have stable IDs.
+
+Other structures, especially Resource Hub entries, must reference contacts by stable ID rather than relying on matching names or invented refs.
+
+---
+
+### Timekeeping naming
+Use one consistent employee-facing label across the launch implementation:
+
+**Timeclock**
+
+Do not alternate between:
+- `Timeclock`
+- `PayClock`
+
+Use `Timeclock` in employee-facing launch UI and content.
+
+---
+
+## Content Safety Rules
+Do not invent or expand:
+- legal language
+- leave/accommodation details
+- benefits specifics beyond the locked launch content
+- attendance thresholds beyond approved launch level
+- policy promises
+- role-specific content not approved for launch
+
+Do not add:
+- quiz content
+- checklist content
+- knowledge checks
+- half-built “more coming later” content inside live modules
+
+Keep launch content:
+- warm
+- polished
+- practical
+- employee-facing
+- structured
+- easy to scan
+
+Do not turn launch content into:
+- handbook paste
+- marketing copy
+- internal drafting memo
+- legal wall-of-text
+
+---
+
+## Required Working Style
+Before making implementation edits, do the following:
+
+1. audit the repo for launch conflicts
+2. identify files where old onboarding assumptions still exist
+3. replace outdated structures rather than blending them
+4. report remaining conflicts clearly if they cannot be resolved safely
+
+Do not quietly preserve legacy behavior just because it already exists.
+
+---
+
+## Audit Targets
+Before coding, check for:
+
+### Old branding
+- `AAP/API Onboarding`
+- `AAP Onboarding Portal`
+- `AAP/API`
+- mixed old labels in metadata, rails, hero copy, loading states, headings
+
+### Old launch assumptions
+- outdated module counts
+- old section slugs
+- legacy onboarding content seeds
+- hardcoded toolkit links
+- old progress math
+- old route labels
+- ambiguous `organization.name` usage
+
+### Time estimate drift
+- `estimatedMinutes`
+- remaining minutes
+- average minutes
+- path time summaries
+- hero minute summaries
+
+### UI leakage
+- empty toolkit UI
+- empty checklist UI
+- pending Resource Hub items rendered as live
+- role-specific content surfacing before role logic exists
+
+---
+
+## High-Risk Files
+Pay especially close attention to files like:
+- `content.py`
+- `types.ts`
+- `api.ts`
+- `portal-experience.tsx`
+- `overview-screen.tsx`
+- `overview-hero.tsx`
+- `course-path.tsx`
+- rail/sidebar/nav components
+- layout metadata
+- progress logic files
+
+These are the most likely places for legacy assumptions to leak into launch behavior.
+
+---
+
+## Implementation Priorities
+When implementing the launch version, work in this order:
+
+1. audit repo for conflicts
+2. update and lock data model
+3. replace launch content pack
+4. update nav and progress logic
+5. hide toolkit UI
+6. remove visible time-estimate dependencies
+7. wire Resource Hub file resolution
+8. replace legacy branding strings
+9. run final drift review
+
+---
+
+## Reporting Requirements
+After making changes, provide a concise implementation report that includes:
+
+1. files changed
+2. legacy strings replaced
+3. outdated structures removed or neutralized
+4. progress logic changes made
+5. toolkit UI gating changes made
+6. estimatedMinutes dependencies removed
+7. any remaining launch risks or unresolved follow-ups
+
+If something could not be safely changed, say so clearly.
+
+Do not pretend a conflict is resolved if it is not.
+
+---
+
+## Final Rule
+When in doubt:
+- prefer launch correctness over legacy compatibility
+- prefer replacement over patching
+- prefer explicit truth over repo vibes
+- prefer visible clarity over hidden assumptions

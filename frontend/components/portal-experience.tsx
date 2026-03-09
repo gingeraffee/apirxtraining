@@ -336,7 +336,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
       </aside>
 
       <main className={`main-stage portal-stage${kind === "overview" ? "" : " portal-stage--detail"}`}>
-        {kind !== "overview" && (
+        {kind !== "overview" && activeSection?.slug !== "welcome-to-aap" && (
           <header className="topbar portal-topbar">
             <div>
               {contextEyebrow && contextEyebrow !== "Start Here" && <p className="section-label">{contextEyebrow}</p>}
@@ -436,8 +436,8 @@ function SectionScreen({ section, organization, nextSection, isAcknowledged, sel
   ];
 
   return (
-    <div className={`page-stack section-page portal-page portal-page--detail portal-page--section${isWelcomeModule ? " portal-page--welcome" : ""}`}>
-      <section className="page-hero single-focus-hero section-hero section-hero--focused">
+    <div className={`page-stack section-page portal-page portal-page--detail${isWelcomeModule ? " portal-page--welcome" : " portal-page--section"}`}>
+      <section className={`page-hero single-focus-hero section-hero section-hero--focused${isWelcomeModule ? " welcome-hero" : ""}`}>
         <div className="section-hero-copy">
           <p className="section-label">{section.eyebrow}</p>
           <h1>{section.title}</h1>
@@ -467,10 +467,6 @@ function SectionScreen({ section, organization, nextSection, isAcknowledged, sel
             <div className="lesson-chapter-head">
               <h2>Big Picture</h2>
               <p className="lesson-chapter-intro">Get the orientation anchor first: what AAP Start is for, what AAP does, and how support is delivered.</p>
-            </div>
-            <div className="welcome-big-picture-copy">
-              <p>{section.summary}</p>
-              <p>{section.purpose}</p>
             </div>
             <ul className="plain-list welcome-orientation-list">
               {section.essentials.map((item) => (
@@ -649,7 +645,7 @@ function SectionScreen({ section, organization, nextSection, isAcknowledged, sel
         />
       </section>
 
-      <section className={`content-panel acknowledgment-panel lesson-chapter lesson-chapter--completion lesson-chapter-surface${isWelcomeModule ? " welcome-completion-section" : ""}`} id={isWelcomeModule ? "section-completion" : "section-acknowledgment"}>
+      <section className={isWelcomeModule ? "lesson-chapter lesson-chapter--completion welcome-completion-section" : "content-panel acknowledgment-panel lesson-chapter lesson-chapter--completion lesson-chapter-surface"} id={isWelcomeModule ? "section-completion" : "section-acknowledgment"}>
         <div className="lesson-chapter-head lesson-chapter-head--completion">
           {!isWelcomeModule && <p className="section-label">Section 6</p>}
           <h2>{section.acknowledgment.title}</h2>
@@ -673,9 +669,10 @@ function SectionScreen({ section, organization, nextSection, isAcknowledged, sel
         )}
 
         <button
-          className="primary-action"
-          disabled={isAcknowledged || !allChecked || isPending}
-          onClick={() => onAcknowledge(section)}
+          className={`primary-action${isWelcomeModule && isAcknowledged ? " primary-action--done" : ""}`}
+          disabled={(!isWelcomeModule && isAcknowledged) || !allChecked || isPending}
+          onClick={() => !isAcknowledged && onAcknowledge(section)}
+          aria-disabled={isAcknowledged}
           type="button"
         >
           {isAcknowledged ? "Section complete" : isPending ? "Saving..." : "Mark module complete"}

@@ -339,7 +339,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
         {kind !== "overview" && (
           <header className="topbar portal-topbar">
             <div>
-              {contextEyebrow && <p className="section-label">{contextEyebrow}</p>}
+              {contextEyebrow && contextEyebrow !== "Start Here" && <p className="section-label">{contextEyebrow}</p>}
               <h1 className="topbar-title">{contextTitle}</h1>
             </div>
           </header>
@@ -352,6 +352,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
         {kind !== "overview" && activeSection && (
           <SectionScreen
             section={activeSection}
+            organization={experience.organization}
             nextSection={contextNextSection}
             isAcknowledged={acknowledgedSections.has(activeSection.slug)}
             selections={checkedItems[activeSection.slug] ?? []}
@@ -381,6 +382,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
 
 type SectionProps = {
   section: Section;
+  organization: ExperienceContent["organization"];
   nextSection: Section | null;
   isAcknowledged: boolean;
   selections: boolean[];
@@ -389,11 +391,49 @@ type SectionProps = {
   isPending: boolean;
 };
 
-function SectionScreen({ section, nextSection, isAcknowledged, selections, onToggle, onAcknowledge, isPending }: SectionProps) {
+function SectionScreen({ section, organization, nextSection, isAcknowledged, selections, onToggle, onAcknowledge, isPending }: SectionProps) {
   const showChecklist = section.acknowledgment.mode !== "manual" && section.acknowledgment.items.length > 0;
   const allChecked = !showChecklist || (selections.length === section.acknowledgment.items.length && selections.every(Boolean));
   const checkedCount = selections.filter(Boolean).length;
   const isWelcomeModule = section.slug === "welcome-to-aap";
+  const completionStatus = isAcknowledged
+    ? "Completed"
+    : showChecklist
+      ? `${checkedCount}/${section.acknowledgment.items.length} ready`
+      : "Manual completion";
+  const completionStatusNote = isAcknowledged
+    ? "Saved and ready whenever you need a quick refresh."
+    : "Move section by section, then finish at the end.";
+  const checkpointDescription = isWelcomeModule
+    ? "Before you finish Welcome to AAP, confirm the core orientation points are clear in your own words."
+    : `Pause on the key ideas from ${section.title} before you finish this module.`;
+  const checkpointNote = isWelcomeModule
+    ? "This reusable checkpoint shell stays ready for future prompts while launch completion remains manual."
+    : "This launch checkpoint remains a non-interactive shell so module completion stays manual and dependable.";
+  const completionSectionHref = isWelcomeModule ? "#section-completion" : "#section-acknowledgment";
+  const progressionItems = isWelcomeModule
+    ? [
+      { href: "#section-big-picture", title: "Big Picture" },
+      { href: "#section-context", title: "AAP and API Context" },
+      { href: "#section-practical-guidance", title: "What This Means for You" },
+      { href: "#section-checkpoint", title: "Knowledge Check" },
+      { href: "#section-completion", title: "Completion" },
+    ]
+    : [
+      { href: "#section-orientation", title: "Orientation" },
+      { href: "#section-takeaways", title: "What matters most" },
+      { href: "#section-policy", title: "Practical reference" },
+      { href: "#section-application", title: "Use this in practice" },
+      { href: "#section-checkpoint", title: "Knowledge check" },
+      { href: "#section-acknowledgment", title: "Completion" },
+    ];
+  const welcomeSupportItems = section.policyAreas[0]?.items ?? [];
+  const welcomeContextItems = section.policyAreas[1]?.items ?? [];
+  const welcomeCheckpoints = [
+    { title: "Big picture clarity", description: "Can you explain what AAP Start is for and what AAP is here to support?" },
+    { title: "Support model recall", description: "Can you describe how AAP serves pharmacies and where API references fit?" },
+    { title: "Next-step confidence", description: "Can you name what to do next and when to involve your manager or HR?" },
+  ];
 
   return (
     <div className={`page-stack section-page portal-page portal-page--detail portal-page--section${isWelcomeModule ? " portal-page--welcome" : ""}`}>
@@ -406,98 +446,214 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
         </div>
       </section>
 
-      <section className="module-utility-strip" aria-label="Module guidance">
-        <article className="module-utility-card module-utility-card--focus">
-          <p className="section-label">Focus areas</p>
-          <div className="focus-list">
-            {section.focuses.map((focus) => <span key={focus} className="focus-pill">{focus}</span>)}
-          </div>
-        </article>
-
-        <article className="module-utility-card module-utility-card--status">
-          <p className="section-label">Completion status</p>
-          <strong>{isAcknowledged ? "Completed" : showChecklist ? `${checkedCount}/${section.acknowledgment.items.length} ready` : "Manual completion"}</strong>
-          <p>{isAcknowledged ? "Saved and ready whenever you need a quick refresh." : "Read through the step, then finish at the end of the page."}</p>
-        </article>
-
-        {nextSection && (
-          <article className="module-utility-card module-utility-card--next">
-            <p className="section-label">Next after this</p>
-            <strong>{nextSection.title}</strong>
-            <p>Visible now so the path keeps its shape, but secondary until this step is complete.</p>
-          </article>
-        )}
-      </section>
-
-      <div className="jump-chip-row" aria-label="Module sections">
-        <a className="jump-chip" href="#section-takeaways">Takeaways</a>
-        <a className="jump-chip" href="#section-policy">Practical reference</a>
-      </div>
-
-      <section className="section-band takeaway-band" id="section-takeaways">
-        <div className="section-band-head">
-          <p className="section-label">Core takeaways</p>
-          <h2>What matters most in this step</h2>
-        </div>
-        <div className="essential-grid compact-takeaways">
-          {section.essentials.map((item) => (
-            <article key={item.title} className="essential-card">
-              <strong>{item.title}</strong>
-              <p>{item.body}</p>
-            </article>
+      <nav className="lesson-flow-nav" aria-label="Lesson progression">
+        <div className="lesson-flow-track">
+          {progressionItems.map((item, index) => (
+            <a
+              key={item.href}
+              className={index === 0 ? "lesson-flow-link lesson-flow-link--active" : item.href === completionSectionHref ? "lesson-flow-link lesson-flow-link--completion" : "lesson-flow-link"}
+              href={item.href}
+            >
+              <span className="lesson-flow-step">{index + 1}</span>
+              <span className="lesson-flow-title">{item.title}</span>
+            </a>
           ))}
         </div>
-      </section>
+      </nav>
 
-      <section className="section-band policy-band" id="section-policy">
-        <div className="section-band-head">
-          <p className="section-label">Practical reference</p>
-          <h2>Use this as your practical reference</h2>
-        </div>
-        <div className="policy-area-list">
-          {section.policyAreas.map((area) => (
-            <article key={area.title} className="policy-area">
-              <h3>{area.title}</h3>
-              <dl className="policy-list">
-                {area.items.map((item) => (
-                  <div key={item.label} className="policy-row">
-                    <dt>{item.label}</dt>
-                    <dd>{item.body}</dd>
-                  </div>
-                ))}
-              </dl>
-            </article>
-          ))}
-        </div>
-      </section>
+      {isWelcomeModule ? (
+        <>
+          <section className="lesson-chapter lesson-chapter--orientation lesson-chapter-surface welcome-body-section welcome-big-picture-section" id="section-big-picture">
+            <div className="lesson-chapter-head">
+              <h2>Big Picture</h2>
+              <p className="lesson-chapter-intro">Get the orientation anchor first: what AAP Start is for, what AAP does, and how support is delivered.</p>
+            </div>
+            <div className="welcome-big-picture-copy">
+              <p>{section.summary}</p>
+              <p>{section.purpose}</p>
+            </div>
+            <ul className="plain-list welcome-orientation-list">
+              {section.essentials.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}.</strong> {item.body}
+                </li>
+              ))}
+            </ul>
+          </section>
 
-      <section className="content-columns section-support-grid">
-        <div className="content-panel quiet-content-panel">
-          <p className="section-label">What to do</p>
-          <h3>Use this in practice</h3>
-          <ul className="plain-list">
-            {section.actions.map((item) => <li key={item}>{item}</li>)}
-          </ul>
-        </div>
-        <div className="content-panel warning-panel quiet-content-panel">
-          <p className="section-label">Escalate when</p>
-          <h3>Do not improvise these scenarios</h3>
-          <ul className="plain-list">
-            {section.escalation.map((item) => <li key={item}>{item}</li>)}
-          </ul>
-        </div>
-      </section>
+          <section className="lesson-chapter lesson-chapter--reference lesson-chapter-surface welcome-body-section" id="section-context">
+            <div className="lesson-chapter-head">
+              <h2>AAP and API Context</h2>
+              <p className="lesson-chapter-intro">Understand who API is, what API does, and how API references fit with AAP language in this launch experience.</p>
+            </div>
+            <div className="welcome-context-layout">
+              <article className="welcome-context-block">
+                <h3>{section.policyAreas[0]?.title ?? "Company context"}</h3>
+                <dl className="policy-list">
+                  {welcomeSupportItems.map((item) => (
+                    <div key={item.label} className="policy-row">
+                      <dt>{item.label}</dt>
+                      <dd>{item.body}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </article>
+              <article className="welcome-context-block welcome-context-block--api">
+                <h3>Where API fits</h3>
+                <p>
+                  In this launch onboarding experience, company identity is centered on {organization.companyName} ({organization.companyShortName}).
+                  API appears as a historical identity reference connected to that same support mission.
+                </p>
+                <p>
+                  When API is referenced, use the same operating context covered in this module:
+                  practical programs, operational help, and dependable service for independent community pharmacies.
+                </p>
+              </article>
+            </div>
+          </section>
 
-      {isWelcomeModule && (
-        <ModuleKnowledgeCheckShell
-          description="Use this checkpoint space to pause on the key ideas above before you finish the module. Future review prompts can land here without changing the page flow."
-          note="The launch shell is ready for future module review questions, while the completion flow stays clean and manual for version one."
-        />
+          <section className="lesson-chapter lesson-chapter--application lesson-chapter-surface welcome-body-section" id="section-practical-guidance">
+            <div className="lesson-chapter-head">
+              <h2>What This Means for You</h2>
+              <p className="lesson-chapter-intro">Use this page as a working guide for how to move through AAP Start and where to route questions in real situations.</p>
+            </div>
+            <div className="welcome-practical-grid">
+              <article className="welcome-practical-block">
+                <h3>Use AAP Start as your guide</h3>
+                <ul className="plain-list">
+                  {section.actions.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </article>
+              <article className="welcome-practical-block">
+                <h3>Ask the right support lane</h3>
+                <ul className="plain-list">
+                  {section.escalation.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </article>
+            </div>
+            {welcomeContextItems.length > 0 && (
+              <article className="welcome-practical-block welcome-practical-block--portal">
+                <h3>Use the portal in practice</h3>
+                <ul className="plain-list">
+                  {welcomeContextItems.map((item) => (
+                    <li key={item.label}>{item.body}</li>
+                  ))}
+                </ul>
+              </article>
+            )}
+          </section>
+        </>
+      ) : (
+        <>
+          <section className="content-panel quiet-content-panel lesson-chapter lesson-chapter--orientation lesson-chapter-surface" id="section-orientation">
+            <div className="lesson-chapter-head">
+              <p className="section-label">Section 1</p>
+              <h2>Start with what this step is here to teach</h2>
+            </div>
+            <p className="lesson-chapter-intro">{section.purpose}</p>
+
+            <div className="lesson-orientation-grid" aria-label="Module orientation details">
+              <article className="lesson-orientation-card lesson-orientation-card--focus lesson-orientation-card--primary">
+                <p className="section-label">Focus areas</p>
+                <div className="focus-list">
+                  {section.focuses.map((focus) => <span key={focus} className="focus-pill">{focus}</span>)}
+                </div>
+              </article>
+              <div className="lesson-orientation-side">
+                <article className="lesson-orientation-card lesson-orientation-card--status lesson-orientation-card--secondary">
+                  <p className="section-label">Completion status</p>
+                  <strong>{completionStatus}</strong>
+                  <p>{completionStatusNote}</p>
+                </article>
+                {nextSection && (
+                  <article className="lesson-orientation-card lesson-orientation-card--next lesson-orientation-card--secondary">
+                    <p className="section-label">Next after this</p>
+                    <strong>{nextSection.title}</strong>
+                    <p>Visible next so the path stays clear once this section is complete.</p>
+                  </article>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <section className="section-band takeaway-band lesson-chapter lesson-chapter--takeaways lesson-chapter-surface" id="section-takeaways">
+            <div className="section-band-head lesson-chapter-head">
+              <p className="section-label">Section 2</p>
+              <h2>What matters most in this step</h2>
+            </div>
+            <div className="essential-grid compact-takeaways">
+              {section.essentials.map((item) => (
+                <article key={item.title} className="essential-card">
+                  <strong>{item.title}</strong>
+                  <p>{item.body}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="section-band policy-band lesson-chapter lesson-chapter--reference lesson-chapter-surface" id="section-policy">
+            <div className="section-band-head lesson-chapter-head">
+              <p className="section-label">Section 3</p>
+              <h2>Use this as your practical reference</h2>
+            </div>
+            <div className="policy-area-list">
+              {section.policyAreas.map((area) => (
+                <article key={area.title} className="policy-area">
+                  <h3>{area.title}</h3>
+                  <dl className="policy-list">
+                    {area.items.map((item) => (
+                      <div key={item.label} className="policy-row">
+                        <dt>{item.label}</dt>
+                        <dd>{item.body}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section className="lesson-chapter lesson-chapter--application lesson-chapter-surface" id="section-application">
+            <div className="lesson-chapter-head">
+              <p className="section-label">Section 4</p>
+              <h2>Use this in practice</h2>
+            </div>
+            <div className="content-columns section-support-grid lesson-action-grid">
+              <div className="content-panel quiet-content-panel">
+                <p className="section-label">What to do</p>
+                <h3>Use this in practice</h3>
+                <ul className="plain-list">
+                  {section.actions.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+              <div className="content-panel warning-panel quiet-content-panel">
+                <p className="section-label">Escalate when</p>
+                <h3>Do not improvise these scenarios</h3>
+                <ul className="plain-list">
+                  {section.escalation.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+            </div>
+          </section>
+        </>
       )}
 
-      <section className="content-panel acknowledgment-panel" id="section-acknowledgment">
-        <p className="section-label">Finish this module</p>
-        <h3>{section.acknowledgment.title}</h3>
+      <section className={`lesson-chapter lesson-chapter--checkpoint${isWelcomeModule ? " welcome-checkpoint-section" : ""}`} id="section-checkpoint">
+        <ModuleKnowledgeCheckShell
+          eyebrow="Knowledge check"
+          title={isWelcomeModule ? "Knowledge Check" : `Pause here before completing ${section.title}`}
+          description={checkpointDescription}
+          note={checkpointNote}
+          checkpoints={isWelcomeModule ? welcomeCheckpoints : undefined}
+          className={isWelcomeModule ? "lesson-knowledge-shell lesson-knowledge-shell--welcome" : "lesson-knowledge-shell"}
+        />
+      </section>
+
+      <section className={`content-panel acknowledgment-panel lesson-chapter lesson-chapter--completion lesson-chapter-surface${isWelcomeModule ? " welcome-completion-section" : ""}`} id={isWelcomeModule ? "section-completion" : "section-acknowledgment"}>
+        <div className="lesson-chapter-head lesson-chapter-head--completion">
+          {!isWelcomeModule && <p className="section-label">Section 6</p>}
+          <h2>{section.acknowledgment.title}</h2>
+        </div>
         <p>{section.acknowledgment.statement}</p>
 
         {showChecklist && (
@@ -534,7 +690,6 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
     </div>
   );
 }
-
 type SupplementalPageScreenProps = {
   page: SupplementalPage;
   contacts: Contact[];
@@ -612,4 +767,5 @@ function SupplementalPageScreen({ page, contacts }: SupplementalPageScreenProps)
     </div>
   );
 }
+
 

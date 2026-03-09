@@ -1,0 +1,19 @@
+
+> dev
+> next dev --port 3000
+
+   ▲ Next.js 15.5.12
+   - Local:        http://localhost:3000
+   - Network:      http://10.98.0.40:3000
+
+ ✓ Starting...
+ ✓ Ready in 2.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 1879ms (651 modules)
+ GET / 200 in 2079ms
+ ○ Compiling /modules/[slug] ...
+ ✓ Compiled /api/coach-tip in 2s (673 modules)
+ GET /api/coach-tip?context=Tools+%26+Systems%3A+Get+familiar+with+the+core+systems+and+the+habits+that+keep+access%2C+records%2C+and+work+moving+smoothly.&t=1773091830189&r=vtma566sx4 200 in 1304ms
+ GET /api/coach-tip?context=Tools+%26+Systems%3A+Get+familiar+with+the+core+systems+and+the+habits+that+keep+access%2C+records%2C+and+work+moving+smoothly.&t=1773091830186&r=f4c7tekvjeu 200 in 1308ms
+ GET /modules/welcome-to-aap 200 in 3463ms
+[?25h

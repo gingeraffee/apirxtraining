@@ -1621,3 +1621,984 @@
     flex-direction: column;
   }
 }
+
+/* Guided lesson flow refinement (major pass) */
+.portal-page--section {
+  gap: 20px;
+}
+
+.lesson-flow-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: -2px;
+}
+
+.lesson-flow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(142, 170, 201, 0.24);
+  background: rgba(246, 250, 255, 0.9);
+  color: #233d57;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition: border-color 170ms ease, box-shadow 200ms ease, transform 170ms ease;
+}
+
+.lesson-flow-link:hover {
+  transform: translateY(-1px);
+  border-color: rgba(79, 220, 255, 0.35);
+  box-shadow: 0 10px 18px rgba(8, 20, 44, 0.08);
+}
+
+.lesson-flow-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(25, 51, 77, 0.9);
+  color: #eef7ff;
+  font-size: 0.67rem;
+  line-height: 1;
+}
+
+.lesson-chapter {
+  display: grid;
+  gap: 12px;
+}
+
+.lesson-chapter-head {
+  display: grid;
+  gap: 4px;
+  max-width: 39rem;
+}
+
+.lesson-chapter-head h2 {
+  margin: 0;
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-size: clamp(1.02rem, 0.95rem + 0.36vw, 1.34rem);
+  letter-spacing: -0.03em;
+  line-height: 1.14;
+}
+
+.lesson-chapter-intro {
+  max-width: 52rem;
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.58;
+}
+
+.lesson-transition {
+  margin: -2px 2px;
+  color: rgba(231, 242, 255, 0.75);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.lesson-orientation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.lesson-orientation-card {
+  display: grid;
+  gap: 6px;
+  padding: 12px 13px;
+  border-radius: 14px;
+  border: 1px solid rgba(11, 31, 55, 0.08);
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+.lesson-orientation-card strong {
+  color: var(--text-strong);
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.lesson-orientation-card p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  line-height: 1.44;
+}
+
+.lesson-action-grid {
+  margin-top: 2px;
+}
+
+.lesson-knowledge-shell {
+  margin-top: 0;
+}
+
+.lesson-chapter--checkpoint {
+  gap: 0;
+}
+
+.lesson-chapter--completion {
+  border-color: rgba(79, 220, 255, 0.24);
+  background:
+    radial-gradient(circle at top right, rgba(76, 202, 255, 0.09), transparent 34%),
+    linear-gradient(180deg, rgba(251, 253, 255, 0.98), rgba(244, 248, 253, 0.96));
+}
+
+.lesson-chapter--completion .primary-action {
+  margin-top: 4px;
+}
+
+.portal-page--section .lesson-chapter .essential-card:hover,
+.portal-page--section .lesson-chapter .policy-area:hover,
+.portal-page--section .lesson-chapter .content-panel:hover {
+  transform: none;
+}
+
+@media (max-width: 1020px) {
+  .lesson-orientation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .lesson-flow-link {
+    flex: 1 1 48%;
+    justify-content: flex-start;
+  }
+
+  .lesson-transition {
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+  }
+}
+
+@media (max-width: 640px) {
+  .lesson-flow-link {
+    flex: 1 1 100%;
+  }
+}
+/* Scoped refinement pass: module composition, chapter row, and section choreography */
+.portal-stage--detail .portal-page--section {
+  width: min(100%, 1040px);
+  margin-inline: auto;
+  gap: clamp(22px, 2.3vw, 30px);
+  padding-inline: clamp(2px, 1vw, 12px);
+}
+
+.portal-page--section .page-hero.section-hero--focused {
+  max-width: 980px;
+}
+
+.portal-page--section .section-hero-copy {
+  max-width: 45rem;
+}
+
+.lesson-flow-nav {
+  display: grid;
+  gap: 8px;
+  margin-top: 2px;
+  padding: 11px 13px;
+  border-radius: 16px;
+  border: 1px solid rgba(150, 176, 204, 0.22);
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0.95), rgba(241, 247, 253, 0.9));
+  box-shadow: 0 10px 24px rgba(8, 20, 44, 0.05);
+}
+
+.lesson-flow-label {
+  margin: 0;
+  color: #5a7288;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lesson-flow-track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.lesson-flow-track::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 14px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(155, 181, 208, 0.3), rgba(155, 181, 208, 0.12));
+}
+
+.lesson-flow-link {
+  display: grid;
+  justify-items: start;
+  gap: 5px;
+  min-height: 58px;
+  padding: 6px 7px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.45);
+  color: #526b81;
+  text-decoration: none;
+  transition: border-color 170ms ease, background-color 170ms ease, box-shadow 180ms ease;
+}
+
+.lesson-flow-step {
+  position: relative;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  font-size: 0.58rem;
+  background: rgba(78, 106, 133, 0.92);
+}
+
+.lesson-flow-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.26;
+}
+
+.lesson-flow-link--active,
+.lesson-flow-link:hover {
+  border-color: rgba(79, 220, 255, 0.24);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 8px 16px rgba(8, 20, 44, 0.08);
+}
+
+.lesson-flow-link--active .lesson-flow-step,
+.lesson-flow-link:hover .lesson-flow-step {
+  background: #0a5773;
+}
+
+.lesson-flow-link--active .lesson-flow-title {
+  color: #14344e;
+}
+
+.lesson-flow-link--completion .lesson-flow-step {
+  background: rgba(166, 77, 90, 0.92);
+}
+
+.lesson-chapter-surface {
+  padding: 17px 19px;
+  border-radius: 20px;
+  border: 1px solid rgba(129, 159, 190, 0.2);
+  box-shadow: 0 10px 22px rgba(8, 20, 44, 0.045);
+}
+
+.lesson-chapter--orientation {
+  background: linear-gradient(180deg, rgba(249, 252, 255, 0.97), rgba(242, 248, 254, 0.94));
+}
+
+.lesson-orientation-grid {
+  grid-template-columns: minmax(0, 1.36fr) minmax(250px, 0.64fr);
+  gap: 9px;
+}
+
+.lesson-orientation-side {
+  display: grid;
+  gap: 8px;
+}
+
+.lesson-orientation-card {
+  gap: 5px;
+  padding: 10px 11px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.93);
+}
+
+.lesson-orientation-card--primary {
+  padding: 12px 13px;
+  border-color: rgba(79, 220, 255, 0.2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(245, 252, 255, 0.9));
+}
+
+.lesson-orientation-card--secondary p {
+  max-width: 30ch;
+  font-size: 0.75rem;
+  line-height: 1.36;
+}
+
+.lesson-orientation-card--status strong {
+  color: #10415d;
+}
+
+.lesson-orientation-card--next strong {
+  color: #5d2f3a;
+}
+
+.lesson-transition {
+  margin: -8px 4px -2px;
+  padding-left: 11px;
+  color: #6f879b;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  position: relative;
+}
+
+.lesson-transition::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.38rem;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(88, 119, 148, 0.7);
+}
+
+.lesson-chapter--takeaways {
+  background: linear-gradient(180deg, rgba(248, 252, 255, 0.96), rgba(241, 248, 253, 0.92));
+}
+
+.lesson-chapter--reference {
+  background: linear-gradient(180deg, rgba(253, 251, 248, 0.95), rgba(248, 245, 239, 0.92));
+}
+
+.lesson-chapter--application {
+  background: linear-gradient(180deg, rgba(250, 252, 255, 0.95), rgba(244, 248, 252, 0.92));
+}
+
+.lesson-chapter--takeaways .essential-card,
+.lesson-chapter--reference .policy-area,
+.lesson-chapter--application .content-panel {
+  border-radius: 16px;
+  box-shadow: 0 8px 18px rgba(8, 20, 44, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.lesson-chapter--takeaways .essential-card {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.lesson-chapter--reference .policy-area {
+  border-color: rgba(173, 154, 126, 0.22);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.lesson-chapter--reference .policy-row + .policy-row {
+  border-top: 1px dashed rgba(143, 130, 109, 0.3);
+}
+
+.lesson-chapter--application .content-panel:first-child {
+  background: linear-gradient(180deg, rgba(248, 253, 255, 0.96), rgba(241, 249, 254, 0.9));
+}
+
+.lesson-chapter--application .content-panel:last-child {
+  background: linear-gradient(180deg, rgba(255, 249, 250, 0.97), rgba(255, 241, 244, 0.9));
+}
+
+.lesson-chapter--completion {
+  border-color: rgba(79, 220, 255, 0.2);
+  box-shadow: 0 14px 28px rgba(8, 20, 44, 0.07);
+}
+
+@media (max-width: 1180px) {
+  .lesson-flow-track {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lesson-orientation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .portal-stage--detail .portal-page--section {
+    width: min(100%, 920px);
+    padding-inline: 2px;
+  }
+
+  .lesson-flow-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lesson-flow-track::before {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .lesson-flow-track {
+    grid-template-columns: 1fr;
+  }
+}
+/* Priority refinement pass: composition, chapter guidance, and surface rhythm */
+.portal-stage--detail .portal-page--section {
+  width: min(100%, 940px);
+  margin-inline: auto;
+  gap: clamp(24px, 3.1vw, 36px);
+  padding-inline: clamp(4px, 1.4vw, 18px);
+}
+
+.portal-stage--detail .portal-page--section > .page-hero.section-hero--focused {
+  max-width: 940px;
+}
+
+.portal-stage--detail .portal-page--section > .lesson-transition {
+  margin: -10px 6px -4px;
+}
+
+.portal-stage--detail .portal-page--section > .lesson-chapter,
+.portal-stage--detail .portal-page--section > .section-band {
+  scroll-margin-top: 88px;
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-nav {
+  gap: 10px;
+  padding: 12px 14px 13px;
+  border-radius: 17px;
+  border: 1px solid rgba(137, 166, 196, 0.28);
+  background: linear-gradient(180deg, rgba(245, 250, 255, 0.96), rgba(236, 244, 252, 0.9));
+  box-shadow: 0 12px 24px rgba(8, 20, 44, 0.06);
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-label {
+  color: #4c6881;
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-track {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0;
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-track::before {
+  left: 16px;
+  right: 16px;
+  top: 8px;
+  background: linear-gradient(90deg, rgba(145, 173, 202, 0.42), rgba(145, 173, 202, 0.15));
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-link {
+  position: relative;
+  justify-items: start;
+  align-content: start;
+  gap: 6px;
+  min-height: 62px;
+  padding: 0 7px;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-link::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 10px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-step {
+  width: 17px;
+  height: 17px;
+  font-size: 0.56rem;
+  background: #607e98;
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-title {
+  color: #557089;
+  font-size: 0.69rem;
+  line-height: 1.24;
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-link--active .lesson-flow-step {
+  background: #0a607d;
+  box-shadow: 0 0 0 3px rgba(79, 220, 255, 0.16);
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-link--active .lesson-flow-title {
+  color: #113751;
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-link--active::after {
+  background: linear-gradient(90deg, rgba(79, 220, 255, 0.85), rgba(79, 220, 255, 0.28));
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-link:hover {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-link:hover .lesson-flow-step {
+  background: #1c6a87;
+}
+
+.portal-stage--detail .portal-page--section .lesson-flow-link--completion .lesson-flow-step {
+  background: #8f4150;
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--orientation.lesson-chapter-surface {
+  padding: 16px 18px;
+}
+
+.portal-stage--detail .portal-page--section .lesson-orientation-grid {
+  grid-template-columns: minmax(0, 1.45fr) minmax(240px, 0.55fr);
+  gap: 9px;
+}
+
+.portal-stage--detail .portal-page--section .lesson-orientation-side {
+  gap: 7px;
+}
+
+.portal-stage--detail .portal-page--section .lesson-orientation-card {
+  padding: 9px 10px;
+  gap: 4px;
+  border-radius: 12px;
+}
+
+.portal-stage--detail .portal-page--section .lesson-orientation-card--primary {
+  padding: 12px 13px;
+  border-color: rgba(79, 220, 255, 0.22);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(246, 252, 255, 0.9));
+}
+
+.portal-stage--detail .portal-page--section .lesson-orientation-card--secondary {
+  border-color: rgba(133, 162, 192, 0.16);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.portal-stage--detail .portal-page--section .lesson-orientation-card--secondary strong {
+  font-size: 0.8rem;
+  line-height: 1.22;
+}
+
+.portal-stage--detail .portal-page--section .lesson-orientation-card--secondary p {
+  max-width: 27ch;
+  font-size: 0.72rem;
+  line-height: 1.33;
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter-surface {
+  position: relative;
+  padding: 18px 20px;
+  border-radius: 19px;
+  border: 1px solid rgba(132, 161, 191, 0.22);
+  box-shadow: 0 12px 26px rgba(8, 20, 44, 0.055);
+  overflow: hidden;
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter-surface::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: rgba(132, 161, 191, 0.22);
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--takeaways {
+  background: linear-gradient(180deg, rgba(247, 252, 255, 0.97), rgba(239, 248, 253, 0.92));
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--takeaways::before {
+  background: linear-gradient(90deg, rgba(69, 172, 214, 0.9), rgba(69, 172, 214, 0.3));
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--reference {
+  background: linear-gradient(180deg, rgba(253, 250, 245, 0.97), rgba(246, 240, 231, 0.92));
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--reference::before {
+  background: linear-gradient(90deg, rgba(180, 146, 96, 0.78), rgba(180, 146, 96, 0.26));
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--application {
+  background: linear-gradient(180deg, rgba(249, 252, 255, 0.97), rgba(242, 247, 252, 0.92));
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--application::before {
+  background: linear-gradient(90deg, rgba(87, 142, 199, 0.76), rgba(87, 142, 199, 0.24));
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--completion::before {
+  background: linear-gradient(90deg, rgba(79, 220, 255, 0.86), rgba(255, 95, 109, 0.42));
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--takeaways .essential-card,
+.portal-stage--detail .portal-page--section .lesson-chapter--reference .policy-area,
+.portal-stage--detail .portal-page--section .lesson-chapter--application .content-panel {
+  border-radius: 15px;
+  box-shadow: 0 8px 16px rgba(8, 20, 44, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.96);
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--reference .policy-area {
+  border-color: rgba(170, 145, 106, 0.24);
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--reference .policy-row + .policy-row {
+  border-top: 1px dashed rgba(156, 137, 107, 0.34);
+}
+
+.portal-stage--detail .portal-page--section .lesson-chapter--application .content-panel:last-child {
+  border-color: rgba(193, 132, 142, 0.26);
+}
+
+@media (max-width: 1180px) {
+  .portal-stage--detail .portal-page--section {
+    width: min(100%, 900px);
+    gap: 24px;
+  }
+
+  .portal-stage--detail .portal-page--section .lesson-flow-track {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px 0;
+  }
+
+  .portal-stage--detail .portal-page--section .lesson-flow-track::before {
+    display: none;
+  }
+
+  .portal-stage--detail .portal-page--section .lesson-flow-link {
+    min-height: 54px;
+  }
+
+  .portal-stage--detail .portal-page--section .lesson-orientation-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .portal-stage--detail .portal-page--section {
+    width: min(100%, 860px);
+    padding-inline: 2px;
+  }
+
+  .portal-stage--detail .portal-page--section .lesson-flow-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .portal-stage--detail .portal-page--section .lesson-flow-track {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Welcome hard reset: module body structure and hierarchy */
+.portal-stage--detail .portal-page--welcome {
+  width: min(100%, 1120px);
+  gap: clamp(24px, 3vw, 36px);
+  padding-inline: clamp(8px, 1.4vw, 22px);
+}
+
+.portal-stage--detail .portal-page--welcome .section-hero--focused {
+  max-width: none;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-nav {
+  padding: 11px 14px;
+  border-radius: 15px;
+  border: 1px solid rgba(129, 158, 186, 0.22);
+  background: linear-gradient(180deg, rgba(246, 251, 255, 0.96), rgba(238, 246, 252, 0.9));
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-track {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-track::before {
+  left: 14px;
+  right: 14px;
+  top: 8px;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link {
+  min-height: 58px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link::after {
+  left: 7px;
+  right: 8px;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link:hover {
+  background: transparent;
+  box-shadow: none;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-title {
+  font-size: 0.68rem;
+  line-height: 1.24;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-chapter-surface,
+.portal-stage--detail .portal-page--welcome .welcome-body-section {
+  position: relative;
+  padding: clamp(22px, 2.1vw, 30px);
+  border-radius: 20px;
+  border: 1px solid rgba(14, 35, 58, 0.12);
+  background: #ffffff;
+  box-shadow: 0 16px 30px rgba(8, 20, 44, 0.05);
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-chapter-surface::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: rgba(88, 128, 166, 0.28);
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-chapter-head {
+  max-width: 74ch;
+  gap: 7px;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-chapter-head h2 {
+  font-size: clamp(1.2rem, 1.02rem + 0.6vw, 1.6rem);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-chapter-intro {
+  max-width: 76ch;
+  font-size: 0.95rem;
+  line-height: 1.58;
+}
+
+.portal-stage--detail .portal-page--welcome p,
+.portal-stage--detail .portal-page--welcome li,
+.portal-stage--detail .portal-page--welcome dd {
+  font-size: 0.92rem;
+  line-height: 1.58;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-body-section p,
+.portal-stage--detail .portal-page--welcome .welcome-body-section li,
+.portal-stage--detail .portal-page--welcome .welcome-body-section dd {
+  color: var(--text-soft);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-body-section strong,
+.portal-stage--detail .portal-page--welcome .welcome-body-section dt,
+.portal-stage--detail .portal-page--welcome .welcome-body-section h3 {
+  color: var(--text-strong);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-big-picture-section {
+  border-color: rgba(21, 56, 86, 0.15);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-big-picture-copy {
+  max-width: 92ch;
+  display: grid;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-orientation-list {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-orientation-list li {
+  margin: 0;
+  padding-left: 12px;
+  border-left: 2px solid rgba(32, 92, 136, 0.24);
+  max-width: none;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-context-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: 22px;
+  margin-top: 8px;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-context-block {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-context-block h3,
+.portal-stage--detail .portal-page--welcome .welcome-practical-block h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.03rem;
+  letter-spacing: -0.015em;
+  color: var(--text-strong);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-context-block .policy-list {
+  gap: 0;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-context-block .policy-row + .policy-row {
+  border-top: 1px solid rgba(125, 154, 180, 0.2);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-context-block--api {
+  padding-left: 18px;
+  border-left: 1px solid rgba(125, 154, 180, 0.26);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-practical-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 8px;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-practical-block {
+  display: grid;
+  gap: 9px;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-practical-block .plain-list {
+  gap: 9px;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-practical-block--portal {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(125, 154, 180, 0.24);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-checkpoint-section,
+.portal-stage--detail .portal-page--welcome .welcome-completion-section {
+  border: 1px solid rgba(20, 90, 142, 0.32);
+  background: linear-gradient(135deg, #0f2d4a 0%, #1a466d 100%);
+  box-shadow: 0 20px 34px rgba(8, 20, 44, 0.14);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-checkpoint-section::before,
+.portal-stage--detail .portal-page--welcome .welcome-completion-section::before {
+  background: linear-gradient(90deg, rgba(127, 222, 255, 0.86), rgba(255, 255, 255, 0.25));
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #ebf5ff;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .section-label {
+  color: rgba(202, 228, 255, 0.88);
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome h3,
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .knowledge-check-description,
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .knowledge-check-note,
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .knowledge-check-state,
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .knowledge-check-card strong,
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .knowledge-check-card p {
+  color: #ebf5ff;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .knowledge-check-state {
+  border-color: rgba(171, 214, 249, 0.34);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .knowledge-check-grid {
+  gap: 10px;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .knowledge-check-card {
+  gap: 8px;
+  padding: 14px 14px 13px;
+  border: 1px solid rgba(171, 214, 249, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .knowledge-check-chip,
+.portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome .knowledge-check-shell-lines {
+  display: none;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-completion-section {
+  color: #ebf5ff;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-completion-section p,
+.portal-stage--detail .portal-page--welcome .welcome-completion-section h2,
+.portal-stage--detail .portal-page--welcome .welcome-completion-section .finish-next-note {
+  color: #ebf5ff;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-completion-section .module-next-link {
+  color: #d8f3ff;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-completion-section .primary-action {
+  border: 0;
+  background: #ffffff;
+  color: #0f2d49;
+  box-shadow: 0 10px 20px rgba(6, 14, 24, 0.24);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-completion-section .primary-action:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px rgba(6, 14, 24, 0.28);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-completion-section .primary-action:disabled {
+  background: rgba(255, 255, 255, 0.58);
+  color: rgba(15, 45, 73, 0.62);
+}
+
+@media (max-width: 1180px) {
+  .portal-stage--detail .portal-page--welcome {
+    width: min(100%, 1020px);
+  }
+
+  .portal-stage--detail .portal-page--welcome .welcome-orientation-list,
+  .portal-stage--detail .portal-page--welcome .welcome-context-layout,
+  .portal-stage--detail .portal-page--welcome .welcome-practical-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-stage--detail .portal-page--welcome .welcome-context-block--api {
+    padding-left: 0;
+    border-left: 0;
+    padding-top: 12px;
+    border-top: 1px solid rgba(125, 154, 180, 0.26);
+  }
+}
+
+@media (max-width: 760px) {
+  .portal-stage--detail .portal-page--welcome .lesson-flow-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .portal-stage--detail .portal-page--welcome .lesson-flow-track {
+    grid-template-columns: 1fr;
+  }
+}
+
+

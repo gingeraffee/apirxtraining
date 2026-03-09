@@ -19,16 +19,16 @@ type ModuleKnowledgeCheckShellProps = {
 
 const DEFAULT_CHECKPOINTS: CheckpointCard[] = [
   {
-    title: "Question area",
-    description: "Future module review prompts can land here in focused cards without changing the page rhythm.",
+    title: "Key idea recap",
+    description: "Pause and restate the main takeaway from this module in your own words.",
   },
   {
-    title: "Response options",
-    description: "Answer choices can stack cleanly in this shell while keeping the checkpoint easy to scan.",
+    title: "Practical moment",
+    description: "Think through one day-to-day moment where this guidance should shape your next step.",
   },
   {
-    title: "Completion feedback",
-    description: "Guidance and review feedback can confirm understanding before the final module action.",
+    title: "Ready to continue",
+    description: "Confirm what action you would take and where you would escalate if needed.",
   },
 ];
 
@@ -59,7 +59,7 @@ export function ModuleKnowledgeCheckShell({
         {checkpoints.map((checkpoint) => (
           <article key={checkpoint.title} className="knowledge-check-card">
             <div className="knowledge-check-card-top">
-              <span className="knowledge-check-chip">Future-ready</span>
+              <span className="knowledge-check-chip">Review point</span>
               <strong>{checkpoint.title}</strong>
             </div>
             <p>{checkpoint.description}</p>

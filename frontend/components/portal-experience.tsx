@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 import { acknowledgeSection, fetchExperience, fetchProgress, saveProgress } from "@/lib/api";
 import type { Contact, ExperienceContent, ProgressRecord, Section, SupplementalPage } from "@/lib/types";
@@ -18,6 +18,7 @@ type PortalExperienceProps = {
 
 const EMPLOYEE_ID = "demo-employee";
 const AUTH_NAME_KEY = "aap_portal_name";
+const AUTH_EMPLOYEE_NUMBER_KEY = "aap_portal_employee_number";
 const FALLBACK_DISPLAY_NAME = "";
 
 const CheckIcon = () => (
@@ -41,6 +42,12 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   const [profileName, setProfileName] = useState<string | null>(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem(AUTH_NAME_KEY) ?? null;
+    }
+    return null;
+  });
+  const [profileEmployeeNumber, setProfileEmployeeNumber] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(AUTH_EMPLOYEE_NUMBER_KEY) ?? null;
     }
     return null;
   });
@@ -91,6 +98,8 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   const supplementalPages = experience?.supplementalPages ?? [];
   const activeSection = sections.find((section) => section.slug === slug) ?? null;
   const activeSupplemental = supplementalPages.find((page) => page.slug === slug) ?? null;
+  const roleSpecificPages = supplementalPages.filter((page) => page.slug === "where-you-make-an-impact");
+  const referencePages = supplementalPages.filter((page) => page.slug !== "where-you-make-an-impact");
   const completedSections = new Set(progress?.completed_sections ?? []);
   const acknowledgedSections = new Set(progress?.acknowledged_sections ?? []);
   const overviewNextSection = sections.find((section) => !completedSections.has(section.slug)) ?? null;
@@ -101,12 +110,6 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   const completionPercent = sections.length
     ? Math.round(((progress?.completed_sections.length ?? 0) / sections.length) * 100)
     : 0;
-  const supportContact = useMemo(() => {
-    if (!experience) {
-      return null;
-    }
-    return experience.contacts.find((contact) => contact.id === experience.track.supportContactId) ?? null;
-  }, [experience]);
 
   useEffect(() => {
     if (!activeSection) {
@@ -180,14 +183,16 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
     });
   }
 
-  async function handleLogin(nextName: string) {
+  async function handleLogin(nextName: string, nextEmployeeNumber: string) {
     if (!progress) {
       return;
     }
 
     setIsSigningIn(true);
     setProfileName(nextName);
+    setProfileEmployeeNumber(nextEmployeeNumber);
     localStorage.setItem(AUTH_NAME_KEY, nextName);
+    localStorage.setItem(AUTH_EMPLOYEE_NUMBER_KEY, nextEmployeeNumber);
 
     try {
       const updated = await saveProgress(EMPLOYEE_ID, {
@@ -206,7 +211,9 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
 
   function handleLogout() {
     setProfileName(null);
+    setProfileEmployeeNumber(null);
     localStorage.removeItem(AUTH_NAME_KEY);
+    localStorage.removeItem(AUTH_EMPLOYEE_NUMBER_KEY);
   }
 
   if (loading) {
@@ -234,25 +241,30 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   }
 
   if (!profileName) {
-    return <LoginScreen defaultName="" isPending={isSigningIn} onSubmit={handleLogin} />;
+    return <LoginScreen defaultName="" defaultEmployeeNumber={profileEmployeeNumber ?? ""} isPending={isSigningIn} onSubmit={handleLogin} />;
   }
 
   const contextTitle = kind === "overview"
     ? "Overview"
     : activeSection?.title ?? activeSupplemental?.title ?? "Page not found";
+  const contextEyebrow = kind === "overview"
+    ? "Launch overview"
+    : activeSection?.eyebrow ?? activeSupplemental?.eyebrow ?? "Launch page";
   const contextType = activeSection
     ? "Tracked module"
-    : activeSupplemental?.state === "coming_soon"
-      ? "Visible, untracked launch preview"
-      : activeSupplemental
-        ? "Visible, untracked reference page"
-        : "Launch overview";
+    : activeSupplemental?.slug === "where-you-make-an-impact"
+      ? "Role-specific coming soon page"
+      : activeSupplemental?.state === "coming_soon"
+        ? "Visible, untracked preview"
+        : activeSupplemental
+          ? "Visible, untracked reference page"
+          : "Launch overview";
 
   return (
     <div className={`app-shell portal-shell${kind === "overview" ? "" : " portal-shell--detail"}`}>
       <aside className="side-rail portal-rail">
         <div className="brand-block portal-brand-block portal-rail-brand">
-          <PortalBrandLockup copyClassName="portal-brand-sidebar" priority />
+          <PortalBrandLockup priority />
         </div>
 
         <div className="rail-panel progress-panel">
@@ -270,7 +282,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
           <p className="rail-group-label">Launch path</p>
           <nav className="nav-stack">
             <Link className={kind === "overview" ? "nav-link active" : "nav-link"} href="/">
-              <span className="nav-link-num">•</span>
+              <span className="nav-link-num">0</span>
               <span className="nav-link-title">Overview</span>
             </Link>
             {sections.map((section, index) => (
@@ -286,29 +298,41 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
           </nav>
         </div>
 
-        <div className="rail-nav-group">
-          <p className="rail-group-label">Also in AAP Start</p>
-          <nav className="nav-stack">
-            {supplementalPages.map((page) => (
-              <Link
-                key={page.slug}
-                className={slug === page.slug ? "nav-link active" : "nav-link"}
-                href={`/modules/${page.slug}`}
-              >
-                <span className="nav-link-num">{page.state === "coming_soon" ? "..." : <LaunchLinkIcon />}</span>
-                <span className="nav-link-title">{page.title}</span>
-                <span className={`nav-link-badge ${page.state}`}>{page.state === "coming_soon" ? "Soon" : "Live"}</span>
-              </Link>
-            ))}
-          </nav>
-        </div>
+        {referencePages.length > 0 && (
+          <div className="rail-nav-group">
+            <p className="rail-group-label">Reference shelf</p>
+            <nav className="nav-stack">
+              {referencePages.map((page) => (
+                <Link
+                  key={page.slug}
+                  className={slug === page.slug ? "nav-link active" : "nav-link"}
+                  href={`/modules/${page.slug}`}
+                >
+                  <span className="nav-link-num"><LaunchLinkIcon /></span>
+                  <span className="nav-link-title">{page.title}</span>
+                  <span className={`nav-link-badge ${page.state}`}>{page.state === "coming_soon" ? "Soon" : "Live"}</span>
+                </Link>
+              ))}
+            </nav>
+          </div>
+        )}
 
-        {supportContact && (
-          <div className="rail-panel contact-rail-panel">
-            <p className="section-label">Support</p>
-            <strong>{supportContact.name}</strong>
-            <p>{supportContact.role}</p>
-            <a className="inline-action" href={`mailto:${supportContact.email}`}>Email support</a>
+        {roleSpecificPages.length > 0 && (
+          <div className="rail-nav-group">
+            <p className="rail-group-label">Role-specific</p>
+            <nav className="nav-stack">
+              {roleSpecificPages.map((page) => (
+                <Link
+                  key={page.slug}
+                  className={slug === page.slug ? "nav-link active" : "nav-link"}
+                  href={`/modules/${page.slug}`}
+                >
+                  <span className="nav-link-num">...</span>
+                  <span className="nav-link-title">{page.title}</span>
+                  <span className={`nav-link-badge ${page.state}`}>Soon</span>
+                </Link>
+              ))}
+            </nav>
           </div>
         )}
 
@@ -324,7 +348,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
       <main className={`main-stage portal-stage${kind === "overview" ? "" : " portal-stage--detail"}`}>
         <header className="topbar portal-topbar">
           <div>
-            <p className="section-label">{experience.brand.portalName}</p>
+            <p className="section-label">{contextEyebrow}</p>
             <h1 className="topbar-title">{contextTitle}</h1>
           </div>
           <div className="topbar-right">
@@ -332,30 +356,8 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
               <span>Now viewing</span>
               <strong>{contextType}</strong>
             </div>
-            <button className="topbar-logout" type="button" onClick={handleLogout}>
-              <span>Sign out</span>
-            </button>
           </div>
         </header>
-
-        {kind !== "overview" && (
-          <section className="context-strip" aria-label="Current onboarding context">
-            <article className="context-chip">
-              <span>Now viewing</span>
-              <strong>{contextTitle}</strong>
-              <p>{contextType}</p>
-            </article>
-            {contextNextSection && (
-              <article className="context-chip emphasis">
-                <span>Next in line</span>
-                <strong>{contextNextSection.title}</strong>
-                <Link className="inline-action" href={`/modules/${contextNextSection.slug}`}>
-                  Continue
-                </Link>
-              </article>
-            )}
-          </section>
-        )}
 
         {kind === "overview" && (
           <OverviewScreen experience={experience} progress={progress} nextSection={overviewNextSection} firstName={firstName} />
@@ -364,6 +366,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
         {kind !== "overview" && activeSection && (
           <SectionScreen
             section={activeSection}
+            nextSection={contextNextSection}
             isAcknowledged={acknowledgedSections.has(activeSection.slug)}
             selections={checkedItems[activeSection.slug] ?? []}
             onToggle={toggleItem}
@@ -392,6 +395,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
 
 type SectionProps = {
   section: Section;
+  nextSection: Section | null;
   isAcknowledged: boolean;
   selections: boolean[];
   onToggle: (sectionSlug: string, itemIndex: number) => void;
@@ -399,7 +403,7 @@ type SectionProps = {
   isPending: boolean;
 };
 
-function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknowledge, isPending }: SectionProps) {
+function SectionScreen({ section, nextSection, isAcknowledged, selections, onToggle, onAcknowledge, isPending }: SectionProps) {
   const showChecklist = section.acknowledgment.mode !== "manual" && section.acknowledgment.items.length > 0;
   const allChecked = !showChecklist || (selections.length === section.acknowledgment.items.length && selections.every(Boolean));
   const checkedCount = selections.filter(Boolean).length;
@@ -425,6 +429,19 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
             <p>{isAcknowledged ? "Section saved." : section.acknowledgment.statement}</p>
             <a className="inline-action" href="#section-acknowledgment">Jump to finish</a>
           </div>
+          {nextSection && (
+            <>
+              <hr className="hero-support-divider" />
+              <p className="section-label">Next up</p>
+              <div className="hero-progress-copy hero-progress-copy--next">
+                <strong>{nextSection.title}</strong>
+                <p>Keep moving through the tracked path with the next live module.</p>
+                <Link className="inline-action" href={`/modules/${nextSection.slug}`}>
+                  Open next module
+                </Link>
+              </div>
+            </>
+          )}
         </aside>
       </section>
 
@@ -599,5 +616,3 @@ function SupplementalPageScreen({ page, contacts }: SupplementalPageScreenProps)
     </div>
   );
 }
-
-

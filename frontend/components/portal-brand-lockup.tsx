@@ -2,17 +2,14 @@
 
 type PortalBrandLockupProps = {
   className?: string;
-  copyClassName?: string;
   priority?: boolean;
 };
 
 export function PortalBrandLockup({
   className = "",
-  copyClassName = "",
   priority = false,
 }: PortalBrandLockupProps) {
   const lockupClassName = ["portal-brand-lockup", className].filter(Boolean).join(" ");
-  const brandCopyClassName = ["portal-brand", copyClassName].filter(Boolean).join(" ");
 
   return (
     <div className={lockupClassName}>
@@ -24,12 +21,10 @@ export function PortalBrandLockup({
         priority={priority}
         className="brand-logo-img portal-lockup-logo"
       />
-      <div className={brandCopyClassName}>
-        <span className="portal-brand-overline">Launch onboarding</span>
-        <strong>AAP Start</strong>
-        <span className="portal-brand-subline">American Associated Pharmacies</span>
+      <div className="portal-brand-caption" aria-label="Portal identity">
+        <span className="portal-brand-caption-label">AAP Start</span>
+        <span className="portal-brand-caption-subline">American Associated Pharmacies</span>
       </div>
     </div>
   );
 }
-

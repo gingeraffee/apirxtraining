@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useState } from "react";
 
 type TipData = { label: string; tip: string };
 
@@ -22,26 +22,6 @@ function pickFooter() {
   return FOOTER_LINES[Math.floor(Math.random() * FOOTER_LINES.length)];
 }
 
-function RefreshIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-      <path
-        d="M11.5 2A5.5 5.5 0 1 0 12 6.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M12 2V5.5H8.5"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
 function SparkIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
@@ -56,36 +36,46 @@ function SparkIcon() {
 export function CoachTipCard({ context, variant = "rail" }: CoachTipCardProps) {
   const [data, setData] = useState<TipData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [spinning, setSpinning] = useState(false);
-
-  const fetchTip = useCallback(async (isRefresh = false) => {
-    if (isRefresh) setSpinning(true);
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        context,
-        t: Date.now().toString(),
-        r: Math.random().toString(36).slice(2),
-      });
-      const res = await fetch(`/api/coach-tip?${params}`, {
-        method: "GET",
-        cache: "no-store",
-      });
-      const json = await res.json();
-      setData(json);
-    } catch {
-      setData({ label: "Pro tip", tip: "Take notes as you go — your future self will thank you." });
-    } finally {
-      setLoading(false);
-      if (isRefresh) setTimeout(() => setSpinning(false), 400);
-    }
-  }, [context]);
 
   useEffect(() => {
-    fetchTip();
-  }, [fetchTip]);
+    let active = true;
 
-  // ── HERO VARIANT ──────────────────────────────────────────────
+    async function fetchTip() {
+      setLoading(true);
+
+      try {
+        const params = new URLSearchParams({
+          context,
+          t: Date.now().toString(),
+          r: Math.random().toString(36).slice(2),
+        });
+        const res = await fetch(`/api/coach-tip?${params}`, {
+          method: "GET",
+          cache: "no-store",
+        });
+        const json = await res.json();
+
+        if (active) {
+          setData(json);
+        }
+      } catch {
+        if (active) {
+          setData({ label: "Pro tip", tip: "Take notes as you go - your future self will thank you." });
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void fetchTip();
+
+    return () => {
+      active = false;
+    };
+  }, [context]);
+
   if (variant === "hero") {
     return (
       <div className="hero-tip-strip" role="note" aria-label="Onboarding tip">
@@ -108,7 +98,6 @@ export function CoachTipCard({ context, variant = "rail" }: CoachTipCardProps) {
     );
   }
 
-  // ── RAIL VARIANT ──────────────────────────────────────────────
   return (
     <article className="ov-rail-card ov-rail-card-tip" aria-label="Coach tip">
       <div className="tip-card-header">
@@ -118,15 +107,6 @@ export function CoachTipCard({ context, variant = "rail" }: CoachTipCardProps) {
           </span>
           <p className="section-label">Coach tip</p>
         </div>
-        <button
-          className={`tip-refresh-btn${spinning ? " spin" : ""}`}
-          onClick={() => fetchTip(true)}
-          disabled={loading}
-          aria-label="Get a new tip"
-          title="New tip"
-        >
-          <RefreshIcon />
-        </button>
       </div>
 
       {loading || !data ? (

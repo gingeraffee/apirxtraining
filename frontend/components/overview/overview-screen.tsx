@@ -1,4 +1,4 @@
-﻿import type { Contact, ExperienceContent, ProgressRecord, Section } from "@/lib/types";
+import type { ExperienceContent, ProgressRecord, Section } from "@/lib/types";
 
 import { OverviewHero } from "./overview-hero";
 import { CoursePath } from "./course-path";
@@ -22,8 +22,9 @@ export function OverviewScreen({ experience, progress, nextSection, firstName }:
     : nextSection;
 
   const supportContact = experience.contacts.find((contact) => contact.id === experience.track.supportContactId) ?? null;
-  const supportFirstName = supportContact?.name.split(" ")[0] ?? "Support";
+  const escalationContact = experience.contacts.find((contact) => contact.id === "brandy-hooper") ?? null;
   const supportPhoneDigits = supportContact ? supportContact.phone.replace(/\D/g, "") : "";
+  const escalationPhoneDigits = escalationContact ? escalationContact.phone.replace(/\D/g, "") : "";
   const tipContext = nextSection
     ? `${nextSection.title}: ${nextSection.summary}`
     : "The employee completed the tracked launch path and may revisit Resource Hub for reference.";
@@ -106,16 +107,36 @@ export function OverviewScreen({ experience, progress, nextSection, firstName }:
           {supportContact && (
             <article className="ov-rail-card ov-rail-card-support">
               <p className="section-label">Questions</p>
-              <h3>{supportFirstName} is your person.</h3>
-              <p>{supportContact.role}. Helpful answers, actual human.</p>
-              <div className="ov-rail-actions">
-                <a className="inline-action" href={`mailto:${supportContact.email}`}>
-                  Email {supportFirstName}
-                </a>
-                <a className="inline-action" href={`tel:${supportPhoneDigits}`}>
-                  Call {supportFirstName}
-                </a>
+              <h3>{supportContact.name}</h3>
+              <p>{supportContact.role}</p>
+              <div className="question-contact-stack">
+                <div className="question-contact-row">
+                  <span>Email</span>
+                  <a href={`mailto:${supportContact.email}`}>{supportContact.email}</a>
+                </div>
+                <div className="question-contact-row">
+                  <span>Phone</span>
+                  <a href={`tel:${supportPhoneDigits}`}>{supportContact.phone}</a>
+                </div>
               </div>
+              <p className="question-contact-note">{supportContact.note}</p>
+              {escalationContact && (
+                <div className="question-escalation-block">
+                  <p className="question-escalation-label">Escalation support</p>
+                  <strong>{escalationContact.name}</strong>
+                  <span>{escalationContact.role}</span>
+                  <div className="question-contact-stack question-contact-stack--secondary">
+                    <div className="question-contact-row">
+                      <span>Email</span>
+                      <a href={`mailto:${escalationContact.email}`}>{escalationContact.email}</a>
+                    </div>
+                    <div className="question-contact-row">
+                      <span>Phone</span>
+                      <a href={`tel:${escalationPhoneDigits}`}>{escalationContact.phone}</a>
+                    </div>
+                  </div>
+                </div>
+              )}
             </article>
           )}
         </aside>
@@ -123,4 +144,3 @@ export function OverviewScreen({ experience, progress, nextSection, firstName }:
     </div>
   );
 }
-

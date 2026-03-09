@@ -8,6 +8,7 @@ import type { Contact, ExperienceContent, ProgressRecord, Section, SupplementalP
 import { OverviewScreen } from "@/components/overview/overview-screen";
 import { LoginScreen } from "@/components/login-screen";
 import { PortalBrandLockup } from "@/components/portal-brand-lockup";
+import { ModuleKnowledgeCheckShell } from "@/components/module-knowledge-check-shell";
 
 type PortalKind = "overview" | "section" | "toolkit";
 
@@ -392,21 +393,16 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
   const showChecklist = section.acknowledgment.mode !== "manual" && section.acknowledgment.items.length > 0;
   const allChecked = !showChecklist || (selections.length === section.acknowledgment.items.length && selections.every(Boolean));
   const checkedCount = selections.filter(Boolean).length;
+  const isWelcomeModule = section.slug === "welcome-to-aap";
 
   return (
-    <div className="page-stack section-page portal-page portal-page--detail portal-page--section">
+    <div className={`page-stack section-page portal-page portal-page--detail portal-page--section${isWelcomeModule ? " portal-page--welcome" : ""}`}>
       <section className="page-hero single-focus-hero section-hero section-hero--focused">
         <div className="section-hero-copy">
           <p className="section-label">{section.eyebrow}</p>
           <h1>{section.title}</h1>
           <p className="lead">{section.summary}</p>
           <p className="purpose-line">{section.purpose}</p>
-          <div className="module-hero-actions">
-            <a className="primary-action compact-primary" href="#section-acknowledgment">
-              {isAcknowledged ? "Module completed" : "Finish module"}
-            </a>
-            <a className="inline-action" href="#section-takeaways">Start with takeaways</a>
-          </div>
         </div>
       </section>
 
@@ -421,25 +417,21 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
         <article className="module-utility-card module-utility-card--status">
           <p className="section-label">Completion status</p>
           <strong>{isAcknowledged ? "Completed" : showChecklist ? `${checkedCount}/${section.acknowledgment.items.length} ready` : "Manual completion"}</strong>
-          <p>{isAcknowledged ? "Section saved. You can revisit this page anytime." : section.acknowledgment.statement}</p>
-          <a className="inline-action" href="#section-acknowledgment">Jump to finish</a>
+          <p>{isAcknowledged ? "Saved and ready whenever you need a quick refresh." : "Read through the step, then finish at the end of the page."}</p>
         </article>
 
         {nextSection && (
           <article className="module-utility-card module-utility-card--next">
             <p className="section-label">Next after this</p>
             <strong>{nextSection.title}</strong>
-            <p>Keep moving through the tracked path once this step is complete.</p>
-            <Link className="module-next-link" href={`/modules/${nextSection.slug}`}>
-              Preview next module
-            </Link>
+            <p>Visible now so the path keeps its shape, but secondary until this step is complete.</p>
           </article>
         )}
       </section>
 
       <div className="jump-chip-row" aria-label="Module sections">
         <a className="jump-chip" href="#section-takeaways">Takeaways</a>
-        <a className="jump-chip" href="#section-policy">Policy guide</a>
+        <a className="jump-chip" href="#section-policy">Practical reference</a>
       </div>
 
       <section className="section-band takeaway-band" id="section-takeaways">
@@ -459,7 +451,7 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
 
       <section className="section-band policy-band" id="section-policy">
         <div className="section-band-head">
-          <p className="section-label">Policy guide</p>
+          <p className="section-label">Practical reference</p>
           <h2>Use this as your practical reference</h2>
         </div>
         <div className="policy-area-list">
@@ -496,6 +488,13 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
         </div>
       </section>
 
+      {isWelcomeModule && (
+        <ModuleKnowledgeCheckShell
+          description="Use this checkpoint space to pause on the key ideas above before you finish the module. Future review prompts can land here without changing the page flow."
+          note="The launch shell is ready for future module review questions, while the completion flow stays clean and manual for version one."
+        />
+      )}
+
       <section className="content-panel acknowledgment-panel" id="section-acknowledgment">
         <p className="section-label">Finish this module</p>
         <h3>{section.acknowledgment.title}</h3>
@@ -525,6 +524,12 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
         >
           {isAcknowledged ? "Section complete" : isPending ? "Saving..." : "Mark module complete"}
         </button>
+
+        {nextSection && (
+          <p className="finish-next-note">
+            Next after this: <Link className="module-next-link" href={`/modules/${nextSection.slug}`}>{nextSection.title}</Link>
+          </p>
+        )}
       </section>
     </div>
   );
@@ -607,3 +612,4 @@ function SupplementalPageScreen({ page, contacts }: SupplementalPageScreenProps)
     </div>
   );
 }
+

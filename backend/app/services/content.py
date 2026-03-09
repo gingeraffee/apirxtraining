@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
@@ -102,22 +102,22 @@ SECTIONS = [
         slug="welcome-to-aap",
         eyebrow="Start Here",
         title="Welcome to AAP",
-        summary="Get the big picture first so the rest of onboarding feels connected instead of random.",
-        purpose="Start with who AAP is, what the company exists to support, and how this launch path is meant to help you settle in with confidence.",
-        focuses=["Company story", "What AAP supports", "How to use the portal"],
+        summary="Start with the big picture so the rest of AAP Start feels connected, useful, and easier to move through.",
+        purpose="This first step introduces what AAP is here to support, what AAP Start is for, and how to use the launch path without getting buried in details too early.",
+        focuses=["Who AAP supports", "What AAP Start is for", "Where questions go"],
         essentials=[
-            ("AAP has a clear mission", "The company exists to support independent community pharmacies with practical tools, operational help, and dependable service."),
-            ("The portal is a guide, not a maze", "AAP Start walks you through the essentials in a clean order so you always know what comes next."),
-            ("Questions are expected", "When something gets specific, HR and your manager are there to help."),
+            ("AAP supports independent community pharmacies", "The company exists to help independent pharmacies stay strong through practical programs, operational help, and dependable service."),
+            ("AAP Start is a guide, not a document dump", "The launch path is sequenced on purpose so each step builds context instead of dropping everything on you at once."),
+            ("You are not expected to figure everything out alone", "Questions are part of onboarding. The goal is to know where to look and who to ask when something needs real context."),
         ],
         policy_areas=[
-            ("Company context", [("Who AAP serves", "AAP supports independent pharmacies that depend on consistent service, strong operations, and trusted relationships."), ("Why your role matters", "Every role affects how reliably AAP supports customers and teammates.")]),
-            ("How to approach onboarding", [("Use the sequence", "The launch path is ordered on purpose so each module builds context for the next one."), ("Keep it practical", "Use the portal to understand standards, vocabulary, and where to go for help.")]),
+            ("Company context", [("What AAP is here to do", "AAP supports independent community pharmacies with practical help that keeps service, operations, and relationships steady."), ("Why the work matters", "Every role contributes to how reliably AAP supports customers, teammates, and the pharmacies depending on both.")]),
+            ("Using AAP Start well", [("Follow the path in order", "The launch modules are arranged to give you context first, then systems, expectations, support, and what to expect next."), ("Keep it practical", "Use the portal to understand the basics, keep your questions organized, and come back when you need a quick reset.")]),
         ],
-        actions=["Use this module to get your bearings before you chase details.", "Keep a short list of questions for your manager or HR.", "Treat the portal as a guide you can come back to."],
-        escalation=["Use HR when a policy question becomes specific to your situation.", "Use your manager for team context and role expectations.", "Escalate sensitive concerns instead of relying on hallway answers."],
+        actions=["Use this module to get your bearings before you chase details.", "Keep a short list of questions for your manager or HR as you move through the path.", "Come back to AAP Start when you need a clear refresher instead of guessing."],
+        escalation=["Use HR when a question becomes specific to your benefits, records, leave, or another employee situation.", "Use your manager when you need role or team context that the launch path is not meant to cover.", "Escalate sensitive concerns instead of relying on assumptions or side conversations."],
         acknowledgment_title="Ready for the path",
-        acknowledgment_statement="I understand what AAP Start is for and where to go when a question needs real context.",
+        acknowledgment_statement="I understand what AAP Start is for, what AAP exists to support, and where to go when a question needs real context.",
     ),
     build_section(
         section_id="how-we-show-up",

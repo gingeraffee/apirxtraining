@@ -4,6 +4,7 @@ import { Manrope, Inter } from "next/font/google";
 
 import "./globals.css";
 import "./globals-refined.css";
+import "./launch-parity.css";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -31,3 +32,4 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     </html>
   );
 }
+

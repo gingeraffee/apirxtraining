@@ -7,6 +7,7 @@ import { acknowledgeSection, fetchExperience, fetchProgress, saveProgress } from
 import type { Contact, ExperienceContent, ProgressRecord, Section, SupplementalPage } from "@/lib/types";
 import { OverviewScreen } from "@/components/overview/overview-screen";
 import { LoginScreen } from "@/components/login-screen";
+import { PortalBrandLockup } from "@/components/portal-brand-lockup";
 
 type PortalKind = "overview" | "section" | "toolkit";
 
@@ -18,6 +19,19 @@ type PortalExperienceProps = {
 const EMPLOYEE_ID = "demo-employee";
 const AUTH_NAME_KEY = "aap_portal_name";
 const FALLBACK_DISPLAY_NAME = "";
+
+const CheckIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+    <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const LaunchLinkIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+    <path d="M3 9L9 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M4.5 3H9V7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 export function PortalExperience({ kind, slug }: PortalExperienceProps) {
   const [experience, setExperience] = useState<ExperienceContent | null>(null);
@@ -235,14 +249,10 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
         : "Launch overview";
 
   return (
-    <div className={kind === "overview" ? "app-shell" : "app-shell section-shell"}>
-      <aside className="side-rail">
-        <div className="brand-block portal-brand-block">
-          <div className="portal-brand portal-brand-sidebar">
-            <span className="portal-brand-overline">Launch onboarding</span>
-            <strong>AAP Start</strong>
-            <span className="portal-brand-subline">American Associated Pharmacies</span>
-          </div>
+    <div className={`app-shell portal-shell${kind === "overview" ? "" : " portal-shell--detail"}`}>
+      <aside className="side-rail portal-rail">
+        <div className="brand-block portal-brand-block portal-rail-brand">
+          <PortalBrandLockup copyClassName="portal-brand-sidebar" priority />
         </div>
 
         <div className="rail-panel progress-panel">
@@ -269,7 +279,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
                 className={slug === section.slug ? "nav-link active" : "nav-link"}
                 href={`/modules/${section.slug}`}
               >
-                <span className="nav-link-num">{completedSections.has(section.slug) ? "✓" : index + 1}</span>
+                <span className="nav-link-num">{completedSections.has(section.slug) ? <CheckIcon /> : index + 1}</span>
                 <span className="nav-link-title">{section.title}</span>
               </Link>
             ))}
@@ -285,7 +295,7 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
                 className={slug === page.slug ? "nav-link active" : "nav-link"}
                 href={`/modules/${page.slug}`}
               >
-                <span className="nav-link-num">{page.state === "coming_soon" ? "…" : "↗"}</span>
+                <span className="nav-link-num">{page.state === "coming_soon" ? "..." : <LaunchLinkIcon />}</span>
                 <span className="nav-link-title">{page.title}</span>
                 <span className={`nav-link-badge ${page.state}`}>{page.state === "coming_soon" ? "Soon" : "Live"}</span>
               </Link>
@@ -311,14 +321,14 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
         </button>
       </aside>
 
-      <main className={kind === "overview" ? "main-stage" : "main-stage section-stage"}>
-        <header className={kind === "overview" ? "topbar overview-topbar" : "topbar section-topbar"}>
+      <main className={`main-stage portal-stage${kind === "overview" ? "" : " portal-stage--detail"}`}>
+        <header className="topbar portal-topbar">
           <div>
             <p className="section-label">{experience.brand.portalName}</p>
             <h1 className="topbar-title">{contextTitle}</h1>
           </div>
           <div className="topbar-right">
-            <div className="topbar-meta">
+            <div className="topbar-meta portal-topbar-meta">
               <span>Now viewing</span>
               <strong>{contextType}</strong>
             </div>
@@ -395,7 +405,7 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
   const checkedCount = selections.filter(Boolean).length;
 
   return (
-    <div className="page-stack section-page">
+    <div className="page-stack section-page portal-page portal-page--detail portal-page--section">
       <section className="page-hero single-focus-hero section-hero">
         <div className="section-hero-copy">
           <p className="section-label">{section.eyebrow}</p>
@@ -492,7 +502,7 @@ function SectionScreen({ section, isAcknowledged, selections, onToggle, onAcknow
                 onClick={() => onToggle(section.slug, index)}
                 type="button"
               >
-                <span className="check-item-indicator" aria-hidden="true">{selections[index] ? "✓" : ""}</span>
+                <span className="check-item-indicator" aria-hidden="true">{selections[index] ? <CheckIcon /> : ""}</span>
                 <strong>{item}</strong>
               </button>
             ))}
@@ -521,7 +531,7 @@ function SupplementalPageScreen({ page, contacts }: SupplementalPageScreenProps)
   const contactMap = new Map(contacts.map((contact) => [contact.id, contact]));
 
   return (
-    <div className="page-stack section-page supplemental-page">
+    <div className="page-stack section-page supplemental-page portal-page portal-page--detail portal-page--supplemental">
       <section className="page-hero single-focus-hero section-hero supplemental-hero">
         <div className="section-hero-copy">
           <p className="section-label">{page.eyebrow}</p>
@@ -589,3 +599,5 @@ function SupplementalPageScreen({ page, contacts }: SupplementalPageScreenProps)
     </div>
   );
 }
+
+

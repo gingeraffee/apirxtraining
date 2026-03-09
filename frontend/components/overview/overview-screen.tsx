@@ -29,7 +29,7 @@ export function OverviewScreen({ experience, progress, nextSection, firstName }:
     : "The employee completed the tracked launch path and may revisit Resource Hub for reference.";
 
   return (
-    <div className="ov-page">
+    <div className="ov-page portal-page portal-page--overview">
       <div className="ov-layout-grid">
         <div className="ov-main-column">
           <OverviewHero
@@ -123,3 +123,4 @@ export function OverviewScreen({ experience, progress, nextSection, firstName }:
     </div>
   );
 }
+

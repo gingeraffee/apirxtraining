@@ -625,7 +625,22 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
                   <p className="section-label">Section 1</p>
                   <h2>Start with what this step is here to teach</h2>
                 </div>
-                <p className="lesson-chapter-intro">{section.purpose}</p>
+                {isWelcomeModule ? (
+                  <>
+                    <p className="lesson-chapter-intro">AAP Start is here to make your first stretch of onboarding clearer and easier to follow.</p>
+                    <figure className="ceo-pull-quote" aria-label="CEO quote">
+                      <blockquote>
+                        <span className="ceo-pull-quote-mark" aria-hidden="true">{"\u201C"}</span>
+                        <p>Every employee contributes directly to the company{"\u2019"}s growth and success.</p>
+                        <span className="ceo-pull-quote-mark ceo-pull-quote-mark--close" aria-hidden="true">{"\u201D"}</span>
+                      </blockquote>
+                      <figcaption>Jon Copeland, CEO</figcaption>
+                    </figure>
+                    <p className="lesson-chapter-intro">The goal of this experience is to help you understand how AAP works, what{"\u2019"}s expected of you, where to go for help, and what to expect as you get settled in.</p>
+                  </>
+                ) : (
+                  <p className="lesson-chapter-intro">{section.purpose}</p>
+                )}
 
                 <div className="lesson-orientation-grid" aria-label="Module orientation details">
                   <article className="lesson-orientation-card lesson-orientation-card--focus lesson-orientation-card--primary">

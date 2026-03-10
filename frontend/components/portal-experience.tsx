@@ -772,22 +772,28 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
               <Link className="inline-action" href={`/modules/${nextSection.slug}`}>Preview next</Link>
             </article>
           )}
-          <article className="rail-context-card rail-context-card--status">
-            <p className="section-label">This module</p>
-            <strong>{completionStatus}</strong>
-            <p>{completionStatusNote}</p>
-          </article>
-          {supportContact && (
-            <article className="rail-context-card rail-context-card--support">
-              <p className="section-label">Questions</p>
-              <strong>{supportContact.name}</strong>
-              <p>{supportContact.role}</p>
-              <div className="rail-contact-actions">
-                <a className="inline-action" href={`mailto:${supportContact.email}`}>Email</a>
-                <a className="inline-action" href={`tel:${supportContact.phone.replace(/\D/g, "")}`}>Call</a>
+          <article className="rail-context-card rail-context-card--compact">
+            <div className="compact-card-section compact-card-section--status">
+              <p className="section-label">This module</p>
+              <strong>{completionStatus}</strong>
+              <p>{completionStatusNote}</p>
+            </div>
+            {supportContact && (
+              <div className="compact-card-section compact-card-section--support">
+                <p className="section-label">Questions</p>
+                <div className="compact-support-row">
+                  <div className="compact-support-identity">
+                    <strong>{supportContact.name}</strong>
+                    <span className="compact-support-role">{supportContact.role}</span>
+                  </div>
+                  <div className="rail-contact-actions">
+                    <a className="inline-action" href={`mailto:${supportContact.email}`}>Email</a>
+                    <a className="inline-action" href={`tel:${supportContact.phone.replace(/\D/g, "")}`}>Call</a>
+                  </div>
+                </div>
               </div>
-            </article>
-          )}
+            )}
+          </article>
         </aside>
       </div>
     </div>

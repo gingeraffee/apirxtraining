@@ -27,8 +27,10 @@ def build_section(
     escalation: list[str],
     acknowledgment_title: str,
     acknowledgment_statement: str,
+    chapter_intros: list[str] | None = None,
+    context_sidebar: tuple[str, list[str]] | None = None,
 ) -> dict[str, Any]:
-    return {
+    section: dict[str, Any] = {
         "id": section_id,
         "slug": slug,
         "eyebrow": eyebrow,
@@ -48,6 +50,11 @@ def build_section(
         "escalation": escalation,
         "acknowledgment": manual_acknowledgment(acknowledgment_title, acknowledgment_statement),
     }
+    if chapter_intros is not None:
+        section["chapterIntros"] = chapter_intros
+    if context_sidebar is not None:
+        section["contextSidebar"] = {"title": context_sidebar[0], "body": context_sidebar[1]}
+    return section
 
 
 def public_file_item(item_id: str, title: str, description: str, public_path: str) -> dict[str, Any] | None:
@@ -71,9 +78,9 @@ ORGANIZATION = {
     "companyShortName": "AAP",
     "headline": "A polished starting point for how work, support, and expectations come together at AAP.",
     "tagline": "Clear next steps, practical guidance, and a calm first-week experience.",
-    "mission": "AAP supports independent community pharmacies with programs, operational help, and distribution services that help them stay strong in the markets they serve.",
-    "vision": "Helping independent pharmacies thrive with dependable support and practical solutions.",
-    "story": "American Associated Pharmacies is a cooperative built to support independent pharmacies. AAP Start turns the first stretch of employment into a guided experience so new teammates can build confidence without getting buried in handbook noise.",
+    "mission": "AAP\u2019s mission is to provide support and customized solutions for independent and community pharmacies to enhance profitability, streamline operations, and improve the quality of patient care.",
+    "vision": "Helping independent pharmacies thrive in a competitive healthcare market.",
+    "story": "American Associated Pharmacies, or AAP, is a member-owned cooperative that supports independent and community pharmacies. AAP was formed in 2009 through the joining of two pharmacy organizations, and API continues to operate as AAP\u2019s warehouse and distribution arm. AAP Start turns the first stretch of employment into a guided experience so new teammates can build confidence without getting buried in handbook noise.",
     "values": [
         {"name": "Customer Focus", "body": "The work should make life easier for pharmacies, teammates, and the people depending on both."},
         {"name": "Integrity", "body": "Do the right thing clearly, consistently, and without side-stepping hard conversations."},
@@ -102,22 +109,46 @@ SECTIONS = [
         slug="welcome-to-aap",
         eyebrow="Start Here",
         title="Welcome to AAP",
-        summary="Start with the big picture so the rest of AAP Start feels connected, useful, and easier to move through.",
-        purpose="This first step introduces what AAP is here to support, what AAP Start is for, and how to use the launch path without getting buried in details too early.",
+        summary="You\u2019re joining a company that supports more than 2,000 independent and community pharmacies, and every role helps that mission move forward. Whether your work is operational, administrative, customer-facing, or behind the scenes, it plays a part in helping member pharmacies stay strong, supported, and competitive.",
+        purpose="AAP Start is here to make your first stretch of onboarding clearer and easier to follow. The goal is to help you understand how AAP works, what\u2019s expected of you, where to go for help, and what to expect as you get settled in. The handbook is meant to answer many of your early questions and give you a foundation for working at AAP.",
         focuses=["Who AAP supports", "What AAP Start is for", "Where questions go"],
         essentials=[
-            ("AAP supports independent community pharmacies", "The company exists to help independent pharmacies stay strong through practical programs, operational help, and dependable service."),
-            ("AAP Start is a guide, not a document dump", "The launch path is sequenced on purpose so each step builds context instead of dropping everything on you at once."),
-            ("You are not expected to figure everything out alone", "Questions are part of onboarding. The goal is to know where to look and who to ask when something needs real context."),
+            ("Who AAP is", "American Associated Pharmacies, or AAP, is a member-owned cooperative that supports independent and community pharmacies. AAP was formed in 2009 through the joining of two pharmacy organizations, and API continues to operate as AAP\u2019s warehouse and distribution arm."),
+            ("Mission", "AAP\u2019s mission is to provide support and customized solutions for independent and community pharmacies to enhance profitability, streamline operations, and improve the quality of patient care."),
+            ("Vision and values", "AAP\u2019s vision is helping independent pharmacies thrive in a competitive healthcare market. The values\u2014customer focus, integrity, respect, excellence, and ownership\u2014are meant to show up in day-to-day behavior."),
         ],
         policy_areas=[
-            ("Company context", [("What AAP is here to do", "AAP supports independent community pharmacies with practical help that keeps service, operations, and relationships steady."), ("Why the work matters", "Every role contributes to how reliably AAP supports customers, teammates, and the pharmacies depending on both.")]),
-            ("Using AAP Start well", [("Follow the path in order", "The launch modules are arranged to give you context first, then systems, expectations, support, and what to expect next."), ("Keep it practical", "Use the portal to understand the basics, keep your questions organized, and come back when you need a quick reset.")]),
+            ("Who AAP is", [
+                ("What AAP supports", "American Associated Pharmacies, or AAP, is a member-owned cooperative that supports independent and community pharmacies."),
+                ("Where API fits", "AAP was formed in 2009 through the joining of two pharmacy organizations. API continues to operate as AAP\u2019s warehouse and distribution arm."),
+            ]),
+            ("Using AAP Start", [
+                ("The right goal for day one", "You are not expected to memorize everything on day one. The goal is to help you get oriented, know the basics, and know where to look when you need a refresher."),
+            ]),
         ],
-        actions=["Use this module to get your bearings before you chase details.", "Keep a short list of questions for your manager or HR as you move through the path.", "Come back to AAP Start when you need a clear refresher instead of guessing."],
-        escalation=["Use HR when a question becomes specific to your benefits, records, leave, or another employee situation.", "Use your manager when you need role or team context that the launch path is not meant to cover.", "Escalate sensitive concerns instead of relying on assumptions or side conversations."],
+        actions=[
+            "Understand the basics of working at AAP.",
+            "Learn where key tools and systems live.",
+            "Get a clear overview of important expectations and policies.",
+            "Know where to go for help.",
+            "Feel more confident in your first 90 days.",
+        ],
+        escalation=[
+            "For general onboarding, policy, benefits, or employee-record questions, contact Nicole Thornton, HR Manager.",
+            "For higher-level escalation, contact Brandy Hooper, VP of HR.",
+            "Your supervisor is also an important first point of contact for day-to-day support.",
+        ],
         acknowledgment_title="Ready for the path",
         acknowledgment_statement="I understand what AAP Start is for, what AAP exists to support, and where to go when a question needs real context.",
+        chapter_intros=[
+            "Get the orientation anchor first: what AAP Start is for, what AAP does, and how support is delivered.",
+            "Understand who API is, what API does, and how API references fit with AAP language in this launch experience.",
+            "Use this page as a working guide for how to move through AAP Start and where to route questions in real situations.",
+        ],
+        context_sidebar=("Where API fits", [
+            "In this launch onboarding experience, company identity is centered on American Associated Pharmacies (AAP). API appears as a historical identity reference connected to that same support mission.",
+            "When API is referenced, use the same operating context covered in this module: practical programs, operational help, and dependable service for independent community pharmacies.",
+        ]),
     ),
     build_section(
         section_id="how-we-show-up",

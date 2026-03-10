@@ -33,6 +33,8 @@ export type Section = {
   actions: string[];
   escalation: string[];
   acknowledgment: Acknowledgment;
+  chapterIntros?: string[];
+  contextSidebar?: { title: string; body: string[] };
 };
 
 export type ResourceItem = {

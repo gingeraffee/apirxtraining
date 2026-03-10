@@ -352,7 +352,6 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
         {kind !== "overview" && activeSection && (
           <SectionScreen
             section={activeSection}
-            organization={experience.organization}
             nextSection={contextNextSection}
             isAcknowledged={acknowledgedSections.has(activeSection.slug)}
             selections={checkedItems[activeSection.slug] ?? []}
@@ -382,7 +381,6 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
 
 type SectionProps = {
   section: Section;
-  organization: ExperienceContent["organization"];
   nextSection: Section | null;
   isAcknowledged: boolean;
   selections: boolean[];
@@ -391,7 +389,7 @@ type SectionProps = {
   isPending: boolean;
 };
 
-function SectionScreen({ section, organization, nextSection, isAcknowledged, selections, onToggle, onAcknowledge, isPending }: SectionProps) {
+function SectionScreen({ section, nextSection, isAcknowledged, selections, onToggle, onAcknowledge, isPending }: SectionProps) {
   const showChecklist = section.acknowledgment.mode !== "manual" && section.acknowledgment.items.length > 0;
   const allChecked = !showChecklist || (selections.length === section.acknowledgment.items.length && selections.every(Boolean));
   const checkedCount = selections.filter(Boolean).length;
@@ -466,7 +464,7 @@ function SectionScreen({ section, organization, nextSection, isAcknowledged, sel
           <section className="lesson-chapter lesson-chapter--orientation lesson-chapter-surface welcome-body-section welcome-big-picture-section" id="section-big-picture">
             <div className="lesson-chapter-head">
               <h2>Big Picture</h2>
-              <p className="lesson-chapter-intro">Get the orientation anchor first: what AAP Start is for, what AAP does, and how support is delivered.</p>
+              <p className="lesson-chapter-intro">{section.chapterIntros?.[0]}</p>
             </div>
             <ul className="plain-list welcome-orientation-list">
               {section.essentials.map((item) => (
@@ -480,7 +478,7 @@ function SectionScreen({ section, organization, nextSection, isAcknowledged, sel
           <section className="lesson-chapter lesson-chapter--reference lesson-chapter-surface welcome-body-section" id="section-context">
             <div className="lesson-chapter-head">
               <h2>AAP and API Context</h2>
-              <p className="lesson-chapter-intro">Understand who API is, what API does, and how API references fit with AAP language in this launch experience.</p>
+              <p className="lesson-chapter-intro">{section.chapterIntros?.[1]}</p>
             </div>
             <div className="welcome-context-layout">
               <article className="welcome-context-block">
@@ -494,24 +492,21 @@ function SectionScreen({ section, organization, nextSection, isAcknowledged, sel
                   ))}
                 </dl>
               </article>
-              <article className="welcome-context-block welcome-context-block--api">
-                <h3>Where API fits</h3>
-                <p>
-                  In this launch onboarding experience, company identity is centered on {organization.companyName} ({organization.companyShortName}).
-                  API appears as a historical identity reference connected to that same support mission.
-                </p>
-                <p>
-                  When API is referenced, use the same operating context covered in this module:
-                  practical programs, operational help, and dependable service for independent community pharmacies.
-                </p>
-              </article>
+              {section.contextSidebar && (
+                <article className="welcome-context-block welcome-context-block--api">
+                  <h3>{section.contextSidebar.title}</h3>
+                  {section.contextSidebar.body.map((para, i) => (
+                    <p key={i}>{para}</p>
+                  ))}
+                </article>
+              )}
             </div>
           </section>
 
           <section className="lesson-chapter lesson-chapter--application lesson-chapter-surface welcome-body-section" id="section-practical-guidance">
             <div className="lesson-chapter-head">
               <h2>What This Means for You</h2>
-              <p className="lesson-chapter-intro">Use this page as a working guide for how to move through AAP Start and where to route questions in real situations.</p>
+              <p className="lesson-chapter-intro">{section.chapterIntros?.[2]}</p>
             </div>
             <div className="welcome-practical-grid">
               <article className="welcome-practical-block">

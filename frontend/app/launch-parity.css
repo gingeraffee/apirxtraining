@@ -2791,3 +2791,315 @@
     grid-template-columns: 1fr;
   }
 }
+/* Focused welcome polish: rail identity, module map, and opening section composition */
+.portal-shell,
+.portal-shell--detail {
+  grid-template-columns: 292px minmax(0, 1fr);
+}
+
+.portal-rail {
+  gap: 10px;
+}
+
+.portal-rail .brand-block {
+  padding: 16px 15px 14px;
+}
+
+.portal-rail .portal-brand-lockup {
+  gap: 14px;
+}
+
+.portal-rail .portal-lockup-logo {
+  max-width: 184px;
+  filter: drop-shadow(0 16px 30px rgba(5, 14, 28, 0.2));
+}
+
+.portal-rail .portal-brand-caption {
+  gap: 0.24rem;
+  padding: 0;
+  margin-top: 0;
+  border-top: 0;
+}
+
+.portal-rail .portal-brand-caption-label {
+  color: rgba(160, 204, 236, 0.56);
+  font-size: 0.53rem;
+  letter-spacing: 0.22em;
+}
+
+.portal-rail .portal-brand-product-name {
+  margin: 0;
+  color: #f5fbff;
+  font-family: var(--font-display);
+  font-size: 1.26rem;
+  font-weight: 760;
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+}
+
+.portal-rail .portal-brand-caption-subline {
+  color: rgba(188, 214, 236, 0.72);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.portal-stage--detail .portal-page--welcome {
+  width: min(100%, 1044px);
+  gap: clamp(16px, 1.9vw, 24px);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-hero {
+  padding: 28px 32px 24px;
+  border-radius: 22px;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-hero .section-hero-copy {
+  max-width: 50rem;
+  gap: 0.46rem;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-hero h1 {
+  max-width: 14ch;
+  font-size: clamp(1.96rem, 2.32vw, 2.62rem);
+  line-height: 0.98;
+  margin-bottom: 0.26rem;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-hero .lead {
+  max-width: 46rem;
+  font-size: 0.98rem;
+  line-height: 1.56;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-hero .purpose-line {
+  max-width: 42rem;
+  font-size: 0.85rem;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-nav {
+  gap: 12px;
+  padding: 14px 16px 15px;
+  border-radius: 18px;
+  border-color: rgba(115, 145, 175, 0.18);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 251, 255, 0.9));
+  box-shadow: 0 10px 24px rgba(8, 20, 44, 0.05);
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-label {
+  margin: 0;
+  color: #47647d;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-meta {
+  margin: 0;
+  color: #72879b;
+  font-size: 0.74rem;
+  line-height: 1.3;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-track {
+  gap: 8px;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-track::before {
+  left: 14px;
+  right: 14px;
+  top: 10px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(128, 156, 183, 0.34), rgba(128, 156, 183, 0.12));
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link {
+  gap: 6px;
+  min-height: 58px;
+  padding: 8px 10px 7px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(248, 251, 255, 0.16));
+  transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease, box-shadow 180ms ease;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link::after {
+  left: 10px;
+  right: 10px;
+  bottom: 0;
+  height: 2px;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link:hover {
+  border-color: rgba(79, 220, 255, 0.16);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(247, 252, 255, 0.74));
+  box-shadow: 0 8px 18px rgba(8, 20, 44, 0.06);
+  transform: translateY(-1px);
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-step {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #6d7f91;
+  box-shadow: 0 0 0 4px rgba(110, 136, 161, 0.09);
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-title {
+  color: #5d7388;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.28;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link--active {
+  border-color: rgba(79, 220, 255, 0.2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 250, 255, 0.92));
+  box-shadow: 0 12px 24px rgba(8, 20, 44, 0.08);
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link--active::after {
+  background: linear-gradient(90deg, rgba(79, 220, 255, 0.9), rgba(79, 220, 255, 0.28));
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link--active .lesson-flow-step {
+  background: #095f7b;
+  box-shadow: 0 0 0 3px rgba(79, 220, 255, 0.22), 0 0 0 7px rgba(79, 220, 255, 0.06);
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link--active .lesson-flow-title {
+  color: #153a53;
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link--completion {
+  background: linear-gradient(180deg, rgba(255, 249, 250, 0.84), rgba(255, 244, 246, 0.58));
+}
+
+.portal-stage--detail .portal-page--welcome .lesson-flow-link--completion .lesson-flow-step {
+  background: #8f4957;
+  box-shadow: 0 0 0 4px rgba(143, 73, 87, 0.08);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-body-section,
+.portal-stage--detail .portal-page--welcome .welcome-checkpoint-section,
+.portal-stage--detail .portal-page--welcome .welcome-completion-section {
+  border-radius: 20px;
+  border-color: rgba(16, 38, 62, 0.08);
+  box-shadow: 0 10px 26px rgba(8, 20, 44, 0.05);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-body-section {
+  padding: clamp(20px, 1.95vw, 26px);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-big-picture-section {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-foundation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-foundation-head {
+  gap: 6px;
+  align-content: start;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-foundation-panel {
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(115, 145, 175, 0.12);
+  background: linear-gradient(180deg, rgba(247, 251, 255, 0.96), rgba(241, 248, 253, 0.88));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-orientation-list {
+  margin-top: 0;
+  gap: 10px;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-orientation-list li {
+  padding: 12px 14px;
+  border: 1px solid rgba(117, 148, 178, 0.12);
+  border-left: 0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 6px 14px rgba(8, 20, 44, 0.03);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-context-layout,
+.portal-stage--detail .portal-page--welcome .welcome-practical-grid {
+  gap: 14px;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-context-block,
+.portal-stage--detail .portal-page--welcome .welcome-practical-block {
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(118, 149, 178, 0.12);
+  background: linear-gradient(180deg, rgba(250, 252, 255, 0.96), rgba(245, 249, 253, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-context-block--api {
+  padding-left: 18px;
+  border-left: 1px solid rgba(118, 149, 178, 0.12);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-practical-block--portal {
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(118, 149, 178, 0.12);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-checkpoint-section {
+  background: linear-gradient(180deg, #f8fbfe 0%, #edf5fb 100%);
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-completion-section {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+@media (max-width: 1180px) {
+  .portal-shell,
+  .portal-shell--detail {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-stage--detail .portal-page--welcome {
+    width: min(100%, 960px);
+  }
+
+  .portal-stage--detail .portal-page--welcome .welcome-foundation-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-stage--detail .portal-page--welcome .welcome-context-block--api {
+    padding-left: 18px;
+    border-left: 1px solid rgba(118, 149, 178, 0.12);
+  }
+}
+
+@media (max-width: 760px) {
+  .portal-stage--detail .portal-page--welcome .lesson-flow-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .portal-stage--detail .portal-page--welcome .lesson-flow-track {
+    gap: 6px;
+  }
+}
+

@@ -425,6 +425,10 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
       { href: "#section-checkpoint", title: "Knowledge check" },
       { href: "#section-acknowledgment", title: "Completion" },
     ];
+  const progressionLabel = isWelcomeModule ? "Welcome module map" : "Module flow";
+  const progressionMeta = isWelcomeModule
+    ? `${progressionItems.length} stops from foundation to finish`
+    : `${progressionItems.length} checkpoints in this module`;
   const welcomeSupportItems = section.policyAreas[0]?.items ?? [];
   const welcomeContextItems = section.policyAreas[1]?.items ?? [];
   const welcomeCheckpoints = [
@@ -445,6 +449,10 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
       </section>
 
       <nav className="lesson-flow-nav" aria-label="Lesson progression">
+        <div className="lesson-flow-head">
+          <p className="lesson-flow-label">{progressionLabel}</p>
+          <p className="lesson-flow-meta">{progressionMeta}</p>
+        </div>
         <div className="lesson-flow-track">
           {progressionItems.map((item, index) => (
             <a
@@ -462,17 +470,21 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
       {isWelcomeModule ? (
         <>
           <section className="lesson-chapter lesson-chapter--orientation lesson-chapter-surface welcome-body-section welcome-big-picture-section" id="section-big-picture">
-            <div className="lesson-chapter-head">
-              <h2>The Foundation</h2>
-              <p className="lesson-chapter-intro">{section.chapterIntros?.[0]}</p>
+            <div className="welcome-foundation-layout">
+              <div className="lesson-chapter-head welcome-foundation-head">
+                <h2>The Foundation</h2>
+                <p className="lesson-chapter-intro">{section.chapterIntros?.[0]}</p>
+              </div>
+              <div className="welcome-foundation-panel">
+                <ul className="plain-list welcome-orientation-list">
+                  {section.essentials.map((item) => (
+                    <li key={item.title}>
+                      <strong>{item.title}.</strong> {item.body}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <ul className="plain-list welcome-orientation-list">
-              {section.essentials.map((item) => (
-                <li key={item.title}>
-                  <strong>{item.title}.</strong> {item.body}
-                </li>
-              ))}
-            </ul>
           </section>
 
           <section className="lesson-chapter lesson-chapter--reference lesson-chapter-surface welcome-body-section" id="section-context">

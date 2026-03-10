@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 
 type PortalBrandLockupProps = {
   className?: string;
@@ -22,9 +22,11 @@ export function PortalBrandLockup({
         className="brand-logo-img portal-lockup-logo"
       />
       <div className="portal-brand-caption">
-        <span className="portal-brand-caption-label">AAP Start</span>
-        <span className="portal-brand-caption-subline">Onboarding Portal</span>
+        <span className="portal-brand-caption-label">Employee onboarding portal</span>
+        <strong className="portal-brand-product-name">AAP Start</strong>
+        <span className="portal-brand-caption-subline">American Associated Pharmacies</span>
       </div>
     </div>
   );
 }
+

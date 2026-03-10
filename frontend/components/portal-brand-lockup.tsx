@@ -21,9 +21,10 @@ export function PortalBrandLockup({
         priority={priority}
         className="brand-logo-img portal-lockup-logo"
       />
-      <span className="portal-brand-caption-label" aria-label="AAP Start">
-        AAP Start
-      </span>
+      <div className="portal-brand-caption">
+        <span className="portal-brand-caption-label">AAP Start</span>
+        <span className="portal-brand-caption-subline">Onboarding Portal</span>
+      </div>
     </div>
   );
 }

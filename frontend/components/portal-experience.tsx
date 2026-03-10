@@ -411,8 +411,8 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
   const completionSectionHref = isWelcomeModule ? "#section-completion" : "#section-acknowledgment";
   const progressionItems = isWelcomeModule
     ? [
-      { href: "#section-big-picture", title: "Big Picture" },
-      { href: "#section-context", title: "AAP and API Context" },
+      { href: "#section-big-picture", title: "The Foundation" },
+      { href: "#section-context", title: "The Organization" },
       { href: "#section-practical-guidance", title: "What This Means for You" },
       { href: "#section-checkpoint", title: "Knowledge Check" },
       { href: "#section-completion", title: "Completion" },
@@ -428,7 +428,7 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
   const welcomeSupportItems = section.policyAreas[0]?.items ?? [];
   const welcomeContextItems = section.policyAreas[1]?.items ?? [];
   const welcomeCheckpoints = [
-    { title: "Big picture clarity", description: "Can you explain what AAP Start is for and what AAP is here to support?" },
+    { title: "Foundation clarity", description: "Can you explain what AAP Start is for and what AAP is here to support?" },
     { title: "Support model recall", description: "Can you describe how AAP serves pharmacies and where API references fit?" },
     { title: "Next-step confidence", description: "Can you name what to do next and when to involve your manager or HR?" },
   ];
@@ -463,7 +463,7 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
         <>
           <section className="lesson-chapter lesson-chapter--orientation lesson-chapter-surface welcome-body-section welcome-big-picture-section" id="section-big-picture">
             <div className="lesson-chapter-head">
-              <h2>Big Picture</h2>
+              <h2>The Foundation</h2>
               <p className="lesson-chapter-intro">{section.chapterIntros?.[0]}</p>
             </div>
             <ul className="plain-list welcome-orientation-list">
@@ -477,7 +477,7 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
 
           <section className="lesson-chapter lesson-chapter--reference lesson-chapter-surface welcome-body-section" id="section-context">
             <div className="lesson-chapter-head">
-              <h2>AAP and API Context</h2>
+              <h2>The Organization</h2>
               <p className="lesson-chapter-intro">{section.chapterIntros?.[1]}</p>
             </div>
             <div className="welcome-context-layout">

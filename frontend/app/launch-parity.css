@@ -2531,7 +2531,7 @@
   color: var(--text-strong);
 }
 
-/* ── Big Picture ── */
+/* ── The Foundation ── */
 .portal-stage--detail .portal-page--welcome .welcome-big-picture-copy {
   max-width: none;
   display: grid;
@@ -2549,22 +2549,22 @@
 .portal-stage--detail .portal-page--welcome .welcome-orientation-list li {
   margin: 0;
   padding-left: 12px;
-  border-left: 2px solid rgba(32, 92, 136, 0.2);
+  border-left: 2px solid rgba(129, 158, 186, 0.22);
   max-width: none;
 }
 
-/* ── AAP and API Context ── */
+/* ── The Organization ── */
 .portal-stage--detail .portal-page--welcome .welcome-context-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: 18px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .portal-stage--detail .portal-page--welcome .welcome-context-block {
   display: grid;
   align-content: start;
-  gap: 10px;
+  gap: 8px;
 }
 
 .portal-stage--detail .portal-page--welcome .welcome-context-block h3,
@@ -2594,7 +2594,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  margin-top: 6px;
+  margin-top: 10px;
 }
 
 .portal-stage--detail .portal-page--welcome .welcome-practical-block {
@@ -2614,11 +2614,23 @@
 
 /* ── Knowledge Check: light surface checkpoint ── */
 .portal-stage--detail .portal-page--welcome .welcome-checkpoint-section {
-  padding: clamp(16px, 1.6vw, 22px);
+  padding: clamp(18px, 1.8vw, 24px);
   border-radius: 18px;
-  border: 1px solid rgba(42, 100, 150, 0.18);
-  background: linear-gradient(180deg, #eef6fd 0%, #e2eef8 100%);
-  box-shadow: 0 8px 28px rgba(8, 20, 44, 0.06);
+  border: 1px solid rgba(14, 35, 58, 0.08);
+  background: linear-gradient(180deg, #f4f9fd 0%, #eaf3f9 100%);
+  box-shadow: 0 6px 20px rgba(8, 20, 44, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.portal-stage--detail .portal-page--welcome .welcome-checkpoint-section::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(79, 180, 220, 0.45), rgba(79, 180, 220, 0.08));
 }
 
 .portal-stage--detail .portal-page--welcome .lesson-knowledge-shell--welcome {

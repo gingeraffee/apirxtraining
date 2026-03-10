@@ -340,10 +340,10 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
       </aside>
 
       <main className={`main-stage portal-stage${kind === "overview" ? "" : " portal-stage--detail"}`}>
-        {kind !== "overview" && activeSection?.slug !== "welcome-to-aap" && (
+        {kind !== "overview" && activeSection && (
           <header className="topbar portal-topbar">
             <div>
-              {contextEyebrow && contextEyebrow !== "Start Here" && <p className="section-label">{contextEyebrow}</p>}
+              {contextEyebrow && <p className="section-label">{contextEyebrow}</p>}
               <h1 className="topbar-title">{contextTitle}</h1>
             </div>
           </header>
@@ -401,7 +401,6 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
   const showChecklist = section.acknowledgment.mode !== "manual" && section.acknowledgment.items.length > 0;
   const allChecked = !showChecklist || (selections.length === section.acknowledgment.items.length && selections.every(Boolean));
   const checkedCount = selections.filter(Boolean).length;
-  const isWelcomeModule = section.slug === "welcome-to-aap";
   const completionStatus = isAcknowledged
     ? "Completed"
     : showChecklist
@@ -410,40 +409,35 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
   const completionStatusNote = isAcknowledged
     ? "Saved and ready whenever you need a quick refresh."
     : "Move section by section, then finish at the end.";
-  const checkpointDescription = isWelcomeModule
-    ? "Before you finish Welcome to AAP, confirm the core orientation points are clear in your own words."
-    : `Pause on the key ideas from ${section.title} before you finish this module.`;
-  const checkpointNote = isWelcomeModule
-    ? "Take a moment to reflect on these points before moving on."
-    : "Pause and make sure these ideas are clear before you continue.";
-  const completionSectionHref = isWelcomeModule ? "#section-completion" : "#section-acknowledgment";
-  const progressionItems = isWelcomeModule
-    ? [
-      { href: "#section-big-picture", title: "Big picture" },
-      { href: "#section-context", title: "AAP and API" },
-      { href: "#section-practical-guidance", title: "Using AAP Start" },
-      { href: "#section-checkpoint", title: "Knowledge Check" },
-      { href: "#section-completion", title: "Completion" },
-    ]
-    : [
-      { href: "#section-orientation", title: "Orientation" },
-      { href: "#section-takeaways", title: "What matters most" },
-      { href: "#section-policy", title: "Practical reference" },
-      { href: "#section-application", title: "Use this in practice" },
-      { href: "#section-checkpoint", title: "Knowledge check" },
-      { href: "#section-acknowledgment", title: "Completion" },
-    ];
-  const progressionLabel = isWelcomeModule ? "Welcome module map" : "Module flow";
-  const progressionMeta = isWelcomeModule
-    ? `${progressionItems.length} stops through the welcome path`
-    : `${progressionItems.length} checkpoints in this module`;
-  const welcomeSupportItems = section.policyAreas[0]?.items ?? [];
-  const welcomeContextItems = section.policyAreas[1]?.items ?? [];
-  const welcomeCheckpoints = [
-    { title: "Foundation clarity", description: "Can you explain what AAP Start is for and what AAP is here to support?" },
-    { title: "Support model recall", description: "Can you describe how AAP serves pharmacies and where API references fit?" },
-    { title: "Next-step confidence", description: "Can you name what to do next and when to involve your manager or HR?" },
+  const checkpointDescription = `Pause on the key ideas from ${section.title} before you finish this module.`;
+  const checkpointNote = "Pause and make sure these ideas are clear before you continue.";
+  const completionSectionHref = "#section-acknowledgment";
+  const progressionItems = [
+    { href: "#section-orientation", title: "Orientation" },
+    { href: "#section-takeaways", title: "What matters most" },
+    { href: "#section-policy", title: "Practical reference" },
+    { href: "#section-application", title: "Use this in practice" },
+    { href: "#section-checkpoint", title: "Knowledge check" },
+    { href: "#section-acknowledgment", title: "Completion" },
   ];
+  const progressionLabel = "Module flow";
+  const progressionMeta = `${progressionItems.length} checkpoints in this module`;
+  const referenceAreas = [
+    ...section.policyAreas,
+    ...(section.contextSidebar
+      ? [{
+        title: section.contextSidebar.title,
+        items: section.contextSidebar.body.map((body, index) => ({
+          label: index === 0 ? "Launch context" : `Reference note ${index + 1}`,
+          body,
+        })),
+      }]
+      : []),
+  ];
+  const knowledgeCheckpoints = section.focuses.slice(0, 3).map((focus, index) => ({
+    title: focus,
+    description: section.essentials[index]?.body ?? "Pause and confirm how this idea should shape your next step at AAP.",
+  }));
 
   const supportContact = contacts.find((c) => c.id === track.supportContactId) ?? null;
 
@@ -452,19 +446,13 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
     : `${section.title}: ${section.summary}`;
 
   return (
-    <div className={`section-page portal-page portal-page--detail portal-page--section${isWelcomeModule ? " portal-page--welcome" : ""}`}>
-      <section className={`page-hero single-focus-hero section-hero section-hero--focused section-hero--cinematic${isWelcomeModule ? " welcome-hero" : ""}`}>
+    <div className="section-page portal-page portal-page--detail portal-page--section">
+      <section className="page-hero single-focus-hero section-hero section-hero--focused">
         <div className="section-hero-copy">
           <p className="section-label">{section.eyebrow}</p>
           <h1>{section.title}</h1>
           <p className="lead">{section.summary}</p>
           <p className="purpose-line">{section.purpose}</p>
-          {isWelcomeModule && (
-            <div className="welcome-hero-meta" aria-label="Welcome module details">
-              <span className="welcome-hero-meta-chip">{`${progressionItems.length}-part welcome module`}</span>
-              <span className="welcome-hero-meta-chip welcome-hero-meta-chip--subtle">{showChecklist ? `${section.acknowledgment.items.length} completion checks` : "Manual completion"}</span>
-            </div>
-          )}
         </div>
       </section>
 
@@ -489,277 +477,148 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
             </div>
           </nav>
 
-          {isWelcomeModule ? (
-            <>
-              <section className="lesson-chapter lesson-chapter--orientation lesson-chapter-surface welcome-body-section welcome-big-picture-section" id="section-big-picture">
-                <div className="welcome-foundation-layout">
-                  <div className="lesson-chapter-head welcome-foundation-head">
-                    <h2>Start with the big picture</h2>
-                    <p className="lesson-chapter-intro">{section.chapterIntros?.[0]}</p>
-                  </div>
-                  <div className="welcome-foundation-panel">
-                    <ul className="plain-list welcome-orientation-list">
-                      {section.essentials.map((item) => (
-                        <li key={item.title}>
-                          <strong>{item.title}.</strong> {item.body}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+          <section className="content-panel quiet-content-panel lesson-chapter lesson-chapter--orientation lesson-chapter-surface" id="section-orientation">
+            <div className="lesson-chapter-head">
+              <p className="section-label">Section 1</p>
+              <h2>Start with what this step is here to teach</h2>
+            </div>
+            <p className="lesson-chapter-intro">{section.purpose}</p>
+
+            <div className="lesson-orientation-grid" aria-label="Module orientation details">
+              <article className="lesson-orientation-card lesson-orientation-card--focus lesson-orientation-card--primary">
+                <p className="section-label">Focus areas</p>
+                <div className="focus-list">
+                  {section.focuses.map((focus) => <span key={focus} className="focus-pill">{focus}</span>)}
                 </div>
-              </section>
-
-              <section className="lesson-chapter lesson-chapter--reference lesson-chapter-surface welcome-body-section" id="section-context">
-                <div className="lesson-chapter-head">
-                  <h2>AAP and API in this launch experience</h2>
-                  <p className="lesson-chapter-intro">{section.chapterIntros?.[1]}</p>
-                </div>
-                <div className="welcome-context-layout">
-                  <article className="welcome-context-block">
-                    <h3>{section.policyAreas[0]?.title ?? "Company context"}</h3>
-                    <dl className="policy-list">
-                      {welcomeSupportItems.map((item) => (
-                        <div key={item.label} className="policy-row">
-                          <dt>{item.label}</dt>
-                          <dd>{item.body}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </article>
-                  {section.contextSidebar && (
-                    <article className="welcome-context-block welcome-context-block--api">
-                      <h3>{section.contextSidebar.title}</h3>
-                      {section.contextSidebar.body.map((para, i) => (
-                        <p key={i}>{para}</p>
-                      ))}
-                    </article>
-                  )}
-                </div>
-              </section>
-
-              <section className="lesson-chapter lesson-chapter--application lesson-chapter-surface welcome-body-section" id="section-practical-guidance">
-                <div className="lesson-chapter-head">
-                  <h2>Using AAP Start</h2>
-                  <p className="lesson-chapter-intro">{section.chapterIntros?.[2]}</p>
-                </div>
-                <div className="welcome-practical-grid">
-                  <article className="welcome-practical-block">
-                    <h3>What this path should give you</h3>
-                    <ul className="plain-list">
-                      {section.actions.map((item) => <li key={item}>{item}</li>)}
-                    </ul>
-                  </article>
-                  <article className="welcome-practical-block">
-                    <h3>Where questions should go</h3>
-                    <ul className="plain-list">
-                      {section.escalation.map((item) => <li key={item}>{item}</li>)}
-                    </ul>
-                  </article>
-                </div>
-                {welcomeContextItems.length > 0 && (
-                  <article className="welcome-practical-block welcome-practical-block--portal">
-                    <h3>{welcomeContextItems[0]?.label ?? "Day-one orientation"}</h3>
-                    <ul className="plain-list">
-                      {welcomeContextItems.map((item) => (
-                        <li key={item.label}>{item.body}</li>
-                      ))}
-                    </ul>
-                  </article>
-                )}
-              </section>
-
-              <section className="lesson-chapter lesson-chapter--checkpoint welcome-checkpoint-section" id="section-checkpoint">
-                <ModuleKnowledgeCheckShell
-                  eyebrow="Knowledge check"
-                  title="Knowledge Check"
-                  description={checkpointDescription}
-                  note={checkpointNote}
-                  checkpoints={welcomeCheckpoints}
-                  className="lesson-knowledge-shell lesson-knowledge-shell--welcome"
-                />
-              </section>
-
-              <section className="lesson-chapter lesson-chapter--completion welcome-completion-section" id="section-completion">
-                <div className="lesson-chapter-head lesson-chapter-head--completion">
-                  <h2>{section.acknowledgment.title}</h2>
-                </div>
-                <p>{section.acknowledgment.statement}</p>
-
-                {showChecklist && (
-                  <div className="checklist-list">
-                    {section.acknowledgment.items.map((item, index) => (
-                      <button
-                        key={item}
-                        className={selections[index] ? "check-item active" : "check-item"}
-                        onClick={() => onToggle(section.slug, index)}
-                        type="button"
-                      >
-                        <span className="check-item-indicator" aria-hidden="true">{selections[index] ? <CheckIcon /> : ""}</span>
-                        <strong>{item}</strong>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                <button
-                  className={`primary-action${isAcknowledged ? " primary-action--done" : ""}`}
-                  disabled={isAcknowledged || !allChecked || isPending}
-                  onClick={() => !isAcknowledged && onAcknowledge(section)}
-                  aria-disabled={isAcknowledged}
-                  type="button"
-                >
-                  {isAcknowledged ? "Section complete" : isPending ? "Saving..." : "Mark module complete"}
-                </button>
-
+              </article>
+              <div className="lesson-orientation-side">
+                <article className="lesson-orientation-card lesson-orientation-card--status lesson-orientation-card--secondary">
+                  <p className="section-label">Completion status</p>
+                  <strong>{completionStatus}</strong>
+                  <p>{completionStatusNote}</p>
+                </article>
                 {nextSection && (
-                  <p className="finish-next-note">
-                    Next after this: <Link className="module-next-link" href={`/modules/${nextSection.slug}`}>{nextSection.title}</Link>
-                  </p>
-                )}
-              </section>
-            </>
-          ) : (
-            <>
-              <section className="content-panel quiet-content-panel lesson-chapter lesson-chapter--orientation lesson-chapter-surface" id="section-orientation">
-                <div className="lesson-chapter-head">
-                  <p className="section-label">Section 1</p>
-                  <h2>Start with what this step is here to teach</h2>
-                </div>
-                <p className="lesson-chapter-intro">{section.purpose}</p>
-
-                <div className="lesson-orientation-grid" aria-label="Module orientation details">
-                  <article className="lesson-orientation-card lesson-orientation-card--focus lesson-orientation-card--primary">
-                    <p className="section-label">Focus areas</p>
-                    <div className="focus-list">
-                      {section.focuses.map((focus) => <span key={focus} className="focus-pill">{focus}</span>)}
-                    </div>
+                  <article className="lesson-orientation-card lesson-orientation-card--next lesson-orientation-card--secondary">
+                    <p className="section-label">Next after this</p>
+                    <strong>{nextSection.title}</strong>
+                    <p>Visible next so the path stays clear once this section is complete.</p>
                   </article>
-                  <div className="lesson-orientation-side">
-                    <article className="lesson-orientation-card lesson-orientation-card--status lesson-orientation-card--secondary">
-                      <p className="section-label">Completion status</p>
-                      <strong>{completionStatus}</strong>
-                      <p>{completionStatusNote}</p>
-                    </article>
-                    {nextSection && (
-                      <article className="lesson-orientation-card lesson-orientation-card--next lesson-orientation-card--secondary">
-                        <p className="section-label">Next after this</p>
-                        <strong>{nextSection.title}</strong>
-                        <p>Visible next so the path stays clear once this section is complete.</p>
-                      </article>
-                    )}
-                  </div>
-                </div>
-              </section>
+                )}
+              </div>
+            </div>
+          </section>
 
-              <section className="section-band takeaway-band lesson-chapter lesson-chapter--takeaways lesson-chapter-surface" id="section-takeaways">
-                <div className="section-band-head lesson-chapter-head">
-                  <p className="section-label">Section 2</p>
-                  <h2>What matters most in this step</h2>
-                </div>
-                <div className="essential-grid compact-takeaways">
-                  {section.essentials.map((item) => (
-                    <article key={item.title} className="essential-card">
-                      <strong>{item.title}</strong>
-                      <p>{item.body}</p>
-                    </article>
-                  ))}
-                </div>
-              </section>
+          <section className="section-band takeaway-band lesson-chapter lesson-chapter--takeaways lesson-chapter-surface" id="section-takeaways">
+            <div className="section-band-head lesson-chapter-head">
+              <p className="section-label">Section 2</p>
+              <h2>What matters most in this step</h2>
+            </div>
+            {section.chapterIntros?.[0] && <p className="lesson-chapter-intro">{section.chapterIntros[0]}</p>}
+            <div className="essential-grid compact-takeaways">
+              {section.essentials.map((item) => (
+                <article key={item.title} className="essential-card">
+                  <strong>{item.title}</strong>
+                  <p>{item.body}</p>
+                </article>
+              ))}
+            </div>
+          </section>
 
-              <section className="section-band policy-band lesson-chapter lesson-chapter--reference lesson-chapter-surface" id="section-policy">
-                <div className="section-band-head lesson-chapter-head">
-                  <p className="section-label">Section 3</p>
-                  <h2>Use this as your practical reference</h2>
-                </div>
-                <div className="policy-area-list">
-                  {section.policyAreas.map((area) => (
-                    <article key={area.title} className="policy-area">
-                      <h3>{area.title}</h3>
-                      <dl className="policy-list">
-                        {area.items.map((item) => (
-                          <div key={item.label} className="policy-row">
-                            <dt>{item.label}</dt>
-                            <dd>{item.body}</dd>
-                          </div>
-                        ))}
-                      </dl>
-                    </article>
-                  ))}
-                </div>
-              </section>
-
-              <section className="lesson-chapter lesson-chapter--application lesson-chapter-surface" id="section-application">
-                <div className="lesson-chapter-head">
-                  <p className="section-label">Section 4</p>
-                  <h2>Use this in practice</h2>
-                </div>
-                <div className="content-columns section-support-grid lesson-action-grid">
-                  <div className="content-panel quiet-content-panel">
-                    <p className="section-label">What to do</p>
-                    <ul className="plain-list">
-                      {section.actions.map((item) => <li key={item}>{item}</li>)}
-                    </ul>
-                  </div>
-                  <div className="content-panel warning-panel quiet-content-panel">
-                    <p className="section-label">Escalate when</p>
-                    <ul className="plain-list">
-                      {section.escalation.map((item) => <li key={item}>{item}</li>)}
-                    </ul>
-                  </div>
-                </div>
-              </section>
-
-              <section className="lesson-chapter lesson-chapter--checkpoint" id="section-checkpoint">
-                <ModuleKnowledgeCheckShell
-                  eyebrow="Knowledge check"
-                  title={`Pause here before completing ${section.title}`}
-                  description={checkpointDescription}
-                  note={checkpointNote}
-                  className="lesson-knowledge-shell"
-                />
-              </section>
-
-              <section className="content-panel acknowledgment-panel lesson-chapter lesson-chapter--completion lesson-chapter-surface" id="section-acknowledgment">
-                <div className="lesson-chapter-head lesson-chapter-head--completion">
-                  <p className="section-label">Section 6</p>
-                  <h2>{section.acknowledgment.title}</h2>
-                </div>
-                <p>{section.acknowledgment.statement}</p>
-
-                {showChecklist && (
-                  <div className="checklist-list">
-                    {section.acknowledgment.items.map((item, index) => (
-                      <button
-                        key={item}
-                        className={selections[index] ? "check-item active" : "check-item"}
-                        onClick={() => onToggle(section.slug, index)}
-                        type="button"
-                      >
-                        <span className="check-item-indicator" aria-hidden="true">{selections[index] ? <CheckIcon /> : ""}</span>
-                        <strong>{item}</strong>
-                      </button>
+          <section className="section-band policy-band lesson-chapter lesson-chapter--reference lesson-chapter-surface" id="section-policy">
+            <div className="section-band-head lesson-chapter-head">
+              <p className="section-label">Section 3</p>
+              <h2>Use this as your practical reference</h2>
+            </div>
+            {section.chapterIntros?.[1] && <p className="lesson-chapter-intro">{section.chapterIntros[1]}</p>}
+            <div className="policy-area-list">
+              {referenceAreas.map((area) => (
+                <article key={area.title} className="policy-area">
+                  <h3>{area.title}</h3>
+                  <dl className="policy-list">
+                    {area.items.map((item) => (
+                      <div key={item.label} className="policy-row">
+                        <dt>{item.label}</dt>
+                        <dd>{item.body}</dd>
+                      </div>
                     ))}
-                  </div>
-                )}
+                  </dl>
+                </article>
+              ))}
+            </div>
+          </section>
 
-                <button
-                  className="primary-action"
-                  disabled={isAcknowledged || !allChecked || isPending}
-                  onClick={() => !isAcknowledged && onAcknowledge(section)}
-                  aria-disabled={isAcknowledged}
-                  type="button"
-                >
-                  {isAcknowledged ? "Section complete" : isPending ? "Saving..." : "Mark module complete"}
-                </button>
+          <section className="lesson-chapter lesson-chapter--application lesson-chapter-surface" id="section-application">
+            <div className="lesson-chapter-head">
+              <p className="section-label">Section 4</p>
+              <h2>Use this in practice</h2>
+            </div>
+            {section.chapterIntros?.[2] && <p className="lesson-chapter-intro">{section.chapterIntros[2]}</p>}
+            <div className="content-columns section-support-grid lesson-action-grid">
+              <div className="content-panel quiet-content-panel">
+                <p className="section-label">What to do</p>
+                <ul className="plain-list">
+                  {section.actions.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+              <div className="content-panel warning-panel quiet-content-panel">
+                <p className="section-label">Escalate when</p>
+                <ul className="plain-list">
+                  {section.escalation.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+              </div>
+            </div>
+          </section>
 
-                {nextSection && (
-                  <p className="finish-next-note">
-                    Next after this: <Link className="module-next-link" href={`/modules/${nextSection.slug}`}>{nextSection.title}</Link>
-                  </p>
-                )}
-              </section>
-            </>
-          )}
+          <section className="lesson-chapter lesson-chapter--checkpoint" id="section-checkpoint">
+            <ModuleKnowledgeCheckShell
+              eyebrow="Knowledge check"
+              title={`Pause here before completing ${section.title}`}
+              description={checkpointDescription}
+              note={checkpointNote}
+              checkpoints={knowledgeCheckpoints}
+              className="lesson-knowledge-shell"
+            />
+          </section>
+
+          <section className="content-panel acknowledgment-panel lesson-chapter lesson-chapter--completion lesson-chapter-surface" id="section-acknowledgment">
+            <div className="lesson-chapter-head lesson-chapter-head--completion">
+              <p className="section-label">Section 6</p>
+              <h2>{section.acknowledgment.title}</h2>
+            </div>
+            <p>{section.acknowledgment.statement}</p>
+
+            {showChecklist && (
+              <div className="checklist-list">
+                {section.acknowledgment.items.map((item, index) => (
+                  <button
+                    key={item}
+                    className={selections[index] ? "check-item active" : "check-item"}
+                    onClick={() => onToggle(section.slug, index)}
+                    type="button"
+                  >
+                    <span className="check-item-indicator" aria-hidden="true">{selections[index] ? <CheckIcon /> : ""}</span>
+                    <strong>{item}</strong>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <button
+              className={`primary-action${isAcknowledged ? " primary-action--done" : ""}`}
+              disabled={isAcknowledged || !allChecked || isPending}
+              onClick={() => !isAcknowledged && onAcknowledge(section)}
+              aria-disabled={isAcknowledged}
+              type="button"
+            >
+              {isAcknowledged ? "Section complete" : isPending ? "Saving..." : "Mark module complete"}
+            </button>
+
+            {nextSection && (
+              <p className="finish-next-note">
+                Next after this: <Link className="module-next-link" href={`/modules/${nextSection.slug}`}>{nextSection.title}</Link>
+              </p>
+            )}
+          </section>
         </div>
 
         <aside className="section-context-rail" aria-label="Module context">

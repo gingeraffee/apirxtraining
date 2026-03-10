@@ -406,8 +406,8 @@ function SectionScreen({ section, nextSection, isAcknowledged, selections, onTog
     ? "Before you finish Welcome to AAP, confirm the core orientation points are clear in your own words."
     : `Pause on the key ideas from ${section.title} before you finish this module.`;
   const checkpointNote = isWelcomeModule
-    ? "This reusable checkpoint shell stays ready for future prompts while launch completion remains manual."
-    : "This launch checkpoint remains a non-interactive shell so module completion stays manual and dependable.";
+    ? "Take a moment to reflect on these points before moving on."
+    : "Pause and make sure these ideas are clear before you continue.";
   const completionSectionHref = isWelcomeModule ? "#section-completion" : "#section-acknowledgment";
   const progressionItems = isWelcomeModule
     ? [

@@ -133,10 +133,10 @@ SECTIONS = [
         eyebrow="Start Here",
         title="Welcome to AAP",
         summary="You\u2019re joining a company that supports more than 2,000 independent and community pharmacies, and every role helps that mission move forward. Whether your work is operational, administrative, customer-facing, or behind the scenes, it plays a part in helping member pharmacies stay strong, supported, and competitive.",
-        purpose="AAP Start is here to make your first stretch of onboarding clearer and easier to follow. AAP\u2019s CEO, Jon Copeland, puts it simply: every employee contributes directly to the company\u2019s growth and success. The goal of this experience is to help you understand how AAP works, what\u2019s expected of you, where to go for help, and what to expect as you get settled in.",
+        purpose="",
         focuses=["Who AAP supports", "What AAP Start is for", "Where questions go"],
         essentials=[
-            ("What AAP Start Is", "AAP Start is your onboarding guide. It is designed to make your first stretch at AAP clearer, easier to follow, and easier to complete by organizing key information, training, and next steps in one place."),
+            ("What AAP Start Is", "AAP Start is your onboarding guide. It is designed to make your first stretch at AAP clearer, easier to follow, and easier to complete by organizing key information, training, and next steps in one place.\n\nAAP\u2019s CEO, Jon Copeland, puts it simply: every employee contributes directly to the company\u2019s growth and success. The goal of this experience is to help you understand how AAP works, what\u2019s expected of you, where to go for help, and what to expect as you get settled in."),
             ("Who AAP Is", "American Associated Pharmacies, or AAP, is a member-owned cooperative that supports independent and community pharmacies. AAP was formed in 2009 through the joining of two pharmacy organizations, and API continues to operate as AAP\u2019s warehouse and distribution arm."),
             ("Core Values", "The way we work matters just as much as the work itself. \n\nAt AAP, we lead with customer focus, act with integrity, treat people with respect, aim for excellence, and take ownership of what we do."),
             ("Mission and Vision", "Mission: Provide support and customized solutions for independent and community pharmacies to enhance profitability, streamline operations, and improve the quality of patient care.\n\nVision: Help independent pharmacies thrive in a competitive healthcare market."),

@@ -1272,7 +1272,7 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
             </div>
             {supportContact && (
               <div className="compact-card-section compact-card-section--support">
-                <p className="section-label">Questions</p>
+                <p className="section-label">Your People Person</p>
                 <div className="compact-support-row">
                   <div className="compact-support-identity">
                     <strong>{supportContact.name}</strong>

@@ -12,6 +12,28 @@ def manual_acknowledgment(title: str, statement: str) -> dict[str, Any]:
     return {"mode": "manual", "title": title, "statement": statement, "items": []}
 
 
+def build_knowledge_check(
+    *,
+    intro: str,
+    questions: list[tuple[str, str, list[str], int]],
+    passing_percent: float = 1.0,
+) -> dict[str, Any]:
+    return {
+        "title": "Knowledge Check",
+        "intro": intro,
+        "passingPercent": passing_percent,
+        "questions": [
+            {
+                "id": question_id,
+                "prompt": prompt,
+                "options": options,
+                "correctOptionIndex": correct_option_index,
+            }
+            for question_id, prompt, options, correct_option_index in questions
+        ],
+    }
+
+
 def build_section(
     *,
     section_id: str,
@@ -25,6 +47,7 @@ def build_section(
     policy_areas: list[tuple[str, list[tuple[str, str]]]],
     actions: list[str],
     escalation: list[str],
+    knowledge_check: dict[str, Any],
     acknowledgment_title: str,
     acknowledgment_statement: str,
     chapter_intros: list[str] | None = None,
@@ -48,6 +71,7 @@ def build_section(
         ],
         "actions": actions,
         "escalation": escalation,
+        "knowledgeCheck": knowledge_check,
         "acknowledgment": manual_acknowledgment(acknowledgment_title, acknowledgment_statement),
     }
     if chapter_intros is not None:
@@ -139,6 +163,13 @@ SECTIONS = [
             "For higher-level escalation, contact Brandy Hooper, VP of HR.",
             "Your supervisor is also an important first point of contact for day-to-day support.",
         ],
+        knowledge_check=build_knowledge_check(
+            intro="Complete this required check before you move into the acknowledgment step.",
+            questions=[
+                ("welcome-purpose", "Which description best matches what AAP Start is for?", ["A place to memorize every policy on day one.", "A guided launch path that orients you, shows where to look, and helps you know where questions go.", "A role-specific toolkit that replaces supervisor training."], 1),
+                ("welcome-support", "Who is the primary onboarding and employee-support contact named in this module?", ["Nicole Thornton, HR Manager", "CBIZ Benefits", "LifeMatters"], 0),
+            ],
+        ),
         acknowledgment_title="Ready for the path",
         acknowledgment_statement="I understand what AAP Start is for, what AAP exists to support, and where to go when a question needs real context.",
         chapter_intros=[
@@ -156,8 +187,8 @@ SECTIONS = [
         slug="how-we-show-up",
         eyebrow="Culture",
         title="How We Show Up",
-        summary="Learn the values, conduct expectations, and confidentiality standards that shape how people work together at AAP.",
-        purpose="This module turns culture into something practical. It covers how people are expected to treat each other, communicate clearly, and protect trust \u2014 especially when handling sensitive information.",
+        summary="See how respect, direct communication, and confidentiality shape the way people work together at AAP.",
+        purpose="This chapter keeps culture practical: how people speak to each other, protect trust, and handle sensitive situations before they become bigger problems.",
         focuses=["Values in practice", "Respectful conduct", "Confidentiality and trust"],
         essentials=[
             ("Values should be visible", "Customer focus, integrity, respect, excellence, and ownership are not slogans. They set the standard for how people communicate, make decisions, and treat each other every day."),
@@ -188,8 +219,20 @@ SECTIONS = [
             "Report suspected privacy breaches or unauthorized access to HR and IT right away.",
             "Use HR when a people issue becomes sensitive, personal, or employee-specific.",
         ],
-        acknowledgment_title="Values, clearly understood",
-        acknowledgment_statement="I understand the conduct expectations, confidentiality standards, and communication habits that protect trust at AAP.",
+        knowledge_check=build_knowledge_check(
+            intro="This required check confirms the practical culture habits from this chapter before you acknowledge it.",
+            questions=[
+                ("culture-directness", "When you do not know the answer to a sensitive question, what is the best response?", ["Give your best guess so the conversation keeps moving.", "Say you need to check and follow up through the right channel.", "Share the question with anyone nearby until someone answers it."], 1),
+                ("culture-privacy", "What should you do if you suspect a privacy breach or unauthorized access?", ["Wait to see if it becomes a larger problem.", "Report it to HR and IT right away.", "Mention it casually to a teammate and move on."], 1),
+            ],
+        ),
+        acknowledgment_title="Leave with this",
+        acknowledgment_statement="At AAP, strong culture is visible in respectful communication, good judgment, and careful handling of sensitive information.",
+        chapter_intros=[
+            "The standard is not abstract. It shows up in ordinary moments: how you answer, how you correct, how you raise concerns, and how carefully you handle information other people trust you with.",
+            "The clearest test is not what you know in theory. It is what you do when a conversation gets awkward, when a situation crosses a line, or when information should travel no farther.",
+            "Leave this chapter with a short list of habits you can use right away and a clear sense of which situations should be escalated instead of absorbed.",
+        ],
     ),
     build_section(
         section_id="tools-and-systems",
@@ -224,6 +267,13 @@ SECTIONS = [
             "Escalate data-handling concerns or suspected misdirected information to HR.",
             "Ask for help if a system instruction conflicts with policy or team guidance.",
         ],
+        knowledge_check=build_knowledge_check(
+            intro="Pass this required check before you acknowledge the systems basics for this module.",
+            questions=[
+                ("systems-passwords", "Where should work passwords be stored?", ["In your personal notes app so you can reach them anywhere.", "Only in the approved company password manager.", "In a shared team spreadsheet so backup coverage is easy."], 1),
+                ("systems-access", "What should you do if a key system is not working during your first week?", ["Build a workaround and ask about it later.", "Flag it early through the right support path.", "Share your credentials with a teammate who has access."], 1),
+            ],
+        ),
         acknowledgment_title="Systems basics are clear",
         acknowledgment_statement="I understand the basic expectations around system access, password security, and where to go when something needs help.",
     ),
@@ -263,6 +313,13 @@ SECTIONS = [
             "Escalate conflicting instructions that could affect compliance or fairness.",
             "Raise recurring blockers with your manager instead of working around them indefinitely.",
         ],
+        knowledge_check=build_knowledge_check(
+            intro="Use this required check to confirm the work habits and support lanes from the chapter.",
+            questions=[
+                ("work-follow-up", "If a deadline or follow-up you promised is going to change, what should you do?", ["Wait until the original deadline passes, then explain what happened.", "Communicate the change before the deadline passes.", "Assume people will understand if the work is important enough."], 1),
+                ("work-hr-lane", "Which team owns people, policy, pay, and other sensitive employee issues?", ["HR", "IT", "Any experienced coworker"], 0),
+            ],
+        ),
         acknowledgment_title="Day-to-day expectations make sense",
         acknowledgment_statement="I understand the communication, follow-through, and ownership expectations that keep work moving well at AAP.",
     ),
@@ -308,6 +365,13 @@ SECTIONS = [
             "Escalate time-away questions that involve medical situations, leave certification, or anything beyond routine PTO.",
             "Use HR whenever benefits timing, eligibility, or classification seems inconsistent with what you expected.",
         ],
+        knowledge_check=build_knowledge_check(
+            intro="This required check keeps the basics practical before you move into the acknowledgment.",
+            questions=[
+                ("benefits-attendance", "What does two consecutive months of perfect attendance do under this module's attendance overview?", ["It removes one point early.", "It adds a floating holiday.", "It resets your entire attendance record."], 0),
+                ("benefits-leave", "If a time-away question involves a medical situation or FMLA, what is the right move?", ["Wait for your next annual review to bring it up.", "Move it to HR directly.", "Ask a coworker what usually happens."], 1),
+            ],
+        ),
         acknowledgment_title="Benefits, pay, and attendance basics understood",
         acknowledgment_statement="I understand the basics of benefits timing, the attendance point system, time-away expectations, and when HR needs to be involved.",
     ),
@@ -347,6 +411,13 @@ SECTIONS = [
             "Escalate pay or safety concerns through the proper channel without delay.",
             "Use HR when a situation involves privacy, fairness, or interpretation of policy.",
         ],
+        knowledge_check=build_knowledge_check(
+            intro="Pass this required check to confirm where support should go before you acknowledge the module.",
+            questions=[
+                ("support-hr", "Where should medical, leave, and accommodation questions go?", ["To HR directly", "To the Resource Hub only", "To any teammate who has handled it before"], 0),
+                ("support-eap", "How can employees use LifeMatters?", ["Only after HR approval", "Only after 90 days", "Confidentially from day one without a referral"], 2),
+            ],
+        ),
         acknowledgment_title="Support routes are clear",
         acknowledgment_statement="I understand when to use support resources, when leave questions require HR, and why sensitive issues should not be improvised.",
     ),
@@ -369,6 +440,13 @@ SECTIONS = [
         ],
         actions=["Learn the specific safety expectations that apply to your work area.", "Report hazards, near misses, and injuries promptly.", "Pause and ask for guidance when the safe path is not obvious."],
         escalation=["Escalate urgent safety issues immediately.", "Escalate incidents, injuries, or threats through the correct company path.", "Use your manager or HR when a safety concern overlaps with employee support needs."],
+        knowledge_check=build_knowledge_check(
+            intro="Finish this required check before you acknowledge the shared safety expectations.",
+            questions=[
+                ("safety-urgent", "If something feels unsafe or threatening, what should you do?", ["Wait for a calmer time to mention it.", "Escalate it immediately.", "Keep working unless someone else stops."], 1),
+                ("safety-reporting", "Which answer reflects the module's safety standard?", ["Near misses and hazards should be reported promptly.", "Only injuries that require medical treatment need to be reported.", "Minor hazards are fine if you can work around them."], 0),
+            ],
+        ),
         acknowledgment_title="Safety expectations are clear",
         acknowledgment_statement="I understand the shared safety expectations and the importance of speaking up quickly when something does not look right.",
     ),
@@ -407,6 +485,13 @@ SECTIONS = [
             "Use your manager when priorities or expectations still feel unclear.",
             "Use HR when a people or policy issue outgrows routine team support.",
         ],
+        knowledge_check=build_knowledge_check(
+            intro="Use this required check to confirm the practical expectations for your first stretch at AAP.",
+            questions=[
+                ("first-90-days-day-one", "What is day one mainly for according to this module?", ["Orientation and getting settled", "Independent mastery of your full role", "Completing every system training in one day"], 0),
+                ("first-90-days-questions", "What is the better move when something still feels unclear in your first 90 days?", ["Stay quiet until you have a perfect question.", "Ask early and use your support routes.", "Wait until onboarding is fully finished."], 1),
+            ],
+        ),
         acknowledgment_title="The next stretch feels navigable",
         acknowledgment_statement="I understand what the first days and weeks look like, what the introductory period means, and how to keep using support instead of guessing.",
     ),
@@ -429,6 +514,13 @@ SECTIONS = [
         ],
         actions=["Take one last pass through anything that still feels fuzzy.", "Use the Resource Hub as your live reference shelf.", "Mark this section complete when you are ready to finish the launch path."],
         escalation=["Use HR when a real situation needs interpretation or sensitive handling.", "Use your manager when role-specific expectations still need clarity.", "Escalate unresolved questions instead of assuming completion means total certainty."],
+        knowledge_check=build_knowledge_check(
+            intro="Complete this required final check before you finish the tracked launch path.",
+            questions=[
+                ("final-review-reference", "What does successful launch completion mean in this module?", ["You memorized every policy detail.", "You know the essentials, where to look, and who to ask.", "You should not need support anymore."], 1),
+                ("final-review-hub", "How should you use the Resource Hub after onboarding?", ["As a live reference shelf for files, contacts, and refreshers.", "Only if your manager gives written approval.", "Only after all future modules are released."], 0),
+            ],
+        ),
         acknowledgment_title="Launch path complete",
         acknowledgment_statement="I have completed the launch onboarding path and I know where to go for support, clarification, and live reference materials.",
     ),

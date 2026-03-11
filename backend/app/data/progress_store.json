@@ -2,7 +2,7 @@
   "employees": {
     "demo-employee": {
       "display_name": "Nicole Thornton",
-      "current_section": "how-we-show-up",
+      "current_section": "welcome-to-aap",
       "completed_sections": [
         "how-we-show-up",
         "tools-and-systems",
@@ -13,8 +13,13 @@
         "tools-and-systems",
         "welcome-to-aap"
       ],
+      "quiz_passed_sections": [
+        "how-we-show-up",
+        "tools-and-systems",
+        "welcome-to-aap"
+      ],
       "started_at": "2026-03-07T05:24:49.713479+00:00",
-      "updated_at": "2026-03-10T22:51:37.074185+00:00"
+      "updated_at": "2026-03-11T03:52:47.876457+00:00"
     }
   }
 }

@@ -20,6 +20,20 @@ export type Acknowledgment = {
   items: string[];
 };
 
+export type KnowledgeCheckQuestion = {
+  id: string;
+  prompt: string;
+  options: string[];
+  correctOptionIndex: number;
+};
+
+export type KnowledgeCheck = {
+  title: string;
+  intro: string;
+  passingPercent: number;
+  questions: KnowledgeCheckQuestion[];
+};
+
 export type Section = {
   id: string;
   slug: string;
@@ -32,6 +46,7 @@ export type Section = {
   policyAreas: { title: string; items: { label: string; body: string }[] }[];
   actions: string[];
   escalation: string[];
+  knowledgeCheck: KnowledgeCheck;
   acknowledgment: Acknowledgment;
   chapterIntros?: string[];
   contextSidebar?: { title: string; body: string[] };
@@ -109,6 +124,7 @@ export type ProgressRecord = {
   current_section: string | null;
   completed_sections: string[];
   acknowledged_sections: string[];
+  quiz_passed_sections: string[];
   started_at: string | null;
   updated_at: string | null;
   core_total_sections: number;
@@ -120,4 +136,15 @@ export type ProgressUpdate = {
   current_section?: string | null;
   completed_sections: string[];
   acknowledged_sections: string[];
+  quiz_passed_sections: string[];
+};
+
+export type QuizSubmissionResult = {
+  section_slug: string;
+  passed: boolean;
+  correct_count: number;
+  total_questions: number;
+  score: number;
+  passing_percent: number;
+  progress: ProgressRecord;
 };

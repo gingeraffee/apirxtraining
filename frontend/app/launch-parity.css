@@ -3008,7 +3008,7 @@
   display: grid;
   grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
   gap: 22px;
-  align-items: start;
+  align-items: flex-start;
 }
 
 .portal-stage--detail .portal-page--welcome .welcome-foundation-head {
@@ -3877,7 +3877,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.72fr) minmax(260px, 0.68fr);
   gap: 18px;
-  align-items: start;
+  align-items: flex-start;
   width: 100%;
 }
 
@@ -4701,6 +4701,750 @@
    Enhance active state glow, improve connecting line,
    make completion step more distinct, mute non-active steps.
    ═══════════════════════════════════════════════════════════════ */
+
+/* Guided chapter layout for tracked modules: narrative flow, one dominant lane, lighter support */
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-framing-shell,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-story-shell,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-shell,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-action-shell,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-ending-shell {
+  padding: 22px 24px;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-framing-layout,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-layout,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-action-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.34fr) minmax(220px, 0.72fr);
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-framing-main,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-action-main {
+  display: grid;
+  gap: 10px;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-framing-main h2,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-story-head h2,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-shell h2,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-action-shell h2,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-ending-shell h2 {
+  max-width: 24ch;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-framing-copy,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-ending-copy {
+  max-width: 60ch;
+  margin: 0;
+  font-size: 0.97rem;
+  line-height: 1.68;
+  color: #365069;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-support-column,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-side,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-action-side {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-support-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px 17px;
+  border-radius: 16px;
+  border: 1px solid rgba(126, 156, 187, 0.18);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 10px 22px rgba(8, 20, 44, 0.045), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-support-card strong {
+  font-size: 0.95rem;
+  line-height: 1.28;
+  color: #132b43;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-support-card p,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-support-card dd,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-support-card li {
+  font-size: 0.8rem;
+  line-height: 1.52;
+  color: #526b82;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-focus-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-focus-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 31px;
+  padding: 0.42rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(79, 220, 255, 0.18);
+  background: rgba(79, 220, 255, 0.08);
+  color: #0d6d8d;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-story-head {
+  margin-bottom: 4px;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-story-prose {
+  display: grid;
+  gap: 16px;
+  max-width: 64ch;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-story-beat {
+  display: grid;
+  gap: 6px;
+  padding-left: 18px;
+  border-left: 2px solid rgba(130, 159, 189, 0.28);
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-story-beat--lead {
+  padding-left: 22px;
+  border-left-width: 3px;
+  border-left-color: rgba(61, 216, 248, 0.78);
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-story-beat h3,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-panel h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.24;
+  color: #112942;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-story-beat p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: #39536b;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-panel {
+  display: grid;
+  gap: 12px;
+  padding: 18px 18px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(170, 145, 106, 0.2);
+  background: rgba(255, 251, 246, 0.68);
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-list,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-support-list {
+  gap: 0;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-list .policy-row,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-support-list .policy-row {
+  grid-template-columns: minmax(130px, 172px) minmax(0, 1fr);
+  padding: 10px 0;
+  gap: 10px;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-list .policy-row + .policy-row,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-support-list .policy-row + .policy-row {
+  border-top: 1px solid rgba(170, 145, 106, 0.16);
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-action-main {
+  padding: 2px 0 0;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-action-list,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-escalation-list,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-reflection-list {
+  gap: 10px;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-action-list li,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-escalation-list li,
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-reflection-list li {
+  font-size: 0.9rem;
+  line-height: 1.56;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-reflection-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 4px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(129, 159, 190, 0.18);
+  background: linear-gradient(180deg, rgba(250, 252, 255, 0.96), rgba(244, 248, 253, 0.94));
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-reflection-list li strong {
+  color: #17314a;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-reflection-note {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #5d7489;
+}
+
+@media (max-width: 960px) {
+  .portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-framing-layout,
+  .portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-layout,
+  .portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-action-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-framing-shell,
+  .portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-story-shell,
+  .portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-shell,
+  .portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-action-shell,
+  .portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-ending-shell {
+    padding: 18px 18px 17px;
+  }
+
+  .portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-list .policy-row,
+  .portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-example-support-list .policy-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.portal-stage--detail .portal-page--section .chapter-knowledge-shell,
+.portal-stage--detail .portal-page--section .chapter-acknowledgment-shell,
+.portal-stage--detail .portal-page--section .welcome-knowledge-section,
+.portal-stage--detail .portal-page--section .welcome-acknowledgment-section {
+  padding: 22px 24px;
+}
+
+.portal-stage--detail .portal-page--section .chapter-knowledge-shell,
+.portal-stage--detail .portal-page--section .welcome-knowledge-section,
+.portal-page--culture .culture-knowledge-shell {
+  background: linear-gradient(180deg, rgba(252, 254, 255, 0.99), rgba(245, 249, 253, 0.96));
+}
+
+.portal-stage--detail .portal-page--section .chapter-acknowledgment-shell,
+.portal-stage--detail .portal-page--section .welcome-acknowledgment-section,
+.portal-page--culture .culture-acknowledgment-shell {
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.98), rgba(250, 245, 238, 0.95));
+}
+
+.portal-stage--detail .portal-page--section .module-quiz {
+  display: grid;
+  gap: 18px;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-head-copy {
+  display: grid;
+  gap: 6px;
+  max-width: 62ch;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-head h2 {
+  margin: 0;
+  max-width: 20ch;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-meta {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-status,
+.portal-stage--detail .portal-page--section .module-quiz-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 31px;
+  padding: 0.42rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-status {
+  border: 1px solid rgba(174, 147, 113, 0.18);
+  background: rgba(255, 248, 239, 0.92);
+  color: #8a5d29;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-status--passed {
+  border-color: rgba(61, 216, 248, 0.22);
+  background: rgba(79, 220, 255, 0.12);
+  color: #0d6d8d;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-count {
+  border: 1px solid rgba(126, 156, 187, 0.14);
+  background: rgba(255, 255, 255, 0.78);
+  color: #5d7489;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-intro,
+.portal-stage--detail .portal-page--section .module-quiz-note,
+.portal-stage--detail .portal-page--section .acknowledgment-statement,
+.portal-stage--detail .portal-page--section .module-flow-bridge,
+.portal-stage--detail .portal-page--section .module-completion-helper {
+  margin: 0;
+  font-size: 0.93rem;
+  line-height: 1.62;
+  color: #3d556c;
+  max-width: 66ch;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-note,
+.portal-stage--detail .portal-page--section .module-flow-bridge,
+.portal-stage--detail .portal-page--section .module-completion-helper {
+  font-size: 0.82rem;
+  color: #62798e;
+}
+
+.portal-stage--detail .portal-page--section .module-flow-bridge {
+  margin-top: -2px;
+}
+
+.portal-stage--detail .portal-page--section .module-completion-helper {
+  margin-top: 14px;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-question-list {
+  display: grid;
+  gap: 14px;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-question {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(128, 158, 189, 0.14);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 10px 24px rgba(8, 20, 44, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-question-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-question-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-question-kicker,
+.portal-stage--detail .portal-page--section .module-quiz-feedback-kicker {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6c8195;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-number {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(15, 42, 70, 0.1), rgba(15, 42, 70, 0.06));
+  color: #14304b;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-question h3 {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.42;
+  color: #132b43;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-options {
+  display: grid;
+  gap: 10px;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-option {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(129, 159, 189, 0.16);
+  background: rgba(248, 251, 255, 0.86);
+  color: #17314a;
+  text-align: left;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-option:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(61, 216, 248, 0.24);
+  background: rgba(251, 253, 255, 0.96);
+  box-shadow: 0 10px 20px rgba(8, 20, 44, 0.05);
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-option:disabled {
+  cursor: default;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-option.active {
+  border-color: rgba(61, 216, 248, 0.34);
+  background: linear-gradient(180deg, rgba(237, 250, 255, 0.98), rgba(230, 246, 252, 0.95));
+  box-shadow: 0 12px 24px rgba(12, 39, 64, 0.05);
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-option-key {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(19, 43, 67, 0.1);
+  background: rgba(255, 255, 255, 0.94);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-option.active .module-quiz-option-key {
+  border-color: rgba(61, 216, 248, 0.32);
+  color: #0d6d8d;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-option-copy {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-option-state {
+  min-width: 58px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-align: right;
+  color: #0d6d8d;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-feedback {
+  display: grid;
+  gap: 5px;
+  padding: 15px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(129, 159, 189, 0.16);
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-feedback strong {
+  color: #14304b;
+  font-size: 0.95rem;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-feedback p,
+.portal-stage--detail .portal-page--section .module-quiz-feedback-score {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.52;
+  color: #567087;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-feedback--passed {
+  background: rgba(233, 248, 252, 0.82);
+  border-color: rgba(61, 216, 248, 0.2);
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-feedback--failed,
+.portal-stage--detail .portal-page--section .module-quiz-feedback--needs-answers {
+  background: rgba(255, 249, 242, 0.92);
+  border-color: rgba(184, 131, 72, 0.16);
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-footer {
+  display: grid;
+  gap: 10px;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-submit {
+  justify-self: start;
+}
+
+.portal-stage--detail .portal-page--section .module-quiz-footer-note {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #62798e;
+}
+
+.portal-stage--detail .portal-page--section .acknowledgment-section-head {
+  gap: 6px;
+}
+
+.portal-stage--detail .portal-page--section .module-completion-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.portal-stage--detail .portal-page--section .module-completion-summary--stacked {
+  grid-template-columns: 1fr;
+  margin-top: 0;
+}
+
+.portal-stage--detail .portal-page--section .module-completion-card {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(129, 159, 189, 0.16);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.portal-stage--detail .portal-page--section .module-completion-card--done {
+  border-color: rgba(61, 216, 248, 0.18);
+  background: linear-gradient(180deg, rgba(240, 251, 255, 0.96), rgba(234, 247, 252, 0.94));
+}
+
+.portal-stage--detail .portal-page--section .module-completion-card strong {
+  color: #14304b;
+  font-size: 0.94rem;
+}
+
+.portal-stage--detail .portal-page--section .module-completion-card p {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: #587088;
+}
+
+@media (max-width: 960px) {
+  .portal-stage--detail .portal-page--section .chapter-knowledge-shell,
+  .portal-stage--detail .portal-page--section .chapter-acknowledgment-shell,
+  .portal-stage--detail .portal-page--section .welcome-knowledge-section,
+  .portal-stage--detail .portal-page--section .welcome-acknowledgment-section {
+    padding: 18px;
+  }
+
+  .portal-stage--detail .portal-page--section .module-quiz-head {
+    flex-direction: column;
+  }
+
+  .portal-stage--detail .portal-page--section .module-quiz-meta {
+    justify-items: start;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+  }
+
+  .portal-stage--detail .portal-page--section .module-quiz-option {
+    grid-template-columns: auto 1fr;
+  }
+
+  .portal-stage--detail .portal-page--section .module-quiz-option-state {
+    display: none;
+  }
+
+  .portal-stage--detail .portal-page--section .module-completion-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* How We Show Up: calm chapter layout with one dominant story lane */
+.portal-page--culture .section-main-column {
+  gap: 20px;
+}
+
+.portal-page--culture .section-hero--cinematic {
+  padding: 28px 30px 26px;
+}
+
+.portal-page--culture .section-hero--cinematic h1 {
+  max-width: 12ch;
+}
+
+.portal-page--culture .section-hero--cinematic .lead {
+  max-width: 46ch;
+  font-size: 1rem;
+  line-height: 1.58;
+}
+
+.portal-page--culture .culture-chapter-shell {
+  padding: 24px 26px;
+  border-radius: 22px;
+}
+
+.portal-page--culture .culture-chapter-head {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.portal-page--culture .culture-chapter-head h2 {
+  max-width: 24ch;
+}
+
+.portal-page--culture .culture-chapter-head .lesson-chapter-intro {
+  max-width: 62ch;
+  font-size: 0.95rem;
+  line-height: 1.66;
+}
+
+.portal-page--culture .culture-day-shell,
+.portal-page--culture .culture-action-shell,
+.portal-page--culture .culture-ending-shell {
+  background: linear-gradient(180deg, rgba(252, 254, 255, 0.98), rgba(246, 250, 254, 0.95));
+}
+
+.portal-page--culture .culture-example-shell {
+  background: linear-gradient(180deg, rgba(255, 251, 245, 0.98), rgba(250, 244, 235, 0.94));
+}
+
+.portal-page--culture .culture-prose-stack,
+.portal-page--culture .culture-scenario-list {
+  display: grid;
+  gap: 16px;
+}
+
+.portal-page--culture .culture-prose-point,
+.portal-page--culture .culture-scenario {
+  display: grid;
+  gap: 7px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(132, 161, 191, 0.14);
+}
+
+.portal-page--culture .culture-prose-point:first-child,
+.portal-page--culture .culture-scenario:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.portal-page--culture .culture-prose-point--lead {
+  padding-bottom: 2px;
+}
+
+.portal-page--culture .culture-prose-point h3,
+.portal-page--culture .culture-scenario h3 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.28;
+  color: #112942;
+}
+
+.portal-page--culture .culture-prose-point p,
+.portal-page--culture .culture-scenario p,
+.portal-page--culture .culture-bottom-card p,
+.portal-page--culture .culture-inline-note,
+.portal-page--culture .culture-reflection-note {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.62;
+  color: #3d556c;
+}
+
+.portal-page--culture .culture-action-layout,
+.portal-page--culture .culture-ending-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.38fr) minmax(220px, 0.72fr);
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.portal-page--culture .culture-action-main {
+  min-width: 0;
+}
+
+.portal-page--culture .culture-action-list,
+.portal-page--culture .culture-escalation-list,
+.portal-page--culture .culture-reflection-list {
+  gap: 10px;
+}
+
+.portal-page--culture .culture-action-list li,
+.portal-page--culture .culture-escalation-list li,
+.portal-page--culture .culture-reflection-list li {
+  font-size: 0.91rem;
+  line-height: 1.58;
+}
+
+.portal-page--culture .culture-inline-support,
+.portal-page--culture .culture-reflection-panel,
+.portal-page--culture .culture-bottom-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(130, 159, 189, 0.16);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 10px 22px rgba(8, 20, 44, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.portal-page--culture .culture-bottom-support {
+  display: grid;
+  gap: 12px;
+}
+
+.portal-page--culture .culture-bottom-card strong,
+.portal-page--culture .culture-inline-support strong,
+.portal-page--culture .culture-reflection-list li strong {
+  color: #14304b;
+}
+
+.portal-page--culture .culture-contact-role {
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: #6d8097;
+}
+
+.portal-page--culture .culture-ending-shell .primary-action {
+  margin-top: 18px;
+}
+
+.portal-page--culture .section-context-rail {
+  gap: 0;
+}
+
+.portal-page--culture .section-context-rail .ov-rail-card,
+.portal-page--culture .section-context-rail .rail-context-card {
+  margin: 0;
+}
+
+@media (max-width: 960px) {
+  .portal-page--culture .culture-chapter-shell {
+    padding: 20px 18px 18px;
+  }
+
+  .portal-page--culture .culture-action-layout,
+  .portal-page--culture .culture-ending-layout {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* Mute non-active, non-completion links */
 .portal-stage--detail .portal-page--section .lesson-flow-link:not(.lesson-flow-link--active):not(.lesson-flow-link--completion) {

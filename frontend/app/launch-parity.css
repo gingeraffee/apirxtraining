@@ -2342,55 +2342,7 @@
   scroll-margin-top: 88px;
 }
 
-/* ── Hero: dark, premium — base shell (cinematic overrides below handle visuals) ── */
-.portal-stage--detail .portal-page--welcome .welcome-hero {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0;
-  overflow: hidden;
-  position: relative;
-  isolation: isolate;
-}
-
-/* Legacy overlay — disabled; accent stripe handled in cinematic override */
-.portal-stage--detail .portal-page--welcome .welcome-hero::before {
-  display: none;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero .section-hero-copy {
-  max-width: none;
-  gap: 0.38rem;
-  position: relative;
-  z-index: 1;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero .section-label {
-  color: rgba(61, 216, 248, 0.7);
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero h1 {
-  max-width: none;
-  font-size: clamp(1.85rem, 2.8vw, 2.5rem);
-  font-weight: 800;
-  line-height: 1.04;
-  margin-bottom: 0.2rem;
-  color: #ffffff;
-  text-shadow: none;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero .lead {
-  max-width: none;
-  margin-bottom: 0.1rem;
-  font-size: 0.94rem;
-  line-height: 1.5;
-  color: rgba(200, 225, 248, 0.82);
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero .purpose-line {
-  max-width: none;
-  font-size: 0.83rem;
-  line-height: 1.44;
-  color: rgba(175, 210, 238, 0.55);
-}
+/* (Legacy .welcome-hero rules removed — hero now uses universal .section-hero--cinematic) */
 
 /* ── Lesson progression bar ── */
 .portal-stage--detail .portal-page--welcome .lesson-flow-nav {
@@ -2856,33 +2808,7 @@
   gap: clamp(16px, 1.9vw, 24px);
 }
 
-.portal-stage--detail .portal-page--welcome .welcome-hero {
-  padding: 28px 32px 24px;
-  border-radius: 22px;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero .section-hero-copy {
-  max-width: 50rem;
-  gap: 0.46rem;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero h1 {
-  max-width: 14ch;
-  font-size: clamp(1.96rem, 2.32vw, 2.62rem);
-  line-height: 0.98;
-  margin-bottom: 0.26rem;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero .lead {
-  max-width: 46rem;
-  font-size: 0.98rem;
-  line-height: 1.56;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero .purpose-line {
-  max-width: 42rem;
-  font-size: 0.85rem;
-}
+/* (Legacy .welcome-hero refinement pass removed) */
 
 .portal-stage--detail .portal-page--welcome .lesson-flow-nav {
   gap: 12px;
@@ -3111,37 +3037,6 @@
 }
 
 /* Final refinement pass: layout balance, lighter surfaces, clearer states */
-.portal-stage--detail .portal-page--welcome {
-  width: min(100%, 1012px);
-  gap: 18px;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero {
-  padding: 24px 28px 24px;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero .section-hero-copy {
-  max-width: 42rem;
-  gap: 0.48rem;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero h1 {
-  max-width: 12ch;
-  font-size: clamp(1.84rem, 2.06vw, 2.36rem);
-  margin-bottom: 0.18rem;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero .lead {
-  max-width: 34rem;
-  font-size: 0.94rem;
-  line-height: 1.5;
-}
-
-.portal-stage--detail .portal-page--welcome .welcome-hero .purpose-line {
-  max-width: 33rem;
-  font-size: 0.82rem;
-  line-height: 1.42;
-}
 
 .portal-stage--detail .portal-page--welcome .lesson-flow-nav {
   gap: 10px;
@@ -3384,10 +3279,6 @@
 }
 
 @media (max-width: 760px) {
-  .portal-stage--detail .portal-page--welcome .welcome-hero {
-    padding: 22px 20px 18px;
-  }
-
   .portal-stage--detail .portal-page--welcome .welcome-orientation-list {
     grid-template-columns: 1fr;
   }
@@ -3945,46 +3836,41 @@
   font-size: 0.72rem;
 }
 
-/* ── 3. Cinematic hero for non-welcome modules ── */
+/* ── 3. Cinematic hero for all module pages (Overview-aligned) ── */
 .portal-page--section .section-hero--cinematic {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  padding: 28px 30px 24px;
-  border-radius: 22px;
-  border: 1px solid rgba(79, 220, 255, 0.1);
+  padding: 32px 34px 28px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   background:
-    linear-gradient(145deg, #0d1f38 0%, #0f2744 55%, #0d1e35 100%);
-  box-shadow:
-    0 22px 48px rgba(4, 12, 24, 0.26),
-    0 0 0 1px rgba(79, 220, 255, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    radial-gradient(ellipse at 10% 50%, rgba(17, 183, 228, 0.12), transparent 50%),
+    radial-gradient(circle, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(135deg, #071a30 0%, #0b2240 100%);
+  background-size: auto, 18px 18px, auto;
+  box-shadow: var(--shadow-dark);
 }
 
-/* Cyan radial glow (top-right) */
+/* 5px top accent stripe — matches Overview hero */
 .portal-page--section .section-hero--cinematic::before {
   content: "";
   position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 280px;
-  height: 280px;
-  background: radial-gradient(circle, rgba(79, 220, 255, 0.1) 0%, transparent 65%);
+  top: 0;
+  right: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, rgba(79, 220, 255, 1) 0%, #38bdf8 45%, var(--red) 100%);
+  border-radius: 0;
+  box-shadow: 0 0 14px rgba(79, 220, 255, 0.3);
   pointer-events: none;
-  z-index: 0;
+  z-index: 2;
 }
 
-/* Wine radial glow (bottom-left) */
+/* No secondary pseudo-element */
 .portal-page--section .section-hero--cinematic::after {
-  content: "";
-  position: absolute;
-  bottom: -30px;
-  left: -30px;
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(176, 49, 69, 0.07) 0%, transparent 65%);
-  pointer-events: none;
-  z-index: 0;
+  display: none;
 }
 
 .portal-page--section .section-hero--cinematic > * {
@@ -3992,16 +3878,16 @@
   z-index: 1;
 }
 
-/* Accent gradient bar at top */
+/* No inner accent bar */
 .portal-page--section .section-hero--cinematic .section-hero-copy::before {
-  content: "";
-  position: absolute;
-  top: -28px;
-  left: -30px;
-  right: -30px;
-  height: 3px;
-  border-radius: 22px 22px 0 0;
-  background: linear-gradient(90deg, #4fdcff 0%, #38bdf8 50%, rgba(176, 49, 69, 0.6) 100%);
+  display: none;
+}
+
+.portal-page--section .section-hero--cinematic .section-hero-copy {
+  max-width: none;
+  gap: 0.38rem;
+  position: relative;
+  z-index: 1;
 }
 
 /* Override light-mode text colors inside cinematic hero */
@@ -4012,26 +3898,27 @@
 .portal-page--section .section-hero--cinematic h1 {
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: clamp(1.8rem, 2.5vw, 2.5rem);
+  font-size: clamp(1.85rem, 2.8vw, 2.5rem);
   font-weight: 800;
   line-height: 1.06;
   letter-spacing: -0.04em;
-  max-width: 14ch;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+  max-width: none;
+  text-shadow: none;
+  margin-bottom: 0;
 }
 
 .portal-page--section .section-hero--cinematic .lead {
-  color: rgba(175, 210, 238, 0.78);
+  color: rgba(200, 225, 248, 0.82);
   font-size: 0.94rem;
   line-height: 1.52;
-  max-width: 50ch;
+  max-width: none;
 }
 
 .portal-page--section .section-hero--cinematic .purpose-line {
   color: rgba(175, 210, 238, 0.55);
   font-size: 0.82rem;
   line-height: 1.44;
-  max-width: 46ch;
+  max-width: none;
 }
 
 /* ── 4. Page shell parity: match Overview's 1360px width system ── */
@@ -4265,127 +4152,23 @@
    container while preserving welcome-specific content styles.
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Container: let the section layout grid control width/spacing ── */
-.portal-page--section.portal-page--welcome {
-  display: grid;
-  grid-template-columns: minmax(0, 1.72fr) minmax(260px, 0.68fr);
-  column-gap: 18px;
-  row-gap: 18px;
-  width: min(100%, 1360px);
-  margin-inline: auto;
-  padding-inline: 0;
-}
+/* (Welcome container overrides removed — now part of universal section grid) */
 
-.portal-page--section.portal-page--welcome > .page-hero {
-  grid-column: 1;
-  margin-bottom: 0;
-}
+/* (Welcome hero overrides removed — now part of base cinematic hero) */
 
-.portal-page--section.portal-page--welcome > .section-layout-grid {
-  display: contents;
-}
-
-.portal-page--section.portal-page--welcome > .section-layout-grid > .section-main-column {
-  grid-column: 1;
-  min-width: 0;
-  gap: 16px;
-}
-
-.portal-page--section.portal-page--welcome > .section-layout-grid > .section-context-rail {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  align-self: start;
-  padding-top: 2px;
-}
-
-/* ── Hero: match Overview hero design (full-width text, accent line, pills) ── */
-.portal-page--section.portal-page--welcome .section-hero--cinematic {
-  padding: 32px 34px 28px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  background:
-    radial-gradient(ellipse at 10% 50%, rgba(17, 183, 228, 0.12), transparent 50%),
-    radial-gradient(circle, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(135deg, #071a30 0%, #0b2240 100%);
-  background-size: auto, 18px 18px, auto;
-  box-shadow: var(--shadow-dark);
-}
-
-/* 5px top accent stripe — matches Overview hero exactly */
-.portal-page--section.portal-page--welcome .section-hero--cinematic::before {
-  content: "" !important;
-  position: absolute !important;
-  top: 0 !important;
-  right: 0 !important;
-  bottom: auto !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 5px !important;
-  transform: none !important;
-  background: linear-gradient(90deg, rgba(79, 220, 255, 1) 0%, #38bdf8 45%, var(--red) 100%) !important;
-  border-radius: 0 !important;
-  box-shadow: 0 0 14px rgba(79, 220, 255, 0.3) !important;
-  pointer-events: none !important;
-  z-index: 2 !important;
-}
-
-/* Remove wine glow — Overview hero has none */
-.portal-page--section.portal-page--welcome .section-hero--cinematic::after {
-  display: none !important;
-}
-
-/* Remove accent bar inside section-hero-copy for welcome */
-.portal-page--section.portal-page--welcome .section-hero--cinematic .section-hero-copy::before {
-  display: none !important;
-}
-
-.portal-page--section.portal-page--welcome .section-hero--cinematic .section-hero-copy {
-  max-width: none;
-  gap: 0.38rem;
-  position: relative;
-  z-index: 1;
-}
-
-.portal-page--section.portal-page--welcome .section-hero--cinematic h1 {
-  max-width: none;
-  font-size: clamp(1.85rem, 2.8vw, 2.5rem);
-  font-weight: 800;
-  margin-bottom: 0;
-  color: #ffffff;
-  text-shadow: none;
-}
-
-.portal-page--section.portal-page--welcome .section-hero--cinematic .lead {
-  max-width: none;
-  font-size: 0.94rem;
-  line-height: 1.52;
-  color: rgba(200, 225, 248, 0.82);
-}
-
-.portal-page--section.portal-page--welcome .section-hero--cinematic .purpose-line {
-  max-width: none;
-  font-size: 0.82rem;
-  line-height: 1.44;
-  color: rgba(175, 210, 238, 0.55);
-}
-
-.portal-page--section.portal-page--welcome .section-hero--cinematic .section-label {
-  color: rgba(61, 216, 248, 0.7) !important;
-}
-
-/* ── Welcome hero head row (eyebrow + status pill) — matches ov-hero-head ── */
-.welcome-hero-head {
+/* ── Hero head row (eyebrow + status pill) — matches ov-hero-head ── */
+.section-hero-head {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.15rem;
 }
 
-.welcome-hero-head .section-label {
+.section-hero-head .section-label {
   margin: 0;
 }
 
-.welcome-hero-status {
+.section-hero-status {
   display: inline-flex;
   align-items: center;
   padding: 4px 10px;
@@ -4398,21 +4181,21 @@
   white-space: nowrap;
 }
 
-.welcome-hero-status.done {
+.section-hero-status.done {
   border-color: rgba(67, 181, 129, 0.3);
   background: rgba(67, 181, 129, 0.12);
   color: rgba(67, 210, 150, 0.9);
 }
 
-/* ── Welcome chip row — matches overview-chip-row ── */
-.welcome-chip-row {
+/* ── Chip row — matches overview-chip-row ── */
+.section-chip-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.65rem;
   margin-top: 1.25rem;
 }
 
-.welcome-chip {
+.section-chip {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
   padding: 0.55rem 0.9rem;
@@ -4422,32 +4205,13 @@
   letter-spacing: 0.02em;
 }
 
-/* ── Responsive: welcome container inherits section grid behaviour ── */
-@media (max-width: 1180px) {
-  .portal-page--section.portal-page--welcome {
-    grid-template-columns: minmax(0, 1.55fr) minmax(250px, 0.72fr);
-    width: min(100%, 1360px);
-  }
-}
-
-@media (max-width: 960px) {
-  .portal-page--section.portal-page--welcome {
-    display: block;
-    width: 100%;
-  }
-
-  .portal-page--section.portal-page--welcome > .section-layout-grid {
-    display: grid;
-  }
-}
-
+/* ── Responsive: hero compact at narrow widths ── */
 @media (max-width: 720px) {
-  .portal-page--section.portal-page--welcome .section-hero--cinematic {
+  .portal-page--section .section-hero--cinematic {
     padding: 22px 20px 18px;
   }
 
-  .portal-page--section.portal-page--welcome .section-hero--cinematic h1 {
-    max-width: none;
+  .portal-page--section .section-hero--cinematic h1 {
     font-size: clamp(1.5rem, 5vw, 2rem);
   }
 }
@@ -4613,7 +4377,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.72fr) minmax(260px, 0.68fr);
   column-gap: 18px;
-  row-gap: 22px;
+  row-gap: 18px;
   width: 100%;
   max-width: none;
   margin-inline: 0;
@@ -4631,12 +4395,14 @@
 .portal-stage--detail .portal-page--section > .section-layout-grid > .section-main-column {
   grid-column: 1;
   min-width: 0;
+  gap: 16px;
 }
 
 .portal-stage--detail .portal-page--section > .section-layout-grid > .section-context-rail {
   grid-column: 2;
   grid-row: 1 / span 2;
   align-self: start;
+  padding-top: 2px;
 }
 
 @media (max-width: 1180px) {
@@ -5242,24 +5008,6 @@
 }
 
 /* How We Show Up: calm chapter layout with one dominant story lane */
-.portal-page--culture .section-main-column {
-  gap: 20px;
-}
-
-.portal-page--culture .section-hero--cinematic {
-  padding: 28px 30px 26px;
-}
-
-.portal-page--culture .section-hero--cinematic h1 {
-  max-width: 12ch;
-}
-
-.portal-page--culture .section-hero--cinematic .lead {
-  max-width: 46ch;
-  font-size: 1rem;
-  line-height: 1.58;
-}
-
 .portal-page--culture .culture-chapter-shell {
   padding: 24px 26px;
   border-radius: 22px;
@@ -5393,14 +5141,7 @@
   margin-top: 18px;
 }
 
-.portal-page--culture .section-context-rail {
-  gap: 0;
-}
-
-.portal-page--culture .section-context-rail .ov-rail-card,
-.portal-page--culture .section-context-rail .rail-context-card {
-  margin: 0;
-}
+/* (Culture rail overrides removed — culture now uses universal rail) */
 
 @media (max-width: 960px) {
   .portal-page--culture .culture-chapter-shell {

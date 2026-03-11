@@ -698,52 +698,45 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
 
   return (
     <div className={`section-page portal-page portal-page--detail portal-page--section${isWelcomeModule ? " portal-page--welcome" : ""}${isCultureModule ? " portal-page--culture" : ""}`}>
-      <section className={`page-hero single-focus-hero section-hero section-hero--focused section-hero--cinematic${isWelcomeModule ? " welcome-hero" : ""}`}>
+      <section className="page-hero single-focus-hero section-hero section-hero--focused section-hero--cinematic">
         <div className="section-hero-copy">
-          {isWelcomeModule && (
-            <div className="welcome-hero-head">
-              <p className="section-label">{section.eyebrow}</p>
-              <span className={`welcome-hero-status${isCompleted ? " done" : ""}`}>
-                {isCompleted ? "Module complete" : "In progress"}
-              </span>
-            </div>
-          )}
-          {!isWelcomeModule && <p className="section-label">{section.eyebrow}</p>}
+          <div className="section-hero-head">
+            <p className="section-label">{section.eyebrow}</p>
+            <span className={`section-hero-status${isCompleted ? " done" : ""}`}>
+              {isCompleted ? "Module complete" : "In progress"}
+            </span>
+          </div>
           <h1>{section.title}</h1>
           <p className="lead">{section.summary}</p>
-          {!isCultureModule && <p className="purpose-line">{section.purpose}</p>}
-          {isWelcomeModule && (
-            <div className="welcome-chip-row">
-              <span className="welcome-chip">{progressionItems.length} sections</span>
-              <span className="welcome-chip">Knowledge check</span>
-              <span className="welcome-chip">Acknowledgment required</span>
-            </div>
-          )}
+          <p className="purpose-line">{section.purpose}</p>
+          <div className="section-chip-row">
+            <span className="section-chip">{progressionItems.length} sections</span>
+            <span className="section-chip">Knowledge check</span>
+            <span className="section-chip">Acknowledgment required</span>
+          </div>
         </div>
       </section>
 
       <div className="section-layout-grid">
         <div className="section-main-column">
-          {!isCultureModule && (
-            <nav className="lesson-flow-nav" aria-label="Lesson progression">
-              <div className="lesson-flow-head">
-                <p className="lesson-flow-label">{progressionLabel}</p>
-                <p className="lesson-flow-meta">{progressionMeta}</p>
-              </div>
-              <div className="lesson-flow-track">
-                {progressionItems.map((item, index) => (
-                  <a
-                    key={item.href}
-                    className={index === 0 ? "lesson-flow-link lesson-flow-link--active" : item.href === completionSectionHref ? "lesson-flow-link lesson-flow-link--completion" : "lesson-flow-link"}
-                    href={item.href}
-                  >
-                    <span className="lesson-flow-step">{index + 1}</span>
-                    <span className="lesson-flow-title">{item.title}</span>
-                  </a>
-                ))}
-              </div>
-            </nav>
-          )}
+          <nav className="lesson-flow-nav" aria-label="Lesson progression">
+            <div className="lesson-flow-head">
+              <p className="lesson-flow-label">{progressionLabel}</p>
+              <p className="lesson-flow-meta">{progressionMeta}</p>
+            </div>
+            <div className="lesson-flow-track">
+              {progressionItems.map((item, index) => (
+                <a
+                  key={item.href}
+                  className={index === 0 ? "lesson-flow-link lesson-flow-link--active" : item.href === completionSectionHref ? "lesson-flow-link lesson-flow-link--completion" : "lesson-flow-link"}
+                  href={item.href}
+                >
+                  <span className="lesson-flow-step">{index + 1}</span>
+                  <span className="lesson-flow-title">{item.title}</span>
+                </a>
+              ))}
+            </div>
+          </nav>
 
           {isWelcomeModule ? (
             <>
@@ -1263,7 +1256,7 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
 
         <aside className="section-context-rail" aria-label="Module context">
           <CoachTipCard context={tipContext} variant="rail" />
-          {!isCultureModule && nextSection && (
+          {nextSection && (
             <article className="rail-context-card rail-context-card--next">
               <p className="section-label">Next module</p>
               <strong>{nextSection.title}</strong>
@@ -1271,30 +1264,28 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
               <Link className="inline-action" href={`/modules/${nextSection.slug}`}>Preview next</Link>
             </article>
           )}
-          {!isCultureModule && (
-            <article className="rail-context-card rail-context-card--compact">
-              <div className="compact-card-section compact-card-section--status">
-                <p className="section-label">This module</p>
-                <strong>{completionStatus}</strong>
-                <p>{completionStatusNote}</p>
-              </div>
-              {supportContact && (
-                <div className="compact-card-section compact-card-section--support">
-                  <p className="section-label">Questions</p>
-                  <div className="compact-support-row">
-                    <div className="compact-support-identity">
-                      <strong>{supportContact.name}</strong>
-                      <span className="compact-support-role">{supportContact.role}</span>
-                    </div>
-                    <div className="rail-contact-actions">
-                      <a className="inline-action" href={`mailto:${supportContact.email}`}>Email</a>
-                      <a className="inline-action" href={`tel:${supportContact.phone.replace(/\D/g, "")}`}>Call</a>
-                    </div>
+          <article className="rail-context-card rail-context-card--compact">
+            <div className="compact-card-section compact-card-section--status">
+              <p className="section-label">This module</p>
+              <strong>{completionStatus}</strong>
+              <p>{completionStatusNote}</p>
+            </div>
+            {supportContact && (
+              <div className="compact-card-section compact-card-section--support">
+                <p className="section-label">Questions</p>
+                <div className="compact-support-row">
+                  <div className="compact-support-identity">
+                    <strong>{supportContact.name}</strong>
+                    <span className="compact-support-role">{supportContact.role}</span>
+                  </div>
+                  <div className="rail-contact-actions">
+                    <a className="inline-action" href={`mailto:${supportContact.email}`}>Email</a>
+                    <a className="inline-action" href={`tel:${supportContact.phone.replace(/\D/g, "")}`}>Call</a>
                   </div>
                 </div>
-              )}
-            </article>
-          )}
+              </div>
+            )}
+          </article>
         </aside>
       </div>
     </div>

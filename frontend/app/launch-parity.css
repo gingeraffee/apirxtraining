@@ -4344,6 +4344,18 @@
   line-height: 1.3;
 }
 
+.compact-support-detail {
+  font-size: 0.78rem;
+  color: #3d6b8e;
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+.compact-support-detail:hover {
+  color: var(--cyan);
+  text-decoration: underline;
+}
+
 
 /* ═══════════════════════════════════════════════════════════════
    FIX 2: HERO TEXT DENSITY — DE-EMPHASIZE PURPOSE LINE

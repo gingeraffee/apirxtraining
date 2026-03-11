@@ -1273,16 +1273,10 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
             {supportContact && (
               <div className="compact-card-section compact-card-section--support">
                 <p className="section-label">Your People Person</p>
-                <div className="compact-support-row">
-                  <div className="compact-support-identity">
-                    <strong>{supportContact.name}</strong>
-                    <span className="compact-support-role">{supportContact.role}</span>
-                  </div>
-                  <div className="rail-contact-actions">
-                    <a className="inline-action" href={`mailto:${supportContact.email}`}>Email</a>
-                    <a className="inline-action" href={`tel:${supportContact.phone.replace(/\D/g, "")}`}>Call</a>
-                  </div>
-                </div>
+                <strong>{supportContact.name}</strong>
+                <span className="compact-support-role">{supportContact.role}</span>
+                <a className="compact-support-detail" href={`mailto:${supportContact.email}`}>{supportContact.email}</a>
+                <a className="compact-support-detail" href={`tel:${supportContact.phone.replace(/\D/g, "")}`}>{supportContact.phone}</a>
               </div>
             )}
           </article>

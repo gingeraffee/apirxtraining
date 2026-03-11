@@ -8,8 +8,8 @@ ROOT_DIR = Path(__file__).resolve().parents[3]
 FRONTEND_PUBLIC_DIR = ROOT_DIR / "frontend" / "public"
 
 
-def manual_acknowledgment(title: str, statement: str) -> dict[str, Any]:
-    return {"mode": "manual", "title": title, "statement": statement, "items": []}
+def manual_acknowledgment(title: str, statement: str, items: list[str] | None = None) -> dict[str, Any]:
+    return {"mode": "checklist", "title": title, "statement": statement, "items": items or []}
 
 
 def build_knowledge_check(
@@ -50,6 +50,7 @@ def build_section(
     knowledge_check: dict[str, Any],
     acknowledgment_title: str,
     acknowledgment_statement: str,
+    acknowledgment_items: list[str] | None = None,
     chapter_intros: list[str] | None = None,
     context_sidebar: tuple[str, list[str]] | None = None,
 ) -> dict[str, Any]:
@@ -72,7 +73,7 @@ def build_section(
         "actions": actions,
         "escalation": escalation,
         "knowledgeCheck": knowledge_check,
-        "acknowledgment": manual_acknowledgment(acknowledgment_title, acknowledgment_statement),
+        "acknowledgment": manual_acknowledgment(acknowledgment_title, acknowledgment_statement, acknowledgment_items),
     }
     if chapter_intros is not None:
         section["chapterIntros"] = chapter_intros
@@ -168,10 +169,19 @@ SECTIONS = [
             questions=[
                 ("welcome-purpose", "Which description best matches what AAP Start is for?", ["A place to memorize every policy on day one.", "A guided launch path that orients you, shows where to look, and helps you know where questions go.", "A role-specific toolkit that replaces supervisor training."], 1),
                 ("welcome-support", "Who is the primary onboarding and employee-support contact named in this module?", ["Nicole Thornton, HR Manager", "CBIZ Benefits", "LifeMatters"], 0),
+                ("welcome-cooperative", "What type of organization is AAP?", ["A publicly traded corporation.", "A member-owned cooperative supporting independent pharmacies.", "A government agency overseeing pharmacy regulations."], 1),
+                ("welcome-day-one", "What is the right goal for day one according to this module?", ["Memorize every policy and procedure.", "Get oriented, know the basics, and know where to look.", "Complete all system training before end of shift."], 1),
+                ("welcome-api", "What is API's relationship to AAP?", ["API is a competitor to AAP.", "API continues to operate as AAP's warehouse and distribution arm.", "API is the parent company that acquired AAP."], 1),
             ],
         ),
         acknowledgment_title="Ready for the path",
         acknowledgment_statement="I understand what AAP Start is for, what AAP exists to support, and where to go when a question needs real context.",
+        acknowledgment_items=[
+            "I understand what AAP Start is and how to use it as my onboarding guide.",
+            "I know who AAP supports and what the company does as a member-owned cooperative.",
+            "I know where to go when I have onboarding or employee-support questions.",
+            "I recognize the core values: customer focus, integrity, respect, excellence, and ownership.",
+        ],
         chapter_intros=[
             "Get the orientation anchor first: what AAP Start is for, what AAP does, and how support is delivered.",
             "Understand who API is, what API does, and how API references fit with AAP language in this launch experience.",
@@ -224,10 +234,19 @@ SECTIONS = [
             questions=[
                 ("culture-directness", "When you do not know the answer to a sensitive question, what is the best response?", ["Give your best guess so the conversation keeps moving.", "Say you need to check and follow up through the right channel.", "Share the question with anyone nearby until someone answers it."], 1),
                 ("culture-privacy", "What should you do if you suspect a privacy breach or unauthorized access?", ["Wait to see if it becomes a larger problem.", "Report it to HR and IT right away.", "Mention it casually to a teammate and move on."], 1),
+                ("culture-escalation", "Which of these should be escalated immediately?", ["A coworker arriving five minutes late.", "Harassment, retaliation, or threatening conduct.", "A preference disagreement about lunch schedules."], 1),
+                ("culture-documents", "What should happen to printed materials with sensitive information?", ["Leave them at the shared printer for convenience.", "Retrieve them immediately, never leave them unattended, and shred when done.", "Store them in your desk drawer indefinitely."], 1),
+                ("culture-email", "What is the rule about forwarding work materials to personal email?", ["It is fine as long as you delete them later.", "Do not forward work materials to personal email addresses.", "Only do it if your manager is copied."], 1),
             ],
         ),
         acknowledgment_title="Leave with this",
         acknowledgment_statement="At AAP, strong culture is visible in respectful communication, good judgment, and careful handling of sensitive information.",
+        acknowledgment_items=[
+            "I understand the communication standards expected at AAP.",
+            "I know how to handle sensitive information responsibly.",
+            "I understand when and how to escalate concerns about conduct or privacy.",
+            "I will use respectful directness in professional interactions.",
+        ],
         chapter_intros=[
             "The standard is not abstract. It shows up in ordinary moments: how you answer, how you correct, how you raise concerns, and how carefully you handle information other people trust you with.",
             "The clearest test is not what you know in theory. It is what you do when a conversation gets awkward, when a situation crosses a line, or when information should travel no farther.",
@@ -272,10 +291,18 @@ SECTIONS = [
             questions=[
                 ("systems-passwords", "Where should work passwords be stored?", ["In your personal notes app so you can reach them anywhere.", "Only in the approved company password manager.", "In a shared team spreadsheet so backup coverage is easy."], 1),
                 ("systems-access", "What should you do if a key system is not working during your first week?", ["Build a workaround and ask about it later.", "Flag it early through the right support path.", "Share your credentials with a teammate who has access."], 1),
+                ("systems-approved", "What is the policy on using personal tools for company work?", ["Use whatever is fastest.", "Store work only in approved company systems.", "Personal tools are fine if they are cloud-based."], 1),
+                ("systems-support", "Where should IT-related problems and access issues be directed?", ["To any coworker who seems tech-savvy.", "To your site's IT team, who generally prefers Teams for requests.", "To the company's public website help form."], 1),
+                ("systems-day-one", "What is expected regarding system training on your first day?", ["Master every tool before leaving.", "Get familiar with key systems; your supervisor and trainer will guide you.", "Skip systems training until your second week."], 1),
             ],
         ),
         acknowledgment_title="Systems basics are clear",
         acknowledgment_statement="I understand the basic expectations around system access, password security, and where to go when something needs help.",
+        acknowledgment_items=[
+            "I know to store passwords only in the approved company password manager.",
+            "I will verify my system access during my first week and flag issues early.",
+            "I understand to use approved tools for all company work.",
+        ],
     ),
     build_section(
         section_id="how-work-works",
@@ -318,10 +345,19 @@ SECTIONS = [
             questions=[
                 ("work-follow-up", "If a deadline or follow-up you promised is going to change, what should you do?", ["Wait until the original deadline passes, then explain what happened.", "Communicate the change before the deadline passes.", "Assume people will understand if the work is important enough."], 1),
                 ("work-hr-lane", "Which team owns people, policy, pay, and other sensitive employee issues?", ["HR", "IT", "Any experienced coworker"], 0),
+                ("work-open-door", "What does AAP's open door culture mean?", ["Only speak up during scheduled meetings.", "You are encouraged to raise questions, concerns, or ideas with your supervisor or HR at any time.", "Wait for a formal review to share feedback."], 1),
+                ("work-records", "When personal details change, what should you do?", ["Wait until annual enrollment.", "Update HR promptly so your records stay accurate.", "Let payroll figure it out on their own."], 1),
+                ("work-documentation", "Why is it important to document key interactions?", ["To create a paper trail for legal disputes.", "To protect everyone by capturing decisions, commitments, and next steps.", "Documentation is optional at AAP."], 1),
             ],
         ),
         acknowledgment_title="Day-to-day expectations make sense",
         acknowledgment_statement="I understand the communication, follow-through, and ownership expectations that keep work moving well at AAP.",
+        acknowledgment_items=[
+            "I understand the importance of direct and professional communication.",
+            "I will follow through on commitments and communicate changes before deadlines pass.",
+            "I know which team owns what: manager for day-to-day, HR for policy and pay, IT for systems.",
+            "I will document important decisions and follow-ups.",
+        ],
     ),
     build_section(
         section_id="benefits-pay-and-time-away",
@@ -370,10 +406,19 @@ SECTIONS = [
             questions=[
                 ("benefits-attendance", "What does two consecutive months of perfect attendance do under this module's attendance overview?", ["It removes one point early.", "It adds a floating holiday.", "It resets your entire attendance record."], 0),
                 ("benefits-leave", "If a time-away question involves a medical situation or FMLA, what is the right move?", ["Wait for your next annual review to bring it up.", "Move it to HR directly.", "Ask a coworker what usually happens."], 1),
+                ("benefits-pto", "When does PTO eligibility begin for full-time employees?", ["Immediately on day one.", "After 60 days.", "After one full year of employment."], 1),
+                ("benefits-pay", "Where should pay discrepancies or unexpected deductions be directed?", ["Handle it informally with your manager.", "Bring it to HR through the proper channel.", "Ignore it and assume it will correct itself."], 1),
+                ("benefits-two-day", "What happens after two consecutive workdays of absence without any call-in notification?", ["A verbal warning is issued.", "It is treated as a voluntary resignation.", "A point is added but nothing else changes."], 1),
             ],
         ),
         acknowledgment_title="Benefits, pay, and attendance basics understood",
         acknowledgment_statement="I understand the basics of benefits timing, the attendance point system, time-away expectations, and when HR needs to be involved.",
+        acknowledgment_items=[
+            "I understand that benefits eligibility opens in stages based on hire date and status.",
+            "I know the basics of the attendance point system and how points are earned and removed.",
+            "I know to bring pay or benefits questions to HR instead of sorting them out on my own.",
+            "I understand the different types of time away and their request paths.",
+        ],
     ),
     build_section(
         section_id="support-leave-and-employee-resources",
@@ -416,10 +461,18 @@ SECTIONS = [
             questions=[
                 ("support-hr", "Where should medical, leave, and accommodation questions go?", ["To HR directly", "To the Resource Hub only", "To any teammate who has handled it before"], 0),
                 ("support-eap", "How can employees use LifeMatters?", ["Only after HR approval", "Only after 90 days", "Confidentially from day one without a referral"], 2),
+                ("support-urgency", "Which of these requires immediate attention rather than waiting until the next business day?", ["A routine PTO request.", "A pay discrepancy or safety concern.", "A question about the dress code."], 1),
+                ("support-language", "When someone raises a sensitive topic, what is the right approach?", ["Speculate about outcomes and reassure them.", "Listen, acknowledge, and avoid promising outcomes.", "Tell them to handle it on their own."], 1),
+                ("support-it", "How does IT generally prefer to receive support requests?", ["Through personal phone calls.", "Through Teams.", "By walking to the IT department in person."], 1),
             ],
         ),
         acknowledgment_title="Support routes are clear",
         acknowledgment_statement="I understand when to use support resources, when leave questions require HR, and why sensitive issues should not be improvised.",
+        acknowledgment_items=[
+            "I know to route medical, leave, and accommodation questions directly to HR.",
+            "I understand that LifeMatters is available confidentially from day one.",
+            "I know how urgency determines the right support path.",
+        ],
     ),
     build_section(
         section_id="safety-at-aap",
@@ -445,10 +498,18 @@ SECTIONS = [
             questions=[
                 ("safety-urgent", "If something feels unsafe or threatening, what should you do?", ["Wait for a calmer time to mention it.", "Escalate it immediately.", "Keep working unless someone else stops."], 1),
                 ("safety-reporting", "Which answer reflects the module's safety standard?", ["Near misses and hazards should be reported promptly.", "Only injuries that require medical treatment need to be reported.", "Minor hazards are fine if you can work around them."], 0),
+                ("safety-responsibility", "Who is responsible for safety at AAP?", ["Only the safety department.", "Everyone shares responsibility for safety.", "Only managers and supervisors."], 1),
+                ("safety-unclear", "What should you do when the safe path for a task is not obvious?", ["Use your best guess and move quickly.", "Stop and get direction instead of guessing.", "Ask a coworker to do it for you."], 1),
+                ("safety-process", "What is the right approach to safety training and local guidance?", ["Skip it if you have prior experience.", "Follow the training and guidance that applies to your workspace.", "Only review it after an incident occurs."], 1),
             ],
         ),
         acknowledgment_title="Safety expectations are clear",
         acknowledgment_statement="I understand the shared safety expectations and the importance of speaking up quickly when something does not look right.",
+        acknowledgment_items=[
+            "I understand that safety is a shared responsibility across all roles.",
+            "I will report hazards, near misses, and injuries promptly.",
+            "I know to escalate urgent safety concerns immediately without waiting.",
+        ],
     ),
     build_section(
         section_id="your-first-90-days",
@@ -490,10 +551,18 @@ SECTIONS = [
             questions=[
                 ("first-90-days-day-one", "What is day one mainly for according to this module?", ["Orientation and getting settled", "Independent mastery of your full role", "Completing every system training in one day"], 0),
                 ("first-90-days-questions", "What is the better move when something still feels unclear in your first 90 days?", ["Stay quiet until you have a perfect question.", "Ask early and use your support routes.", "Wait until onboarding is fully finished."], 1),
+                ("first-90-days-intro-period", "What defines the first 60 days at AAP?", ["The probationary review period with mandatory testing.", "The introductory period with important attendance expectations and some benefits not yet started.", "A self-directed phase with no expectations."], 1),
+                ("first-90-days-confidence", "How does confidence develop according to this module?", ["Through memorizing the handbook cover to cover.", "Through repetition, practice, and returning to resources when needed.", "Through avoiding mistakes at all costs."], 1),
+                ("first-90-days-plan", "Who guides the specific milestones for your 30/60/90-day development plan?", ["AAP Start provides the detailed plan.", "Your supervisor or trainer based on your role.", "You create the plan independently."], 1),
             ],
         ),
         acknowledgment_title="The next stretch feels navigable",
         acknowledgment_statement="I understand what the first days and weeks look like, what the introductory period means, and how to keep using support instead of guessing.",
+        acknowledgment_items=[
+            "I understand that day one is about orientation, not mastery.",
+            "I know that the first 60 days are the introductory period with specific expectations.",
+            "I will ask questions early and use my support routes instead of guessing.",
+        ],
     ),
     build_section(
         section_id="final-review-and-acknowledgment",
@@ -519,10 +588,18 @@ SECTIONS = [
             questions=[
                 ("final-review-reference", "What does successful launch completion mean in this module?", ["You memorized every policy detail.", "You know the essentials, where to look, and who to ask.", "You should not need support anymore."], 1),
                 ("final-review-hub", "How should you use the Resource Hub after onboarding?", ["As a live reference shelf for files, contacts, and refreshers.", "Only if your manager gives written approval.", "Only after all future modules are released."], 0),
+                ("final-review-finish", "Why is the finish line manual on purpose?", ["To slow employees down.", "So completion happens when you intentionally mark it, not by reaching the bottom of a page.", "To give HR time to review your progress."], 1),
+                ("final-review-support", "What should you expect after finishing the launch path?", ["You should no longer need any support.", "You should feel oriented and know where to ask questions.", "You should memorize all policies before asking anything."], 1),
+                ("final-review-next", "What is the recommended approach for topics that still feel fuzzy?", ["Skip them and move on.", "Take one last pass through anything unclear and use your support routes.", "Wait until someone brings them up."], 1),
             ],
         ),
         acknowledgment_title="Launch path complete",
         acknowledgment_statement="I have completed the launch onboarding path and I know where to go for support, clarification, and live reference materials.",
+        acknowledgment_items=[
+            "I have reviewed the launch path essentials and key takeaways.",
+            "I know where to find support contacts and reference materials in the Resource Hub.",
+            "I understand that completion means knowing where to look and who to ask, not memorizing everything.",
+        ],
     ),
 ]
 

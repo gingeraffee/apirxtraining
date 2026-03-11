@@ -22,6 +22,36 @@ const QUIZ_FALLBACKS: Record<string, KnowledgeCheck> = {
         options: ["Nicole Thornton, HR Manager", "CBIZ Benefits", "LifeMatters"],
         correctOptionIndex: 0,
       },
+      {
+        id: "welcome-cooperative",
+        prompt: "What type of organization is AAP?",
+        options: [
+          "A publicly traded corporation.",
+          "A member-owned cooperative supporting independent pharmacies.",
+          "A government agency overseeing pharmacy regulations.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "welcome-day-one",
+        prompt: "What is the right goal for day one according to this module?",
+        options: [
+          "Memorize every policy and procedure.",
+          "Get oriented, know the basics, and know where to look.",
+          "Complete all system training before end of shift.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "welcome-api",
+        prompt: "What is API's relationship to AAP?",
+        options: [
+          "API is a competitor to AAP.",
+          "API continues to operate as AAP's warehouse and distribution arm.",
+          "API is the parent company that acquired AAP.",
+        ],
+        correctOptionIndex: 1,
+      },
     ],
   },
   "how-we-show-up": {
@@ -46,6 +76,36 @@ const QUIZ_FALLBACKS: Record<string, KnowledgeCheck> = {
           "Wait to see if it becomes a larger problem.",
           "Report it to HR and IT right away.",
           "Mention it casually to a teammate and move on.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "culture-escalation",
+        prompt: "Which of these should be escalated immediately?",
+        options: [
+          "A coworker arriving five minutes late.",
+          "Harassment, retaliation, or threatening conduct.",
+          "A preference disagreement about lunch schedules.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "culture-documents",
+        prompt: "What should happen to printed materials with sensitive information?",
+        options: [
+          "Leave them at the shared printer for convenience.",
+          "Retrieve them immediately, never leave them unattended, and shred when done.",
+          "Store them in your desk drawer indefinitely.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "culture-email",
+        prompt: "What is the rule about forwarding work materials to personal email?",
+        options: [
+          "It is fine as long as you delete them later.",
+          "Do not forward work materials to personal email addresses.",
+          "Only do it if your manager is copied.",
         ],
         correctOptionIndex: 1,
       },
@@ -76,6 +136,36 @@ const QUIZ_FALLBACKS: Record<string, KnowledgeCheck> = {
         ],
         correctOptionIndex: 1,
       },
+      {
+        id: "systems-approved",
+        prompt: "What is the policy on using personal tools for company work?",
+        options: [
+          "Use whatever is fastest.",
+          "Store work only in approved company systems.",
+          "Personal tools are fine if they are cloud-based.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "systems-support",
+        prompt: "Where should IT-related problems and access issues be directed?",
+        options: [
+          "To any coworker who seems tech-savvy.",
+          "To your site's IT team, who generally prefers Teams for requests.",
+          "To the company's public website help form.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "systems-day-one",
+        prompt: "What is expected regarding system training on your first day?",
+        options: [
+          "Master every tool before leaving.",
+          "Get familiar with key systems; your supervisor and trainer will guide you.",
+          "Skip systems training until your second week.",
+        ],
+        correctOptionIndex: 1,
+      },
     ],
   },
   "how-work-works": {
@@ -98,6 +188,36 @@ const QUIZ_FALLBACKS: Record<string, KnowledgeCheck> = {
         prompt: "Which team owns people, policy, pay, and other sensitive employee issues?",
         options: ["HR", "IT", "Any experienced coworker"],
         correctOptionIndex: 0,
+      },
+      {
+        id: "work-open-door",
+        prompt: "What does AAP's open door culture mean?",
+        options: [
+          "Only speak up during scheduled meetings.",
+          "You are encouraged to raise questions, concerns, or ideas with your supervisor or HR at any time.",
+          "Wait for a formal review to share feedback.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "work-records",
+        prompt: "When personal details change, what should you do?",
+        options: [
+          "Wait until annual enrollment.",
+          "Update HR promptly so your records stay accurate.",
+          "Let payroll figure it out on their own.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "work-documentation",
+        prompt: "Why is it important to document key interactions?",
+        options: [
+          "To create a paper trail for legal disputes.",
+          "To protect everyone by capturing decisions, commitments, and next steps.",
+          "Documentation is optional at AAP.",
+        ],
+        correctOptionIndex: 1,
       },
     ],
   },
@@ -126,6 +246,36 @@ const QUIZ_FALLBACKS: Record<string, KnowledgeCheck> = {
         ],
         correctOptionIndex: 1,
       },
+      {
+        id: "benefits-pto",
+        prompt: "When does PTO eligibility begin for full-time employees?",
+        options: [
+          "Immediately on day one.",
+          "After 60 days.",
+          "After one full year of employment.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "benefits-pay",
+        prompt: "Where should pay discrepancies or unexpected deductions be directed?",
+        options: [
+          "Handle it informally with your manager.",
+          "Bring it to HR through the proper channel.",
+          "Ignore it and assume it will correct itself.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "benefits-two-day",
+        prompt: "What happens after two consecutive workdays of absence without any call-in notification?",
+        options: [
+          "A verbal warning is issued.",
+          "It is treated as a voluntary resignation.",
+          "A point is added but nothing else changes.",
+        ],
+        correctOptionIndex: 1,
+      },
     ],
   },
   "support-leave-and-employee-resources": {
@@ -148,6 +298,36 @@ const QUIZ_FALLBACKS: Record<string, KnowledgeCheck> = {
           "Confidentially from day one without a referral",
         ],
         correctOptionIndex: 2,
+      },
+      {
+        id: "support-urgency",
+        prompt: "Which of these requires immediate attention rather than waiting until the next business day?",
+        options: [
+          "A routine PTO request.",
+          "A pay discrepancy or safety concern.",
+          "A question about the dress code.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "support-language",
+        prompt: "When someone raises a sensitive topic, what is the right approach?",
+        options: [
+          "Speculate about outcomes and reassure them.",
+          "Listen, acknowledge, and avoid promising outcomes.",
+          "Tell them to handle it on their own.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "support-it",
+        prompt: "How does IT generally prefer to receive support requests?",
+        options: [
+          "Through personal phone calls.",
+          "Through Teams.",
+          "By walking to the IT department in person.",
+        ],
+        correctOptionIndex: 1,
       },
     ],
   },
@@ -176,6 +356,36 @@ const QUIZ_FALLBACKS: Record<string, KnowledgeCheck> = {
         ],
         correctOptionIndex: 0,
       },
+      {
+        id: "safety-responsibility",
+        prompt: "Who is responsible for safety at AAP?",
+        options: [
+          "Only the safety department.",
+          "Everyone shares responsibility for safety.",
+          "Only managers and supervisors.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "safety-unclear",
+        prompt: "What should you do when the safe path for a task is not obvious?",
+        options: [
+          "Use your best guess and move quickly.",
+          "Stop and get direction instead of guessing.",
+          "Ask a coworker to do it for you.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "safety-process",
+        prompt: "What is the right approach to safety training and local guidance?",
+        options: [
+          "Skip it if you have prior experience.",
+          "Follow the training and guidance that applies to your workspace.",
+          "Only review it after an incident occurs.",
+        ],
+        correctOptionIndex: 1,
+      },
     ],
   },
   "your-first-90-days": {
@@ -200,6 +410,36 @@ const QUIZ_FALLBACKS: Record<string, KnowledgeCheck> = {
           "Stay quiet until you have a perfect question.",
           "Ask early and use your support routes.",
           "Wait until onboarding is fully finished.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "first-90-days-intro-period",
+        prompt: "What defines the first 60 days at AAP?",
+        options: [
+          "The probationary review period with mandatory testing.",
+          "The introductory period with important attendance expectations and some benefits not yet started.",
+          "A self-directed phase with no expectations.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "first-90-days-confidence",
+        prompt: "How does confidence develop according to this module?",
+        options: [
+          "Through memorizing the handbook cover to cover.",
+          "Through repetition, practice, and returning to resources when needed.",
+          "Through avoiding mistakes at all costs.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "first-90-days-plan",
+        prompt: "Who guides the specific milestones for your 30/60/90-day development plan?",
+        options: [
+          "AAP Start provides the detailed plan.",
+          "Your supervisor or trainer based on your role.",
+          "You create the plan independently.",
         ],
         correctOptionIndex: 1,
       },
@@ -229,6 +469,36 @@ const QUIZ_FALLBACKS: Record<string, KnowledgeCheck> = {
           "Only after all future modules are released.",
         ],
         correctOptionIndex: 0,
+      },
+      {
+        id: "final-review-finish",
+        prompt: "Why is the finish line manual on purpose?",
+        options: [
+          "To slow employees down.",
+          "So completion happens when you intentionally mark it, not by reaching the bottom of a page.",
+          "To give HR time to review your progress.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "final-review-support",
+        prompt: "What should you expect after finishing the launch path?",
+        options: [
+          "You should no longer need any support.",
+          "You should feel oriented and know where to ask questions.",
+          "You should memorize all policies before asking anything.",
+        ],
+        correctOptionIndex: 1,
+      },
+      {
+        id: "final-review-next",
+        prompt: "What is the recommended approach for topics that still feel fuzzy?",
+        options: [
+          "Skip them and move on.",
+          "Take one last pass through anything unclear and use your support routes.",
+          "Wait until someone brings them up.",
+        ],
+        correctOptionIndex: 1,
       },
     ],
   },

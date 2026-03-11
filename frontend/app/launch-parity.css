@@ -3871,50 +3871,47 @@
   top: 22px;
 }
 
-/* ── 2. Context rail cards ── */
+/* ── 2. Context rail cards — uses Overview's exact card system ── */
 .rail-context-card {
   display: grid;
-  gap: 6px;
-  padding: 16px 18px;
+  gap: 12px;
+  padding: 18px 18px;
   border-radius: 16px;
-  border: 1px solid rgba(11, 31, 55, 0.08);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow:
-    0 8px 22px rgba(8, 20, 44, 0.06),
-    0 2px 6px rgba(8, 20, 44, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.96);
-  transition: border-color 200ms ease, box-shadow 200ms ease;
+  border: 1px solid var(--mist-border);
+  background: #ffffff;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 200ms ease;
 }
 
 .rail-context-card:hover {
-  border-color: rgba(61, 216, 248, 0.16);
   box-shadow:
-    0 12px 28px rgba(8, 20, 44, 0.08),
-    0 2px 6px rgba(8, 20, 44, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.96);
+    0 0 0 1px rgba(0, 0, 0, 0.03),
+    0 4px 8px rgba(0, 0, 0, 0.05),
+    0 14px 32px rgba(0, 0, 0, 0.07),
+    0 32px 56px rgba(0, 0, 0, 0.05);
 }
 
 .rail-context-card .section-label {
-  font-size: 0.6rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #6d8097;
+  color: #3d4f62;
 }
 
 .rail-context-card strong {
   font-family: var(--font-display);
   font-size: 0.88rem;
   font-weight: 700;
-  color: var(--text-strong);
+  color: #0e1c2e;
   line-height: 1.22;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
 .rail-context-card p {
-  font-size: 0.78rem;
-  line-height: 1.46;
-  color: #42556d;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: #5a6e82;
   margin: 0;
 }
 
@@ -3923,40 +3920,19 @@
   margin-top: 2px;
 }
 
-/* Next module card: subtle accent treatment */
+/* Next module card: plain white card — matches Overview white card pattern */
 .rail-context-card--next {
   position: relative;
-  overflow: hidden;
 }
 
+/* Accent bar removed — Next Module card uses same treatment as all other white cards */
 .rail-context-card--next::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  border-radius: 0 2px 2px 0;
-  background: linear-gradient(180deg, #3dd8f8, rgba(176, 49, 69, 0.5));
-}
-
-/* Status card: frosted glass hint */
-.rail-context-card--status {
-  background:
-    radial-gradient(ellipse at 10% 20%, rgba(61, 216, 248, 0.04), transparent 60%),
-    rgba(255, 255, 255, 0.92);
+  display: none;
 }
 
 .rail-context-card--status strong {
-  color: #0e2540;
+  color: #0e1c2e;
   font-size: 0.92rem;
-}
-
-/* Support card */
-.rail-context-card--support {
-  background:
-    radial-gradient(ellipse at 90% 80%, rgba(176, 49, 69, 0.03), transparent 60%),
-    rgba(255, 255, 255, 0.92);
 }
 
 .rail-contact-actions {
@@ -4294,7 +4270,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.72fr) minmax(260px, 0.68fr);
   column-gap: 18px;
-  row-gap: 22px;
+  row-gap: 18px;
   width: min(100%, 1360px);
   margin-inline: auto;
   padding-inline: 0;
@@ -4312,29 +4288,30 @@
 .portal-page--section.portal-page--welcome > .section-layout-grid > .section-main-column {
   grid-column: 1;
   min-width: 0;
+  gap: 16px;
 }
 
 .portal-page--section.portal-page--welcome > .section-layout-grid > .section-context-rail {
   grid-column: 2;
   grid-row: 1 / span 2;
   align-self: start;
+  padding-top: 2px;
 }
 
 /* ── Hero: match Overview hero design (full-width text, accent line, pills) ── */
 .portal-page--section.portal-page--welcome .section-hero--cinematic {
-  padding: 28px 30px 24px;
-  border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 32px 34px 28px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   background:
-    radial-gradient(ellipse at 10% 50%, rgba(17, 183, 228, 0.1), transparent 50%),
+    radial-gradient(ellipse at 10% 50%, rgba(17, 183, 228, 0.12), transparent 50%),
+    radial-gradient(circle, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
     linear-gradient(135deg, #071a30 0%, #0b2240 100%);
-  box-shadow:
-    0 20px 48px rgba(4, 12, 24, 0.26),
-    0 4px 10px rgba(4, 12, 24, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  background-size: auto, 18px 18px, auto;
+  box-shadow: var(--shadow-dark);
 }
 
-/* Clean 3px top accent stripe — matches Overview hero */
+/* 5px top accent stripe — matches Overview hero exactly */
 .portal-page--section.portal-page--welcome .section-hero--cinematic::before {
   content: "" !important;
   position: absolute !important;
@@ -4343,10 +4320,11 @@
   bottom: auto !important;
   left: 0 !important;
   width: 100% !important;
-  height: 3px !important;
+  height: 5px !important;
   transform: none !important;
-  background: linear-gradient(90deg, var(--cyan) 0%, #38bdf8 50%, var(--red) 100%) !important;
-  border-radius: 22px 22px 0 0 !important;
+  background: linear-gradient(90deg, rgba(79, 220, 255, 1) 0%, #38bdf8 45%, var(--red) 100%) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 0 14px rgba(79, 220, 255, 0.3) !important;
   pointer-events: none !important;
   z-index: 2 !important;
 }
@@ -4465,7 +4443,7 @@
 
 @media (max-width: 720px) {
   .portal-page--section.portal-page--welcome .section-hero--cinematic {
-    padding: 20px 18px 17px;
+    padding: 22px 20px 18px;
   }
 
   .portal-page--section.portal-page--welcome .section-hero--cinematic h1 {
@@ -4538,28 +4516,17 @@
    ═══════════════════════════════════════════════════════════════ */
 
 .section-context-rail .rail-context-card {
-  background: rgba(255, 255, 255, 0.94) !important;
-  border: 1px solid rgba(11, 31, 55, 0.06);
-  box-shadow:
-    0 8px 22px rgba(8, 20, 44, 0.05),
-    0 2px 6px rgba(8, 20, 44, 0.025),
-    inset 0 1px 0 rgba(255, 255, 255, 0.98);
+  background: #ffffff !important;
+  border: 1px solid var(--mist-border);
+  box-shadow: var(--shadow-card);
 }
 
 .section-context-rail .rail-context-card:hover {
-  border-color: rgba(61, 216, 248, 0.14);
   box-shadow:
-    0 12px 28px rgba(8, 20, 44, 0.07),
-    0 2px 6px rgba(8, 20, 44, 0.035),
-    inset 0 1px 0 rgba(255, 255, 255, 0.98);
-}
-
-.section-context-rail .rail-context-card--status {
-  background: rgba(255, 255, 255, 0.94) !important;
-}
-
-.section-context-rail .rail-context-card--support {
-  background: rgba(255, 255, 255, 0.94) !important;
+    0 0 0 1px rgba(0, 0, 0, 0.03),
+    0 4px 8px rgba(0, 0, 0, 0.05),
+    0 14px 32px rgba(0, 0, 0, 0.07),
+    0 32px 56px rgba(0, 0, 0, 0.05);
 }
 
 
@@ -4575,14 +4542,14 @@
 }
 
 .compact-card-section {
-  padding: 14px 18px;
+  padding: 16px 18px;
   display: grid;
-  gap: 4px;
+  gap: 6px;
 }
 
 .compact-card-section--support {
-  border-top: 1px solid rgba(11, 31, 55, 0.06);
-  padding-top: 12px;
+  border-top: 1px solid var(--mist-border);
+  padding-top: 14px;
 }
 
 .compact-support-row {
@@ -4609,7 +4576,7 @@
 
 .compact-support-role {
   font-size: 0.68rem;
-  color: #6d8097;
+  color: #5a6e82;
   line-height: 1.3;
 }
 

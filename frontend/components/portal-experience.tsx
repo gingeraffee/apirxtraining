@@ -700,10 +700,25 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
     <div className={`section-page portal-page portal-page--detail portal-page--section${isWelcomeModule ? " portal-page--welcome" : ""}${isCultureModule ? " portal-page--culture" : ""}`}>
       <section className={`page-hero single-focus-hero section-hero section-hero--focused section-hero--cinematic${isWelcomeModule ? " welcome-hero" : ""}`}>
         <div className="section-hero-copy">
-          <p className="section-label">{section.eyebrow}</p>
+          {isWelcomeModule && (
+            <div className="welcome-hero-head">
+              <p className="section-label">{section.eyebrow}</p>
+              <span className={`welcome-hero-status${isCompleted ? " done" : ""}`}>
+                {isCompleted ? "Module complete" : "In progress"}
+              </span>
+            </div>
+          )}
+          {!isWelcomeModule && <p className="section-label">{section.eyebrow}</p>}
           <h1>{section.title}</h1>
           <p className="lead">{section.summary}</p>
           {!isCultureModule && <p className="purpose-line">{section.purpose}</p>}
+          {isWelcomeModule && (
+            <div className="welcome-chip-row">
+              <span className="welcome-chip">{progressionItems.length} sections</span>
+              <span className="welcome-chip">Knowledge check</span>
+              <span className="welcome-chip">Acknowledgment required</span>
+            </div>
+          )}
         </div>
       </section>
 

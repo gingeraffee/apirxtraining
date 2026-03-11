@@ -123,7 +123,6 @@ DASHBOARD_STATS = [
 CONTACTS = [
     {"id": "nicole-thornton", "name": "Nicole Thornton", "role": "HR Manager", "email": "nicole.thornton@apirx.com", "phone": "256-574-7528", "note": "Primary contact for onboarding questions, benefits timing, time-away routing, and general next-step help."},
     {"id": "brandy-hooper", "name": "Brandy Hooper", "role": "VP of Human Resources", "email": "brandy.hooper@rxaap.com", "phone": "256-574-7526", "note": "Escalation contact for sensitive HR concerns, unresolved issues, and higher-level employee support."},
-    {"id": "cbiz-benefits", "name": "CBIZ Benefits", "role": "Benefits Support", "email": "melissa.street@cbiz.com", "phone": "844.200.2249", "note": "Benefits support after HR has routed the request and confirmed what needs action."},
     {"id": "lifematters", "name": "LifeMatters", "role": "Employee Assistance Program", "email": "", "phone": "800-634-6433", "note": "Confidential employee assistance support available from day one."},
 ]
 
@@ -139,7 +138,7 @@ SECTIONS = [
         essentials=[
             ("What AAP Start Is", "AAP Start is your onboarding guide. It is designed to make your first stretch at AAP clearer, easier to follow, and easier to complete by organizing key information, training, and next steps in one place."),
             ("Who AAP Is", "American Associated Pharmacies, or AAP, is a member-owned cooperative that supports independent and community pharmacies. AAP was formed in 2009 through the joining of two pharmacy organizations, and API continues to operate as AAP\u2019s warehouse and distribution arm."),
-            ("Core Values", "Customer focus, integrity, respect, excellence, and ownership."),
+            ("Core Values", "The way we work matters just as much as the work itself. \n\nAt AAP, we lead with customer focus, act with integrity, treat people with respect, aim for excellence, and take ownership of what we do."),
             ("Mission and Vision", "Mission: Provide support and customized solutions for independent and community pharmacies to enhance profitability, streamline operations, and improve the quality of patient care.\n\nVision: Help independent pharmacies thrive in a competitive healthcare market."),
         ],
         policy_areas=[

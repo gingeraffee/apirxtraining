@@ -10,6 +10,7 @@ import { LoginScreen } from "@/components/login-screen";
 import { PortalBrandLockup } from "@/components/portal-brand-lockup";
 import { ModuleKnowledgeCheck, type KnowledgeCheckFeedback } from "@/components/module-knowledge-check";
 import { CoachTipCard } from "@/components/overview/coach-tip-card";
+import ModuleCompletionFlow from "@/components/module-completion-flow";
 import { normalizeExperienceContent } from "@/lib/quiz-fallbacks";
 
 type PortalKind = "overview" | "section" | "toolkit";
@@ -515,6 +516,11 @@ export function PortalExperience({ kind, slug }: PortalExperienceProps) {
             pendingAction={pendingAction}
             contacts={experience.contacts}
             track={experience.track}
+            employeeId={EMPLOYEE_ID}
+            displayName={displayName}
+            progressRecord={progress}
+            onProgressUpdate={setProgress}
+            allSections={sections}
           />
         )}
 
@@ -553,9 +559,14 @@ type SectionProps = {
   pendingAction: "quiz" | "acknowledgment" | null;
   contacts: Contact[];
   track: TrackInfo;
+  employeeId: string;
+  displayName: string;
+  progressRecord: ProgressRecord;
+  onProgressUpdate: (record: ProgressRecord) => void;
+  allSections: Section[];
 };
 
-function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isCompleted, selections, quizSelections, quizFeedback, onToggle, onQuizSelect, onSubmitKnowledgeCheck, onAcknowledge, isPending, pendingAction, contacts, track }: SectionProps) {
+function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isCompleted, selections, quizSelections, quizFeedback, onToggle, onQuizSelect, onSubmitKnowledgeCheck, onAcknowledge, isPending, pendingAction, contacts, track, employeeId, displayName, progressRecord, onProgressUpdate, allSections }: SectionProps) {
   const knowledgeCheck: KnowledgeCheck = section.knowledgeCheck ?? { title: "Knowledge Check", intro: "Quiz content is unavailable right now.", passingPercent: 1, questions: [] };
   const showChecklist = section.acknowledgment.mode !== "manual" && section.acknowledgment.items.length > 0;
   const allChecked = !showChecklist || (selections.length === section.acknowledgment.items.length && selections.every(Boolean));
@@ -592,18 +603,14 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
       { href: "#section-big-picture", title: "Big picture" },
       { href: "#section-context", title: "AAP and API" },
       { href: "#section-practical-guidance", title: "Using AAP Start" },
-      { href: "#section-knowledge-check", title: "Knowledge check" },
-      { href: "#section-acknowledgment", title: "Acknowledgment" },
-      { href: "#section-completion", title: "Completion" },
+      { href: "#section-completion-flow", title: "Complete" },
     ]
     : [
       { href: "#section-framing", title: "Framing" },
       { href: "#section-story", title: "Main idea" },
       { href: "#section-example", title: "At AAP" },
       { href: "#section-action", title: "Take action" },
-      { href: "#section-knowledge-check", title: "Knowledge check" },
-      { href: "#section-acknowledgment", title: "Acknowledgment" },
-      { href: "#section-completion", title: "Completion" },
+      { href: "#section-completion-flow", title: "Complete" },
     ];
   const progressionLabel = isWelcomeModule ? "Welcome module map" : "Progress tracker";
   const progressionMeta = isWelcomeModule
@@ -646,6 +653,22 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
   const cultureEscalationNote = isCultureModule
     ? section.policyAreas[1]?.items[3]?.body ?? section.escalation[1] ?? null
     : null;
+  const isLastModule = allSections.length > 0 && allSections[allSections.length - 1]?.slug === section.slug;
+  const completionFlowElement = (
+    <ModuleCompletionFlow
+      sectionSlug={section.slug}
+      sectionTitle={section.title}
+      employeeId={employeeId}
+      displayName={displayName}
+      acknowledgment={section.acknowledgment}
+      knowledgeCheck={knowledgeCheck}
+      nextSectionSlug={nextSection?.slug}
+      nextSectionTitle={nextSection?.title}
+      isLastModule={isLastModule}
+      progressRecord={progressRecord}
+      onProgressUpdate={onProgressUpdate}
+    />
+  );
   const supportPhoneHref = supportContact ? supportContact.phone.replace(/\D/g, "") : "";
   const quizFeedbackToShow = quizFeedback ?? (isQuizPassed
     ? {
@@ -820,82 +843,7 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
                 )}
               </section>
 
-              <section className="lesson-chapter lesson-chapter--checkpoint welcome-checkpoint-section welcome-knowledge-section" id="section-knowledge-check">
-                <ModuleKnowledgeCheck
-                  knowledgeCheck={knowledgeCheck}
-                  selections={quizSelections}
-                  isPassed={isQuizPassed}
-                  isPending={isPending && pendingAction === "quiz"}
-                  feedback={quizFeedbackToShow}
-                  onSelect={(questionIndex, optionIndex) => onQuizSelect(section.slug, questionIndex, optionIndex)}
-                  onSubmit={() => onSubmitKnowledgeCheck(section)}
-                />
-              </section>
-
-              <section className="lesson-chapter lesson-chapter--acknowledgment lesson-chapter-surface welcome-acknowledgment-section" id="section-acknowledgment">
-                <div className="lesson-chapter-head lesson-chapter-head--completion acknowledgment-section-head">
-                  <p className="section-label">Acknowledgment</p>
-                  <h2>{section.acknowledgment.title}</h2>
-                  <p className="lesson-chapter-intro">This is the final required confirmation after the checkpoint passes.</p>
-                </div>
-                <p className="acknowledgment-statement">{section.acknowledgment.statement}</p>
-
-                {showChecklist && (
-                  <div className="checklist-list">
-                    {section.acknowledgment.items.map((item, index) => (
-                      <button
-                        key={item}
-                        className={selections[index] ? "check-item active" : "check-item"}
-                        onClick={() => onToggle(section.slug, index)}
-                        type="button"
-                        disabled={isAcknowledged}
-                      >
-                        <span className="check-item-indicator" aria-hidden="true">{selections[index] ? <CheckIcon /> : ""}</span>
-                        <strong>{item}</strong>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                <button
-                  className={`primary-action${isAcknowledged ? " primary-action--done" : ""}`}
-                  disabled={isAcknowledged || !allChecked || isPending}
-                  onClick={() => !isAcknowledged && onAcknowledge(section)}
-                  aria-disabled={isAcknowledged}
-                  type="button"
-                >
-                  {isAcknowledged ? "Acknowledgment saved" : isPending && pendingAction === "acknowledgment" ? "Saving acknowledgment..." : "Complete acknowledgment"}
-                </button>
-              </section>
-
-              <section className="lesson-chapter lesson-chapter--completion welcome-completion-section" id="section-completion">
-                <div className="lesson-chapter-head lesson-chapter-head--completion">
-                  <p className="section-label">Completion</p>
-                  <h2>Finish the module with both required steps</h2>
-                </div>
-                <p>{checkpointDescription}</p>
-                <p className="module-flow-bridge">Checkpoint first, acknowledgment second, completion last.</p>
-                <div className="module-completion-summary">
-                  {completionRequirements.map((item) => (
-                    <article key={item.label} className={item.complete ? "module-completion-card module-completion-card--done" : "module-completion-card"}>
-                      <p className="section-label">{item.label}</p>
-                      <strong>{item.complete ? "Complete" : "Required"}</strong>
-                      <p>{item.body}</p>
-                    </article>
-                  ))}
-                </div>
-
-                <p className="module-completion-helper">{completionHelperNote}</p>
-                <button className={`primary-action${isCompleted ? " primary-action--done" : ""}`} disabled type="button">
-                  {completionCtaLabel}
-                </button>
-
-                {nextSection && (
-                  <p className="finish-next-note">
-                    Next after this: <Link className="module-next-link" href={`/modules/${nextSection.slug}`}>{nextSection.title}</Link>
-                  </p>
-                )}
-              </section>
+              {completionFlowElement}
             </>
           ) : isCultureModule ? (
             <>
@@ -954,102 +902,7 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
                 </div>
               </section>
 
-              <section className="lesson-chapter lesson-chapter--checkpoint lesson-chapter-surface culture-chapter-shell culture-knowledge-shell" id="section-knowledge-check">
-                <ModuleKnowledgeCheck
-                  knowledgeCheck={knowledgeCheck}
-                  selections={quizSelections}
-                  isPassed={isQuizPassed}
-                  isPending={isPending && pendingAction === "quiz"}
-                  feedback={quizFeedbackToShow}
-                  onSelect={(questionIndex, optionIndex) => onQuizSelect(section.slug, questionIndex, optionIndex)}
-                  onSubmit={() => onSubmitKnowledgeCheck(section)}
-                />
-              </section>
-
-              <section className="lesson-chapter lesson-chapter--acknowledgment lesson-chapter-surface culture-chapter-shell culture-acknowledgment-shell" id="section-acknowledgment">
-                <div className="lesson-chapter-head lesson-chapter-head--completion culture-chapter-head acknowledgment-section-head">
-                  <p className="section-label">Acknowledgment</p>
-                  <h2>{section.acknowledgment.title}</h2>
-                  <p className="lesson-chapter-intro">This is the final required confirmation after the checkpoint passes.</p>
-                </div>
-                <p className="acknowledgment-statement">{section.acknowledgment.statement}</p>
-
-                {showChecklist && (
-                  <div className="checklist-list">
-                    {section.acknowledgment.items.map((item, index) => (
-                      <button
-                        key={item}
-                        className={selections[index] ? "check-item active" : "check-item"}
-                        onClick={() => onToggle(section.slug, index)}
-                        type="button"
-                        disabled={isAcknowledged}
-                      >
-                        <span className="check-item-indicator" aria-hidden="true">{selections[index] ? <CheckIcon /> : ""}</span>
-                        <strong>{item}</strong>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                <button
-                  className={`primary-action${isAcknowledged ? " primary-action--done" : ""}`}
-                  disabled={isAcknowledged || !allChecked || isPending}
-                  onClick={() => !isAcknowledged && onAcknowledge(section)}
-                  aria-disabled={isAcknowledged}
-                  type="button"
-                >
-                  {isAcknowledged ? "Acknowledgment saved" : isPending && pendingAction === "acknowledgment" ? "Saving acknowledgment..." : "Complete acknowledgment"}
-                </button>
-              </section>
-
-              <section className="content-panel acknowledgment-panel lesson-chapter lesson-chapter--completion lesson-chapter-surface culture-chapter-shell culture-ending-shell" id="section-completion">
-                <div className="lesson-chapter-head lesson-chapter-head--completion culture-chapter-head">
-                  <p className="section-label">Completion</p>
-                  <h2>Finish the module with both required steps</h2>
-                  <p className="lesson-chapter-intro">{checkpointDescription}</p>
-                </div>
-                <div className="culture-ending-layout">
-                  <div className="culture-reflection-panel">
-                    <p className="section-label">Completion status</p>
-                    <div className="module-completion-summary module-completion-summary--stacked">
-                      {completionRequirements.map((item) => (
-                        <article key={item.label} className={item.complete ? "module-completion-card module-completion-card--done" : "module-completion-card"}>
-                          <p className="section-label">{item.label}</p>
-                          <strong>{item.complete ? "Complete" : "Required"}</strong>
-                          <p>{item.body}</p>
-                        </article>
-                      ))}
-                    </div>
-                    <p className="culture-reflection-note">{checkpointNote}</p>
-                    <p className="module-completion-helper">{completionHelperNote}</p>
-                    <button className={`primary-action${isCompleted ? " primary-action--done" : ""}`} disabled type="button">
-                      {completionCtaLabel}
-                    </button>
-                  </div>
-                  <div className="culture-bottom-support">
-                    {nextSection && (
-                      <article className="culture-bottom-card">
-                        <p className="section-label">Next module</p>
-                        <strong>{nextSection.title}</strong>
-                        <p>{nextSection.summary}</p>
-                        <Link className="inline-action" href={`/modules/${nextSection.slug}`}>Preview next</Link>
-                      </article>
-                    )}
-                    {supportContact && (
-                      <article className="culture-bottom-card">
-                        <p className="section-label">Questions</p>
-                        <strong>{supportContact.name}</strong>
-                        <span className="culture-contact-role">{supportContact.role}</span>
-                        <p>{supportContact.note}</p>
-                        <div className="rail-contact-actions">
-                          <a className="inline-action" href={`mailto:${supportContact.email}`}>Email</a>
-                          <a className="inline-action" href={`tel:${supportPhoneHref}`}>Call</a>
-                        </div>
-                      </article>
-                    )}
-                  </div>
-                </div>
-              </section>
+              {completionFlowElement}
             </>
            ) : (
             <>
@@ -1162,93 +1015,7 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
                 </div>
               </section>
 
-              <section className="lesson-chapter lesson-chapter--checkpoint lesson-chapter-surface chapter-knowledge-shell" id="section-knowledge-check">
-                <ModuleKnowledgeCheck
-                  knowledgeCheck={knowledgeCheck}
-                  selections={quizSelections}
-                  isPassed={isQuizPassed}
-                  isPending={isPending && pendingAction === "quiz"}
-                  feedback={quizFeedbackToShow}
-                  onSelect={(questionIndex, optionIndex) => onQuizSelect(section.slug, questionIndex, optionIndex)}
-                  onSubmit={() => onSubmitKnowledgeCheck(section)}
-                />
-              </section>
-
-              <section className="lesson-chapter lesson-chapter--acknowledgment lesson-chapter-surface chapter-acknowledgment-shell" id="section-acknowledgment">
-                <div className="lesson-chapter-head lesson-chapter-head--completion acknowledgment-section-head">
-                  <p className="section-label">Acknowledgment</p>
-                  <h2>{section.acknowledgment.title}</h2>
-                  <p className="lesson-chapter-intro">This is the final required confirmation after the checkpoint passes.</p>
-                </div>
-                <p className="acknowledgment-statement">{section.acknowledgment.statement}</p>
-
-                {showChecklist && (
-                  <div className="checklist-list">
-                    {section.acknowledgment.items.map((item, index) => (
-                      <button
-                        key={item}
-                        className={selections[index] ? "check-item active" : "check-item"}
-                        onClick={() => onToggle(section.slug, index)}
-                        type="button"
-                        disabled={isAcknowledged}
-                      >
-                        <span className="check-item-indicator" aria-hidden="true">{selections[index] ? <CheckIcon /> : ""}</span>
-                        <strong>{item}</strong>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                <button
-                  className={`primary-action${isAcknowledged ? " primary-action--done" : ""}`}
-                  disabled={isAcknowledged || !allChecked || isPending}
-                  onClick={() => !isAcknowledged && onAcknowledge(section)}
-                  aria-disabled={isAcknowledged}
-                  type="button"
-                >
-                  {isAcknowledged ? "Acknowledgment saved" : isPending && pendingAction === "acknowledgment" ? "Saving acknowledgment..." : "Complete acknowledgment"}
-                </button>
-              </section>
-
-              <section className="content-panel acknowledgment-panel lesson-chapter lesson-chapter--completion lesson-chapter-surface chapter-ending-shell" id="section-completion">
-                <div className="lesson-chapter-head lesson-chapter-head--completion">
-                  <p className="section-label">Completion</p>
-                  <h2>Finish the module with both required steps</h2>
-                </div>
-                <p className="chapter-ending-copy">{checkpointDescription}</p>
-                <p className="module-flow-bridge">Checkpoint first, acknowledgment second, completion last.</p>
-                <div className="module-completion-summary">
-                  {completionRequirements.map((item) => (
-                    <article key={item.label} className={item.complete ? "module-completion-card module-completion-card--done" : "module-completion-card"}>
-                      <p className="section-label">{item.label}</p>
-                      <strong>{item.complete ? "Complete" : "Required"}</strong>
-                      <p>{item.body}</p>
-                    </article>
-                  ))}
-                </div>
-                <div className="chapter-reflection-panel">
-                  <p className="section-label">Make sure these are clear</p>
-                  <ul className="plain-list chapter-reflection-list">
-                    {reflectionPrompts.map((prompt) => (
-                      <li key={prompt}>
-                        <strong>{prompt}</strong>
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="chapter-reflection-note">{checkpointNote}</p>
-                </div>
-
-                <p className="module-completion-helper">{completionHelperNote}</p>
-                <button className={`primary-action${isCompleted ? " primary-action--done" : ""}`} disabled type="button">
-                  {completionCtaLabel}
-                </button>
-
-                {nextSection && (
-                  <p className="finish-next-note">
-                    Next after this: <Link className="module-next-link" href={`/modules/${nextSection.slug}`}>{nextSection.title}</Link>
-                  </p>
-                )}
-              </section>
+              {completionFlowElement}
             </>
 
           )}

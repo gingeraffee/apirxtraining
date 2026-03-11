@@ -680,6 +680,21 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
       : !isAcknowledged
         ? "The checkpoint is cleared. Save the acknowledgment to finish the module."
         : "Everything required is saved for this module.";
+  const renderWelcomeEssentialBody = (item: { title: string; body: string }) => item.body
+    .split("\n\n")
+    .map((paragraph, index) => {
+      const labeledParagraph = paragraph.match(/^(Mission|Vision):\s*(.*)$/);
+
+      if (labeledParagraph) {
+        return (
+          <p key={`${item.title}-${index}`}>
+            <strong>{labeledParagraph[1]}:</strong> {labeledParagraph[2]}
+          </p>
+        );
+      }
+
+      return <p key={`${item.title}-${index}`}>{paragraph}</p>;
+    });
 
   return (
     <div className={`section-page portal-page portal-page--detail portal-page--section${isWelcomeModule ? " portal-page--welcome" : ""}${isCultureModule ? " portal-page--culture" : ""}`}>
@@ -689,12 +704,6 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
           <h1>{section.title}</h1>
           <p className="lead">{section.summary}</p>
           {!isCultureModule && <p className="purpose-line">{section.purpose}</p>}
-          {isWelcomeModule && (
-            <div className="welcome-hero-meta" aria-label="Welcome module details">
-              <span className="welcome-hero-meta-chip">{`${progressionItems.length}-part welcome module`}</span>
-              <span className="welcome-hero-meta-chip welcome-hero-meta-chip--subtle">{`${totalQuizQuestions} quiz questions + acknowledgment`}</span>
-            </div>
-          )}
         </div>
       </section>
 
@@ -730,13 +739,16 @@ function SectionScreen({ section, nextSection, isAcknowledged, isQuizPassed, isC
                     <p className="lesson-chapter-intro">{section.chapterIntros?.[0]}</p>
                   </div>
                   <div className="welcome-foundation-panel">
-                    <ul className="plain-list welcome-orientation-list">
+                    <div className="welcome-big-picture-grid">
                       {section.essentials.map((item) => (
-                        <li key={item.title}>
-                          <strong>{item.title}.</strong> {item.body}
-                        </li>
+                        <article key={item.title} className="welcome-big-picture-card">
+                          <h3>{item.title}</h3>
+                          <div className="welcome-big-picture-copy">
+                            {renderWelcomeEssentialBody(item)}
+                          </div>
+                        </article>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 </div>
               </section>

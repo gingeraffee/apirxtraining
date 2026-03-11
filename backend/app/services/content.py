@@ -137,9 +137,10 @@ SECTIONS = [
         purpose="AAP Start is here to make your first stretch of onboarding clearer and easier to follow. AAP\u2019s CEO, Jon Copeland, puts it simply: every employee contributes directly to the company\u2019s growth and success. The goal of this experience is to help you understand how AAP works, what\u2019s expected of you, where to go for help, and what to expect as you get settled in.",
         focuses=["Who AAP supports", "What AAP Start is for", "Where questions go"],
         essentials=[
-            ("Who AAP is", "American Associated Pharmacies, or AAP, is a member-owned cooperative that supports independent and community pharmacies. AAP was formed in 2009 through the joining of two pharmacy organizations, and API continues to operate as AAP\u2019s warehouse and distribution arm."),
-            ("Mission", "AAP\u2019s mission is to provide support and customized solutions for independent and community pharmacies to enhance profitability, streamline operations, and improve the quality of patient care."),
-            ("Vision and values", "AAP\u2019s vision is helping independent pharmacies thrive in a competitive healthcare market. The values\u2014customer focus, integrity, respect, excellence, and ownership\u2014are meant to show up in day-to-day behavior."),
+            ("What AAP Start Is", "AAP Start is your onboarding guide. It is designed to make your first stretch at AAP clearer, easier to follow, and easier to complete by organizing key information, training, and next steps in one place."),
+            ("Who AAP Is", "American Associated Pharmacies, or AAP, is a member-owned cooperative that supports independent and community pharmacies. AAP was formed in 2009 through the joining of two pharmacy organizations, and API continues to operate as AAP\u2019s warehouse and distribution arm."),
+            ("Core Values", "Customer focus, integrity, respect, excellence, and ownership."),
+            ("Mission and Vision", "Mission: Provide support and customized solutions for independent and community pharmacies to enhance profitability, streamline operations, and improve the quality of patient care.\n\nVision: Help independent pharmacies thrive in a competitive healthcare market."),
         ],
         policy_areas=[
             ("Who AAP is", [

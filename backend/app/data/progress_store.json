@@ -2,7 +2,7 @@
   "employees": {
     "demo-employee": {
       "display_name": "Nicole Thornton",
-      "current_section": "support-leave-and-employee-resources",
+      "current_section": "welcome-to-aap",
       "completed_sections": [
         "how-we-show-up",
         "tools-and-systems",
@@ -19,7 +19,7 @@
         "welcome-to-aap"
       ],
       "started_at": "2026-03-07T05:24:49.713479+00:00",
-      "updated_at": "2026-03-12T14:08:27.367833+00:00"
+      "updated_at": "2026-03-12T16:33:09.791976+00:00"
     }
   }
 }

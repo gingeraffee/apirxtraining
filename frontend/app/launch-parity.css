@@ -5770,3 +5770,11 @@
     padding: 14px 24px;
   }
 }
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-framing-main .section-label {
+  color: #607891;
+}
+
+.portal-stage--detail .portal-page--section:not(.portal-page--welcome) .chapter-framing-main h2 {
+  color: #16344d;
+}
